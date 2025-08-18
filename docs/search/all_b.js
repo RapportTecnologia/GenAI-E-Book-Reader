@@ -1,11 +1,14 @@
 var searchData=
 [
-  ['código_20de_20conduta_0',['Código de Conduta',['../index.html#autotoc_md4',1,'']]],
-  ['casos_20de_20uso_1',['4. Personas e Principais Casos de Uso',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md11',1,'']]],
-  ['como_20rodar_20linux_2',['Como rodar (Linux)',['../index.html#autotoc_md2',1,'']]],
-  ['conduta_3',['Código de Conduta',['../index.html#autotoc_md4',1,'']]],
-  ['contribuindo_4',['Contribuindo',['../index.html#autotoc_md3',1,'']]],
-  ['critérios_20de_20aceitação_20dod_5',['4) Entregas e Critérios de Aceitação (DoD)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md29',1,'']]],
-  ['critérios_20de_20aceitação_20mvp_6',['12. Critérios de Aceitação (MVP)',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md19',1,'']]],
-  ['cronograma_20base_20exemplo_7',['10) Cronograma Base (exemplo)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md35',1,'']]]
+  ['básica_0',['0.1.0 – MVP Leitura Básica',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md47',1,'']]],
+  ['backlog_20técnico_1',['Backlog Técnico',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md54',1,'']]],
+  ['base_20exemplo_2',['10) Cronograma Base (exemplo)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md35',1,'']]],
+  ['baseado_20em_20requisitos_20md_3',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
+  ['book_20reader_4',['GenAI E-Book Reader',['../index.html',1,'']]],
+  ['book_20reader_20—_20descrição_20e_20requisitos_20de_20software_5',['GenAI E-Book Reader — Descrição e Requisitos de Software',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html',1,'']]],
+  ['book_20reader_20—_20plano_20de_20desenvolvimento_20baseado_20em_20requisitos_20md_6',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
+  ['book_20reader_20releases_20tag_20v0_200_2010_200_200_2010_20a_202025_2008_2017_7',['&lt;a href=&quot;https://github.com/&lt;your-org-or-user&gt;/GenAi-E-Book-Reader/releases/tag/v0.0.10&quot; &gt;0.0.10&lt;/a&gt; - 2025-08-17',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md41',1,'']]],
+  ['bootstrap_8',['0.0.1 – Bootstrap',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md46',1,'']]],
+  ['build_20da_20aplicação_20linux_9',['Build da Aplicação (Linux)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md38',1,'']]],
+  ['build_20e_20documentação_10',['12) Instruções de Build e Documentação',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md37',1,'']]]
 ];

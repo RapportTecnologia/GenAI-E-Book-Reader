@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['licença_0',['Licença',['../index.html#autotoc_md5',1,'']]],
-  ['linhas_20gerais_1',['9. UX/UI (linhas gerais)',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md16',1,'']]],
-  ['linux_2',['linux',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md38',1,'Build da Aplicação (Linux)'],['../index.html#autotoc_md2',1,'Como rodar (Linux)']]]
+  ['href_20https_3a_20github_20com_20your_20org_20or_20user_20genai_20e_20book_20reader_20releases_20tag_20v0_200_2010_200_200_2010_20a_202025_2008_2017_0',['&lt;a href=&quot;https://github.com/&lt;your-org-or-user&gt;/GenAi-E-Book-Reader/releases/tag/v0.0.10&quot; &gt;0.0.10&lt;/a&gt; - 2025-08-17',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md41',1,'']]],
+  ['https_3a_20github_20com_20your_20org_20or_20user_20genai_20e_20book_20reader_20releases_20tag_20v0_200_2010_200_200_2010_20a_202025_2008_2017_1',['&lt;a href=&quot;https://github.com/&lt;your-org-or-user&gt;/GenAi-E-Book-Reader/releases/tag/v0.0.10&quot; &gt;0.0.10&lt;/a&gt; - 2025-08-17',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md41',1,'']]]
 ];

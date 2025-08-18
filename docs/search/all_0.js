@@ -1,17 +1,12 @@
 var searchData=
 [
-  ['1_0',['6) Decisões Técnicas Iniciais (a validar no Sprint 1)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md31',1,'']]],
-  ['1_20—_204_20sprints_20de_202_20semanas_1',['3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md28',1,'']]],
-  ['1_20estratégia_20e_20escopo_20do_20mvp_2',['1) Estratégia e Escopo do MVP',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md26',1,'']]],
-  ['1_20visão_20geral_3',['1. Visão Geral',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md8',1,'']]],
-  ['10_20cronograma_20base_20exemplo_4',['10) Cronograma Base (exemplo)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md35',1,'']]],
-  ['10_20integrações_5',['10. Integrações',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md17',1,'']]],
-  ['11_20próximos_20passos_6',['11) Próximos Passos',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md36',1,'']]],
-  ['11_20segurança_20e_20privacidade_7',['11. Segurança e Privacidade',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md18',1,'']]],
-  ['12_20critérios_20de_20aceitação_20mvp_8',['12. Critérios de Aceitação (MVP)',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md19',1,'']]],
-  ['12_20instruções_20de_20build_20e_20documentação_9',['12) Instruções de Build e Documentação',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md37',1,'']]],
-  ['13_20roadmap_20sugestão_10',['13. Roadmap (sugestão)',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md20',1,'']]],
-  ['14_20riscos_20e_20dependências_11',['14. Riscos e Dependências',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md21',1,'']]],
-  ['15_20glossário_12',['15. Glossário',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md22',1,'']]],
-  ['16_20referências_20técnicas_13',['16. Referências Técnicas',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md23',1,'']]]
+  ['0_200_201_20–_20bootstrap_0',['0.0.1 – Bootstrap',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md46',1,'']]],
+  ['0_201_200_20–_20mvp_20leitura_20básica_1',['0.1.0 – MVP Leitura Básica',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md47',1,'']]],
+  ['0_2010_200_200_2010_20a_202025_2008_2017_2',['&lt;a href=&quot;https://github.com/&lt;your-org-or-user&gt;/GenAi-E-Book-Reader/releases/tag/v0.0.10&quot; &gt;0.0.10&lt;/a&gt; - 2025-08-17',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md41',1,'']]],
+  ['0_202_200_20–_20anotações_20e_20dicionário_3',['0.2.0 – Anotações e Dicionário',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md48',1,'']]],
+  ['0_203_200_20–_20tts_20e_20controles_4',['0.3.0 – TTS e Controles',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md49',1,'']]],
+  ['0_204_200_20–_20ia_20rag_20e_20resumos_5',['0.4.0 – IA (RAG) e Resumos',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md50',1,'']]],
+  ['0_205_200_20–_20estatísticas_20e_20sessões_6',['0.5.0 – Estatísticas e Sessões',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md51',1,'']]],
+  ['0_206_200_20–_20integração_20calibre_20e_20melhorias_20ux_7',['0.6.0 – Integração Calibre e Melhorias UX',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md52',1,'']]],
+  ['08_2017_8',['&lt;a href=&quot;https://github.com/&lt;your-org-or-user&gt;/GenAi-E-Book-Reader/releases/tag/v0.0.10&quot; &gt;0.0.10&lt;/a&gt; - 2025-08-17',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md41',1,'']]]
 ];

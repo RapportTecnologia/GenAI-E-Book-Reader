@@ -1,10 +1,15 @@
 var searchData=
 [
-  ['base_20exemplo_0',['10) Cronograma Base (exemplo)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md35',1,'']]],
-  ['baseado_20em_20requisitos_20md_1',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
-  ['book_20reader_2',['GenAI E-Book Reader',['../index.html',1,'']]],
-  ['book_20reader_20—_20descrição_20e_20requisitos_20de_20software_3',['GenAI E-Book Reader — Descrição e Requisitos de Software',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html',1,'']]],
-  ['book_20reader_20—_20plano_20de_20desenvolvimento_20baseado_20em_20requisitos_20md_4',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
-  ['build_20da_20aplicação_20linux_5',['Build da Aplicação (Linux)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md38',1,'']]],
-  ['build_20e_20documentação_6',['12) Instruções de Build e Documentação',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md37',1,'']]]
+  ['a_20href_20https_3a_20github_20com_20your_20org_20or_20user_20genai_20e_20book_20reader_20releases_20tag_20v0_200_2010_200_200_2010_20a_202025_2008_2017_0',['&lt;a href=&quot;https://github.com/&lt;your-org-or-user&gt;/GenAi-E-Book-Reader/releases/tag/v0.0.10&quot; &gt;0.0.10&lt;/a&gt; - 2025-08-17',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md41',1,'']]],
+  ['a_20validar_20no_20sprint_201_1',['6) Decisões Técnicas Iniciais (a validar no Sprint 1)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md31',1,'']]],
+  ['aceitação_20dod_2',['4) Entregas e Critérios de Aceitação (DoD)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md29',1,'']]],
+  ['aceitação_20mvp_3',['12. Critérios de Aceitação (MVP)',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md19',1,'']]],
+  ['added_4',['Added',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md42',1,'']]],
+  ['agradecimentos_5',['Agradecimentos',['../index.html#autotoc_md6',1,'']]],
+  ['alto_20nível_6',['8. Modelo de Dados (alto nível)',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md15',1,'']]],
+  ['anotações_20e_20dicionário_7',['0.2.0 – Anotações e Dicionário',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md48',1,'']]],
+  ['aplicação_20linux_8',['Build da Aplicação (Linux)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md38',1,'']]],
+  ['app_2eh_9',['App.h',['../de/d8b/App_8h.html',1,'']]],
+  ['appinfo_10',['AppInfo',['../de/d5f/classgenai_1_1AppInfo.html',1,'genai']]],
+  ['arquitetura_20e_20tecnologias_11',['7. Arquitetura e Tecnologias',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md14',1,'']]]
 ];

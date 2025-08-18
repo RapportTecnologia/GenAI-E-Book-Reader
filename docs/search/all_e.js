@@ -1,6 +1,30 @@
 var searchData=
 [
-  ['fase_201_20—_204_20sprints_20de_202_20semanas_0',['3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md28',1,'']]],
-  ['fases_1',['2) Roadmap por Fases',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md27',1,'']]],
-  ['funcionais_2',['funcionais',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md12',1,'5. Requisitos Funcionais'],['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md13',1,'6. Requisitos Não Funcionais']]]
+  ['e_20book_20reader_0',['GenAI E-Book Reader',['../index.html',1,'']]],
+  ['e_20book_20reader_20—_20descrição_20e_20requisitos_20de_20software_1',['GenAI E-Book Reader — Descrição e Requisitos de Software',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html',1,'']]],
+  ['e_20book_20reader_20—_20plano_20de_20desenvolvimento_20baseado_20em_20requisitos_20md_2',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
+  ['e_20book_20reader_20releases_20tag_20v0_200_2010_200_200_2010_20a_202025_2008_2017_3',['&lt;a href=&quot;https://github.com/&lt;your-org-or-user&gt;/GenAi-E-Book-Reader/releases/tag/v0.0.10&quot; &gt;0.0.10&lt;/a&gt; - 2025-08-17',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md41',1,'']]],
+  ['e_20controles_4',['0.3.0 – TTS e Controles',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md49',1,'']]],
+  ['e_20critérios_20de_20aceitação_20dod_5',['4) Entregas e Critérios de Aceitação (DoD)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md29',1,'']]],
+  ['e_20dependências_6',['14. Riscos e Dependências',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md21',1,'']]],
+  ['e_20dicionário_7',['0.2.0 – Anotações e Dicionário',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md48',1,'']]],
+  ['e_20documentação_8',['12) Instruções de Build e Documentação',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md37',1,'']]],
+  ['e_20escopo_20do_20mvp_9',['1) Estratégia e Escopo do MVP',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md26',1,'']]],
+  ['e_20melhorias_20ux_10',['0.6.0 – Integração Calibre e Melhorias UX',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md52',1,'']]],
+  ['e_20mitigações_20prioritários_11',['8) Riscos e Mitigações (prioritários)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md33',1,'']]],
+  ['e_20principais_20casos_20de_20uso_12',['4. Personas e Principais Casos de Uso',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md11',1,'']]],
+  ['e_20privacidade_13',['11. Segurança e Privacidade',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md18',1,'']]],
+  ['e_20releases_14',['1.x – Estabilidade e Releases',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md53',1,'']]],
+  ['e_20resumos_15',['0.4.0 – IA (RAG) e Resumos',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md50',1,'']]],
+  ['e_20sessões_16',['0.5.0 – Estatísticas e Sessões',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md51',1,'']]],
+  ['e_20tecnologias_17',['7. Arquitetura e Tecnologias',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md14',1,'']]],
+  ['em_20requisitos_20md_18',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
+  ['entregas_20e_20critérios_20de_20aceitação_20dod_19',['4) Entregas e Critérios de Aceitação (DoD)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md29',1,'']]],
+  ['escopo_20',['3. Escopo',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md10',1,'']]],
+  ['escopo_20do_20mvp_21',['1) Estratégia e Escopo do MVP',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md26',1,'']]],
+  ['estabilidade_20e_20releases_22',['1.x – Estabilidade e Releases',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md53',1,'']]],
+  ['estatísticas_20e_20sessões_23',['0.5.0 – Estatísticas e Sessões',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md51',1,'']]],
+  ['estratégia_20e_20escopo_20do_20mvp_24',['1) Estratégia e Escopo do MVP',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md26',1,'']]],
+  ['estrutura_20inicial_20do_20repositório_25',['7) Estrutura Inicial do Repositório',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md32',1,'']]],
+  ['exemplo_26',['10) Cronograma Base (exemplo)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md35',1,'']]]
 ];
