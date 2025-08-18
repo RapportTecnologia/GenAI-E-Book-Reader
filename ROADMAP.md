@@ -20,9 +20,10 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - "Salvar como" (RF-28)
 - Pequenos aprimoramentos de usabilidade
 
-## 0.1.3 - Refinamento da interface de usuário
+## 0.1.3 - Refinamento da interface de usuário (Planejado)
 - com base no arquivo docs/imgs/logo-do-projeto.png para gere um icone para ser usado no app na barra de títulos
-- Adicione a barra de títulos o nome do livro que
+- Adicione a barra de títulos o nome do livro que está sendo lido, use os metadados do arquivo, se não estiver disponível use o nome do arquivo.
+- Faça uma splash screen para mostrar o arquivo docs/imgs/logo-do-projeto.png e a versão do app. Dados do autor: Carlos Delfino <consultoria@carlosdelfino.eti.br>
 
 ## 0.2.0 – Anotações e Dicionário
 - Marcação de trechos e notas com exportação JSON
