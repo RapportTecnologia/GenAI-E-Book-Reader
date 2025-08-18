@@ -1,0 +1,54 @@
+# Doxyfile for GenAI E-Book Reader
+
+# Project
+PROJECT_NAME           = "GenAI E-Book Reader"
+PROJECT_BRIEF          = "Leitor de e-books com IA, TTS, anotações e integrações"
+PROJECT_NUMBER         = 0.0.1
+OUTPUT_DIRECTORY       = docs
+CREATE_SUBDIRS         = YES
+
+# Inputs
+INPUT                  = include \
+                          src \
+                          README.md \
+                          REQUISITOS.md \
+                          PLANO-DE-DESENVOLVIMENTO.md \
+                          CHANGELOG.md \
+                          ROADMAP.md
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.hpp *.hh *.hxx *.c *.cc *.cpp *.cxx *.md
+MARKDOWN_SUPPORT       = YES
+USE_MDFILE_AS_MAINPAGE = README.md
+EXCLUDE_PATTERNS       = include/README.md \
+                         */include/README.md \
+                         **/include/README.md
+
+# Build
+EXTRACT_ALL            = YES
+GENERATE_LATEX         = NO
+GENERATE_XML           = NO
+QUIET                  = NO
+WARN_IF_UNDOCUMENTED   = NO
+
+# HTML
+GENERATE_HTML          = YES
+HTML_OUTPUT            = .
+HTML_DYNAMIC_SECTIONS  = YES
+# Paths relative to this Doxyfile (portable for all devs)
+PROJECT_LOGO           = docs/imgs/logo-do-projeto.png
+# Use default Doxygen header (keeps sidebar & search). We'll style via CSS.
+# HTML_HEADER            = docs/header.html
+GENERATE_TREEVIEW      = YES
+TREEVIEW_WIDTH         = 260
+SEARCHENGINE           = YES
+SERVER_BASED_SEARCH    = NO
+DISABLE_INDEX          = NO
+HTML_COLORSTYLE        = LIGHT
+HTML_COLORSTYLE_HUE    = 210
+HTML_COLORSTYLE_SAT    = 180
+HTML_COLORSTYLE_GAMMA  = 90
+HTML_EXTRA_STYLESHEET  = docs/assets/customdox.css
+HTML_EXTRA_FILES       = docs/imgs/header-do-projeto.png
+
+# Misc
+STRIP_FROM_PATH        = ..

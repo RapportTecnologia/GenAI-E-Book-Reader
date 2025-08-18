@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['da_20aplicação_20linux_0',['Build da Aplicação (Linux)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md38',1,'']]],
+  ['da_20documentação_20doxygen_1',['Geração da Documentação (Doxygen)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md39',1,'']]],
+  ['dados_20alto_20nível_2',['8. Modelo de Dados (alto nível)',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md15',1,'']]],
+  ['de_202_20semanas_3',['3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md28',1,'']]],
+  ['de_20aceitação_20dod_4',['4) Entregas e Critérios de Aceitação (DoD)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md29',1,'']]],
+  ['de_20aceitação_20mvp_5',['12. Critérios de Aceitação (MVP)',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md19',1,'']]],
+  ['de_20build_20e_20documentação_6',['12) Instruções de Build e Documentação',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md37',1,'']]],
+  ['de_20conduta_7',['Código de Conduta',['../index.html#autotoc_md4',1,'']]],
+  ['de_20dados_20alto_20nível_8',['8. Modelo de Dados (alto nível)',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md15',1,'']]],
+  ['de_20desenvolvimento_20baseado_20em_20requisitos_20md_9',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
+  ['de_20projeto_10',['9) Métricas de Projeto',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md34',1,'']]],
+  ['de_20rastreabilidade_20resumo_11',['5) Matriz de Rastreabilidade (resumo)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md30',1,'']]],
+  ['de_20software_12',['GenAI E-Book Reader — Descrição e Requisitos de Software',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html',1,'']]],
+  ['de_20uso_13',['4. Personas e Principais Casos de Uso',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md11',1,'']]],
+  ['decisões_20técnicas_20iniciais_20a_20validar_20no_20sprint_201_14',['6) Decisões Técnicas Iniciais (a validar no Sprint 1)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md31',1,'']]],
+  ['dependências_15',['14. Riscos e Dependências',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md21',1,'']]],
+  ['descrição_20e_20requisitos_20de_20software_16',['GenAI E-Book Reader — Descrição e Requisitos de Software',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html',1,'']]],
+  ['desenvolvimento_20baseado_20em_20requisitos_20md_17',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
+  ['do_20mvp_18',['1) Estratégia e Escopo do MVP',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md26',1,'']]],
+  ['do_20repositório_19',['7) Estrutura Inicial do Repositório',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md32',1,'']]],
+  ['documentação_20',['12) Instruções de Build e Documentação',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md37',1,'']]],
+  ['documentação_20doxygen_21',['Geração da Documentação (Doxygen)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md39',1,'']]],
+  ['dod_22',['4) Entregas e Critérios de Aceitação (DoD)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md29',1,'']]],
+  ['doxygen_23',['Geração da Documentação (Doxygen)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md39',1,'']]]
+];

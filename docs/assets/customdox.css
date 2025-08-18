@@ -1,0 +1,54 @@
+/* Custom theme for GenAI E-Book Reader docs (moved to assets to avoid copy-to-self) */
+:root{
+  --brand-hue:210; /* match Doxygen hue */
+  --brand: hsl(var(--brand-hue),70%,45%);
+  --brand-weak: hsl(var(--brand-hue),70%,96%);
+  --text:#1c2430;
+}
+
+/* Header / Logo */
+.project-header{padding:8px 0;border-bottom:1px solid #e5e8ef;background:var(--brand-weak)}
+.project-header img{filter: drop-shadow(0 2px 2px rgba(0,0,0,.1));}
+/* Doxygen logo container/id is #projectlogo; guarantee square area, no crop */
+#titlearea{overflow:visible}
+#projectlogo{display:flex;align-items:center;overflow:visible}
+#projectlogo img{height:56px;width:56px;object-fit:contain}
+@media (max-width: 600px){
+  #projectlogo img{height:40px;width:40px}
+}
+
+/* Top title bar */
+#titlearea{background: linear-gradient(90deg, var(--brand) 0%, hsl(var(--brand-hue),70%,35%) 100%); color:#fff;}
+#projectname,#projectbrief{color:#fff}
+#projectname{font-weight:700}
+
+/* Links */
+a{color:var(--brand)}
+a:hover{opacity:.85}
+
+/* Sidebar tree */
+#nav-tree{background:#f8fafc;border-right:1px solid #e5e8ef}
+#nav-tree .selected{background:var(--brand-weak);border-left:3px solid var(--brand)}
+#nav-sync{background:var(--brand);}
+
+/* Search box */
+#MSearchBox{border:1px solid #d6dbe6;border-radius:6px}
+#MSearchField{padding:.35rem .5rem}
+
+/* Content */
+#doc-content{padding:1rem 1.25rem}
+.contents h1,.contents h2,.contents h3{scroll-margin-top: 80px}
+/* Make markdown images responsive and not huge */
+.contents img{max-width:100%;height:auto}
+/* Typical badge images */
+.contents img[src*="img.shields.io"],
+.contents img[src*="visitor-badge"],
+.contents img.inline{height:20px;max-height:20px;width:auto}
+
+/* Tables */
+table.doxtable{border:1px solid #e5e8ef}
+table.doxtable th{background:var(--brand-weak);}
+
+/* Footer */
+#nav-path{background:#f8fafc;border-top:1px solid #e5e8ef}
+.footer{color:#6b7280}

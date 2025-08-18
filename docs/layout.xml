@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doxygenlayout version="1.0">
+  <navindex>
+    <tab type="mainpage" visible="yes" title="Início"/>
+    <tab type="pages" visible="yes"/>
+    <tab type="modules" visible="yes"/>
+    <tab type="namespaces" visible="yes"/>
+    <tab type="classes" visible="yes"/>
+    <tab type="files" visible="yes"/>
+  </navindex>
+</doxygenlayout>
