@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(GenAI_EBook_Reader VERSION 0.0.1 LANGUAGES C CXX)
+project(GenAI_EBook_Reader VERSION 0.0.10 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

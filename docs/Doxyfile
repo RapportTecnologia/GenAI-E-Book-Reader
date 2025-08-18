@@ -37,7 +37,7 @@ HTML_DYNAMIC_SECTIONS  = YES
 # Paths relative to this Doxyfile (portable for all devs)
 PROJECT_LOGO           = docs/imgs/logo-do-projeto.png
 # Use default Doxygen header (keeps sidebar & search). We'll style via CSS.
-# HTML_HEADER            = docs/header.html
+HTML_HEADER            = docs/header.html
 GENERATE_TREEVIEW      = YES
 TREEVIEW_WIDTH         = 260
 SEARCHENGINE           = YES

@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-## [0.0.1] - 2025-08-17
+## [0.0.10] - 2025-08-17
 ### Added
 - Initial project scaffolding (CMake, C++17, optional Qt Widgets placeholder).
 - Doxygen documentation pipeline with custom theme and sidebar/search enabled.
@@ -13,11 +13,11 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - New docs: `CHANGELOG.md`, `ROADMAP.md`.
 
 ### Changed
-- Set project version to 0.0.1 in `CMakeLists.txt` and `docs/Doxyfile` (`PROJECT_NUMBER`).
+- Set project version to 0.0.10 in `CMakeLists.txt`, `README.md` and headers.
 - Improved Doxyfile to avoid copy-to-self issues and keep default header.
 
 ### Known Issues
 - If Qt is not installed, a console placeholder is built (see `CMakeLists.txt` message).
 - One unresolved reference in `README.md` badge/anchor noted by Doxygen (harmless).
 
-[0.0.1]: https://github.com/<your-org-or-user>/GenAi-E-Book-Reader/releases/tag/v0.0.1
+[0.0.10]: https://github.com/<your-org-or-user>/GenAi-E-Book-Reader/releases/tag/v0.0.10

@@ -6,7 +6,7 @@
 ![Qt](https://img.shields.io/badge/Qt-Widgets%20%7C%20QML-brightgreen)
 ![CMake](https://img.shields.io/badge/CMake-%3E%3D3.16-informational)
 [![Docs](https://img.shields.io/badge/docs-Doxygen-blueviolet)](docs/index.html)
-![Version](https://img.shields.io/badge/version-0.0.1-blue)
+![Version](https://img.shields.io/badge/version-0.0.10-blue)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contribuindo)
 
 Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt, com recursos de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.

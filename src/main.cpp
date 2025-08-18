@@ -5,16 +5,21 @@
 #include <Qt>
 #endif
 #include <iostream>
+#include "app/App.h"
 
 int main(int argc, char* argv[]) {
 #ifdef USE_QT
     QApplication app(argc, argv);
 
     QMainWindow win;
-    win.setWindowTitle("GenAI E-Book Reader (MVP Skeleton)");
+    win.setWindowTitle(QString("%1 v%2 — MVP Skeleton")
+                           .arg(genai::AppInfo::Name)
+                           .arg(genai::AppInfo::Version));
 
     auto *label = new QLabel(&win);
-    label->setText("GenAI E-Book Reader — Skeleton inicial");
+    label->setText(QString("%1 v%2 — Skeleton inicial")
+                       .arg(genai::AppInfo::Name)
+                       .arg(genai::AppInfo::Version));
     label->setAlignment(Qt::AlignCenter);
     win.setCentralWidget(label);
 
@@ -24,7 +29,8 @@ int main(int argc, char* argv[]) {
     return app.exec();
 #else
     (void)argc; (void)argv;
-    std::cout << "GenAI E-Book Reader — Console placeholder (Qt não encontrado)." << std::endl;
+    std::cout << genai::AppInfo::Name << " v" << genai::AppInfo::Version
+              << " — Console placeholder (Qt não encontrado)." << std::endl;
     return 0;
 #endif
 }
