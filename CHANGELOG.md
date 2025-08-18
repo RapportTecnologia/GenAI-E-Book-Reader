@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [0.1.1] - 2025-08-17
+### Added
+- Combobox de seleção de página na toolbar para navegação direta.
+- Restauração de sessão: reabre automaticamente o último arquivo e lembra o último diretório.
+
+### Changed
+- Ajuste do PDF para abrir com zoom adequado (base para "fit to width").
+- Persistência via `QSettings` de geometria, estado da UI, tema e zoom.
+- Correções de compilação e sincronização de cabeçalhos (`MainWindow.h/.cpp`).
+
+---
+
 ## [0.1.0] - 2025-08-17
 ### Added
 - Planejamento do MVP 0.1.0 conforme `ROADMAP.md` (Leitura básica: abrir PDF/EPUB, navegação, tema claro/escuro, sumário, preferências mínimas).
@@ -32,6 +44,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - If Qt is not installed, a console placeholder is built (see `CMakeLists.txt` message).
 - One unresolved reference in `README.md` badge/anchor noted by Doxygen (harmless).
 
+[0.1.1]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.1
 [0.1.0]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.0
 [0.0.10]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.0.10
 

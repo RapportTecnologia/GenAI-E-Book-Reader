@@ -13,6 +13,8 @@
 #include <QTreeWidget>
 #include <QSplitter>
 #include <QFileDialog>
+#include <QComboBox>
+#include <QDir>
 #include <QPalette>
 #include <QMessageBox>
 #include <QFileInfo>
@@ -73,6 +75,19 @@ void MainWindow::createActions() {
     tb->addSeparator();
     tb->addAction(actPrev_);
     tb->addAction(actNext_);
+    // Page combobox (RF-14)
+    pageCombo_ = new QComboBox(tb);
+    pageCombo_->setEditable(false);
+    pageCombo_->setMinimumContentsLength(6);
+    tb->addWidget(pageCombo_);
+    connect(pageCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx){
+        const unsigned int p = static_cast<unsigned int>(idx + 1);
+        if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) vw->setCurrentPage(p);
+#ifdef HAVE_QT_PDF
+        if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) pv->setCurrentPage(p);
+#endif
+        updateStatus();
+    });
     tb->addSeparator();
     tb->addAction(actZoomOut_);
     tb->addAction(actZoomIn_);
@@ -92,6 +107,12 @@ void MainWindow::loadSettings() {
         vw->setZoomFactor(settings_.value("view/zoom", 1.0).toDouble());
     }
     if (darkTheme_) applyDarkPalette(true);
+
+    // Optional: reopen last file on start (RF-20)
+    const QString lastFile = settings_.value("session/lastFile").toString();
+    if (!lastFile.isEmpty() && QFileInfo::exists(lastFile)) {
+        openPath(lastFile);
+    }
 }
 
 void MainWindow::saveSettings() {
@@ -128,6 +149,7 @@ void MainWindow::updateStatus() {
         .arg(cur)
         .arg(tot == 0 ? 100 : tot)
         .arg(int(z*100)));
+    updatePageCombo();
 }
 
 void MainWindow::applyDarkPalette(bool enable) {
@@ -150,9 +172,13 @@ void MainWindow::applyDarkPalette(bool enable) {
 }
 
 void MainWindow::openFile() {
-    const QString file = QFileDialog::getOpenFileName(this, tr("Abrir e-book"), QString(), tr("E-books (*.pdf *.epub);;Todos (*.*)"));
+    const QString startDir = settings_.value("session/lastDir", QDir::homePath()).toString();
+    const QString file = QFileDialog::getOpenFileName(this, tr("Abrir e-book"), startDir, tr("E-books (*.pdf *.epub);;Todos (*.*)"));
     if (file.isEmpty()) return;
+    openPath(file);
+}
 
+bool MainWindow::openPath(const QString& file) {
     const QFileInfo fi(file);
 
 #ifdef HAVE_QT_PDF
@@ -163,7 +189,7 @@ void MainWindow::openFile() {
         if (!newViewer->openFile(file, &err)) {
             delete newViewer;
             QMessageBox::warning(this, tr("Erro"), err.isEmpty() ? tr("Falha ao abrir PDF.") : err);
-            return;
+            return false;
         }
 
         // swap widget in splitter
@@ -180,8 +206,14 @@ void MainWindow::openFile() {
             item->setData(0, Qt::UserRole, i);
             toc_->addTopLevelItem(item);
         }
+        // Fit to width initially (RF-13)
+        // QPdfView supports FitToWidth via ZoomMode; expose through public API if needed.
+        newViewer->setZoomFactor(1.0); // ensure valid
+        // Save last dir/file
+        settings_.setValue("session/lastDir", fi.absolutePath());
+        settings_.setValue("session/lastFile", fi.absoluteFilePath());
         updateStatus();
-        return;
+        return true;
     }
 #endif
 
@@ -189,7 +221,7 @@ void MainWindow::openFile() {
     auto res = reader_.open(file.toStdString());
     if (!res.ok) {
         QMessageBox::warning(this, tr("Erro"), QString::fromStdString(res.message));
-        return;
+        return false;
     }
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
         vw->setTotalPages(res.totalPages);
@@ -201,7 +233,10 @@ void MainWindow::openFile() {
         item->setData(0, Qt::UserRole, i*10u);
         toc_->addTopLevelItem(item);
     }
+    settings_.setValue("session/lastDir", fi.absolutePath());
+    settings_.setValue("session/lastFile", fi.absoluteFilePath());
     updateStatus();
+    return true;
 }
 
 void MainWindow::nextPage() {
@@ -287,4 +322,31 @@ void MainWindow::onTocItemActivated(QTreeWidgetItem* item, int) {
         updateStatus();
     }
 }
+
+void MainWindow::updatePageCombo() {
+    if (!pageCombo_) return;
+    unsigned int cur = 1, tot = 0;
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { cur = vw->currentPage(); tot = vw->totalPages(); }
+#ifdef HAVE_QT_PDF
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { cur = pv->currentPage(); tot = pv->totalPages(); }
+#endif
+    const unsigned int total = tot == 0 ? 100u : tot;
+    // Update items only if count mismatches to avoid flicker
+    if (pageCombo_->count() != int(total)) {
+        pageCombo_->blockSignals(true);
+        pageCombo_->clear();
+        for (unsigned int i=1; i<=total; ++i) {
+            pageCombo_->addItem(QString::number(i));
+        }
+        pageCombo_->blockSignals(false);
+    }
+    const unsigned int curPage = (cur == 0 ? 1u : cur);
+    const int desiredIndex = int(curPage) - 1;
+    if (pageCombo_->currentIndex() != desiredIndex && desiredIndex >= 0 && desiredIndex < pageCombo_->count()) {
+        pageCombo_->blockSignals(true);
+        pageCombo_->setCurrentIndex(desiredIndex);
+        pageCombo_->blockSignals(false);
+    }
+}
+
 #endif // USE_QT

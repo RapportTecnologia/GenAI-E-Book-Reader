@@ -48,6 +48,9 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
    - RF-13: A página deve ser aberta na largura exata de exibição.
    - RF-14: A seleção de página deve ser um combobox na barra de ferramentas, com dois botões: anterior e próximo.
    
+2. Tratamento de DRM
+   - RF-15: Arquivos com DRM devem ser  normalmente, mas devem ser abertos com a opção de desbloquear DRM.
+   - RF-16: Arquivos com DRM também podem ser salvos normalmente, mas devem ser salvos com a opção de desbloquear DRM.
 
 2. Marcações e Anotações
    - RF-04: Marcar texto (realce) e criar anotações vinculadas ao trecho.

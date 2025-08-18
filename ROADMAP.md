@@ -8,11 +8,13 @@ Esta é uma visão de alto nível das entregas previstas. Ajuste conforme evolu�
 - Pipeline de documentação com Doxygen (tema, sidebar, busca)
 - Logo e estilo custom de docs
 
-## 0.1.0 – MVP Leitura Básica
+## 0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)
 - Abrir PDF/EPUB (biblioteca: Qt PDF/Poppler)
 - Navegação básica (páginas, zoom, modo claro/escuro)
 - Barra lateral de sumário
 - Preferências mínimas persistidas
+  
+Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta por combobox), sumário lateral, persistência via QSettings (tema, zoom, geometria/estado), restauração de sessão (último arquivo/diretório).
 
 ## 0.2.0 – Anotações e Dicionário
 - Marcação de trechos e notas com exportação JSON

@@ -9,6 +9,7 @@ class QSplitter;
 class QAction;
 class QToolBar;
 class QStatusBar;
+class QComboBox;
 class ViewerWidget;
 #ifdef HAVE_QT_PDF
 class PdfViewerWidget;
@@ -39,6 +40,8 @@ private:
     void saveSettings();
     void updateStatus();
     void applyDarkPalette(bool enable);
+    void updatePageCombo();
+    bool openPath(const QString& filePath);
 
 private:
     QWidget* viewer_ {nullptr}; // can be ViewerWidget or PdfViewerWidget
@@ -52,6 +55,7 @@ private:
     QAction* actZoomOut_ {nullptr};
     QAction* actZoomReset_ {nullptr};
     QAction* actToggleTheme_ {nullptr};
+    QComboBox* pageCombo_ {nullptr};
 
     QSettings settings_;
     bool darkTheme_ {false};
