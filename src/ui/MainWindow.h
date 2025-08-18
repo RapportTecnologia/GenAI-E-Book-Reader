@@ -3,6 +3,7 @@
 #ifdef USE_QT
 #include <QMainWindow>
 #include <QSettings>
+#include <QString>
 class QTreeWidget;
 class QTreeWidgetItem;
 class QSplitter;
@@ -25,6 +26,7 @@ public:
 
 private slots:
     void openFile();
+    void saveAs();
     void nextPage();
     void prevPage();
     void zoomIn();
@@ -49,6 +51,7 @@ private:
     QSplitter* splitter_ {nullptr};
 
     QAction* actOpen_ {nullptr};
+    QAction* actSaveAs_ {nullptr};
     QAction* actPrev_ {nullptr};
     QAction* actNext_ {nullptr};
     QAction* actZoomIn_ {nullptr};
@@ -59,6 +62,8 @@ private:
 
     QSettings settings_;
     bool darkTheme_ {false};
+
+    QString currentFilePath_;
 
     genai::DummyReader reader_;
 };

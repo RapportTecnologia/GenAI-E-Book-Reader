@@ -14,7 +14,15 @@ Esta é uma visão de alto nível das entregas previstas. Ajuste conforme evolu�
 - Barra lateral de sumário
 - Preferências mínimas persistidas
   
-Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta por combobox), sumário lateral, persistência via QSettings (tema, zoom, geometria/estado), restauração de sessão (último arquivo/diretório).
+Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta por combobox), sumário lateral, persistência via QSettings (tema, zoom, geometria/estado), restauração de sessão (último arquivo/diretório). Para PDFs, o TOC usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas.
+
+## 0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)
+- "Salvar como" (RF-28)
+- Pequenos aprimoramentos de usabilidade
+
+## 0.1.3 - Refinamento da interface de usuário
+- com base no arquivo docs/imgs/logo-do-projeto.png para gere um icone para ser usado no app na barra de títulos
+- Adicione a barra de títulos o nome do livro que
 
 ## 0.2.0 – Anotações e Dicionário
 - Marcação de trechos e notas com exportação JSON

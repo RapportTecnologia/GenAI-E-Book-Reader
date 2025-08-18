@@ -43,10 +43,11 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
    - RF-08: Painel lateral esquerdo com lista de livros abertos, favoritos e arquivos recém-abertos.
    - RF-09: Painel lateral direito com lista de marcações e anotações.
    - RF-10: Painel esquerdo alterna entre thumbnails das páginas e árvore dos capítulos.
+     - Para PDFs, a árvore de capítulos/subcapítulos é derivada dos bookmarks do documento (quando disponíveis); caso contrário, o TOC recai para a lista de páginas.
    - RF-11: Painel esquerdo pode ser recolhido e expandido.
    - RF-12: Painel esquerdo pode ser arrastado para ajustar seu tamanho.
    - RF-13: A página deve ser aberta na largura exata de exibição.
-   - RF-14: A seleção de página deve ser um combobox na barra de ferramentas, com dois botões: anterior e próximo.
+   - RF-14: A seleção de página deve ser um combobox na barra de ferramentas, listando todas as páginas do documento, com dois botões: anterior e próximo.
    
 2. Tratamento de DRM
    - RF-15: Arquivos com DRM devem ser  normalmente, mas devem ser abertos com a opção de desbloquear DRM.
@@ -94,6 +95,9 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
    - RF-26: Tela de Configurações com: URL da OpenAI API, token, dicionários instalados/ordem, TTS/voz, tema, diretórios (Calibre), privacidade.
    - RF-27: Teste de conexão para OpenAI API e validação segura do token.
 
+    11. Operações de Arquivo (complementares)
+   - RF-28: Salvar como — permitir salvar o livro/estado atual em um novo arquivo (planejado para a versão 0.1.2).
+
 ## 6. Requisitos Não Funcionais
 - RNF-01: Desempenho — abertura de livros e navegação devem ser rápidas; UI responsiva.
 - RNF-02: Usabilidade — interface simples, acessível, com atalhos de teclado e hints.
@@ -102,6 +106,7 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 - RNF-05: Confiabilidade — recuperação de sessão após falhas; persistência robusta.
 - RNF-06: Segurança/Privacidade — armazenar segredos (token) de forma segura; não enviar conteúdo do livro sem consentimento explícito.
 - RNF-07: Localização — suporte inicial a PT-BR; arquitetura preparada para i18n.
+- RNF-08: Distribuição — gerar pacote .deb para distribuição, instalação, atualização e remoção. Integração com o Calibre na instalação e com o desktop.
 
 ## 7. Arquitetura e Tecnologias
 - Qt (Widgets/QML a definir) para UI e renderização de documentos.
@@ -137,6 +142,7 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 
 ## 12. Critérios de Aceitação (MVP)
 - CA-01: Abrir e ler PDF/EPUB com navegação básica, tema claro/escuro.
+  - Para PDFs, exibir TOC por capítulos via bookmarks quando disponíveis; na ausência de bookmarks, exibir TOC por páginas.
 - CA-02: Criar marcações e anotações; exibir no painel lateral; exportar JSON.
 - CA-03: Dicionário funcionando ao clicar em palavras (pelo menos 1 idioma).
 - CA-04: TTS lendo trecho selecionado com controles básicos.

@@ -18,7 +18,15 @@
 #include <QPalette>
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QFile>
 #include <algorithm>
+
+#ifdef HAVE_QT_PDF
+#if __has_include(<QPdfBookmarkModel>)
+#include <QPdfBookmarkModel>
+#define HAS_QPDF_BOOKMARK_MODEL 1
+#endif
+#endif
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), settings_("GenAI", "EBookReader") {
@@ -26,6 +34,38 @@ MainWindow::MainWindow(QWidget* parent)
     createActions();
     loadSettings();
     updateStatus();
+}
+
+void MainWindow::saveAs() {
+    if (currentFilePath_.isEmpty() || !QFileInfo::exists(currentFilePath_)) {
+        QMessageBox::information(this, tr("Salvar como"), tr("Nenhum arquivo aberto para salvar."));
+        return;
+    }
+    const QString startDir = settings_.value("session/lastDir", QFileInfo(currentFilePath_).absolutePath()).toString();
+    const QString suggested = QFileInfo(currentFilePath_).fileName();
+    const QString target = QFileDialog::getSaveFileName(this, tr("Salvar como"), QDir(startDir).filePath(suggested), tr("E-books (*.pdf *.epub);;Todos (*.*)"));
+    if (target.isEmpty()) return;
+
+    if (QFileInfo::exists(target)) {
+        const auto ret = QMessageBox::question(this, tr("Confirmar"), tr("O arquivo já existe. Deseja sobrescrever?"),
+                                               QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        if (ret != QMessageBox::Yes) return;
+        if (!QFile::remove(target)) {
+            QMessageBox::warning(this, tr("Erro"), tr("Não foi possível remover o arquivo de destino."));
+            return;
+        }
+    }
+
+    if (!QFile::copy(currentFilePath_, target)) {
+        QMessageBox::warning(this, tr("Erro"), tr("Falha ao copiar para o destino."));
+        return;
+    }
+
+    // Atualiza estado para o novo caminho (comportamento comum de 'Salvar como')
+    currentFilePath_ = QFileInfo(target).absoluteFilePath();
+    settings_.setValue("session/lastDir", QFileInfo(target).absolutePath());
+    settings_.setValue("session/lastFile", currentFilePath_);
+    statusBar()->showMessage(tr("Salvo em %1").arg(currentFilePath_), 3000);
 }
 
 MainWindow::~MainWindow() {
@@ -48,6 +88,7 @@ void MainWindow::buildUi() {
 
 void MainWindow::createActions() {
     actOpen_ = new QAction(tr("Abrir"), this);
+    actSaveAs_ = new QAction(tr("Salvar como..."), this);
     actPrev_ = new QAction(tr("Anterior"), this);
     actNext_ = new QAction(tr("Próxima"), this);
     actZoomIn_ = new QAction(tr("Zoom +"), this);
@@ -56,12 +97,14 @@ void MainWindow::createActions() {
     actToggleTheme_ = new QAction(tr("Tema claro/escuro"), this);
 
     actOpen_->setShortcut(QKeySequence::Open);
+    actSaveAs_->setShortcut(QKeySequence::SaveAs);
     actPrev_->setShortcut(Qt::Key_Left);
     actNext_->setShortcut(Qt::Key_Right);
     actZoomIn_->setShortcut(QKeySequence::ZoomIn);
     actZoomOut_->setShortcut(QKeySequence::ZoomOut);
 
     connect(actOpen_, &QAction::triggered, this, &MainWindow::openFile);
+    connect(actSaveAs_, &QAction::triggered, this, &MainWindow::saveAs);
     connect(actPrev_, &QAction::triggered, this, &MainWindow::prevPage);
     connect(actNext_, &QAction::triggered, this, &MainWindow::nextPage);
     connect(actZoomIn_, &QAction::triggered, this, &MainWindow::zoomIn);
@@ -69,9 +112,15 @@ void MainWindow::createActions() {
     connect(actZoomReset_, &QAction::triggered, this, &MainWindow::zoomReset);
     connect(actToggleTheme_, &QAction::triggered, this, &MainWindow::toggleTheme);
 
+    // Menu Arquivo
+    auto* menuArquivo = menuBar()->addMenu(tr("&Arquivo"));
+    menuArquivo->addAction(actOpen_);
+    menuArquivo->addAction(actSaveAs_);
+
     auto* tb = addToolBar(tr("Leitura"));
     tb->setObjectName("toolbar_reading");
     tb->addAction(actOpen_);
+    tb->addAction(actSaveAs_);
     tb->addSeparator();
     tb->addAction(actPrev_);
     tb->addAction(actNext_);
@@ -198,20 +247,47 @@ bool MainWindow::openPath(const QString& file) {
         viewer_->deleteLater();
         viewer_ = newViewer;
 
-        // Build a simple TOC placeholder if no outline available (future: parse outline)
+        // Build TOC: prefer PDF bookmarks (capítulos/subcapítulos) when available; fallback to all pages
         toc_->clear();
-        const unsigned int pages = newViewer->totalPages();
-        for (unsigned int i = 1; i <= std::min(pages, 10u); ++i) {
-            auto* item = new QTreeWidgetItem(QStringList{tr("Página %1").arg(i)});
-            item->setData(0, Qt::UserRole, i);
-            toc_->addTopLevelItem(item);
+#ifdef HAS_QPDF_BOOKMARK_MODEL
+        auto* bm = new QPdfBookmarkModel(toc_);
+        bm->setDocument(newViewer->document());
+        // recursive lambda to populate tree
+        std::function<void(QTreeWidgetItem*, const QModelIndex&)> addChildren = [&](QTreeWidgetItem* parentItem, const QModelIndex& parentIdx){
+            const int rows = bm->rowCount(parentIdx);
+            for (int r=0; r<rows; ++r) {
+                const QModelIndex idx = bm->index(r, 0, parentIdx);
+                const QString title = bm->data(idx, Qt::DisplayRole).toString();
+                QVariant pageVar = bm->data(idx, Qt::UserRole); // fallback role
+                // Some Qt versions expose page via specific role; try common ones
+                if (!pageVar.isValid()) pageVar = bm->data(idx, Qt::UserRole + 1);
+                if (!pageVar.isValid()) pageVar = bm->data(idx, Qt::UserRole + 2);
+                int pageZeroBased = pageVar.isValid() ? pageVar.toInt() : -1;
+                auto* item = new QTreeWidgetItem(QStringList{ title.isEmpty() ? tr("Seção") : title });
+                if (pageZeroBased >= 0) item->setData(0, Qt::UserRole, static_cast<unsigned int>(pageZeroBased + 1));
+                if (parentItem) parentItem->addChild(item); else toc_->addTopLevelItem(item);
+                addChildren(item, idx);
+            }
+        };
+        addChildren(nullptr, QModelIndex());
+        if (toc_->topLevelItemCount() == 0) {
+#endif
+            const unsigned int pages = newViewer->totalPages();
+            for (unsigned int i = 1; i <= pages; ++i) {
+                auto* item = new QTreeWidgetItem(QStringList{tr("Página %1").arg(i)});
+                item->setData(0, Qt::UserRole, i);
+                toc_->addTopLevelItem(item);
+            }
+#ifdef HAS_QPDF_BOOKMARK_MODEL
         }
+#endif
         // Fit to width initially (RF-13)
         // QPdfView supports FitToWidth via ZoomMode; expose through public API if needed.
         newViewer->setZoomFactor(1.0); // ensure valid
         // Save last dir/file
         settings_.setValue("session/lastDir", fi.absolutePath());
         settings_.setValue("session/lastFile", fi.absoluteFilePath());
+        currentFilePath_ = fi.absoluteFilePath();
         updateStatus();
         return true;
     }
@@ -235,6 +311,7 @@ bool MainWindow::openPath(const QString& file) {
     }
     settings_.setValue("session/lastDir", fi.absolutePath());
     settings_.setValue("session/lastFile", fi.absoluteFilePath());
+    currentFilePath_ = fi.absoluteFilePath();
     updateStatus();
     return true;
 }

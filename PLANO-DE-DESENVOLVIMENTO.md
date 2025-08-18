@@ -22,6 +22,7 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
   - Conversões EPUB/MOBI/PDF e fila (RF-24..RF-25).
   - Dicionários multilíngues e configuráveis (RF-09).
   - Atalhos de teclado e usabilidade (RNF-02).
+  - v0.1.2 (concluída em 2025-08-18): "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.
 
 - Fase 3 — IA avançada e Exportações:
   - RAG otimizado; sumários por capítulo; geração de flashcards (RF-12..RF-15).
@@ -74,6 +75,7 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
 - Sessão: RF-20..21 → CA-07 → Sprint 4.
 - Calibre: RF-22 → CA-08 → Sprint 4.
 - Configurações: RF-26..27 → suporte geral → Sprint 4.
+ - Operações de Arquivo: RF-28 (Salvar como) → release menor v0.1.2.
 
 ## 6) Decisões Técnicas Iniciais (a validar no Sprint 1)
 - UI Qt: Widgets (maior maturidade e estabilidade) vs QML (flexibilidade/anim.)
@@ -119,10 +121,15 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
 - 8 semanas para MVP (4 sprints x 2 semanas). Ajustar conforme disponibilidade.
 
 ## 11) Próximos Passos
-- Decidir Qt (Widgets vs QML) após protótipo rápido.
-- Escolher bibliotecas para PDF/EPUB/MOBI e validar licença.
-- Definir persistência (preferência: SQLite) e esquema inicial.
-- Montar skeleton do projeto com CMake e estrutura acima.
+ - Decidir Qt (Widgets vs QML) após protótipo rápido.
+  - Escolher bibliotecas para PDF/EPUB/MOBI e validar licença.
+  - Definir persistência (preferência: SQLite) e esquema inicial.
+  - Montar skeleton do projeto com CMake e estrutura acima.
+  - Próximos releases: acompanhar `ROADMAP.md`.
+
+### Notas de Progresso Recentes
+- v0.1.2: "Salvar como" (RF-28) implementado; refinamentos de leitura.
+- v0.1.1: Navegação por combobox cobrindo todas as páginas de PDFs e TOC simples para todas as páginas; restauração de sessão; melhorias de status e zoom.
 
 ## 12) Instruções de Build e Documentação
 
