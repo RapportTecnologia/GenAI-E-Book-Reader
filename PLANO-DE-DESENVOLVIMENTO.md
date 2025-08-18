@@ -24,7 +24,7 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
   - Atalhos de teclado e usabilidade (RNF-02).
 
 - Fase 3 — IA avançada e Exportações:
-  - RAG otimizado; sumários por capítulo; geração de flashcards (RF-11..RF-14).
+  - RAG otimizado; sumários por capítulo; geração de flashcards (RF-12..RF-15).
   - Exportações avançadas de marcações/anotações (Markdown/PDF).
   - Sincronização opcional (fora do MVP; requer design de privacidade).
 

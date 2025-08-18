@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(GenAI_EBook_Reader VERSION 0.0.10 LANGUAGES C CXX)
+project(GenAI_EBook_Reader VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,7 +20,7 @@ file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS
 
 if(BUILD_WITH_QT)
   # Try Qt6 first, then Qt5
-  find_package(Qt6 COMPONENTS Widgets QUIET)
+  find_package(Qt6 COMPONENTS Widgets PdfWidgets QUIET)
   if(NOT Qt6_FOUND)
     find_package(Qt5 COMPONENTS Widgets QUIET)
   endif()
@@ -31,16 +31,25 @@ if(BUILD_WITH_QT)
     if(Qt6_FOUND)
       set(QT_PREFIX Qt6)
       set(QT_LIB Qt6::Widgets)
+      # Optional Pdf support on Qt6
+      if(TARGET Qt6::PdfWidgets)
+        set(QT_PDF Qt6::PdfWidgets)
+      endif()
     else()
       set(QT_PREFIX Qt5)
       set(QT_LIB Qt5::Widgets)
+      # Qt5 Pdf not configured in this project by default
     endif()
 
     add_executable(genai_reader ${APP_SOURCES})
 
-    target_include_directories(genai_reader PRIVATE include)
+    target_include_directories(genai_reader PRIVATE include ${CMAKE_SOURCE_DIR}/src)
 
     target_link_libraries(genai_reader PRIVATE ${QT_LIB})
+    if(DEFINED QT_PDF)
+      target_link_libraries(genai_reader PRIVATE ${QT_PDF})
+      target_compile_definitions(genai_reader PRIVATE HAVE_QT_PDF)
+    endif()
 
     # Define to enable Qt-specific code paths
     target_compile_definitions(genai_reader PRIVATE USE_QT)
@@ -60,7 +69,7 @@ endif()
 # Fallback: simple console app when Qt is unavailable
 if(NOT TARGET genai_reader)
   add_executable(genai_reader ${APP_SOURCES})
-  target_include_directories(genai_reader PRIVATE include)
+  target_include_directories(genai_reader PRIVATE include ${CMAKE_SOURCE_DIR}/src)
 endif()
 
 # Doxygen target

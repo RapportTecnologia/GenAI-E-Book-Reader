@@ -28,10 +28,26 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 - Usuário com acessibilidade: TTS para ouvir trechos/obras, controles simples.
 
 ## 5. Requisitos Funcionais
-1. Leitura Multiformato
-   - RF-01: Abrir e exibir e-books nos formatos PDF, EPUB e MOBI.
-   - RF-02: Suportar navegação por página/capítulo, zoom, busca no texto e índice.
-   - RF-03: Ajustes de visualização: tema claro/escuro, tamanho de fonte (quando aplicável), margens.
+
+1. Tratamento de Arquivos
+   - RF-00: Abrir e exibir e-books nos formatos PDF, EPUB e MOBI.
+   - RF-01: Suportar navegação por página/capítulo, zoom, busca no texto e índice.
+   - RF-02: Ajustes de visualização: tema claro/escuro, tamanho de fonte (quando aplicável), margens.
+   - RF-03: Salvar em arquivo de apoio (sidecar) junto do arquivo original.
+   - RF-04: Ao abrir o arquivo, lembrar a última pasta aberta.
+   - RF-05: Permitir adicionar a pasta a favoritas.
+   - RF-06: Lembrar os últimos livros abertos; exibir imediatamente os 5 primeiros e permitir pesquisar os demais.
+
+1. Menu e painel lateral esquerdo
+   - RF-07: Menu com opções de leitura, marcações, anotações, estatísticas, configurações, ajuda e sobre.
+   - RF-08: Painel lateral esquerdo com lista de livros abertos, favoritos e arquivos recém-abertos.
+   - RF-09: Painel lateral direito com lista de marcações e anotações.
+   - RF-10: Painel esquerdo alterna entre thumbnails das páginas e árvore dos capítulos.
+   - RF-11: Painel esquerdo pode ser recolhido e expandido.
+   - RF-12: Painel esquerdo pode ser arrastado para ajustar seu tamanho.
+   - RF-13: A página deve ser aberta na largura exata de exibição.
+   - RF-14: A seleção de página deve ser um combobox na barra de ferramentas, com dois botões: anterior e próximo.
+   
 
 2. Marcações e Anotações
    - RF-04: Marcar texto (realce) e criar anotações vinculadas ao trecho.

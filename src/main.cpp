@@ -1,8 +1,6 @@
 #ifdef USE_QT
 #include <QApplication>
-#include <QMainWindow>
-#include <QLabel>
-#include <Qt>
+#include "ui/MainWindow.h"
 #endif
 #include <iostream>
 #include "app/App.h"
@@ -11,19 +9,11 @@ int main(int argc, char* argv[]) {
 #ifdef USE_QT
     QApplication app(argc, argv);
 
-    QMainWindow win;
-    win.setWindowTitle(QString("%1 v%2 — MVP Skeleton")
+    MainWindow win;
+    win.setWindowTitle(QString("%1 v%2 — Leitor")
                            .arg(genai::AppInfo::Name)
                            .arg(genai::AppInfo::Version));
-
-    auto *label = new QLabel(&win);
-    label->setText(QString("%1 v%2 — Skeleton inicial")
-                       .arg(genai::AppInfo::Name)
-                       .arg(genai::AppInfo::Version));
-    label->setAlignment(Qt::AlignCenter);
-    win.setCentralWidget(label);
-
-    win.resize(800, 600);
+    win.resize(1024, 768);
     win.show();
 
     return app.exec();

@@ -2,7 +2,7 @@ var searchData=
 [
   ['segurança_20e_20privacidade_0',['11. Segurança e Privacidade',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md18',1,'']]],
   ['semanas_1',['3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md28',1,'']]],
-  ['sessões_2',['0.5.0 – Estatísticas e Sessões',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md51',1,'']]],
+  ['sessões_2',['0.5.0 – Estatísticas e Sessões',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md55',1,'']]],
   ['software_3',['GenAI E-Book Reader — Descrição e Requisitos de Software',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html',1,'']]],
   ['sprint_201_4',['6) Decisões Técnicas Iniciais (a validar no Sprint 1)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md31',1,'']]],
   ['sprints_20de_202_20semanas_5',['3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md28',1,'']]],

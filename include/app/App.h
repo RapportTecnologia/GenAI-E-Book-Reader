@@ -16,7 +16,7 @@ public:
     static constexpr const char* Name = "GenAI E-Book Reader";
 
     /** \brief Versão corrente do aplicativo. Sincronizada com CMake/README/Doxygen. */
-    static constexpr const char* Version = "0.0.10";
+    static constexpr const char* Version = "0.1.0";
 };
 
 } // namespace genai

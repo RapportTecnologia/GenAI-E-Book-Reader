@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [0.1.0] - 2025-08-17
+### Added
+- Planejamento do MVP 0.1.0 conforme `ROADMAP.md` (Leitura básica: abrir PDF/EPUB, navegação, tema claro/escuro, sumário, preferências mínimas).
+
+### Changed
+- Bump de versão para 0.1.0 em `CMakeLists.txt`, `include/app/App.h` e badge no `README.md`.
+- Documentação revisada para apontar o alvo do MVP (0.1.0) e alinhar com o plano.
+ - Revisado `REQUISITOS.md`: correções ortográficas e remoção de subseção duplicada de "Leitura Multiformato" (RF-01..RF-03).
+
+### Notes
+- Esta release foca em alinhar a base do projeto e a documentação para iniciar a implementação do MVP de leitura básica.
+
 ## [0.0.10] - 2025-08-17
 ### Added
 - Initial project scaffolding (CMake, C++17, optional Qt Widgets placeholder).
@@ -20,4 +32,6 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - If Qt is not installed, a console placeholder is built (see `CMakeLists.txt` message).
 - One unresolved reference in `README.md` badge/anchor noted by Doxygen (harmless).
 
-[0.0.10]: https://github.com/<your-org-or-user>/GenAi-E-Book-Reader/releases/tag/v0.0.10
+[0.1.0]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.0
+[0.0.10]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.0.10
+

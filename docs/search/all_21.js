@@ -1,11 +1,6 @@
 var searchData=
 [
-  ['–_20anotações_20e_20dicionário_0',['0.2.0 – Anotações e Dicionário',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md48',1,'']]],
-  ['–_20bootstrap_1',['0.0.1 – Bootstrap',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md46',1,'']]],
-  ['–_20estabilidade_20e_20releases_2',['1.x – Estabilidade e Releases',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md53',1,'']]],
-  ['–_20estatísticas_20e_20sessões_3',['0.5.0 – Estatísticas e Sessões',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md51',1,'']]],
-  ['–_20ia_20rag_20e_20resumos_4',['0.4.0 – IA (RAG) e Resumos',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md50',1,'']]],
-  ['–_20integração_20calibre_20e_20melhorias_20ux_5',['0.6.0 – Integração Calibre e Melhorias UX',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md52',1,'']]],
-  ['–_20mvp_20leitura_20básica_6',['0.1.0 – MVP Leitura Básica',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md47',1,'']]],
-  ['–_20tts_20e_20controles_7',['0.3.0 – TTS e Controles',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md49',1,'']]]
+  ['—_204_20sprints_20de_202_20semanas_0',['3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md28',1,'']]],
+  ['—_20descrição_20e_20requisitos_20de_20software_1',['GenAI E-Book Reader — Descrição e Requisitos de Software',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html',1,'']]],
+  ['—_20plano_20de_20desenvolvimento_20baseado_20em_20requisitos_20md_2',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]]
 ];

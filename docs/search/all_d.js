@@ -18,7 +18,7 @@ var searchData=
   ['dependências_15',['14. Riscos e Dependências',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html#autotoc_md21',1,'']]],
   ['descrição_20e_20requisitos_20de_20software_16',['GenAI E-Book Reader — Descrição e Requisitos de Software',['../d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html',1,'']]],
   ['desenvolvimento_20baseado_20em_20requisitos_20md_17',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
-  ['dicionário_18',['0.2.0 – Anotações e Dicionário',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md48',1,'']]],
+  ['dicionário_18',['0.2.0 – Anotações e Dicionário',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md52',1,'']]],
   ['do_20mvp_19',['1) Estratégia e Escopo do MVP',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md26',1,'']]],
   ['do_20repositório_20',['7) Estrutura Inicial do Repositório',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md32',1,'']]],
   ['documentação_21',['12) Instruções de Build e Documentação',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md37',1,'']]],
