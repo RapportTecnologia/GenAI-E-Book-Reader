@@ -33,6 +33,10 @@ Nota (0.1.1): adicionados seleção de página via combobox e restauração do �
 Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento.
 
 ## Próximas versões
+- 0.1.3 (Refinamento de UI):
+  - Ícone do aplicativo a partir de `docs/imgs/logo-do-projeto.png`.
+  - Barra de título exibe o nome do livro (metadados quando disponíveis, senão nome do arquivo).
+  - Splash screen com logo, versão do app e autor: Carlos Delfino <consultoria@carlosdelfino.eti.br>.
 - Planejamento contínuo em `ROADMAP.md`.
 
 ## Como rodar (Linux)

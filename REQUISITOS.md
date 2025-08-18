@@ -98,6 +98,11 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
     11. Operações de Arquivo (complementares)
    - RF-28: Salvar como — permitir salvar o livro/estado atual em um novo arquivo (planejado para a versão 0.1.2).
 
+12. Interface e Branding (planejado para 0.1.3)
+   - RF-29: Ícone do aplicativo baseado em `docs/imgs/logo-do-projeto.png`, exibido na barra de título.
+   - RF-30: Exibir na barra de título o nome do livro em leitura; usar metadados do arquivo quando disponíveis; caso contrário, usar o nome do arquivo.
+   - RF-31: Splash screen exibindo `docs/imgs/logo-do-projeto.png`, a versão do app e os dados do autor: "Carlos Delfino <consultoria@carlosdelfino.eti.br>".
+
 ## 6. Requisitos Não Funcionais
 - RNF-01: Desempenho — abertura de livros e navegação devem ser rápidas; UI responsiva.
 - RNF-02: Usabilidade — interface simples, acessível, com atalhos de teclado e hints.

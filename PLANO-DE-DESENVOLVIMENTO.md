@@ -23,6 +23,7 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
   - Dicionários multilíngues e configuráveis (RF-09).
   - Atalhos de teclado e usabilidade (RNF-02).
   - v0.1.2 (concluída em 2025-08-18): "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.
+  - v0.1.3 (planejada): Refinamento de UI — ícone do app (RF-29), título com nome do livro (RF-30) e splash screen (RF-31).
 
 - Fase 3 — IA avançada e Exportações:
   - RAG otimizado; sumários por capítulo; geração de flashcards (RF-12..RF-15).
@@ -76,6 +77,7 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
 - Calibre: RF-22 → CA-08 → Sprint 4.
 - Configurações: RF-26..27 → suporte geral → Sprint 4.
  - Operações de Arquivo: RF-28 (Salvar como) → release menor v0.1.2.
+ - UI/Branding: RF-29 (ícone), RF-30 (título com nome do livro), RF-31 (splash) → release menor v0.1.3.
 
 ## 6) Decisões Técnicas Iniciais (a validar no Sprint 1)
 - UI Qt: Widgets (maior maturidade e estabilidade) vs QML (flexibilidade/anim.)
@@ -126,6 +128,7 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
   - Definir persistência (preferência: SQLite) e esquema inicial.
   - Montar skeleton do projeto com CMake e estrutura acima.
   - Próximos releases: acompanhar `ROADMAP.md`.
+  - Preparar 0.1.3: implementar ícone do app (a partir de `docs/imgs/logo-do-projeto.png`), exibir nome do livro na barra de título (metadados ou nome do arquivo) e splash com logo/versão/autor.
 
 ### Notas de Progresso Recentes
 - v0.1.2: "Salvar como" (RF-28) implementado; refinamentos de leitura.
