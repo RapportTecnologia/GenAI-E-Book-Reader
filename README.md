@@ -6,7 +6,7 @@
 ![Qt](https://img.shields.io/badge/Qt-Widgets%20%7C%20QML-brightgreen)
 ![CMake](https://img.shields.io/badge/CMake-%3E%3D3.16-informational)
 [![Docs](https://img.shields.io/badge/docs-Doxygen-blueviolet)](docs/index.html)
-![Version](https://img.shields.io/badge/version-0.1.2-blue)
+![Version](https://img.shields.io/badge/version-0.1.3-blue)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contribuindo)
 
 Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt, com recursos de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.
@@ -25,18 +25,26 @@ Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/
 - Estatísticas: tempo ativo, progresso, sessões.
 - Restauração de sessão (reabre livros abertos anteriormente).
 - Integração com Calibre para abrir livros da biblioteca.
+- Painel de Sumário (TOC) com barra de ferramentas:
+  - Alternar entre lista de páginas ("Páginas") e árvore de capítulos ("Conteúdo").
+  - Botões "Voltar" e "Avançar" que navegam página a página (modo Páginas) ou por item/capítulo (modo Conteúdo).
+  - Largura padrão do painel ~10% e área do leitor ~90% na primeira execução (pode ser ajustado via splitter).
+
+Nota (0.1.3): refinamento de UI — ícone do app a partir de `docs/imgs/logo-do-projeto.png`, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível. Painel de TOC remodelado com barra de ferramentas (alternar entre "Páginas"/"Conteúdo" e botões de navegação) e tamanho padrão inicial do splitter ~10% (TOC) / ~90% (visualizador).
 
 Nota (0.1.2): implementado "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.
 
 Nota (0.1.1): adicionados seleção de página via combobox e restauração do último arquivo/diretório aberto.
 
-Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento.
+Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento. O painel de TOC inclui uma barra de ferramentas para alternar entre "Páginas" e "Conteúdo" e botões de navegação; por padrão o painel ocupa ~10% da largura da janela na primeira execução.
+
+## Sumário (TOC) e Navegação
+- Alternar modo do TOC:
+  - "Páginas": lista plana de páginas; os botões "Voltar/Avançar" mudam a página atual.
+  - "Conteúdo": capítulos (grupos de páginas); os botões percorrem o item anterior/próximo (capítulo ou página filho). 
+- Atalhos do painel: arraste o divisor para redimensionar; o tamanho fica salvo para as próximas sessões.
 
 ## Próximas versões
-- 0.1.3 (Refinamento de UI):
-  - Ícone do aplicativo a partir de `docs/imgs/logo-do-projeto.png`.
-  - Barra de título exibe o nome do livro (metadados quando disponíveis, senão nome do arquivo).
-  - Splash screen com logo, versão do app e autor: Carlos Delfino <consultoria@carlosdelfino.eti.br>.
 - Planejamento contínuo em `ROADMAP.md`.
 
 ## Como rodar (Linux)

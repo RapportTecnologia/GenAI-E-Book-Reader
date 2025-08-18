@@ -2,6 +2,7 @@
 
 Esta é uma visão de alto nível das entregas previstas. Ajuste conforme evoluírem requisitos e prioridades.
 
+
 ## 0.0.1 – Bootstrap
 - Infra CMake e esqueleto C++17
 - Placeholder com/sem Qt (Widgets)
@@ -20,10 +21,14 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - "Salvar como" (RF-28)
 - Pequenos aprimoramentos de usabilidade
 
-## 0.1.3 - Refinamento da interface de usuário (Planejado)
-- com base no arquivo docs/imgs/logo-do-projeto.png para gere um icone para ser usado no app na barra de títulos
-- Adicione a barra de títulos o nome do livro que está sendo lido, use os metadados do arquivo, se não estiver disponível use o nome do arquivo.
-- Faça uma splash screen para mostrar o arquivo docs/imgs/logo-do-projeto.png e a versão do app. Dados do autor: Carlos Delfino <consultoria@carlosdelfino.eti.br>
+## 0.1.3 - Refinamento da interface de usuário (Entregue em 2025-08-18)
+- Ícone do app a partir de `docs/imgs/logo-do-projeto.png` aplicado globalmente.
+- Barra de título exibe o nome do livro em leitura (metadados quando disponíveis; senão, nome do arquivo).
+- Ajuste de layout para área de leitura ocupar 100% do espaço do frame.
+- Splash screen com `docs/imgs/logo-do-projeto.png`, versão e autor: Carlos Delfino <consultoria@carlosdelfino.eti.br>.
+ - Painel de TOC com barra de ferramentas para alternar entre "Páginas" e "Conteúdo" (capítulos).
+ - Botões "Voltar" e "Avançar" que respeitam o modo selecionado (página anterior/próxima ou item/capítulo anterior/próximo).
+ - Tamanho padrão do splitter configurado para ~10% (TOC) e ~90% (visualizador) na primeira execução.
 
 ## 0.2.0 – Anotações e Dicionário
 - Marcação de trechos e notas com exportação JSON

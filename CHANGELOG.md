@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [Unreleased]
+
+---
+
+## [0.1.3] - 2025-08-18
+### Added
+- Ícone do aplicativo a partir de `docs/imgs/logo-do-projeto.png` (RF-29), aplicado globalmente.
+- Splash screen exibindo logo, versão e autor (RF-31).
+- Painel de Sumário (TOC) remodelado com barra de ferramentas própria no topo.
+  - Ações para alternar entre modos: lista de páginas ("Páginas") e árvore de capítulos ("Conteúdo").
+  - Botões de navegação que agem por página (modo Páginas) ou por item/capítulo (modo Conteúdo).
+
+### Changed
+- Barra de título agora mostra o nome do livro em leitura. Para PDFs no Qt6, usa metadados Title quando disponíveis; caso contrário, usa o nome do arquivo (RF-30).
+- Ajustes de layout para que a área de leitura ocupe 100% do espaço disponível.
+- Tamanho padrão do divisor (splitter) aplicando ~10% da largura para o painel de TOC e ~90% para o visualizador na primeira execução (sem layout salvo).
+
+---
+
 ## [0.1.2] - 2025-08-18
 ### Added
 - "Salvar como" (RF-28): salvar o livro/estado atual em um novo arquivo via menu Arquivo e toolbar.
@@ -54,6 +73,8 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - If Qt is not installed, a console placeholder is built (see `CMakeLists.txt` message).
 - One unresolved reference in `README.md` badge/anchor noted by Doxygen (harmless).
 
+[Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.3
 [0.1.2]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.2
 [0.1.1]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.1
 [0.1.0]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.0

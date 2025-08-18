@@ -95,8 +95,8 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
   <div class="headertitle"><div class="title">GenAI E-Book Reader — Descrição e Requisitos de Software</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md7"></a> </p>
-<h1><a class="anchor" id="autotoc_md8"></a>
+<div class="textblock"><p><a class="anchor" id="autotoc_md11"></a> </p>
+<h1><a class="anchor" id="autotoc_md12"></a>
 1. Visão Geral</h1>
 <p>Este software visa atender a uma necessidade prática durante a leitura de e-books (PDF, MOBI e EPUB), oferecendo uma experiência simples, fluida e produtiva, com recursos de leitura, marcação, anotações, estatísticas de leitura, dicionário, Text-to-Speech (TTS) e apoio de IA para resumos e explicações via RAG.</p>
 <ul>
@@ -104,7 +104,7 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>Portabilidade: Windows (compilável em versões futuras).</li>
 <li>Tecnologias: C/C++ com Qt para GUI, CMake para build, Doxygen para documentação.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md9"></a>
+<h1><a class="anchor" id="autotoc_md13"></a>
 2. Objetivos</h1>
 <ul>
 <li>Proporcionar leitura confortável e acessível de e-books, com navegação fluida e UI intuitiva.</li>
@@ -112,7 +112,7 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>Registrar e apresentar estatísticas de leitura úteis (tempo ativo, páginas, palavras etc.).</li>
 <li>Integrar-se ao Calibre como biblioteca digital principal e apoiar conversões de formato.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md10"></a>
+<h1><a class="anchor" id="autotoc_md14"></a>
 3. Escopo</h1>
 <ul>
 <li>Leitura e visualização de livros em janelas simples e responsivas.</li>
@@ -123,14 +123,14 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>Registro de histórico, progresso e estatísticas, com persistência e restauração de sessão.</li>
 <li>Integração com Calibre Desktop e conversão entre formatos suportados.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md11"></a>
+<h1><a class="anchor" id="autotoc_md15"></a>
 4. Personas e Principais Casos de Uso</h1>
 <ul>
 <li>Leitor focado: leitura simples, ajuste de fonte/tema, continuidade entre sessões.</li>
 <li>Estudante/Pesquisador: marcações, anotações, exportação, dicionário e IA para explicações/resumos.</li>
 <li>Usuário com acessibilidade: TTS para ouvir trechos/obras, controles simples.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md12"></a>
+<h1><a class="anchor" id="autotoc_md16"></a>
 5. Requisitos Funcionais</h1>
 <ol type="1">
 <li>Tratamento de Arquivos<ul>
@@ -138,19 +138,34 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>RF-01: Suportar navegação por página/capítulo, zoom, busca no texto e índice.</li>
 <li>RF-02: Ajustes de visualização: tema claro/escuro, tamanho de fonte (quando aplicável), margens.</li>
 <li>RF-03: Salvar em arquivo de apoio (sidecar) junto do arquivo original.</li>
-<li>RF-04: Ao abrir o arquivo, lembrar a ultima pasta aberta.</li>
+<li>RF-04: Ao abrir o arquivo, lembrar a última pasta aberta.</li>
 <li>RF-05: Permitir adicionar a pasta a favoritas.</li>
-<li>RF-06: Lembrar os ultimo os livros abertos. exibir imediatamente os 5 pripmeiros e permitir pesguisar os demais.</li>
+<li>RF-06: Lembrar os últimos livros abertos; exibir imediatamente os 5 primeiros e permitir pesquisar os demais.</li>
 </ul>
 </li>
 </ol>
 <ol type="1">
-<li>Leitura Multiformato<ul>
-<li>RF-01: Abrir e exibir e-books nos formatos PDF, EPUB e MOBI.</li>
-<li>RF-02: Suportar navegação por página/capítulo, zoom, busca no texto e índice.</li>
-<li>RF-03: Ajustes de visualização: tema claro/escuro, tamanho de fonte (quando aplicável), margens.</li>
+<li>Menu e painel lateral esquerdo<ul>
+<li>RF-07: Menu com opções de leitura, marcações, anotações, estatísticas, configurações, ajuda e sobre.</li>
+<li>RF-08: Painel lateral esquerdo com lista de livros abertos, favoritos e arquivos recém-abertos.</li>
+<li>RF-09: Painel lateral direito com lista de marcações e anotações.</li>
+<li>RF-10: Painel esquerdo alterna entre thumbnails das páginas e árvore dos capítulos.<ul>
+<li>Para PDFs, a árvore de capítulos/subcapítulos é derivada dos bookmarks do documento (quando disponíveis); caso contrário, o TOC recai para a lista de páginas.</li>
 </ul>
 </li>
+<li>RF-11: Painel esquerdo pode ser recolhido e expandido.</li>
+<li>RF-12: Painel esquerdo pode ser arrastado para ajustar seu tamanho.</li>
+<li>RF-13: A página deve ser aberta na largura exata de exibição.</li>
+<li>RF-14: A seleção de página deve ser um combobox na barra de ferramentas, listando todas as páginas do documento, com dois botões: anterior e próximo.</li>
+</ul>
+</li>
+<li>Tratamento de DRM<ul>
+<li>RF-15: Arquivos com DRM devem ser normalmente, mas devem ser abertos com a opção de desbloquear DRM.</li>
+<li>RF-16: Arquivos com DRM também podem ser salvos normalmente, mas devem ser salvos com a opção de desbloquear DRM.</li>
+</ul>
+</li>
+</ol>
+<ol type="1">
 <li>Marcações e Anotações<ul>
 <li>RF-04: Marcar texto (realce) e criar anotações vinculadas ao trecho.</li>
 <li>RF-05: Exibir painel lateral com lista de marcações/anotações, com filtro e busca.</li>
@@ -199,11 +214,21 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 </li>
 <li>Configurações<ul>
 <li>RF-26: Tela de Configurações com: URL da OpenAI API, token, dicionários instalados/ordem, TTS/voz, tema, diretórios (Calibre), privacidade.</li>
-<li>RF-27: Teste de conexão para OpenAI API e validação segura do token.</li>
+<li>RF-27: Teste de conexão para OpenAI API e validação segura do token.<ol type="a">
+<li>Operações de Arquivo (complementares)</li>
+</ol>
+</li>
+<li>RF-28: Salvar como — permitir salvar o livro/estado atual em um novo arquivo (planejado para a versão 0.1.2).</li>
+</ul>
+</li>
+<li>Interface e Branding (entregue em 0.1.3)<ul>
+<li>RF-29: Ícone do aplicativo baseado em <code>docs/imgs/logo-do-projeto.png</code>, exibido na barra de título.</li>
+<li>RF-30: Exibir na barra de título o nome do livro em leitura; usar metadados do arquivo quando disponíveis; caso contrário, usar o nome do arquivo.</li>
+<li>RF-31: Splash screen exibindo <code>docs/imgs/logo-do-projeto.png</code>, a versão do app e os dados do autor: "Carlos Delfino &lt;consultoria@carlosdelfino.eti.br&gt;".</li>
 </ul>
 </li>
 </ol>
-<h1><a class="anchor" id="autotoc_md13"></a>
+<h1><a class="anchor" id="autotoc_md17"></a>
 6. Requisitos Não Funcionais</h1>
 <ul>
 <li>RNF-01: Desempenho — abertura de livros e navegação devem ser rápidas; UI responsiva.</li>
@@ -213,8 +238,9 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>RNF-05: Confiabilidade — recuperação de sessão após falhas; persistência robusta.</li>
 <li>RNF-06: Segurança/Privacidade — armazenar segredos (token) de forma segura; não enviar conteúdo do livro sem consentimento explícito.</li>
 <li>RNF-07: Localização — suporte inicial a PT-BR; arquitetura preparada para i18n.</li>
+<li>RNF-08: Distribuição — gerar pacote .deb para distribuição, instalação, atualização e remoção. Integração com o Calibre na instalação e com o desktop.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md14"></a>
+<h1><a class="anchor" id="autotoc_md18"></a>
 7. Arquitetura e Tecnologias</h1>
 <ul>
 <li>Qt (Widgets/QML a definir) para UI e renderização de documentos.</li>
@@ -226,7 +252,7 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>Persistência: arquivos locais (JSON/SQLite) para histórico, anotações e configurações.</li>
 <li>Integrações: Calibre via CLI/DB/API local; OpenAI API via HTTPS.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md15"></a>
+<h1><a class="anchor" id="autotoc_md19"></a>
 8. Modelo de Dados (alto nível)</h1>
 <ul>
 <li>Livro: id, título, autor(es), caminho/URI, formato, metadados.</li>
@@ -236,7 +262,7 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>Estatística: livroId, sessões [início, fim, ativo], palavras/páginas estimadas.</li>
 <li>Configurações: tema, fonte, dicionários, TTS, OpenAI (URL/token), diretórios, privacidade.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md16"></a>
+<h1><a class="anchor" id="autotoc_md20"></a>
 9. UX/UI (linhas gerais)</h1>
 <ul>
 <li>Leitor com área principal + painel lateral de marcações/anotações recolhível.</li>
@@ -244,24 +270,27 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>Popover de dicionário sobre seleção/click; opção para abrir no painel.</li>
 <li>Diálogos discretos para chamadas de IA com feedback de carregamento e histórico.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md17"></a>
+<h1><a class="anchor" id="autotoc_md21"></a>
 10. Integrações</h1>
 <ul>
 <li>OpenAI API: endpoints de chat/completions; chave armazenada com segurança; opção para desativar/usar proxy local.</li>
 <li>Calibre: integração com biblioteca local; abrir livros, atualizar metadados, registrar conversões.</li>
 <li>TTS: integração com mecanismo disponível no SO; fallback configurável.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md18"></a>
+<h1><a class="anchor" id="autotoc_md22"></a>
 11. Segurança e Privacidade</h1>
 <ul>
 <li>Armazenar token OpenAI com criptografia local (quando possível) ou permissões restritas.</li>
 <li>Confirmação explícita antes de enviar trechos do livro à IA.</li>
 <li>Logs sem conteúdo sensível (apenas metadados técnicos).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md19"></a>
+<h1><a class="anchor" id="autotoc_md23"></a>
 12. Critérios de Aceitação (MVP)</h1>
 <ul>
-<li>CA-01: Abrir e ler PDF/EPUB com navegação básica, tema claro/escuro.</li>
+<li>CA-01: Abrir e ler PDF/EPUB com navegação básica, tema claro/escuro.<ul>
+<li>Para PDFs, exibir TOC por capítulos via bookmarks quando disponíveis; na ausência de bookmarks, exibir TOC por páginas.</li>
+</ul>
+</li>
 <li>CA-02: Criar marcações e anotações; exibir no painel lateral; exportar JSON.</li>
 <li>CA-03: Dicionário funcionando ao clicar em palavras (pelo menos 1 idioma).</li>
 <li>CA-04: TTS lendo trecho selecionado com controles básicos.</li>
@@ -270,7 +299,7 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>CA-07: Restauração de sessão com reabertura dos livros abertos.</li>
 <li>CA-08: Integração com Calibre para abrir livro a partir da biblioteca.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md20"></a>
+<h1><a class="anchor" id="autotoc_md24"></a>
 13. Roadmap (sugestão)</h1>
 <ul>
 <li>Fase 1: MVP conforme critérios de aceitação.</li>
@@ -278,7 +307,7 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>Fase 3: IA avançada (RAG otimizado, sumários por capítulo, flashcards); exportação avançada (Markdown/PDF de marcações/anotações); sincronização opcional.</li>
 <li>Fase 4: Build/instalador Windows; i18n completo; acessibilidade ampliada.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md21"></a>
+<h1><a class="anchor" id="autotoc_md25"></a>
 14. Riscos e Dependências</h1>
 <ul>
 <li>Licenciamento e capacidade técnica das bibliotecas de renderização para EPUB/MOBI.</li>
@@ -286,13 +315,13 @@ $(document).ready(function(){initNavTree('d0/d89/md_GenAi-E-Book-Reader_2REQUISI
 <li>Custo/latência da OpenAI API; necessidade de alternativas locais.</li>
 <li>Mudanças no Calibre (estrutura de dados/CLI) entre versões.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md22"></a>
+<h1><a class="anchor" id="autotoc_md26"></a>
 15. Glossário</h1>
 <ul>
 <li>RAG (Retrieval-Augmented Generation): técnica que complementa a geração por IA com busca/recuperação de contexto relevante do corpus local.</li>
 <li>TTS (Text-to-Speech): conversão de texto em fala.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md23"></a>
+<h1><a class="anchor" id="autotoc_md27"></a>
 16. Referências Técnicas</h1>
 <ul>
 <li>Qt, CMake, Doxygen.</li>

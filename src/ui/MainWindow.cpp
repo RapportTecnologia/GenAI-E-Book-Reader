@@ -6,12 +6,16 @@
 #endif
 
 #include <QApplication>
+#include <QCoreApplication>
 #include <QAction>
 #include <QToolBar>
 #include <QMenuBar>
 #include <QStatusBar>
 #include <QTreeWidget>
 #include <QSplitter>
+#include <QVBoxLayout>
+#include <QActionGroup>
+#include <QSize>
 #include <QFileDialog>
 #include <QComboBox>
 #include <QDir>
@@ -19,12 +23,41 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QFile>
+#include <QDialog>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QLabel>
+#include <QDialogButtonBox>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
+#include <QMap>
+#include <QSizePolicy>
+#include <QStyle>
+#ifdef HAVE_QT_NETWORK
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QUrl>
+#include <QUrlQuery>
+#include <QJsonDocument>
+#include <QJsonObject>
+#endif
 #include <algorithm>
+#include <functional>
+#include <QModelIndex>
+#include <QVariant>
+
+#include "app/App.h"
 
 #ifdef HAVE_QT_PDF
 #if __has_include(<QPdfBookmarkModel>)
 #include <QPdfBookmarkModel>
 #define HAS_QPDF_BOOKMARK_MODEL 1
+#endif
+#include <QPdfDocument>
+#if __has_include(<QPdfLinkDestination>)
+#include <QPdfLinkDestination>
+#define HAS_QPDF_LINK_DESTINATION 1
 #endif
 #endif
 
@@ -34,6 +67,314 @@ MainWindow::MainWindow(QWidget* parent)
     createActions();
     loadSettings();
     updateStatus();
+#ifdef HAVE_QT_NETWORK
+    netManager_ = new QNetworkAccessManager(this);
+#endif
+}
+
+void MainWindow::applyDefaultSplitterSizesIfNeeded() {
+    // Only apply if there is no saved state; heuristic: if sizes are empty or equal/zero
+    if (!splitter_) return;
+    const QList<int> sizes = splitter_->sizes();
+    bool needDefault = sizes.isEmpty();
+    if (!needDefault) {
+        int total = 0; for (int s : sizes) total += s;
+        needDefault = (total == 0);
+    }
+    if (needDefault) {
+        // Approximate 10% for TOC, 90% for viewer
+        splitter_->setSizes({100, 900});
+    }
+}
+
+void MainWindow::setTocModePages() {
+    tocPagesMode_ = true;
+    // Rebuild TOC based on current document
+    toc_->clear();
+    unsigned int pages = 0;
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { pages = vw->totalPages(); }
+#ifdef HAVE_QT_PDF
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pages = pv->totalPages(); }
+#endif
+    if (pages == 0) return;
+    for (unsigned int i = 1; i <= pages; ++i) {
+        auto* item = new QTreeWidgetItem(QStringList{tr("Página %1").arg(i)});
+        item->setData(0, Qt::UserRole, i);
+        toc_->addTopLevelItem(item);
+    }
+}
+
+void MainWindow::setTocModeChapters() {
+    tocPagesMode_ = false;
+    toc_->clear();
+
+    unsigned int pages = 0;
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { pages = vw->totalPages(); }
+#ifdef HAVE_QT_PDF
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pages = pv->totalPages(); }
+
+#ifdef HAS_QPDF_BOOKMARK_MODEL
+    // Try to build TOC from real PDF bookmarks (titles) when available
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        if (QPdfDocument* doc = pv->document()) {
+            QPdfBookmarkModel bm(doc);
+            if (bm.rowCount() > 0) {
+                std::function<QTreeWidgetItem*(const QModelIndex&)> buildNode = [&](const QModelIndex& idx) -> QTreeWidgetItem* {
+                    // Title
+                    const QString title = bm.data(idx, Qt::DisplayRole).toString();
+#ifdef HAS_QPDF_LINK_DESTINATION
+                    // Destination -> page (0-based in Qt PDF); store 1-based for our navigation
+                    const QVariant destVar = bm.data(idx, QPdfBookmarkModel::DestinationRole);
+                    unsigned int page1 = 0u;
+                    if (destVar.isValid()) {
+                        const QPdfLinkDestination dest = destVar.value<QPdfLinkDestination>();
+                        if (dest.isValid()) {
+                            const int p0 = dest.page();
+                            if (p0 >= 0) page1 = static_cast<unsigned int>(p0 + 1);
+                        }
+                    }
+#endif
+                    auto* item = new QTreeWidgetItem(QStringList{ title.isEmpty() ? tr("(sem título)") : title });
+#ifdef HAS_QPDF_LINK_DESTINATION
+                    if (page1 > 0) item->setData(0, Qt::UserRole, page1);
+#endif
+                    const int rows = bm.rowCount(idx);
+                    for (int r = 0; r < rows; ++r) {
+                        const QModelIndex childIdx = bm.index(r, 0, idx);
+                        if (childIdx.isValid()) {
+                            if (auto* child = buildNode(childIdx)) item->addChild(child);
+                        }
+                    }
+                    // Fallback: if this node has no direct destination, use first child's destination
+#ifdef HAS_QPDF_LINK_DESTINATION
+                    if (!item->data(0, Qt::UserRole).isValid() && item->childCount() > 0) {
+                        const QVariant firstChildPage = item->child(0)->data(0, Qt::UserRole);
+                        if (firstChildPage.isValid()) item->setData(0, Qt::UserRole, firstChildPage);
+                    }
+#endif
+                    return item;
+                };
+
+                // Build top-level items
+                for (int r = 0; r < bm.rowCount(); ++r) {
+                    const QModelIndex topIdx = bm.index(r, 0);
+                    if (!topIdx.isValid()) continue;
+                    if (auto* node = buildNode(topIdx)) toc_->addTopLevelItem(node);
+                }
+
+                // If at least one item has a valid page, keep this TOC; otherwise fallback
+                bool hasNavigable = false;
+                std::function<void(QTreeWidgetItem*)> scan = [&](QTreeWidgetItem* it){
+                    if (!it || hasNavigable) return;
+                    if (it->data(0, Qt::UserRole).isValid()) { hasNavigable = true; return; }
+                    for (int i = 0; i < it->childCount() && !hasNavigable; ++i) scan(it->child(i));
+                };
+                for (int i = 0; i < toc_->topLevelItemCount() && !hasNavigable; ++i) scan(toc_->topLevelItem(i));
+                if (hasNavigable && toc_->topLevelItemCount() > 0) { return; }
+                // else: clear and continue to fallback numeric grouping
+                toc_->clear();
+            }
+        }
+    }
+#endif // HAS_QPDF_BOOKMARK_MODEL
+#endif // HAVE_QT_PDF
+
+    // Fallback: placeholder grouping when no bookmarks are available
+    if (pages == 0) return;
+    const unsigned int group = 10;
+    unsigned int ch = 1;
+    for (unsigned int start = 1; start <= pages; start += group, ++ch) {
+        auto* chap = new QTreeWidgetItem(QStringList{tr("Capítulo %1").arg(ch)});
+        chap->setData(0, Qt::UserRole, start);
+        for (unsigned int p = start; p < start + group && p <= pages; ++p) {
+            auto* child = new QTreeWidgetItem(QStringList{tr("Página %1").arg(p)});
+            child->setData(0, Qt::UserRole, p);
+            chap->addChild(child);
+        }
+        toc_->addTopLevelItem(chap);
+    }
+}
+
+void MainWindow::onTocPrev() {
+    if (tocPagesMode_) { prevPage(); return; }
+    // Chapters mode: move selection to previous item
+    auto* cur = toc_->currentItem();
+    if (!cur) {
+        if (toc_->topLevelItemCount() > 0) toc_->setCurrentItem(toc_->topLevelItem(0));
+        return;
+    }
+    // Find previous item in visible order
+    QTreeWidgetItem* prev = toc_->itemAbove(cur);
+    if (!prev && cur->parent()) prev = cur->parent();
+    if (!prev) return;
+    toc_->setCurrentItem(prev);
+    onTocItemActivated(prev, 0);
+}
+
+void MainWindow::onTocNext() {
+    if (tocPagesMode_) { nextPage(); return; }
+    auto* cur = toc_->currentItem();
+    if (!cur) {
+        if (toc_->topLevelItemCount() > 0) toc_->setCurrentItem(toc_->topLevelItem(0));
+        return;
+    }
+    // Prefer first child, else next sibling, else climb up to find next
+    QTreeWidgetItem* nxt = nullptr;
+    if (cur->childCount() > 0) {
+        nxt = cur->child(0);
+    } else {
+        nxt = toc_->itemBelow(cur);
+    }
+    if (!nxt) return;
+    toc_->setCurrentItem(nxt);
+    onTocItemActivated(nxt, 0);
+}
+
+#endif // USE_QT
+
+bool MainWindow::validateReaderInputs(const QString& name, const QString& email, QString* errorMsg) const {
+    QStringList errors;
+    if (name.trimmed().isEmpty()) errors << tr("Nome completo é obrigatório.");
+    QRegularExpression re(R"(^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$)", QRegularExpression::CaseInsensitiveOption);
+    if (!re.match(email.trimmed()).hasMatch()) errors << tr("E-mail inválido.");
+    if (!errors.isEmpty()) {
+        if (errorMsg) *errorMsg = errors.join('\n');
+        return false;
+    }
+    return true;
+}
+
+QMap<QString, QString> MainWindow::loadEnvConfig() const {
+    QMap<QString, QString> cfg;
+    // Determine preferred .env path: application dir first, then CWD
+    QString appDir = QCoreApplication::applicationDirPath();
+    QString envPath = QDir(appDir).filePath(".env");
+    if (!QFileInfo::exists(envPath)) {
+        QString cwdEnv = QDir::current().filePath(".env");
+        envPath = QFileInfo::exists(cwdEnv) ? cwdEnv : envPath;
+    }
+    QFile f(envPath);
+    if (f.exists() && f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        while (!f.atEnd()) {
+            const QByteArray line = f.readLine();
+            const QByteArray trimmed = line.trimmed();
+            if (trimmed.isEmpty() || trimmed.startsWith('#')) continue;
+            const int eq = trimmed.indexOf('=');
+            if (eq <= 0) continue;
+            const QString key = QString::fromUtf8(trimmed.left(eq));
+            const QString val = QString::fromUtf8(trimmed.mid(eq+1));
+            cfg.insert(key, val);
+        }
+        f.close();
+    }
+    return cfg;
+}
+
+void MainWindow::submitReaderDataToPhpList(const QString& name, const QString& email, const QString& whatsapp) {
+#ifndef HAVE_QT_NETWORK
+    QMessageBox::information(this, tr("Indisponível"), tr("Suporte de rede não está disponível nesta compilação."));
+    return;
+#else
+    const auto cfg = loadEnvConfig();
+    const QString baseUrl = cfg.value("PHPLIST_URL");
+    const QString user = cfg.value("PHPLIST_USER");
+    const QString pass = cfg.value("PHPLIST_PASS");
+    if (baseUrl.isEmpty() || user.isEmpty() || pass.isEmpty()) {
+        QMessageBox::warning(this, tr("Configuração ausente"), tr("Parâmetros do PHPList ausentes no .env."));
+        return;
+    }
+
+    QUrl url(baseUrl);
+    if (!url.isValid()) {
+        QMessageBox::warning(this, tr("URL inválida"), tr("A URL do PHPList no .env é inválida."));
+        return;
+    }
+
+    // Monta payload genérico (JSON). A API específica pode exigir outro formato; manteremos configurável.
+    QJsonObject payload;
+    payload.insert("email", email);
+    if (!name.trimmed().isEmpty()) payload.insert("name", name.trimmed());
+    if (!whatsapp.trimmed().isEmpty()) {
+        QJsonObject attrs; attrs.insert("whatsapp", whatsapp.trimmed());
+        payload.insert("attributes", attrs);
+    }
+
+    const QByteArray data = QJsonDocument(payload).toJson(QJsonDocument::Compact);
+
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    // Basic Auth
+    const QByteArray credentials = (user + ":" + pass).toUtf8().toBase64();
+    req.setRawHeader("Authorization", "Basic " + credentials);
+
+    auto* reply = netManager_->post(req, data);
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        reply->deleteLater();
+        if (reply->error() != QNetworkReply::NoError) {
+            // Não exibir credenciais, apenas mensagem amigável
+            const QString err = reply->errorString();
+            QMessageBox::warning(this, tr("Falha no envio"), tr("Não foi possível enviar os dados para o PHPList. Detalhes: %1").arg(err));
+            return;
+        }
+        const QByteArray body = reply->readAll();
+        // Supondo JSON de resposta; não fazemos parsing rígido para evitar acoplamento
+        Q_UNUSED(body);
+        QMessageBox::information(this, tr("Sucesso"), tr("Dados enviados com sucesso para a lista."));
+    });
+#endif
+}
+
+void MainWindow::editReaderData() {
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Dados do leitor"));
+
+    auto* form = new QFormLayout(&dlg);
+    auto* nameEdit = new QLineEdit(&dlg);
+    auto* emailEdit = new QLineEdit(&dlg);
+    auto* whatsappEdit = new QLineEdit(&dlg);
+
+    // Load existing values from settings
+    nameEdit->setText(settings_.value("reader/name").toString());
+    emailEdit->setText(settings_.value("reader/email").toString());
+    whatsappEdit->setText(settings_.value("reader/whatsapp").toString());
+
+    auto* info = new QLabel(&dlg);
+    info->setWordWrap(true);
+    info->setText(tr("Os dados do leitor (Nome completo, E-mail e WhatsApp) serão usados nas anotações e para personalizar a interação com o ChatGPT.\n\nA integração com o PHPList utiliza configurações no arquivo .env localizado ao lado do executável ou no diretório de onde o aplicativo foi chamado. As credenciais não são exibidas aqui."));
+
+    form->addRow(info);
+    form->addRow(tr("Nome completo"), nameEdit);
+    form->addRow(tr("E-mail"), emailEdit);
+    form->addRow(tr("WhatsApp"), whatsappEdit);
+
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dlg);
+    form->addRow(buttons);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+    if (dlg.exec() == QDialog::Accepted) {
+        // Save settings
+        settings_.setValue("reader/name", nameEdit->text());
+        settings_.setValue("reader/email", emailEdit->text());
+        settings_.setValue("reader/whatsapp", whatsappEdit->text());
+
+        // Validate and optionally submit to PHPList
+        QString err;
+        if (!validateReaderInputs(nameEdit->text().trimmed(), emailEdit->text().trimmed(), &err)) {
+            QMessageBox::warning(this, tr("Dados inválidos"), err);
+            return;
+        }
+        const auto choice = QMessageBox::question(
+            this,
+            tr("Confirmar envio"),
+            tr("Enviar meus dados para a lista ÁrvoreDosSaberes?"),
+            QMessageBox::Yes | QMessageBox::No,
+            QMessageBox::No
+        );
+        if (choice == QMessageBox::Yes) {
+            submitReaderDataToPhpList(nameEdit->text().trimmed(), emailEdit->text().trimmed(), whatsappEdit->text().trimmed());
+        }
+    }
 }
 
 void MainWindow::saveAs() {
@@ -74,21 +415,45 @@ MainWindow::~MainWindow() {
 
 void MainWindow::buildUi() {
     viewer_ = new ViewerWidget(this);
-    toc_ = new QTreeWidget(this);
+
+    // TOC panel with toolbar on top and tree below
+    tocPanel_ = new QWidget(this);
+    tocPanel_->setMinimumWidth(140); // ensure TOC toolbar/buttons remain visible
+    auto* tocLayout = new QVBoxLayout(tocPanel_);
+    tocLayout->setContentsMargins(0,0,0,0);
+    tocLayout->setSpacing(0);
+
+    tocToolBar_ = new QToolBar(tr("TOC"), tocPanel_);
+    tocToolBar_->setIconSize(QSize(16,16));
+    // Show text so buttons are visible even without icons
+    tocToolBar_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    tocLayout->addWidget(tocToolBar_);
+
+    toc_ = new QTreeWidget(tocPanel_);
     toc_->setHeaderHidden(true);
+    tocLayout->addWidget(toc_);
 
     splitter_ = new QSplitter(this);
-    splitter_->addWidget(toc_);
+    splitter_->addWidget(tocPanel_);
     splitter_->addWidget(viewer_);
+    // Ensure viewer occupies remaining space
+    splitter_->setStretchFactor(0, 0);
     splitter_->setStretchFactor(1, 1);
+    splitter_->setContentsMargins(0,0,0,0);
+    // Avoid collapsing the TOC completely
+    splitter_->setCollapsible(0, false);
 
     setCentralWidget(splitter_);
     statusBar();
+    applyDefaultSplitterSizesIfNeeded();
 }
 
 void MainWindow::createActions() {
     actOpen_ = new QAction(tr("Abrir"), this);
     actSaveAs_ = new QAction(tr("Salvar como..."), this);
+    actClose_ = new QAction(tr("Fechar Ebook"), this);
+    actQuit_ = new QAction(tr("Sair"), this);
+    actReaderData_ = new QAction(tr("Dados do leitor..."), this);
     actPrev_ = new QAction(tr("Anterior"), this);
     actNext_ = new QAction(tr("Próxima"), this);
     actZoomIn_ = new QAction(tr("Zoom +"), this);
@@ -96,8 +461,35 @@ void MainWindow::createActions() {
     actZoomReset_ = new QAction(tr("Zoom 100%"), this);
     actToggleTheme_ = new QAction(tr("Tema claro/escuro"), this);
 
+    // TOC toolbar actions and wiring
+    actTocModePages_ = new QAction(tr("Páginas"), this);
+    actTocModeChapters_ = new QAction(tr("Conteúdo"), this);
+    actTocPrev_ = new QAction(tr("Anterior"), this);
+    actTocNext_ = new QAction(tr("Proxima"), this);
+    // Provide standard navigation icons
+    actTocPrev_->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
+    actTocNext_->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
+    actTocModePages_->setCheckable(true);
+    actTocModeChapters_->setCheckable(true);
+    actTocModePages_->setChecked(true);
+    auto* tocModeGroup = new QActionGroup(this);
+    tocModeGroup->addAction(actTocModePages_);
+    tocModeGroup->addAction(actTocModeChapters_);
+    tocModeGroup->setExclusive(true);
+
+    // Clarify behavior of main toolbar navigation based on mode
+    actPrev_->setToolTip(tr("Voltar (página ou item do conteúdo, conforme modo)"));
+    actNext_->setToolTip(tr("Avançar (página ou item do conteúdo, conforme modo)"));
+
+    connect(actTocModePages_, &QAction::triggered, this, &MainWindow::setTocModePages);
+    connect(actTocModeChapters_, &QAction::triggered, this, &MainWindow::setTocModeChapters);
+    connect(actTocPrev_, &QAction::triggered, this, &MainWindow::onTocPrev);
+    connect(actTocNext_, &QAction::triggered, this, &MainWindow::onTocNext);
+
     actOpen_->setShortcut(QKeySequence::Open);
     actSaveAs_->setShortcut(QKeySequence::SaveAs);
+    actClose_->setShortcut(QKeySequence::Close); // Ctrl+W
+    actQuit_->setShortcut(QKeySequence::Quit);   // Ctrl+Q
     actPrev_->setShortcut(Qt::Key_Left);
     actNext_->setShortcut(Qt::Key_Right);
     actZoomIn_->setShortcut(QKeySequence::ZoomIn);
@@ -105,26 +497,43 @@ void MainWindow::createActions() {
 
     connect(actOpen_, &QAction::triggered, this, &MainWindow::openFile);
     connect(actSaveAs_, &QAction::triggered, this, &MainWindow::saveAs);
-    connect(actPrev_, &QAction::triggered, this, &MainWindow::prevPage);
-    connect(actNext_, &QAction::triggered, this, &MainWindow::nextPage);
+    // Mode-aware navigation: uses TOC handlers (pages vs capítulos)
+    connect(actPrev_, &QAction::triggered, this, &MainWindow::onTocPrev);
+    connect(actNext_, &QAction::triggered, this, &MainWindow::onTocNext);
     connect(actZoomIn_, &QAction::triggered, this, &MainWindow::zoomIn);
     connect(actZoomOut_, &QAction::triggered, this, &MainWindow::zoomOut);
     connect(actZoomReset_, &QAction::triggered, this, &MainWindow::zoomReset);
     connect(actToggleTheme_, &QAction::triggered, this, &MainWindow::toggleTheme);
+    connect(actQuit_, &QAction::triggered, qApp, &QApplication::quit);
+    connect(actReaderData_, &QAction::triggered, this, &MainWindow::editReaderData);
+    connect(actClose_, &QAction::triggered, this, &MainWindow::closeDocument);
 
-    // Menu Arquivo
+    // Menu Arquivo com submenus
     auto* menuArquivo = menuBar()->addMenu(tr("&Arquivo"));
-    menuArquivo->addAction(actOpen_);
-    menuArquivo->addAction(actSaveAs_);
+    auto* menuDocumento = menuArquivo->addMenu(tr("Documento"));
+    menuDocumento->addAction(actOpen_);
+    menuDocumento->addAction(actSaveAs_);
+    menuDocumento->addSeparator();
+    menuDocumento->addAction(actClose_);
+    auto* menuLeitor = menuArquivo->addMenu(tr("Leitor"));
+    menuLeitor->addAction(actReaderData_);
+    menuArquivo->addSeparator();
+    menuArquivo->addAction(actQuit_); // Sair diretamente em Arquivo
+
+    // Menu Configurações
+    auto* menuConfig = menuBar()->addMenu(tr("Configurações"));
+    menuConfig->addAction(actToggleTheme_);
 
     auto* tb = addToolBar(tr("Leitura"));
     tb->setObjectName("toolbar_reading");
-    tb->addAction(actOpen_);
-    tb->addAction(actSaveAs_);
-    tb->addSeparator();
+
+    QWidget* leftSpacer = new QWidget(tb);
+    leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    tb->addWidget(leftSpacer);
+
     tb->addAction(actPrev_);
     tb->addAction(actNext_);
-    // Page combobox (RF-14)
+
     pageCombo_ = new QComboBox(tb);
     pageCombo_->setEditable(false);
     pageCombo_->setMinimumContentsLength(6);
@@ -141,10 +550,26 @@ void MainWindow::createActions() {
     tb->addAction(actZoomOut_);
     tb->addAction(actZoomIn_);
     tb->addAction(actZoomReset_);
-    tb->addSeparator();
-    tb->addAction(actToggleTheme_);
+    // Removido: alternância de tema na toolbar (foi para Configurações)
+
+    QWidget* rightSpacer = new QWidget(tb);
+    rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    tb->addWidget(rightSpacer);
+
+    // Add actions to the TOC toolbar now that it exists
+    if (tocToolBar_) {
+        tocToolBar_->addAction(actTocModePages_);
+        tocToolBar_->addAction(actTocModeChapters_);
+        tocToolBar_->addSeparator();
+        tocToolBar_->addAction(actTocPrev_);
+        tocToolBar_->addAction(actTocNext_);
+    }
 
     connect(toc_, &QTreeWidget::itemActivated, this, &MainWindow::onTocItemActivated);
+    connect(toc_, &QTreeWidget::itemClicked, this, &MainWindow::onTocItemActivated);
+
+    // Initial state
+    actClose_->setEnabled(false);
 }
 
 void MainWindow::loadSettings() {
@@ -247,40 +672,8 @@ bool MainWindow::openPath(const QString& file) {
         viewer_->deleteLater();
         viewer_ = newViewer;
 
-        // Build TOC: prefer PDF bookmarks (capítulos/subcapítulos) when available; fallback to all pages
-        toc_->clear();
-#ifdef HAS_QPDF_BOOKMARK_MODEL
-        auto* bm = new QPdfBookmarkModel(toc_);
-        bm->setDocument(newViewer->document());
-        // recursive lambda to populate tree
-        std::function<void(QTreeWidgetItem*, const QModelIndex&)> addChildren = [&](QTreeWidgetItem* parentItem, const QModelIndex& parentIdx){
-            const int rows = bm->rowCount(parentIdx);
-            for (int r=0; r<rows; ++r) {
-                const QModelIndex idx = bm->index(r, 0, parentIdx);
-                const QString title = bm->data(idx, Qt::DisplayRole).toString();
-                QVariant pageVar = bm->data(idx, Qt::UserRole); // fallback role
-                // Some Qt versions expose page via specific role; try common ones
-                if (!pageVar.isValid()) pageVar = bm->data(idx, Qt::UserRole + 1);
-                if (!pageVar.isValid()) pageVar = bm->data(idx, Qt::UserRole + 2);
-                int pageZeroBased = pageVar.isValid() ? pageVar.toInt() : -1;
-                auto* item = new QTreeWidgetItem(QStringList{ title.isEmpty() ? tr("Seção") : title });
-                if (pageZeroBased >= 0) item->setData(0, Qt::UserRole, static_cast<unsigned int>(pageZeroBased + 1));
-                if (parentItem) parentItem->addChild(item); else toc_->addTopLevelItem(item);
-                addChildren(item, idx);
-            }
-        };
-        addChildren(nullptr, QModelIndex());
-        if (toc_->topLevelItemCount() == 0) {
-#endif
-            const unsigned int pages = newViewer->totalPages();
-            for (unsigned int i = 1; i <= pages; ++i) {
-                auto* item = new QTreeWidgetItem(QStringList{tr("Página %1").arg(i)});
-                item->setData(0, Qt::UserRole, i);
-                toc_->addTopLevelItem(item);
-            }
-#ifdef HAS_QPDF_BOOKMARK_MODEL
-        }
-#endif
+        // Build TOC according to current mode
+        if (tocPagesMode_) setTocModePages(); else setTocModeChapters();
         // Fit to width initially (RF-13)
         // QPdfView supports FitToWidth via ZoomMode; expose through public API if needed.
         newViewer->setZoomFactor(1.0); // ensure valid
@@ -288,7 +681,27 @@ bool MainWindow::openPath(const QString& file) {
         settings_.setValue("session/lastDir", fi.absolutePath());
         settings_.setValue("session/lastFile", fi.absoluteFilePath());
         currentFilePath_ = fi.absoluteFilePath();
+
+        // Update window title with metadata Title when available (Qt6+), else filename
+        QString titleText = fi.completeBaseName();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        if (auto* doc = newViewer->document()) {
+            // Some Qt6 versions provide MetaDataField::Title
+            QString metaTitle;
+#ifdef Q_OS_WIN
+            metaTitle = doc->metaData(QPdfDocument::MetaDataField::Title).toString();
+#else
+            metaTitle = doc->metaData(QPdfDocument::MetaDataField::Title).toString();
+#endif
+            if (!metaTitle.trimmed().isEmpty()) titleText = metaTitle.trimmed();
+        }
+#endif
+        setWindowTitle(QString("%1 v%2 — %3")
+                           .arg(genai::AppInfo::Name)
+                           .arg(genai::AppInfo::Version)
+                           .arg(titleText));
         updateStatus();
+        actClose_->setEnabled(true);
         return true;
     }
 #endif
@@ -303,17 +716,38 @@ bool MainWindow::openPath(const QString& file) {
         vw->setTotalPages(res.totalPages);
         vw->setCurrentPage(1);
     }
-    toc_->clear();
-    for (unsigned int i = 1; i <= 10; ++i) {
-        auto* item = new QTreeWidgetItem(QStringList{tr("Capítulo %1").arg(i)});
-        item->setData(0, Qt::UserRole, i*10u);
-        toc_->addTopLevelItem(item);
-    }
+    // Build TOC according to current mode
+    if (tocPagesMode_) setTocModePages(); else setTocModeChapters();
     settings_.setValue("session/lastDir", fi.absolutePath());
     settings_.setValue("session/lastFile", fi.absoluteFilePath());
     currentFilePath_ = fi.absoluteFilePath();
+    setWindowTitle(QString("%1 v%2 — %3")
+                       .arg(genai::AppInfo::Name)
+                       .arg(genai::AppInfo::Version)
+                       .arg(fi.completeBaseName()));
     updateStatus();
+    actClose_->setEnabled(true);
     return true;
+}
+
+void MainWindow::closeDocument() {
+    // Clear TOC
+    toc_->clear();
+    // Replace current viewer with a fresh ViewerWidget
+    QWidget* newViewer = new ViewerWidget(this);
+    int idx = splitter_->indexOf(viewer_);
+    splitter_->replaceWidget(idx, newViewer);
+    viewer_->deleteLater();
+    viewer_ = newViewer;
+    // Reset state
+    currentFilePath_.clear();
+    settings_.remove("session/lastFile");
+    // Update UI state
+    updateStatus();
+    actClose_->setEnabled(false);
+    setWindowTitle(QString("%1 v%2 — Leitor")
+                       .arg(genai::AppInfo::Name)
+                       .arg(genai::AppInfo::Version));
 }
 
 void MainWindow::nextPage() {
@@ -425,5 +859,3 @@ void MainWindow::updatePageCombo() {
         pageCombo_->blockSignals(false);
     }
 }
-
-#endif // USE_QT

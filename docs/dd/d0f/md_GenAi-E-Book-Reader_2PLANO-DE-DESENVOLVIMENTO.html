@@ -95,15 +95,15 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
   <div class="headertitle"><div class="title">GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md25"></a> Documento de planejamento derivado de <code><a class="el" href="../../d9/d3f/REQUISITOS_8md.html">REQUISITOS.md</a></code>. Toda decisão e escopo aqui devem manter rastreabilidade aos RF/RNF/CA descritos em <code><a class="el" href="../../d9/d3f/REQUISITOS_8md.html">REQUISITOS.md</a></code>.</p>
-<h1><a class="anchor" id="autotoc_md26"></a>
+<div class="textblock"><p><a class="anchor" id="autotoc_md29"></a> Documento de planejamento derivado de <code><a class="el" href="../../d9/d3f/REQUISITOS_8md.html">REQUISITOS.md</a></code>. Toda decisão e escopo aqui devem manter rastreabilidade aos RF/RNF/CA descritos em <code><a class="el" href="../../d9/d3f/REQUISITOS_8md.html">REQUISITOS.md</a></code>.</p>
+<h1><a class="anchor" id="autotoc_md30"></a>
 1) Estratégia e Escopo do MVP</h1>
 <ul>
 <li>Objetivo: entregar os Critérios de Aceitação CA-01 a CA-08 (ver <code><a class="el" href="../../d9/d3f/REQUISITOS_8md.html">REQUISITOS.md</a></code>, seção 12).</li>
 <li>Plataformas: Linux (principal). Windows: preparar portabilidade (sem entrega no MVP).</li>
 <li>Stack: C/C++ + Qt; CMake; Doxygen; persistência local (JSON ou SQLite — decidir no início).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md27"></a>
+<h1><a class="anchor" id="autotoc_md31"></a>
 2) Roadmap por Fases</h1>
 <ul>
 <li>Fase 1 — MVP (alinha com CA-01..CA-08):<ul>
@@ -121,10 +121,12 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 <li>Conversões EPUB/MOBI/PDF e fila (RF-24..RF-25).</li>
 <li>Dicionários multilíngues e configuráveis (RF-09).</li>
 <li>Atalhos de teclado e usabilidade (RNF-02).</li>
+<li>v0.1.2 (concluída em 2025-08-18): "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.</li>
+<li>v0.1.3 (concluída em 2025-08-18): Refinamento de UI — ícone do app (RF-29), título com nome do livro (RF-30) e splash screen (RF-31).</li>
 </ul>
 </li>
 <li>Fase 3 — IA avançada e Exportações:<ul>
-<li>RAG otimizado; sumários por capítulo; geração de flashcards (RF-11..RF-14).</li>
+<li>RAG otimizado; sumários por capítulo; geração de flashcards (RF-12..RF-15).</li>
 <li>Exportações avançadas de marcações/anotações (Markdown/PDF).</li>
 <li>Sincronização opcional (fora do MVP; requer design de privacidade).</li>
 </ul>
@@ -135,7 +137,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md28"></a>
+<h1><a class="anchor" id="autotoc_md32"></a>
 3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)</h1>
 <ul>
 <li>Sprint 1: Fundações e Leitura<ul>
@@ -166,7 +168,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md29"></a>
+<h1><a class="anchor" id="autotoc_md33"></a>
 4) Entregas e Critérios de Aceitação (DoD)</h1>
 <ul>
 <li>Cada história deve ter:<ul>
@@ -178,7 +180,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 </li>
 <li>Encerramento do MVP: todos CA-01..CA-08 verificados em Linux.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md30"></a>
+<h1><a class="anchor" id="autotoc_md34"></a>
 5) Matriz de Rastreabilidade (resumo)</h1>
 <ul>
 <li>Leitura: RF-01..03 → CA-01 → Sprints 1–2.</li>
@@ -189,9 +191,13 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 <li>Estatísticas: RF-16..19 → CA-06 → Sprint 3.</li>
 <li>Sessão: RF-20..21 → CA-07 → Sprint 4.</li>
 <li>Calibre: RF-22 → CA-08 → Sprint 4.</li>
-<li>Configurações: RF-26..27 → suporte geral → Sprint 4.</li>
+<li>Configurações: RF-26..27 → suporte geral → Sprint 4.<ul>
+<li>Operações de Arquivo: RF-28 (Salvar como) → release menor v0.1.2.</li>
+<li>UI/Branding: RF-29 (ícone), RF-30 (título com nome do livro), RF-31 (splash) → release menor v0.1.3.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md31"></a>
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md35"></a>
 6) Decisões Técnicas Iniciais (a validar no Sprint 1)</h1>
 <ul>
 <li>UI Qt: Widgets (maior maturidade e estabilidade) vs QML (flexibilidade/anim.)</li>
@@ -199,7 +205,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 <li>Persistência: SQLite (transações/robustez) vs JSON (simplicidade). Sugestão: SQLite.</li>
 <li>Integração Calibre: CLI vs acesso ao DB; começar pela CLI para reduzir acoplamento.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md32"></a>
+<h1><a class="anchor" id="autotoc_md36"></a>
 7) Estrutura Inicial do Repositório</h1>
 <div class="fragment"><div class="line">/ (raiz)</div>
 <div class="line">  CMakeLists.txt</div>
@@ -222,7 +228,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 <div class="line">  /third_party</div>
 <div class="line">  /assets</div>
 <div class="line">  /tests</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md33"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md37"></a>
 8) Riscos e Mitigações (prioritários)</h1>
 <ul>
 <li>EPUB/MOBI libs: risco de licença/qualidade → PoC e revisão legal no Sprint 1.</li>
@@ -230,27 +236,37 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 <li>Custo/latência OpenAI: cache de contexto local; opção de desativar; permitir endpoint alternativo.</li>
 <li>Respeito à privacidade: opt-in para enviar conteúdo à IA; armazenamento seguro do token.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md34"></a>
+<h1><a class="anchor" id="autotoc_md38"></a>
 9) Métricas de Projeto</h1>
 <ul>
 <li>Velocidade por sprint; bugs por entrega; tempo médio de leitura de arquivos grandes; uso de memória; tempo de cold start.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md35"></a>
+<h1><a class="anchor" id="autotoc_md39"></a>
 10) Cronograma Base (exemplo)</h1>
 <ul>
 <li>8 semanas para MVP (4 sprints x 2 semanas). Ajustar conforme disponibilidade.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md36"></a>
+<h1><a class="anchor" id="autotoc_md40"></a>
 11) Próximos Passos</h1>
 <ul>
-<li>Decidir Qt (Widgets vs QML) após protótipo rápido.</li>
+<li>Decidir Qt (Widgets vs QML) após protótipo rápido.<ul>
 <li>Escolher bibliotecas para PDF/EPUB/MOBI e validar licença.</li>
 <li>Definir persistência (preferência: SQLite) e esquema inicial.</li>
 <li>Montar skeleton do projeto com CMake e estrutura acima.</li>
+<li>Próximos releases: acompanhar <code><a class="el" href="../../d9/d59/ROADMAP_8md.html">ROADMAP.md</a></code>.</li>
+<li>Próxima: iniciar 0.2.0 (Anotações e Dicionário) conforme <code><a class="el" href="../../d9/d59/ROADMAP_8md.html">ROADMAP.md</a></code>.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md37"></a>
+</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md41"></a>
+Notas de Progresso Recentes</h2>
+<ul>
+<li>v0.1.2: "Salvar como" (RF-28) implementado; refinamentos de leitura.</li>
+<li>v0.1.1: Navegação por combobox cobrindo todas as páginas de PDFs e TOC simples para todas as páginas; restauração de sessão; melhorias de status e zoom.</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md42"></a>
 12) Instruções de Build e Documentação</h1>
-<h2><a class="anchor" id="autotoc_md38"></a>
+<h2><a class="anchor" id="autotoc_md43"></a>
 Build da Aplicação (Linux)</h2>
 <ul>
 <li>Pré-requisitos: CMake (&gt;=3.16), compilador C++17, Qt5/Qt6 (Widgets), Doxygen (opcional).</li>
@@ -259,7 +275,7 @@ Build da Aplicação (Linux)</h2>
 <div class="line"># Executável gerado em: build/bin/genai_reader</div>
 </div><!-- fragment --></li>
 </ul>
-<h2><a class="anchor" id="autotoc_md39"></a>
+<h2><a class="anchor" id="autotoc_md44"></a>
 Geração da Documentação (Doxygen)</h2>
 <ul>
 <li>Via target CMake: <div class="fragment"><div class="line">cmake --build build --target docs</div>

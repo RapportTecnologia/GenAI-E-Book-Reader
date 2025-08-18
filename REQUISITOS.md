@@ -98,7 +98,7 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
     11. Operações de Arquivo (complementares)
    - RF-28: Salvar como — permitir salvar o livro/estado atual em um novo arquivo (planejado para a versão 0.1.2).
 
-12. Interface e Branding (planejado para 0.1.3)
+12. Interface e Branding (entregue em 0.1.3)
    - RF-29: Ícone do aplicativo baseado em `docs/imgs/logo-do-projeto.png`, exibido na barra de título.
    - RF-30: Exibir na barra de título o nome do livro em leitura; usar metadados do arquivo quando disponíveis; caso contrário, usar o nome do arquivo.
    - RF-31: Splash screen exibindo `docs/imgs/logo-do-projeto.png`, a versão do app e os dados do autor: "Carlos Delfino <consultoria@carlosdelfino.eti.br>".
@@ -112,6 +112,15 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 - RNF-06: Segurança/Privacidade — armazenar segredos (token) de forma segura; não enviar conteúdo do livro sem consentimento explícito.
 - RNF-07: Localização — suporte inicial a PT-BR; arquitetura preparada para i18n.
 - RNF-08: Distribuição — gerar pacote .deb para distribuição, instalação, atualização e remoção. Integração com o Calibre na instalação e com o desktop.
+- RNF-09: Adicionar logs para facilitar a depuração em todo o código.
+- RNF-10: Adicionar comentários ao código para facilitar a identificação de partes do código.
+- RNF-11: Adicionar documentação do código para facilitar a compreensão de partes do código.
+- RNF-12: Adicionar documentação doxygen.
+- RNF-13: Adicionar documentação de instalação e uso.
+- RNF-14: Adicionar documentação de desenvolvimento.
+- RNF-15: Adicionar documentação de teste.
+- RNF-16: Adicionar documentação de segurança.
+- RNF-17: Adicionar documentação de suporte.
 
 ## 7. Arquitetura e Tecnologias
 - Qt (Widgets/QML a definir) para UI e renderização de documentos.

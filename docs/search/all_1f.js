@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7ereader_0',['~Reader',['../d4/db7/classgenai_1_1Reader.html#a6182f5b3dd3efc12dd47e654e16279a1',1,'genai::Reader']]]
+  ['x_20–_20estabilidade_20e_20releases_0',['1.x – Estabilidade e Releases',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md76',1,'']]]
 ];

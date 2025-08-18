@@ -23,7 +23,7 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
   - Dicionários multilíngues e configuráveis (RF-09).
   - Atalhos de teclado e usabilidade (RNF-02).
   - v0.1.2 (concluída em 2025-08-18): "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.
-  - v0.1.3 (planejada): Refinamento de UI — ícone do app (RF-29), título com nome do livro (RF-30) e splash screen (RF-31).
+  - v0.1.3 (concluída em 2025-08-18): Refinamento de UI — ícone do app (RF-29), título com nome do livro (RF-30) e splash screen (RF-31). Painel de Sumário (TOC) remodelado com barra de ferramentas (alternância "Páginas"/"Conteúdo") e botões de navegação; tamanho padrão do splitter ~10%/90% na primeira execução.
 
 - Fase 3 — IA avançada e Exportações:
   - RAG otimizado; sumários por capítulo; geração de flashcards (RF-12..RF-15).
@@ -128,11 +128,12 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
   - Definir persistência (preferência: SQLite) e esquema inicial.
   - Montar skeleton do projeto com CMake e estrutura acima.
   - Próximos releases: acompanhar `ROADMAP.md`.
-  - Preparar 0.1.3: implementar ícone do app (a partir de `docs/imgs/logo-do-projeto.png`), exibir nome do livro na barra de título (metadados ou nome do arquivo) e splash com logo/versão/autor.
+  - Próxima: iniciar 0.2.0 (Anotações e Dicionário) conforme `ROADMAP.md`.
 
 ### Notas de Progresso Recentes
 - v0.1.2: "Salvar como" (RF-28) implementado; refinamentos de leitura.
 - v0.1.1: Navegação por combobox cobrindo todas as páginas de PDFs e TOC simples para todas as páginas; restauração de sessão; melhorias de status e zoom.
+ - v0.1.3: TOC aprimorado com toolbar (modos "Páginas"/"Conteúdo") e navegação context-aware; splitter com tamanho inicial ~10% (TOC) / ~90% (visualizador).
 
 ## 12) Instruções de Build e Documentação
 

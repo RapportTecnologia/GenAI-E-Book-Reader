@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
   <div class="headertitle"><div class="title">GenAI E-Book Reader </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_GenAi-E-Book-Reader_2README"></a> <img src="https://visitor-badge.laobi.icu/badge?page_id=rapporttecnologia.genai-e-book-reader" alt="Visitantes do Projeto" class="inline"/> [<img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" alt="License: CC BY 4.0" style="pointer-events: none;" class="inline"/>](LICENSE) <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="C++" class="inline"/> <img src="https://img.shields.io/badge/Qt-Widgets%20%7C%20QML-brightgreen" alt="Qt" class="inline"/> <img src="https://img.shields.io/badge/CMake-%3E%3D3.16-informational" alt="CMake" class="inline"/> <a href="docs/index.html"><img src="https://img.shields.io/badge/docs-Doxygen-blueviolet" alt="Docs" class="inline"/></a> <img src="https://img.shields.io/badge/version-0.1.0-blue" alt="Version" class="inline"/> ![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)</p>
+<div class="textblock"><p><a class="anchor" id="md_GenAi-E-Book-Reader_2README"></a> <img src="https://visitor-badge.laobi.icu/badge?page_id=rapporttecnologia.genai-e-book-reader" alt="Visitantes do Projeto" class="inline"/> [<img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" alt="License: CC BY 4.0" style="pointer-events: none;" class="inline"/>](LICENSE) <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="C++" class="inline"/> <img src="https://img.shields.io/badge/Qt-Widgets%20%7C%20QML-brightgreen" alt="Qt" class="inline"/> <img src="https://img.shields.io/badge/CMake-%3E%3D3.16-informational" alt="CMake" class="inline"/> <a href="docs/index.html"><img src="https://img.shields.io/badge/docs-Doxygen-blueviolet" alt="Docs" class="inline"/></a> <img src="https://img.shields.io/badge/version-0.1.3-blue" alt="Version" class="inline"/> ![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)</p>
 <p>Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt, com recursos de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.</p>
 <ul>
 <li>Requisitos e escopo completos: consulte <a class="el" href="d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html">REQUISITOS.md</a>.</li>
@@ -115,7 +115,16 @@ Principais Recursos (MVP)</h1>
 <li>Restauração de sessão (reabre livros abertos anteriormente).</li>
 <li>Integração com Calibre para abrir livros da biblioteca.</li>
 </ul>
+<p>Nota (0.1.3): refinamento de UI — ícone do app a partir de <code>docs/imgs/logo-do-projeto.png</code>, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível.</p>
+<p>Nota (0.1.2): implementado "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.</p>
+<p>Nota (0.1.1): adicionados seleção de página via combobox e restauração do último arquivo/diretório aberto.</p>
+<p>Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento.</p>
 <h1><a class="anchor" id="autotoc_md2"></a>
+Próximas versões</h1>
+<ul>
+<li>Planejamento contínuo em <code><a class="el" href="d9/d59/ROADMAP_8md.html">ROADMAP.md</a></code>.</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md3"></a>
 Como rodar (Linux)</h1>
 <p>Pré-requisitos: CMake (&gt;=3.16), compilador C++17, Qt5/Qt6 (Widgets), Doxygen (opcional).</p>
 <div class="fragment"><div class="line">cmake -S . -B build</div>
@@ -128,7 +137,62 @@ Como rodar (Linux)</h1>
 <div class="line">doxygen docs/Doxyfile</div>
 <div class="line"># Abrir: docs/index.html</div>
 </div><!-- fragment --><p>Observação: se o Qt não estiver instalado, um placeholder de console será gerado. Para a UI, instale os headers de desenvolvimento do Qt (ex.: <code>qt6-base-dev</code> no Debian/Ubuntu) e recompile.</p>
-<h1><a class="anchor" id="autotoc_md3"></a>
+<h1><a class="anchor" id="autotoc_md4"></a>
+Dependências de Build por Plataforma</h1>
+<h2><a class="anchor" id="autotoc_md5"></a>
+Linux</h2>
+<ul>
+<li>Geral:<ul>
+<li>Compilador C++17 (g++/clang), CMake (&gt;= 3.16)</li>
+<li>Qt Widgets (Qt5 ou Qt6). Para PDF, o módulo Qt PDF é recomendado; Poppler-Qt é alternativa.</li>
+<li>Doxygen (opcional) para documentação</li>
+</ul>
+</li>
+<li>Debian/Ubuntu (24.04+ sugerido): <div class="fragment"><div class="line">sudo apt update</div>
+<div class="line">sudo apt install -y build-essential cmake ninja-build \</div>
+<div class="line">    qt6-base-dev qt6-tools-dev qt6-tools-dev-tools \</div>
+<div class="line">    qt6-pdf-dev doxygen graphviz</div>
+<div class="line"># Alternativa (Poppler em vez de Qt PDF):</div>
+<div class="line"># sudo apt install -y libpoppler-qt6-dev</div>
+</div><!-- fragment --></li>
+<li>Ubuntu 22.04 / Debian estáveis com Qt5: <div class="fragment"><div class="line">sudo apt install -y build-essential cmake ninja-build \</div>
+<div class="line">    qtbase5-dev qttools5-dev qttools5-dev-tools \</div>
+<div class="line">    qtpdf5-dev doxygen graphviz</div>
+<div class="line"># Alternativa (Poppler-Qt5):</div>
+<div class="line"># sudo apt install -y libpoppler-qt5-dev</div>
+</div><!-- fragment --></li>
+<li>Fedora <div class="fragment"><div class="line">sudo dnf install -y gcc-c++ cmake ninja-build \</div>
+<div class="line">    qt6-qtbase-devel qt6-qttools-devel qt6-qttools \</div>
+<div class="line">    qt6-qtpdf-devel doxygen graphviz</div>
+<div class="line"># Alternativa Poppler-Qt6: sudo dnf install -y poppler-qt6-devel</div>
+</div><!-- fragment --></li>
+<li>Arch/Manjaro <div class="fragment"><div class="line">sudo pacman -S --needed base-devel cmake ninja \</div>
+<div class="line">    qt6-base qt6-tools qt6-pdf doxygen graphviz</div>
+<div class="line"># Alternativa Poppler-Qt6: sudo pacman -S poppler-qt6</div>
+</div><!-- fragment --></li>
+</ul>
+<p>Notas:</p><ul>
+<li>Se sua distro não tiver pacote de Qt PDF, use Poppler-Qt correspondente à sua versão do Qt.</li>
+<li>Caso o include de <code>QPdfBookmarkModel</code> não esteja disponível, o TOC de PDFs cairá automaticamente para a listagem de páginas.</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md6"></a>
+Windows</h2>
+<ul>
+<li>Opção A: Visual Studio + Qt (recomendado) 1) Instale Visual Studio (Community) ou "Build Tools for Visual Studio" com MSVC C++. 2) Instale Qt via Qt Online Installer (mesmo compilador/versão do MSVC). Inclua Qt Widgets e Qt PDF. 3) Instale CMake e Ninja (opcional, melhora builds):<ul>
+<li>CMake: <a href="https://cmake.org/download/">https://cmake.org/download/</a></li>
+<li>Ninja: <a href="https://github.com/ninja-build/ninja/releases">https://github.com/ninja-build/ninja/releases</a> 4) Configure <code>CMAKE_PREFIX_PATH</code> apontando para o <code>.../Qt/&lt;versão&gt;/&lt;kit&gt;/lib/cmake</code> (Qt5 ou Qt6):</li>
+<li>Ex.: <code>set CMAKE_PREFIX_PATH=C:\Qt\6.7.0\msvc2022_64\lib\cmake</code> 5) Gere e compile: <div class="fragment"><div class="line">cmake -S . -B build -G &quot;Ninja&quot;</div>
+<div class="line">cmake --build build -j</div>
+</div><!-- fragment --></li>
+</ul>
+</li>
+<li>Opção B: MSYS2/MinGW 1) Instale MSYS2 e atualize. 2) Instale toolchain e Qt: <div class="fragment"><div class="line">pacman -S --needed mingw-w64-ucrt-x86_64-toolchain \</div>
+<div class="line">    mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja \</div>
+<div class="line">    mingw-w64-ucrt-x86_64-qt6-base mingw-w64-ucrt-x86_64-qt6-tools \</div>
+<div class="line">    mingw-w64-ucrt-x86_64-qt6-pdf doxygen graphviz</div>
+</div><!-- fragment --> 3) Abra o shell UCRT64/MinGW correspondente e compile com CMake.</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md7"></a>
 Contribuindo</h1>
 <p>Contribuições são muito bem-vindas! Você pode ajudar de várias formas:</p><ul>
 <li>Reportando bugs e abrindo issues com sugestões de melhorias.</li>
@@ -141,10 +205,10 @@ Contribuindo</h1>
 <li>Commits pequenos e objetivos com mensagens claras.</li>
 <li>Abra um Pull Request descrevendo o problema/solução e referenciando RF/RNF/CA afetados.</li>
 </ol>
-<h1><a class="anchor" id="autotoc_md4"></a>
+<h1><a class="anchor" id="autotoc_md8"></a>
 Código de Conduta</h1>
 <p>Seja respeitoso e colaborativo. Não serão tolerados comportamentos abusivos. Utilize linguagem cordial e empática nas interações.</p>
-<h1><a class="anchor" id="autotoc_md5"></a>
+<h1><a class="anchor" id="autotoc_md9"></a>
 Licença</h1>
 <p>Este projeto é licenciado sob a licença Creative Commons Attribution 4.0 International (CC BY 4.0). Consulte o arquivo [<code>LICENSE</code>](LICENSE).</p>
 <p>Você é livre para:</p><ul>
@@ -154,7 +218,7 @@ Licença</h1>
 <p>Desde que atribua o crédito apropriado e indique se mudanças foram feitas. Veja os termos completos em:</p><ul>
 <li><a href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></li>
 </ul>
-<h1><a class="anchor" id="autotoc_md6"></a>
+<h1><a class="anchor" id="autotoc_md10"></a>
 Agradecimentos</h1>
 <ul>
 <li>Comunidade Qt e bibliotecas de leitura de documentos (Poppler/Qt PDF, etc.).</li>
