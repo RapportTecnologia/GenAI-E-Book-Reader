@@ -1,11 +1,12 @@
 #pragma once
 
-#ifdef USE_QT
-#ifdef HAVE_QT_PDF
 #include <QWidget>
 #include <QPdfDocument>
 #include <QPdfView>
 #include <QPdfPageNavigator>
+#include <QRubberBand>
+class QLabel;
+class QGraphicsOpacityEffect;
 
 class PdfViewerWidget : public QWidget {
     Q_OBJECT
@@ -27,10 +28,60 @@ public:
 
     QPdfDocument* document() const { return doc_; }
 
+    // Convenience: fit content to widget width for natural reading
+    void fitToWidth();
+
+    enum class SelectionMode { Auto, Text, Rect, None };
+    void setSelectionMode(SelectionMode mode);
+    SelectionMode selectionMode() const { return selMode_; }
+    bool hasSelection() const;
+    void clearSelection();
+    void copySelection();
+    void saveSelectionAsTxt();
+    void saveSelectionAsMarkdown();
+
+    // OCR: when text selection API is not available or selection spans multiple pages,
+    // allow extracting text via Tesseract if present in PATH.
+    QString ocrSelectionText(bool* ok = nullptr);
+
+    // Preferences
+    void setWheelZoomStep(double step);
+    // Scroll helpers
+    int verticalScrollValue() const;
+    void setVerticalScrollValue(int v);
+
 private:
+    void keyPressEvent(QKeyEvent* event) override;
+    bool eventFilter(QObject* watched, QEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void setZoomAnimated(double target);
+    void showCopyToast();
+    QString extractTextFromSelectionNative();
+
     QPdfDocument* doc_;
     QPdfView* view_;
     QPdfPageNavigator* navigation_;
+
+    // Selection state
+    SelectionMode selMode_ { SelectionMode::Auto };
+    bool selecting_ { false };
+    QPoint selStart_;
+    QRect selRect_;
+    QRubberBand* rubber_ { nullptr };
+    QString selectedText_;
+
+    // Zoom wheel preferences and animation
+    double wheelZoomStep_ { 1.1 };
+    class QVariantAnimation* zoomAnim_ { nullptr };
+
+    // Toast UI
+    QLabel* toastLabel_ { nullptr };
+    QGraphicsOpacityEffect* toastOpacity_ { nullptr };
+    class QTimer* toastHideTimer_ { nullptr };
+
+signals:
+    void zoomFactorChanged(double factor);
+    void scrollChanged(int value);
 };
-#endif // HAVE_QT_PDF
-#endif // USE_QT

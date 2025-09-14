@@ -1,15 +1,13 @@
-#ifdef USE_QT
 #include "ui/MainWindow.h"
 #include "ui/ViewerWidget.h"
-#ifdef HAVE_QT_PDF
 #include "ui/PdfViewerWidget.h"
-#endif
 
 #include <QApplication>
 #include <QCoreApplication>
 #include <QAction>
 #include <QToolBar>
 #include <QMenuBar>
+#include <QMenu>
 #include <QStatusBar>
 #include <QTreeWidget>
 #include <QSplitter>
@@ -33,7 +31,7 @@
 #include <QMap>
 #include <QSizePolicy>
 #include <QStyle>
-#ifdef HAVE_QT_NETWORK
+#include <QInputDialog>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -41,7 +39,6 @@
 #include <QUrlQuery>
 #include <QJsonDocument>
 #include <QJsonObject>
-#endif
 #include <algorithm>
 #include <functional>
 #include <QModelIndex>
@@ -49,27 +46,111 @@
 
 #include "app/App.h"
 
-#ifdef HAVE_QT_PDF
-#if __has_include(<QPdfBookmarkModel>)
-#include <QPdfBookmarkModel>
-#define HAS_QPDF_BOOKMARK_MODEL 1
-#endif
 #include <QPdfDocument>
-#if __has_include(<QPdfLinkDestination>)
-#include <QPdfLinkDestination>
-#define HAS_QPDF_LINK_DESTINATION 1
-#endif
-#endif
+#include <QPdfBookmarkModel>
+
+namespace {
+// Load recent entries as a list of QVariantMap with keys:
+// path, title, author, publisher, isbn, summary, keywords
+QVariantList loadRecentEntries(QSettings& settings) {
+    QVariantList entries = settings.value("recent/entries").toList();
+    if (!entries.isEmpty()) return entries;
+    // Backwards compatibility: migrate from recent/files (QStringList)
+    const QStringList files = settings.value("recent/files").toStringList();
+    if (files.isEmpty()) return entries;
+    for (const QString& p : files) {
+        QVariantMap m; m["path"] = p; m["title"] = QFileInfo(p).completeBaseName();
+        m["author"] = QString(); m["publisher"] = QString(); m["isbn"] = QString();
+        m["summary"] = QString(); m["keywords"] = QString();
+        entries.push_back(m);
+    }
+    settings.setValue("recent/entries", entries);
+    return entries;
+}
+
+void saveRecentEntries(QSettings& settings, const QVariantList& entries) {
+    settings.setValue("recent/entries", entries);
+}
+
+QVariantMap extractPdfMeta(const QString& path) {
+    QVariantMap m; m["path"] = path;
+    m["title"] = QFileInfo(path).completeBaseName();
+    m["author"] = QString();
+    m["publisher"] = QString(); // Not available via QPdfDocument; left empty
+    m["isbn"] = QString();       // Not available via QPdfDocument; left empty
+    m["summary"] = QString();
+    m["keywords"] = QString();
+    QPdfDocument doc;
+    const auto status = doc.load(path);
+    if (status == static_cast<QPdfDocument::Error>(0)) {
+        const auto title = doc.metaData(QPdfDocument::MetaDataField::Title).toString();
+        const auto author = doc.metaData(QPdfDocument::MetaDataField::Author).toString();
+        const auto subject = doc.metaData(QPdfDocument::MetaDataField::Subject).toString();
+        const auto keywords = doc.metaData(QPdfDocument::MetaDataField::Keywords).toString();
+        if (!title.trimmed().isEmpty()) m["title"] = title.trimmed();
+        if (!author.trimmed().isEmpty()) m["author"] = author.trimmed();
+        if (!subject.trimmed().isEmpty()) m["summary"] = subject.trimmed();
+        if (!keywords.trimmed().isEmpty()) m["keywords"] = keywords.trimmed();
+    }
+    return m;
+}
+
+bool entryMatches(const QVariantMap& e, const QString& needle) {
+    const QString n = needle.trimmed(); if (n.isEmpty()) return true;
+    const auto contains = [&](const QString& v){ return v.contains(n, Qt::CaseInsensitive); };
+    return contains(e.value("path").toString()) ||
+           contains(e.value("title").toString()) ||
+           contains(e.value("author").toString()) ||
+           contains(e.value("publisher").toString()) ||
+           contains(e.value("isbn").toString()) ||
+           contains(e.value("summary").toString()) ||
+           contains(e.value("keywords").toString());
+}
+}
 
 MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent), settings_("GenAI", "EBookReader") {
+    : QMainWindow(parent), settings_() {
     buildUi();
     createActions();
     loadSettings();
     updateStatus();
-#ifdef HAVE_QT_NETWORK
     netManager_ = new QNetworkAccessManager(this);
-#endif
+}
+
+void MainWindow::enableAutoSelection() {
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        pv->setSelectionMode(PdfViewerWidget::SelectionMode::Auto);
+    }
+}
+
+void MainWindow::enableTextSelection() {
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        pv->setSelectionMode(PdfViewerWidget::SelectionMode::Text);
+    }
+}
+
+void MainWindow::enableRectSelection() {
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        pv->setSelectionMode(PdfViewerWidget::SelectionMode::Rect);
+    }
+}
+
+void MainWindow::copySelection() {
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        pv->copySelection();
+    }
+}
+
+void MainWindow::saveSelectionTxt() {
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        pv->saveSelectionAsTxt();
+    }
+}
+
+void MainWindow::saveSelectionMd() {
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        pv->saveSelectionAsMarkdown();
+    }
 }
 
 void MainWindow::applyDefaultSplitterSizesIfNeeded() {
@@ -93,9 +174,7 @@ void MainWindow::setTocModePages() {
     toc_->clear();
     unsigned int pages = 0;
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { pages = vw->totalPages(); }
-#ifdef HAVE_QT_PDF
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pages = pv->totalPages(); }
-#endif
     if (pages == 0) return;
     for (unsigned int i = 1; i <= pages; ++i) {
         auto* item = new QTreeWidgetItem(QStringList{tr("Página %1").arg(i)});
@@ -110,10 +189,8 @@ void MainWindow::setTocModeChapters() {
 
     unsigned int pages = 0;
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { pages = vw->totalPages(); }
-#ifdef HAVE_QT_PDF
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pages = pv->totalPages(); }
 
-#ifdef HAS_QPDF_BOOKMARK_MODEL
     // Try to build TOC from real PDF bookmarks (titles) when available
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
         if (QPdfDocument* doc = pv->document()) {
@@ -122,22 +199,7 @@ void MainWindow::setTocModeChapters() {
                 std::function<QTreeWidgetItem*(const QModelIndex&)> buildNode = [&](const QModelIndex& idx) -> QTreeWidgetItem* {
                     // Title
                     const QString title = bm.data(idx, Qt::DisplayRole).toString();
-#ifdef HAS_QPDF_LINK_DESTINATION
-                    // Destination -> page (0-based in Qt PDF); store 1-based for our navigation
-                    const QVariant destVar = bm.data(idx, QPdfBookmarkModel::DestinationRole);
-                    unsigned int page1 = 0u;
-                    if (destVar.isValid()) {
-                        const QPdfLinkDestination dest = destVar.value<QPdfLinkDestination>();
-                        if (dest.isValid()) {
-                            const int p0 = dest.page();
-                            if (p0 >= 0) page1 = static_cast<unsigned int>(p0 + 1);
-                        }
-                    }
-#endif
                     auto* item = new QTreeWidgetItem(QStringList{ title.isEmpty() ? tr("(sem título)") : title });
-#ifdef HAS_QPDF_LINK_DESTINATION
-                    if (page1 > 0) item->setData(0, Qt::UserRole, page1);
-#endif
                     const int rows = bm.rowCount(idx);
                     for (int r = 0; r < rows; ++r) {
                         const QModelIndex childIdx = bm.index(r, 0, idx);
@@ -145,13 +207,6 @@ void MainWindow::setTocModeChapters() {
                             if (auto* child = buildNode(childIdx)) item->addChild(child);
                         }
                     }
-                    // Fallback: if this node has no direct destination, use first child's destination
-#ifdef HAS_QPDF_LINK_DESTINATION
-                    if (!item->data(0, Qt::UserRole).isValid() && item->childCount() > 0) {
-                        const QVariant firstChildPage = item->child(0)->data(0, Qt::UserRole);
-                        if (firstChildPage.isValid()) item->setData(0, Qt::UserRole, firstChildPage);
-                    }
-#endif
                     return item;
                 };
 
@@ -162,36 +217,25 @@ void MainWindow::setTocModeChapters() {
                     if (auto* node = buildNode(topIdx)) toc_->addTopLevelItem(node);
                 }
 
-                // If at least one item has a valid page, keep this TOC; otherwise fallback
-                bool hasNavigable = false;
-                std::function<void(QTreeWidgetItem*)> scan = [&](QTreeWidgetItem* it){
-                    if (!it || hasNavigable) return;
-                    if (it->data(0, Qt::UserRole).isValid()) { hasNavigable = true; return; }
-                    for (int i = 0; i < it->childCount() && !hasNavigable; ++i) scan(it->child(i));
-                };
-                for (int i = 0; i < toc_->topLevelItemCount() && !hasNavigable; ++i) scan(toc_->topLevelItem(i));
-                if (hasNavigable && toc_->topLevelItemCount() > 0) { return; }
-                // else: clear and continue to fallback numeric grouping
-                toc_->clear();
+                // Provide better UX: expand first levels so subcapítulos are visible
+                toc_->expandToDepth(1);
+
+                // Note: older Qt may not expose destinations via roles; we keep non-clickable TOC here.
+                // Navigation will fallback below when no bookmarks provide page targets.
             }
         }
     }
-#endif // HAS_QPDF_BOOKMARK_MODEL
-#endif // HAVE_QT_PDF
 
     // Fallback: placeholder grouping when no bookmarks are available
     if (pages == 0) return;
     const unsigned int group = 10;
-    unsigned int ch = 1;
-    for (unsigned int start = 1; start <= pages; start += group, ++ch) {
-        auto* chap = new QTreeWidgetItem(QStringList{tr("Capítulo %1").arg(ch)});
-        chap->setData(0, Qt::UserRole, start);
-        for (unsigned int p = start; p < start + group && p <= pages; ++p) {
-            auto* child = new QTreeWidgetItem(QStringList{tr("Página %1").arg(p)});
-            child->setData(0, Qt::UserRole, p);
-            chap->addChild(child);
-        }
-        toc_->addTopLevelItem(chap);
+    for (unsigned int start = 1; start <= pages; start += group) {
+        const unsigned int end = std::min(start + group - 1, pages);
+        auto* rangeItem = new QTreeWidgetItem(QStringList{tr("Páginas %1–%2").arg(start).arg(end)});
+        // Clicking the range jumps to its first page
+        rangeItem->setData(0, Qt::UserRole, start);
+        rangeItem->setToolTip(0, tr("Da página %1 até %2").arg(start).arg(end));
+        toc_->addTopLevelItem(rangeItem);
     }
 }
 
@@ -229,8 +273,6 @@ void MainWindow::onTocNext() {
     toc_->setCurrentItem(nxt);
     onTocItemActivated(nxt, 0);
 }
-
-#endif // USE_QT
 
 bool MainWindow::validateReaderInputs(const QString& name, const QString& email, QString* errorMsg) const {
     QStringList errors;
@@ -271,10 +313,6 @@ QMap<QString, QString> MainWindow::loadEnvConfig() const {
 }
 
 void MainWindow::submitReaderDataToPhpList(const QString& name, const QString& email, const QString& whatsapp) {
-#ifndef HAVE_QT_NETWORK
-    QMessageBox::information(this, tr("Indisponível"), tr("Suporte de rede não está disponível nesta compilação."));
-    return;
-#else
     const auto cfg = loadEnvConfig();
     const QString baseUrl = cfg.value("PHPLIST_URL");
     const QString user = cfg.value("PHPLIST_USER");
@@ -321,7 +359,6 @@ void MainWindow::submitReaderDataToPhpList(const QString& name, const QString& e
         Q_UNUSED(body);
         QMessageBox::information(this, tr("Sucesso"), tr("Dados enviados com sucesso para a lista."));
     });
-#endif
 }
 
 void MainWindow::editReaderData() {
@@ -461,6 +498,21 @@ void MainWindow::createActions() {
     actZoomReset_ = new QAction(tr("Zoom 100%"), this);
     actToggleTheme_ = new QAction(tr("Tema claro/escuro"), this);
 
+    // Edit actions (seleção)
+    actSelText_ = new QAction(tr("Selecionar texto"), this);
+    actSelRect_ = new QAction(tr("Selecionar retângulo (imagem)"), this);
+    actSelCopy_ = new QAction(tr("Copiar seleção"), this);
+    actSelSaveTxt_ = new QAction(tr("Salvar seleção como TXT"), this);
+    actSelSaveMd_ = new QAction(tr("Salvar seleção como Markdown"), this);
+    actSelCopy_->setShortcut(QKeySequence::Copy); // Ctrl+C
+    actSelCopy_->setShortcutContext(Qt::ApplicationShortcut);
+
+    connect(actSelText_, &QAction::triggered, this, &MainWindow::enableTextSelection);
+    connect(actSelRect_, &QAction::triggered, this, &MainWindow::enableRectSelection);
+    connect(actSelCopy_, &QAction::triggered, this, &MainWindow::copySelection);
+    connect(actSelSaveTxt_, &QAction::triggered, this, &MainWindow::saveSelectionTxt);
+    connect(actSelSaveMd_, &QAction::triggered, this, &MainWindow::saveSelectionMd);
+
     // TOC toolbar actions and wiring
     actTocModePages_ = new QAction(tr("Páginas"), this);
     actTocModeChapters_ = new QAction(tr("Conteúdo"), this);
@@ -515,6 +567,19 @@ void MainWindow::createActions() {
     menuDocumento->addAction(actSaveAs_);
     menuDocumento->addSeparator();
     menuDocumento->addAction(actClose_);
+
+    // Recent files submenu and actions
+    menuRecent_ = menuDocumento->addMenu(tr("Recentes"));
+    for (int i = 0; i < MaxRecentMenuItems; ++i) {
+        recentActs_[i] = new QAction(this);
+        recentActs_[i]->setVisible(false);
+        connect(recentActs_[i], &QAction::triggered, this, &MainWindow::openRecentFile);
+        menuRecent_->addAction(recentActs_[i]);
+    }
+    menuRecent_->addSeparator();
+    actRecentDialog_ = new QAction(tr("Mostrar todos..."), this);
+    connect(actRecentDialog_, &QAction::triggered, this, &MainWindow::showRecentDialog);
+    menuRecent_->addAction(actRecentDialog_);
     auto* menuLeitor = menuArquivo->addMenu(tr("Leitor"));
     menuLeitor->addAction(actReaderData_);
     menuArquivo->addSeparator();
@@ -523,6 +588,19 @@ void MainWindow::createActions() {
     // Menu Configurações
     auto* menuConfig = menuBar()->addMenu(tr("Configurações"));
     menuConfig->addAction(actToggleTheme_);
+    // Preferences: wheel zoom step
+    actWheelZoomPref_ = new QAction(tr("Granularidade do zoom (Ctrl+roda)..."), this);
+    connect(actWheelZoomPref_, &QAction::triggered, this, &MainWindow::setWheelZoomPreference);
+    menuConfig->addAction(actWheelZoomPref_);
+
+    // Menu Editar
+    auto* menuEdit = menuBar()->addMenu(tr("Editar"));
+    menuEdit->addAction(actSelText_);
+    menuEdit->addAction(actSelRect_);
+    menuEdit->addSeparator();
+    menuEdit->addAction(actSelCopy_);
+    menuEdit->addAction(actSelSaveTxt_);
+    menuEdit->addAction(actSelSaveMd_);
 
     auto* tb = addToolBar(tr("Leitura"));
     tb->setObjectName("toolbar_reading");
@@ -541,9 +619,7 @@ void MainWindow::createActions() {
     connect(pageCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx){
         const unsigned int p = static_cast<unsigned int>(idx + 1);
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) vw->setCurrentPage(p);
-#ifdef HAVE_QT_PDF
         if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) pv->setCurrentPage(p);
-#endif
         updateStatus();
     });
     tb->addSeparator();
@@ -570,6 +646,9 @@ void MainWindow::createActions() {
 
     // Initial state
     actClose_->setEnabled(false);
+
+    // Ensure recent menu reflects stored list
+    rebuildRecentMenu();
 }
 
 void MainWindow::loadSettings() {
@@ -586,6 +665,27 @@ void MainWindow::loadSettings() {
     const QString lastFile = settings_.value("session/lastFile").toString();
     if (!lastFile.isEmpty() && QFileInfo::exists(lastFile)) {
         openPath(lastFile);
+    }
+}
+
+void MainWindow::setWheelZoomPreference() {
+    const double current = settings_.value("view/wheelZoomStep", 1.1).toDouble();
+    bool ok = false;
+    const double val = QInputDialog::getDouble(
+        this,
+        tr("Granularidade do zoom"),
+        tr("Fator por passo (1.01 a 1.50):"),
+        current,
+        1.01,
+        1.50,
+        2,
+        &ok
+    );
+    if (!ok) return;
+    settings_.setValue("view/wheelZoomStep", val);
+    // apply immediately if viewer is PdfViewerWidget
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        pv->setWheelZoomStep(val);
     }
 }
 
@@ -659,6 +759,8 @@ bool MainWindow::openPath(const QString& file) {
     if (fi.suffix().compare("pdf", Qt::CaseInsensitive) == 0) {
         // Replace current viewer with a PdfViewerWidget
         auto* newViewer = new PdfViewerWidget(this);
+        // Apply wheel zoom step preference
+        newViewer->setWheelZoomStep(settings_.value("view/wheelZoomStep", 1.1).toDouble());
         QString err;
         if (!newViewer->openFile(file, &err)) {
             delete newViewer;
@@ -674,13 +776,23 @@ bool MainWindow::openPath(const QString& file) {
 
         // Build TOC according to current mode
         if (tocPagesMode_) setTocModePages(); else setTocModeChapters();
-        // Fit to width initially (RF-13)
-        // QPdfView supports FitToWidth via ZoomMode; expose through public API if needed.
-        newViewer->setZoomFactor(1.0); // ensure valid
+        // Apply persisted zoom: per-file if available, else global default; fall back to fit-to-width
+        const QString absPath = fi.absoluteFilePath();
+        double fileZoom = settings_.value(QString("files/%1/zoom").arg(absPath),
+                             settings_.value("view/zoom", 0.0)).toDouble();
+        if (fileZoom > 0.0) {
+            newViewer->setZoomFactor(fileZoom);
+        } else {
+            // Fit to width initially for natural reading
+            newViewer->fitToWidth();
+        }
         // Save last dir/file
         settings_.setValue("session/lastDir", fi.absolutePath());
         settings_.setValue("session/lastFile", fi.absoluteFilePath());
         currentFilePath_ = fi.absoluteFilePath();
+
+        // Track in recent files
+        addRecentFile(currentFilePath_);
 
         // Update window title with metadata Title when available (Qt6+), else filename
         QString titleText = fi.completeBaseName();
@@ -706,28 +818,144 @@ bool MainWindow::openPath(const QString& file) {
     }
 #endif
 
-    // Fallback to dummy reader and placeholder ViewerWidget
-    auto res = reader_.open(file.toStdString());
-    if (!res.ok) {
-        QMessageBox::warning(this, tr("Erro"), QString::fromStdString(res.message));
-        return false;
+    // Sem suporte a outros formatos nesta compilação obrigatória de Qt PDF
+    QMessageBox::warning(this, tr("Formato não suportado"), tr("Apenas arquivos PDF são suportados nesta versão."));
+    return false;
+}
+
+void MainWindow::openRecentFile() {
+    QString path;
+    if (auto act = qobject_cast<QAction*>(sender())) {
+        path = act->data().toString();
     }
-    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
-        vw->setTotalPages(res.totalPages);
-        vw->setCurrentPage(1);
+    if (path.isEmpty()) {
+        showRecentDialog();
+        return;
     }
-    // Build TOC according to current mode
-    if (tocPagesMode_) setTocModePages(); else setTocModeChapters();
-    settings_.setValue("session/lastDir", fi.absolutePath());
-    settings_.setValue("session/lastFile", fi.absoluteFilePath());
-    currentFilePath_ = fi.absoluteFilePath();
-    setWindowTitle(QString("%1 v%2 — %3")
-                       .arg(genai::AppInfo::Name)
-                       .arg(genai::AppInfo::Version)
-                       .arg(fi.completeBaseName()));
-    updateStatus();
-    actClose_->setEnabled(true);
-    return true;
+    if (!QFileInfo::exists(path)) {
+        QMessageBox::warning(this, tr("Arquivo ausente"), tr("O arquivo não existe mais: %1").arg(path));
+        return;
+    }
+    openPath(path);
+}
+
+void MainWindow::showRecentDialog() {
+    QVariantList entries = loadRecentEntries(settings_);
+    if (entries.isEmpty()) {
+        QMessageBox::information(this, tr("Recentes"), tr("Nenhum arquivo recente."));
+        return;
+    }
+
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Abrir recente"));
+    auto* lay = new QVBoxLayout(&dlg);
+
+    auto* searchEdit = new QLineEdit(&dlg);
+    searchEdit->setPlaceholderText(tr("Pesquisar por nome, título, autor, editora, ISBN, palavras-chave..."));
+    lay->addWidget(searchEdit);
+
+    auto* tree = new QTreeWidget(&dlg);
+    tree->setColumnCount(2);
+    QStringList headers; headers << tr("Título") << tr("Arquivo");
+    tree->setHeaderLabels(headers);
+    tree->setRootIsDecorated(false);
+    tree->setAlternatingRowColors(true);
+    lay->addWidget(tree, 1);
+
+    auto populate = [&](const QString& filter){
+        tree->clear();
+        for (const QVariant& v : entries) {
+            const QVariantMap e = v.toMap();
+            if (!entryMatches(e, filter)) continue;
+            auto* it = new QTreeWidgetItem(tree);
+            const QString title = e.value("title").toString();
+            const QString path = e.value("path").toString();
+            it->setText(0, title.isEmpty() ? QFileInfo(path).completeBaseName() : title);
+            it->setText(1, QFileInfo(path).fileName());
+            it->setToolTip(0, path);
+            it->setToolTip(1, path);
+            it->setData(0, Qt::UserRole, path);
+        }
+        for (int c = 0; c < tree->columnCount(); ++c) tree->resizeColumnToContents(c);
+    };
+    populate(QString());
+
+    QObject::connect(searchEdit, &QLineEdit::textChanged, &dlg, [populate](const QString& t){ populate(t); });
+    QObject::connect(tree, &QTreeWidget::itemDoubleClicked, &dlg, [&dlg](QTreeWidgetItem* it, int){
+        dlg.setProperty("selectedPath", it->data(0, Qt::UserRole));
+        dlg.accept();
+    });
+
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Open | QDialogButtonBox::Cancel, &dlg);
+    lay->addWidget(buttons);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dlg, [&](){
+        auto* it = tree->currentItem();
+        if (!it) { dlg.reject(); return; }
+        dlg.setProperty("selectedPath", it->data(0, Qt::UserRole));
+        dlg.accept();
+    });
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+    if (dlg.exec() == QDialog::Accepted) {
+        const QString choice = dlg.property("selectedPath").toString();
+        if (!choice.isEmpty()) openPath(choice);
+    }
+}
+
+void MainWindow::configureRecentDialogCount() {
+    const int current = settings_.value("recent/maxCount", MaxRecentMenuItems).toInt();
+    bool ok = false;
+    const int val = QInputDialog::getInt(
+        this,
+        tr("Configurar recentes"),
+        tr("Quantidade máxima de itens:"),
+        current,
+        1,
+        20,
+        1,
+        &ok
+    );
+    if (!ok) return;
+    settings_.setValue("recent/maxCount", val);
+    rebuildRecentMenu();
+}
+
+void MainWindow::addRecentFile(const QString& absPath) {
+    if (absPath.isEmpty()) return;
+    QVariantList entries = loadRecentEntries(settings_);
+    // Remove existing entry for this path
+    for (int i = entries.size() - 1; i >= 0; --i) {
+        if (entries[i].toMap().value("path").toString() == absPath) entries.removeAt(i);
+    }
+    // Prepend fresh metadata
+    QVariantMap entry = extractPdfMeta(absPath);
+    entries.prepend(entry);
+    const int maxCount = settings_.value("recent/maxCount", MaxRecentMenuItems).toInt();
+    while (entries.size() > maxCount) entries.removeLast();
+    saveRecentEntries(settings_, entries);
+    rebuildRecentMenu();
+}
+
+void MainWindow::rebuildRecentMenu() {
+    if (!menuRecent_) return;
+    const QVariantList entries = loadRecentEntries(settings_);
+    int i = 0;
+    for (; i < MaxRecentMenuItems; ++i) {
+        if (!recentActs_[i]) continue;
+        if (i < entries.size()) {
+            const QVariantMap e = entries.at(i).toMap();
+            const QString path = e.value("path").toString();
+            const QString title = e.value("title").toString();
+            const QString label = title.isEmpty() ? QFileInfo(path).fileName() : QString("%1 — %2").arg(title, QFileInfo(path).fileName());
+            recentActs_[i]->setText(label);
+            recentActs_[i]->setData(path);
+            recentActs_[i]->setToolTip(path);
+            recentActs_[i]->setVisible(true);
+        } else {
+            recentActs_[i]->setVisible(false);
+            recentActs_[i]->setData(QVariant());
+        }
+    }
 }
 
 void MainWindow::closeDocument() {
@@ -756,12 +984,10 @@ void MainWindow::nextPage() {
         cur = vw->currentPage(); tot = vw->totalPages();
         if (cur < tot) vw->setCurrentPage(cur + 1);
     }
-#ifdef HAVE_QT_PDF
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
         cur = pv->currentPage(); tot = pv->totalPages();
         if (cur < tot) pv->setCurrentPage(cur + 1);
     }
-#endif
     updateStatus();
 }
 
@@ -769,11 +995,9 @@ void MainWindow::prevPage() {
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
         if (vw->currentPage() > 1) vw->setCurrentPage(vw->currentPage() - 1);
     }
-#ifdef HAVE_QT_PDF
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
         if (pv->currentPage() > 1) pv->setCurrentPage(pv->currentPage() - 1);
     }
-#endif
     updateStatus();
 }
 
@@ -805,11 +1029,9 @@ void MainWindow::zoomReset() {
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
         vw->setZoomFactor(1.0);
     }
-#ifdef HAVE_QT_PDF
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
         pv->setZoomFactor(1.0);
     }
-#endif
     updateStatus();
 }
 
@@ -825,11 +1047,9 @@ void MainWindow::onTocItemActivated(QTreeWidgetItem* item, int) {
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
             vw->setCurrentPage(page);
         }
-#ifdef HAVE_QT_PDF
         if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
             pv->setCurrentPage(page);
         }
-#endif
         updateStatus();
     }
 }
@@ -838,9 +1058,7 @@ void MainWindow::updatePageCombo() {
     if (!pageCombo_) return;
     unsigned int cur = 1, tot = 0;
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { cur = vw->currentPage(); tot = vw->totalPages(); }
-#ifdef HAVE_QT_PDF
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { cur = pv->currentPage(); tot = pv->totalPages(); }
-#endif
     const unsigned int total = tot == 0 ? 100u : tot;
     // Update items only if count mismatches to avoid flicker
     if (pageCombo_->count() != int(total)) {

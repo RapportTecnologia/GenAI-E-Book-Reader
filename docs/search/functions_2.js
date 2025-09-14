@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['main_0',['main',['../df/d0a/main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main.cpp']]]
+  ['fittowidth_0',['fitToWidth',['../dc/ddc/classPdfViewerWidget.html#a6616311485fd438b1432892df3d89e50',1,'PdfViewerWidget']]]
 ];

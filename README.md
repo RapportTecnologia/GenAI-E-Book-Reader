@@ -1,23 +1,24 @@
-# GenAI E-Book Reader
-
 ![Visitantes do Projeto](https://visitor-badge.laobi.icu/badge?page_id=rapporttecnologia.genai-e-book-reader)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-blue)
-![Qt](https://img.shields.io/badge/Qt-Widgets%20%7C%20QML-brightgreen)
+![Qt](https://img.shields.io/badge/Qt6-Widgets-brightgreen)
 ![CMake](https://img.shields.io/badge/CMake-%3E%3D3.16-informational)
 [![Docs](https://img.shields.io/badge/docs-Doxygen-blueviolet)](docs/index.html)
-![Version](https://img.shields.io/badge/version-0.1.3-blue)
+![Version](https://img.shields.io/badge/version-0.1.4-blue)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contribuindo)
 
-Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt, com recursos de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.
 
-- Requisitos e escopo completos: consulte [REQUISITOS.md](REQUISITOS.md).
+# GenAI E-Book Reader
+
+Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt6, com recursos planejados de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.
+
+- Requisitos e escopo completos: consulte [REQUIREMENTS.md](REQUIREMENTS.md).
 - Plano do projeto (fases, sprints e critérios): consulte [PLANO-DE-DESENVOLVIMENTO.md](PLANO-DE-DESENVOLVIMENTO.md).
 - Histórico de mudanças: consulte [CHANGELOG.md](CHANGELOG.md).
 - Planejamento de releases: consulte [ROADMAP.md](ROADMAP.md).
 
 ## Principais Recursos (MVP)
-- Leitura de PDF/EPUB com navegação básica e tema claro/escuro.
+- Leitura de PDF com navegação básica e tema claro/escuro. (Suporte a EPUB/MOBI está no roadmap.)
 - Marcações e anotações com painel lateral e exportação JSON.
 - Dicionário on-click (mínimo 1 idioma).
 - TTS para trechos selecionados, com controles básicos.
@@ -36,7 +37,7 @@ Nota (0.1.2): implementado "Salvar como" (RF-28) e pequenos aprimoramentos de le
 
 Nota (0.1.1): adicionados seleção de página via combobox e restauração do último arquivo/diretório aberto.
 
-Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento. O painel de TOC inclui uma barra de ferramentas para alternar entre "Páginas" e "Conteúdo" e botões de navegação; por padrão o painel ocupa ~10% da largura da janela na primeira execução.
+Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento. O painel de TOC inclui uma barra de ferramentas para alternar entre "Páginas" e "Conteúdo" e botões de navegação; por padrão o painel ocupa ~10% da largura da janela na primeira execução. Atualmente, o binário suporta apenas arquivos PDF.
 
 ## Sumário (TOC) e Navegação
 - Alternar modo do TOC:
@@ -44,11 +45,30 @@ Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulo
   - "Conteúdo": capítulos (grupos de páginas); os botões percorrem o item anterior/próximo (capítulo ou página filho). 
 - Atalhos do painel: arraste o divisor para redimensionar; o tamanho fica salvo para as próximas sessões.
 
+## Nota (0.1.4)
+
+- Preferência de granularidade do zoom (Ctrl+roda) configurável em Configurações.
+- Modos de seleção no PDF: texto e retângulo (imagem); cópia com toast e exportação de seleção para TXT/Markdown.
+- Diálogo "Dados do leitor" com envio opcional para PHPList via `.env`.
+- "Recentes": novo diálogo rolável com busca e filtro, acessível em `Arquivo > Documento > Recentes > Mostrar todos...`.
+  - Persiste metadados de PDFs abertos (caminho, título, autor, resumo/subject, palavras‑chave) para facilitar a pesquisa.
+  - Busca por trecho do nome do arquivo, título, autor, resumo e palavras‑chave.
+
+### Preferências de Zoom e Seleção
+- Granularidade do zoom via roda do mouse com Ctrl: configurável em `Configurações > Granularidade do zoom (Ctrl+roda)`. Valor padrão: 1.10 por incremento.
+- Modos de seleção no PDF: texto ou retângulo (imagem). A cópia exibe um toast de confirmação. Exportar seleção para TXT/Markdown disponível no menu Editar.
+
+### Arquivos Recentes e Pesquisa
+- Acesse itens recentes por `Arquivo > Documento > Recentes` (submenu) ou `Mostrar todos...` para abrir o diálogo completo.
+- O diálogo de Recentes apresenta uma lista rolável com colunas "Título" e "Arquivo" e um campo de busca.
+- Pesquise por trecho do nome do arquivo, título, autor, resumo (subject) ou palavras‑chave.
+- Os metadados são persistidos em `QSettings` e atualizados quando você abre um PDF.
+
 ## Próximas versões
 - Planejamento contínuo em `ROADMAP.md`.
 
 ## Como rodar (Linux)
-Pré-requisitos: CMake (>=3.16), compilador C++17, Qt5/Qt6 (Widgets), Doxygen (opcional).
+Pré-requisitos: CMake (>=3.16), compilador C++17, Qt6 (Widgets, PdfWidgets, Network), Doxygen (opcional).
 
 ```bash
 cmake -S . -B build
@@ -62,14 +82,14 @@ doxygen docs/Doxyfile
 # Abrir: docs/index.html
 ```
 
-Observação: se o Qt não estiver instalado, um placeholder de console será gerado. Para a UI, instale os headers de desenvolvimento do Qt (ex.: `qt6-base-dev` no Debian/Ubuntu) e recompile.
+Observação: o projeto exige Qt6 (Widgets, PdfWidgets, Network). Sem Qt6 a aplicação não compila.
 
 ## Dependências de Build por Plataforma
 
 ### Linux
 - Geral:
   - Compilador C++17 (g++/clang), CMake (>= 3.16)
-  - Qt Widgets (Qt5 ou Qt6). Para PDF, o módulo Qt PDF é recomendado; Poppler-Qt é alternativa.
+  - Qt6 Widgets + Qt6 PdfWidgets + Qt6 Network.
   - Doxygen (opcional) para documentação
 
 - Debian/Ubuntu (24.04+ sugerido):
@@ -80,15 +100,6 @@ Observação: se o Qt não estiver instalado, um placeholder de console será ge
       qt6-pdf-dev doxygen graphviz
   # Alternativa (Poppler em vez de Qt PDF):
   # sudo apt install -y libpoppler-qt6-dev
-  ```
-
-- Ubuntu 22.04 / Debian estáveis com Qt5:
-  ```bash
-  sudo apt install -y build-essential cmake ninja-build \
-      qtbase5-dev qttools5-dev qttools5-dev-tools \
-      qtpdf5-dev doxygen graphviz
-  # Alternativa (Poppler-Qt5):
-  # sudo apt install -y libpoppler-qt5-dev
   ```
 
 - Fedora
@@ -107,7 +118,7 @@ Observação: se o Qt não estiver instalado, um placeholder de console será ge
   ```
 
 Notas:
-- Se sua distro não tiver pacote de Qt PDF, use Poppler-Qt correspondente à sua versão do Qt.
+- Se sua distro não tiver pacote de Qt PDF, use Poppler-Qt6 correspondente.
 - Caso o include de `QPdfBookmarkModel` não esteja disponível, o TOC de PDFs cairá automaticamente para a listagem de páginas.
 
 ### Windows
@@ -135,6 +146,20 @@ Notas:
       mingw-w64-ucrt-x86_64-qt6-pdf doxygen graphviz
   ```
   3) Abra o shell UCRT64/MinGW correspondente e compile com CMake.
+
+## Integração opcional com PHPList (.env)
+- O aplicativo possui um diálogo "Dados do leitor" (`Arquivo > Leitor > Dados do leitor...`) para registrar nome, e-mail e WhatsApp.
+- Opcionalmente, é possível enviar esses dados para uma lista do PHPList. Para isso, crie um arquivo `.env` na raiz do projeto ou ao lado do executável com as variáveis:
+
+```env
+PHPLIST_URL=http://seu-servidor/phplist/api/v2
+PHPLIST_USER=usuario
+PHPLIST_PASS=senha
+```
+
+Observações:
+- As credenciais não são exibidas pela UI; o envio é sempre confirmado com o usuário.
+- O `.env` é criado com valores vazios automaticamente no primeiro configure do CMake (veja `CMakeLists.txt`).
 
 ## Contribuindo
 Contribuições são muito bem-vindas! Você pode ajudar de várias formas:

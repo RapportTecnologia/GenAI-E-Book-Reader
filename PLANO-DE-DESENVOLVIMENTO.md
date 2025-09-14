@@ -133,12 +133,12 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
 ### Notas de Progresso Recentes
 - v0.1.2: "Salvar como" (RF-28) implementado; refinamentos de leitura.
 - v0.1.1: Navegação por combobox cobrindo todas as páginas de PDFs e TOC simples para todas as páginas; restauração de sessão; melhorias de status e zoom.
- - v0.1.3: TOC aprimorado com toolbar (modos "Páginas"/"Conteúdo") e navegação context-aware; splitter com tamanho inicial ~10% (TOC) / ~90% (visualizador).
+ - v0.1.3: TOC aprimorado com toolbar (modos "Páginas"/"Conteúdo") e navegação context-aware; splitter com tamanho inicial ~10% (TOC) / ~90% (visualizador). Branding/UI entregue: ícone do app (RF-48), título com nome do livro (RF-49) e splash screen (RF-50). Preferência de granularidade do zoom (Ctrl+roda) adicionada. Modos de seleção no PDF (texto/retângulo), cópia com toast e exportação de seleção para TXT/Markdown. Diálogo "Dados do leitor" com envio opcional para PHPList via `.env`.
 
 ## 12) Instruções de Build e Documentação
 
 ### Build da Aplicação (Linux)
-- Pré-requisitos: CMake (>=3.16), compilador C++17, Qt5/Qt6 (Widgets), Doxygen (opcional).
+- Pré-requisitos: CMake (>=3.16), compilador C++17, Qt6 (Widgets, PdfWidgets, Network), Doxygen (opcional).
 - Comandos:
 ```bash
 cmake -S . -B build

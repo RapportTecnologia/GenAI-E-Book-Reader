@@ -1,5 +1,6 @@
 #ifdef USE_QT
 #include <QApplication>
+#include <QCoreApplication>
 #include <QSplashScreen>
 #include <QPixmap>
 #include <QIcon>
@@ -15,6 +16,9 @@
 
 int main(int argc, char* argv[]) {
 #ifdef USE_QT
+    QCoreApplication::setOrganizationDomain("br.com.rapport.genai-reader");
+    QCoreApplication::setOrganizationName("br.com.rapport.genai-reader");
+    QCoreApplication::setApplicationName("genai-reader");
     QApplication app(argc, argv);
     // Set global application icon
     app.setWindowIcon(QIcon(":/app/logo.png"));

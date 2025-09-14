@@ -1,0 +1,13 @@
+<map id="GenAi&#45;E&#45;Book&#45;Reader/src/ui/PdfViewerWidget.h" name="GenAi&#45;E&#45;Book&#45;Reader/src/ui/PdfViewerWidget.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="201,5,390,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,84,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="236,48,95,92,94,87,235,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="109,93,229,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="266,48,200,88,197,84,263,43"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="253,93,338,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="298,46,298,79,293,79,293,46"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="362,93,511,119"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="330,43,405,84,402,89,328,48"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="536,93,647,119"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="367,43,536,87,534,92,366,48"/>
+</map>

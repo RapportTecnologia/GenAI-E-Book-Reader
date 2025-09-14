@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['reader_0',['Reader',['../d4/db7/classgenai_1_1Reader.html',1,'genai']]]
+  ['openresult_0',['OpenResult',['../d4/d22/structgenai_1_1OpenResult.html',1,'genai']]]
 ];

@@ -1,0 +1,72 @@
+name: Build AppImage
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-appimage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build patchelf file
+          # Qt6
+          sudo apt-get install -y qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-pdf-dev
+
+      - name: Configure (Release)
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cmake --build build -j
+
+      - name: Prepare AppDir
+        run: |
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/share/applications
+          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+          cp build/bin/genai_reader AppDir/usr/bin/
+          # Desktop file and icon
+          cp resources/appimage/genai-reader.desktop AppDir/usr/share/applications/
+          cp docs/imgs/logo-do-projeto.png AppDir/usr/share/icons/hicolor/256x256/apps/genai-reader.png
+
+      - name: Download linuxdeploy and plugin-qt
+        run: |
+          wget -O linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -O linuxdeploy-plugin-qt-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy-*.AppImage
+
+      - name: Build AppImage
+        env:
+          QML_SOURCES_PATHS: src
+        run: |
+          ./linuxdeploy-x86_64.AppImage --appdir AppDir \
+            -e AppDir/usr/bin/genai_reader \
+            -d AppDir/usr/share/applications/genai-reader.desktop \
+            -i AppDir/usr/share/icons/hicolor/256x256/apps/genai-reader.png \
+            --output appimage \
+            --plugin qt
+          ls -lh *.AppImage
+          mv *.AppImage genai_reader-${{ github.ref_name }}-x86_64.AppImage
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: genai_reader-${{ github.ref_name }}-AppImage
+          path: genai_reader-${{ github.ref_name }}-x86_64.AppImage
+
+      - name: Upload to GitHub Release (if tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: genai_reader-${{ github.ref_name }}-x86_64.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

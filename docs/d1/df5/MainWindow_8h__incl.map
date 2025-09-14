@@ -1,0 +1,15 @@
+<map id="GenAi&#45;E&#45;Book&#45;Reader/src/ui/MainWindow.h" name="GenAi&#45;E&#45;Book&#45;Reader/src/ui/MainWindow.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="158,5,321,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,121,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="198,48,103,90,101,85,196,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="146,93,231,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="229,47,206,83,201,80,225,44"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="256,93,327,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="254,44,278,80,274,83,250,47"/>
+<area shape="rect" id="Node000005" href="$d5/d49/Reader_8h.html" title="Interface mínima para o leitor de e&#45;books (MVP)." alt="" coords="351,93,477,119"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="282,43,377,85,375,90,280,48"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="341,167,399,192"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="409,120,387,156,382,154,404,118"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="423,167,490,192"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="423,118,445,154,441,156,419,120"/>
+</map>

@@ -5,7 +5,17 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 
 - Plataforma principal: Linux (prioritário).
 - Portabilidade: Windows (compilável em versões futuras).
-- Tecnologias: C/C++ com Qt para GUI, CMake para build, Doxygen para documentação.
+- Tecnologias: C/C++ com Qt6 (Widgets, PdfWidgets, Network) para GUI, CMake para build, Doxygen para documentação.
+
+### Estado Atual (implementação)
+- Suporte de leitura: PDF com Qt6 PdfWidgets.
+- UI e usabilidade:
+  - Painel de Sumário (TOC) com alternância entre "Páginas" e "Conteúdo" (bookmarks quando disponíveis), com botões de navegação.
+  - Preferência de granularidade do zoom via Ctrl+roda do mouse (configurável).
+  - Modos de seleção: texto e retângulo (imagem), com cópia para área de transferência e exportação da seleção para TXT/Markdown. OCR opcional via Tesseract quando disponível no PATH.
+  - "Salvar como" (RF-28).
+  - Branding/UI (RF-48, RF-49, RF-50): ícone do app, título com nome do livro, splash screen com versão/autor.
+- Integração opcional: diálogo "Dados do leitor" e envio para PHPList configurável via `.env`.
 
 ## 2. Objetivos
 - Proporcionar leitura confortável e acessível de e-books, com navegação fluida e UI intuitiva.
@@ -16,6 +26,7 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 ## 3. Escopo
 - Leitura e visualização de livros em janelas simples e responsivas.
 - Marcações e anotações persistentes, com painel lateral dedicado.
+- Painel lateral que permite selecionar páginas ou capítulos para marcação.
 - Recurso de dicionário on-demand ao clicar em palavras/trechos.
 - TTS para leitura de trechos selecionados ou capítulo atual.
 - IA (OpenAI) para explicar e resumir seleções, com RAG para contextualização.
@@ -37,71 +48,79 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
    - RF-04: Ao abrir o arquivo, lembrar a última pasta aberta.
    - RF-05: Permitir adicionar a pasta a favoritas.
    - RF-06: Lembrar os últimos livros abertos; exibir imediatamente os 5 primeiros e permitir pesquisar os demais.
+   - RF-07: Permitir que o usuário selecione uma página ou capítulo para marcação.
+   - RF-08: Ao rolar a página, o usuário deve ver o número da página atual.
+   - RF-09: A rolagem deve ser continua entre páginas. Seja com o botão scroll do mouse ou com a tecla page up/page down.
 
-1. Menu e painel lateral esquerdo
-   - RF-07: Menu com opções de leitura, marcações, anotações, estatísticas, configurações, ajuda e sobre.
-   - RF-08: Painel lateral esquerdo com lista de livros abertos, favoritos e arquivos recém-abertos.
-   - RF-09: Painel lateral direito com lista de marcações e anotações.
-   - RF-10: Painel esquerdo alterna entre thumbnails das páginas e árvore dos capítulos.
+2. Integração com APIs externas
+   - RF-10: Integração com a OpenLibrary.org para obter informações do livro. Metadados, capa, ISBN, Editora e etc
+   - RF-11: Integração com o Google para obter dados de livros.
+   - RF-12: Integração com a Amazon para obter dados de livros.
+
+3. Menu e painel lateral esquerdo
+   - RF-13: Menu com opções de leitura, marcações, anotações, estatísticas, configurações, ajuda e sobre.
+   - RF-14: Painel lateral esquerdo com lista de livros abertos, favoritos e arquivos recém-abertos.
+   - RF-15: Painel lateral direito com lista de marcações e anotações.
+   - RF-16: Painel esquerdo alterna entre thumbnails das páginas e árvore dos capítulos.
      - Para PDFs, a árvore de capítulos/subcapítulos é derivada dos bookmarks do documento (quando disponíveis); caso contrário, o TOC recai para a lista de páginas.
-   - RF-11: Painel esquerdo pode ser recolhido e expandido.
-   - RF-12: Painel esquerdo pode ser arrastado para ajustar seu tamanho.
-   - RF-13: A página deve ser aberta na largura exata de exibição.
-   - RF-14: A seleção de página deve ser um combobox na barra de ferramentas, listando todas as páginas do documento, com dois botões: anterior e próximo.
+   - RF-17: Painel esquerdo pode ser recolhido e expandido.
+   - RF-18: Painel esquerdo pode ser arrastado para ajustar seu tamanho.
+   - RF-19: A página deve ser aberta na largura exata de exibição.
+   - RF-20: A seleção de página deve ser um combobox na barra de ferramentas, listando todas as páginas do documento, com dois botões: anterior e próximo.
    
-2. Tratamento de DRM
-   - RF-15: Arquivos com DRM devem ser  normalmente, mas devem ser abertos com a opção de desbloquear DRM.
-   - RF-16: Arquivos com DRM também podem ser salvos normalmente, mas devem ser salvos com a opção de desbloquear DRM.
+4. Tratamento de DRM
+   - RF-21: Arquivos com DRM devem ser  normalmente, mas devem ser abertos com a opção de desbloquear DRM.
+   - RF-22: Arquivos com DRM também podem ser salvos normalmente, mas devem ser salvos com a opção de desbloquear DRM.
 
-2. Marcações e Anotações
-   - RF-04: Marcar texto (realce) e criar anotações vinculadas ao trecho.
-   - RF-05: Exibir painel lateral com lista de marcações/anotações, com filtro e busca.
-   - RF-06: Exportar/importar marcações e anotações (ex.: JSON/Markdown) por livro.
-   - RF-07: As marcações devem ser salvas em arquivo de apoio (sidecar) junto do arquivo original.
+5. Marcações e Anotações
+   - RF-23: Marcar texto (realce) e criar anotações vinculadas ao trecho.
+   - RF-24: Exibir painel lateral com lista de marcações/anotações, com filtro e busca.
+   - RF-25: Exportar/importar marcações e anotações (ex.: JSON/Markdown) por livro.
+   - RF-26: As marcações devem ser salvas em arquivo de apoio (sidecar) junto do arquivo original.
 
-3. Dicionário
-   - RF-08: Ao clicar em uma palavra/trecho, exibir definição em um popover/painel.
-   - RF-09: Permitir alternar dicionários/idiomas (deve autodetectar o idioma).
+6. Dicionário
+   - RF-27: Ao clicar em uma palavra/trecho, exibir definição em um popover/painel.
+   - RF-28: Permitir alternar dicionários/idiomas (deve autodetectar o idioma).
 
-4. Text-to-Speech (TTS)
-   - RF-10: Integrar com um mecanismo TTS do sistema (ex.: eSpeak/mbrola/festival/SAPI no futuro) para ler trechos marcados ou seção atual.
-   - RF-11: Controles de TTS: reproduzir/pausar/parar, velocidade e voz (quando suportado).
+7. Text-to-Speech (TTS)
+   - RF-29: Integrar com um mecanismo TTS do sistema (ex.: eSpeak/mbrola/festival/SAPI no futuro) para ler trechos marcados ou seção atual.
+   - RF-30: Controles de TTS: reproduzir/pausar/parar, velocidade e voz (quando suportado).
 
-5. IA (OpenAI) para Explicações e Resumos (RAG)
-   - RF-12: Selecionar um trecho ou parágrafo e solicitar explicação ou resumo via OpenAI API.
-   - RF-13: Contextualizar a solicitação via RAG, incluindo parágrafos anteriores e posteriores quando necessário.
-   - RF-14: Salvar as respostas da IA como anotações vinculadas ao trecho (opcional).
-   - RF-15: Registrar logs (locais) das chamadas (metadados, não conteúdo sensível) para depuração.
+8. IA (OpenAI) para Explicações e Resumos (RAG)
+   - RF-31: Selecionar um trecho ou parágrafo e solicitar explicação ou resumo via OpenAI API.
+   - RF-32: Contextualizar a solicitação via RAG, incluindo parágrafos anteriores e posteriores quando necessário.
+   - RF-33: Salvar as respostas da IA como anotações vinculadas ao trecho (opcional).
+   - RF-34: Registrar logs (locais) das chamadas (metadados, não conteúdo sensível) para depuração.
 
-6. Estatísticas e Histórico
-   - RF-16: Registrar tempo de leitura ativo somente quando a janela do livro estiver em primeiro plano.
-   - RF-17: Registrar progresso por livro (página atual, total de páginas quando aplicável, posição no EPUB/MOBI).
-   - RF-18: Calcular estatísticas: páginas lidas, palavras (quando disponível), tempo total, sessões.
-   - RF-19: Apresentar painel/resumo das estatísticas por livro e geral.
+9. Estatísticas e Histórico
+   - RF-35: Registrar tempo de leitura ativo somente quando a janela do livro estiver em primeiro plano.
+   - RF-36: Registrar progresso por livro (página atual, total de páginas quando aplicável, posição no EPUB/MOBI).
+   - RF-37: Calcular estatísticas: páginas lidas, palavras (quando disponível), tempo total, sessões.
+   - RF-38: Apresentar painel/resumo das estatísticas por livro e geral.
 
-7. Sessão e Restauração
-   - RF-20: Lembrar os livros abertos e reabrir automaticamente após reinício/travamento do sistema.
-   - RF-21: Persistir preferências de visualização por livro.
+10. Sessão e Restauração
+   - RF-39: Lembrar os livros abertos e reabrir automaticamente após reinício/travamento do sistema.
+   - RF-40: Persistir preferências de visualização por livro.
 
-8. Integração com Calibre
-   - RF-22: Integração nativa com a biblioteca do Calibre: listar livros, abrir diretamente, atualizar metadados.
-   - RF-23: Após conversões, cadastrar/atualizar o registro no Calibre.
+11. Integração com Calibre
+   - RF-41: Integração nativa com a biblioteca do Calibre: listar livros, abrir diretamente, atualizar metadados.
+   - RF-42: Após conversões, cadastrar/atualizar o registro no Calibre.
 
-9. Conversões de Formato
-   - RF-24: Converter e-books entre EPUB, MOBI e PDF (quando tecnicamente viável e permitido).
-   - RF-25: Expor fila de conversões e status.
+12. Conversões de Formato
+   - RF-43: Converter e-books entre EPUB, MOBI e PDF (quando tecnicamente viável e permitido).
+   - RF-44: Expor fila de conversões e status.
 
-10. Configurações
-   - RF-26: Tela de Configurações com: URL da OpenAI API, token, dicionários instalados/ordem, TTS/voz, tema, diretórios (Calibre), privacidade.
-   - RF-27: Teste de conexão para OpenAI API e validação segura do token.
+13. Configurações
+   - RF-45: Tela de Configurações com: URL da OpenAI API, token, dicionários instalados/ordem, TTS/voz, tema, diretórios (Calibre), privacidade.
+   - RF-46: Teste de conexão para OpenAI API e validação segura do token.
 
-    11. Operações de Arquivo (complementares)
-   - RF-28: Salvar como — permitir salvar o livro/estado atual em um novo arquivo (planejado para a versão 0.1.2).
+14. Operações de Arquivo (complementares)
+   - RF-47: Salvar como — permitir salvar o livro/estado atual em um novo arquivo (planejado para a versão 0.1.2).
 
-12. Interface e Branding (entregue em 0.1.3)
-   - RF-29: Ícone do aplicativo baseado em `docs/imgs/logo-do-projeto.png`, exibido na barra de título.
-   - RF-30: Exibir na barra de título o nome do livro em leitura; usar metadados do arquivo quando disponíveis; caso contrário, usar o nome do arquivo.
-   - RF-31: Splash screen exibindo `docs/imgs/logo-do-projeto.png`, a versão do app e os dados do autor: "Carlos Delfino <consultoria@carlosdelfino.eti.br>".
+15. Interface e Branding (entregue em 0.1.3)
+   - RF-48: Ícone do aplicativo baseado em `docs/imgs/logo-do-projeto.png`, exibido na barra de título.
+   - RF-49: Exibir na barra de título o nome do livro em leitura; usar metadados do arquivo quando disponíveis; caso contrário, usar o nome do arquivo.
+   - RF-50: Splash screen exibindo `docs/imgs/logo-do-projeto.png`, a versão do app e os dados do autor: "Carlos Delfino <consultoria@carlosdelfino.eti.br>".
 
 ## 6. Requisitos Não Funcionais
 - RNF-01: Desempenho — abertura de livros e navegação devem ser rápidas; UI responsiva.
@@ -123,12 +142,24 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 - RNF-17: Adicionar documentação de suporte.
 
 ## 7. Arquitetura e Tecnologias
-- Qt (Widgets/QML a definir) para UI e renderização de documentos.
+- Qt6 (Widgets) para UI e renderização de documentos.
 - Bibliotecas para parsing/renderização:
-  - PDF: Poppler/Qt PDF.
+  - PDF: Qt PDF (Qt6 PdfWidgets). Alternativa: Poppler-Qt6.
   - EPUB/MOBI: bibliotecas de terceiros (ex.: LibCM, epub SDKs), a avaliar.
 - Persistência: arquivos locais (JSON/SQLite) para histórico, anotações e configurações.
 - Integrações: Calibre via CLI/DB/API local; OpenAI API via HTTPS.
+
+### Integração opcional com PHPList (.env)
+- O aplicativo possui diálogo para coleta de "Dados do leitor" (nome, e-mail, WhatsApp) e, opcionalmente, envio para uma lista PHPList.
+- Configuração via `.env` ao lado do executável ou na raiz do projeto:
+
+```env
+PHPLIST_URL=http://seu-servidor/phplist/api/v2
+PHPLIST_USER=usuario
+PHPLIST_PASS=senha
+```
+
+Observações: credenciais não são exibidas pela UI; o envio é sempre confirmado pelo usuário. O arquivo `.env` é gerado com valores padrão vazios no primeiro configure do CMake.
 
 ## 8. Modelo de Dados (alto nível)
 - Livro: id, título, autor(es), caminho/URI, formato, metadados.
@@ -164,6 +195,10 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 - CA-06: Estatísticas básicas de tempo ativo e progresso por livro.
 - CA-07: Restauração de sessão com reabertura dos livros abertos.
 - CA-08: Integração com Calibre para abrir livro a partir da biblioteca.
+
+Notas de alinhamento com o estado atual:
+- Até a versão 0.1.3, a leitura funcional está focada em PDF (Qt6). EPUB/MOBI permanecem no roadmap.
+- Recursos adicionais úteis já presentes: preferência de zoom (Ctrl+roda), seleção/cópia e exportação de seleção (TXT/Markdown), OCR opcional via Tesseract.
 
 ## 13. Roadmap (sugestão)
 - Fase 1: MVP conforme critérios de aceitação.

@@ -8,6 +8,24 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ---
 
+## [0.1.4] - 2025-09-14
+
+### Added
+- Preferência de granularidade do zoom (Ctrl+roda) configurável em Configurações.
+- Modos de seleção no PDF: texto e retângulo (imagem), com cópia exibindo toast de confirmação.
+- Exportação de seleção para TXT e Markdown.
+- Diálogo "Dados do leitor" com envio opcional para PHPList via `.env`.
+- "Recentes": novo diálogo rolável com busca e filtro.
+  - Persiste metadados dos PDFs abertos (caminho, título, autor, resumo/subject, palavras‑chave) em `QSettings`.
+  - Busca por trecho do nome do arquivo, título, autor, resumo e palavras‑chave.
+  - Submenu `Arquivo > Documento > Recentes` mostra últimos itens com título e nome do arquivo.
+
+### Changed
+- Documentação atualizada (`README.md`, `REQUIREMENTS.md`, `PLANO-DE-DESENVOLVIMENTO.md`, `ROADMAP.md`) para refletir Qt6 obrigatório e estado atual (suporte a PDF).
+- Esclarecida a dependência de Qt6 (Widgets, PdfWidgets, Network) no guia de build.
+
+---
+
 ## [0.1.3] - 2025-08-18
 ### Added
 - Ícone do aplicativo a partir de `docs/imgs/logo-do-projeto.png` (RF-29), aplicado globalmente.
@@ -73,7 +91,8 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - If Qt is not installed, a console placeholder is built (see `CMakeLists.txt` message).
 - One unresolved reference in `README.md` badge/anchor noted by Doxygen (harmless).
 
-[Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.4
 [0.1.3]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.3
 [0.1.2]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.2
 [0.1.1]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.1

@@ -1,0 +1,76 @@
+name: Build Windows Zip
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Windows (MSVC) Build and Package
+    runs-on: windows-latest
+    env:
+      QT_VERSION: '6.7.2'
+      QT_HOST: 'windows'
+      QT_TARGET: 'desktop'
+      QT_ARCH: 'win64_msvc2019_64'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install aqtinstall (Qt installer)
+        run: |
+          pip install aqtinstall
+
+      - name: Install Qt ${{ env.QT_VERSION }}
+        run: |
+          python -m aqt install-qt windows desktop $env:QT_VERSION $env:QT_ARCH -O C:/Qt --modules qt5compat
+
+      - name: Add Qt to PATH
+        shell: bash
+        run: |
+          echo "C:/Qt/${QT_VERSION}/${QT_ARCH}/bin" >> $GITHUB_PATH
+
+      - name: Configure (CMake, Release)
+        shell: bash
+        run: |
+          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:/Qt/${QT_VERSION}/${QT_ARCH}" 
+
+      - name: Build
+        shell: bash
+        run: |
+          cmake --build build -j
+
+      - name: Deploy Qt (windeployqt)
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp build/bin/genai_reader.exe dist/
+          windeployqt --release --compiler-runtime dist/genai_reader.exe || true
+
+      - name: Create ZIP
+        shell: bash
+        run: |
+          cd dist
+          7z a genai_reader-${{ github.ref_name }}-windows-x86_64.zip *
+          ls -lh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: genai_reader-${{ github.ref_name }}-windows-x86_64
+          path: dist/genai_reader-${{ github.ref_name }}-windows-x86_64.zip
+
+      - name: Upload to GitHub Release (if tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/genai_reader-${{ github.ref_name }}-windows-x86_64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

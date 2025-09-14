@@ -1,0 +1,34 @@
+var classPdfViewerWidget =
+[
+    [ "SelectionMode", "dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32", [
+      [ "Auto", "dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32a06b9281e396db002010bde1de57262eb", null ],
+      [ "Text", "dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32a9dffbf69ffba8bc38bc4e01abf4b1675", null ],
+      [ "Rect", "dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32a69ad58d91eec91b5c152d21ca117dc81", null ],
+      [ "None", "dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32a6adf97f83acf6453d4a6a4b1070f3754", null ]
+    ] ],
+    [ "PdfViewerWidget", "dc/ddc/classPdfViewerWidget.html#a6df2d87dfa5ecff01864609a5387d00f", null ],
+    [ "~PdfViewerWidget", "dc/ddc/classPdfViewerWidget.html#a84ee4929baf8649f04a401ab296b8e28", null ],
+    [ "clearSelection", "dc/ddc/classPdfViewerWidget.html#abff39ebe2684fdd6172afa054e877c6b", null ],
+    [ "copySelection", "dc/ddc/classPdfViewerWidget.html#a5939711c319061b2cbcfaab57cee2409", null ],
+    [ "currentPage", "dc/ddc/classPdfViewerWidget.html#ab2d4ab926b7055698e65629d02defa78", null ],
+    [ "document", "dc/ddc/classPdfViewerWidget.html#abd91077ce31e7c2ddab99c7c89b5b54b", null ],
+    [ "fitToWidth", "dc/ddc/classPdfViewerWidget.html#a6616311485fd438b1432892df3d89e50", null ],
+    [ "hasSelection", "dc/ddc/classPdfViewerWidget.html#a02ad5b3e5418b770c144faf3044b64f1", null ],
+    [ "nextPage", "dc/ddc/classPdfViewerWidget.html#aa945f266107808255316222f89f18f1e", null ],
+    [ "ocrSelectionText", "dc/ddc/classPdfViewerWidget.html#a9fa285223abb0061d73494bf5f9c5dd9", null ],
+    [ "openFile", "dc/ddc/classPdfViewerWidget.html#a25c6d5268c0ef409794040f830201e27", null ],
+    [ "prevPage", "dc/ddc/classPdfViewerWidget.html#a580dc0ed0d4a36b83bed761dca4df435", null ],
+    [ "saveSelectionAsMarkdown", "dc/ddc/classPdfViewerWidget.html#a5623bb122b381b2b68aca4b9e569c653", null ],
+    [ "saveSelectionAsTxt", "dc/ddc/classPdfViewerWidget.html#aa3ca1d2e554f63cdd67fe0da10aa345f", null ],
+    [ "scrollChanged", "dc/ddc/classPdfViewerWidget.html#ae7dd0c29228f3d1fdabaea724350e9c2", null ],
+    [ "selectionMode", "dc/ddc/classPdfViewerWidget.html#a9b196f4485d5d9672ee88acdc8beac7b", null ],
+    [ "setCurrentPage", "dc/ddc/classPdfViewerWidget.html#ae323d3076918ec66f7b2e5f7b89fddfb", null ],
+    [ "setSelectionMode", "dc/ddc/classPdfViewerWidget.html#abef0c61de608322f93d3062ccc09070d", null ],
+    [ "setVerticalScrollValue", "dc/ddc/classPdfViewerWidget.html#a028e9f2a4739e0b090dd64fcfe670aa5", null ],
+    [ "setWheelZoomStep", "dc/ddc/classPdfViewerWidget.html#a51f21e6a21dc0c9b4fa8de58844e3dbf", null ],
+    [ "setZoomFactor", "dc/ddc/classPdfViewerWidget.html#a1e95565876ced45e12bc0ad943c2bea6", null ],
+    [ "totalPages", "dc/ddc/classPdfViewerWidget.html#af7f12aec22c971654a87cf31104465c3", null ],
+    [ "verticalScrollValue", "dc/ddc/classPdfViewerWidget.html#afc409e6ecfe9d41117984922b827943a", null ],
+    [ "zoomFactor", "dc/ddc/classPdfViewerWidget.html#a5420a9568c25a94134345ced0e83f1cc", null ],
+    [ "zoomFactorChanged", "dc/ddc/classPdfViewerWidget.html#a2930a9789af388d306a177e755c3eca4", null ]
+];

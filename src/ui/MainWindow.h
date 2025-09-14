@@ -1,6 +1,5 @@
 #pragma once
 
-#ifdef USE_QT
 #include <QMainWindow>
 #include <QSettings>
 #include <QString>
@@ -12,12 +11,8 @@ class QToolBar;
 class QStatusBar;
 class QComboBox;
 class ViewerWidget;
-#ifdef HAVE_QT_NETWORK
 class QNetworkAccessManager;
-#endif
-#ifdef HAVE_QT_PDF
 class PdfViewerWidget;
-#endif
 
 #include "reader/Reader.h"
 
@@ -43,6 +38,15 @@ private slots:
     void onTocNext();
     void setTocModePages();
     void setTocModeChapters();
+    // Edit menu handlers
+    void enableTextSelection();
+    void enableRectSelection();
+    void enableAutoSelection();
+    void copySelection();
+    void saveSelectionTxt();
+    void saveSelectionMd();
+    // Preferences
+    void setWheelZoomPreference();
 
 private:
     void buildUi();
@@ -53,6 +57,9 @@ private:
     void applyDarkPalette(bool enable);
     void updatePageCombo();
     bool openPath(const QString& filePath);
+    // Recent files helpers
+    void addRecentFile(const QString& absPath);
+    void rebuildRecentMenu();
 
     // Validation and integration helpers
     bool validateReaderInputs(const QString& name, const QString& email, QString* errorMsg) const;
@@ -78,6 +85,16 @@ private:
     QAction* actToggleTheme_ {nullptr};
     QAction* actQuit_ {nullptr};
     QAction* actReaderData_ {nullptr};
+    // Edit actions
+    QAction* actSelText_ {nullptr};
+    QAction* actSelRect_ {nullptr};
+    QAction* actSelAuto_ {nullptr};
+    QAction* actSelCopy_ {nullptr};
+    QAction* actSelSaveTxt_ {nullptr};
+    QAction* actSelSaveMd_ {nullptr};
+    // Preferences
+    QAction* actWheelZoomPref_ {nullptr};
+    QAction* actRecentConfig_ {nullptr};
     // TOC toolbar actions
     QAction* actTocModePages_ {nullptr};
     QAction* actTocModeChapters_ {nullptr};
@@ -88,13 +105,22 @@ private:
 
     QSettings settings_;
     bool darkTheme_ {false};
+    // Recent files menu
+    QMenu* menuRecent_ {nullptr};
+    QAction* actRecentDialog_ {nullptr};
+    enum { MaxRecentMenuItems = 6 };
+    QAction* recentActs_[MaxRecentMenuItems] {};
 
+private slots:
+    // Recent files slots
+    void openRecentFile();
+    void showRecentDialog();
+    void configureRecentDialogCount();
+
+private:
     QString currentFilePath_;
 
     genai::DummyReader reader_;
 
-#ifdef HAVE_QT_NETWORK
     QNetworkAccessManager* netManager_ {nullptr};
-#endif
 };
-#endif // USE_QT

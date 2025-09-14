@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=GenAI E-Book Reader
+Comment=Leitor de e-books (PDF) com foco em produtividade e estudo
+Exec=genai_reader
+Icon=genai-reader
+Categories=Office;Education;Viewer;
+Terminal=false
+StartupNotify=true
+Keywords=ebook;reader;pdf;study;books;

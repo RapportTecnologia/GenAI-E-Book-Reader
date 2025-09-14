@@ -95,18 +95,20 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
   <div class="headertitle"><div class="title">GenAI E-Book Reader </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_GenAi-E-Book-Reader_2README"></a> <img src="https://visitor-badge.laobi.icu/badge?page_id=rapporttecnologia.genai-e-book-reader" alt="Visitantes do Projeto" class="inline"/> [<img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" alt="License: CC BY 4.0" style="pointer-events: none;" class="inline"/>](LICENSE) <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="C++" class="inline"/> <img src="https://img.shields.io/badge/Qt-Widgets%20%7C%20QML-brightgreen" alt="Qt" class="inline"/> <img src="https://img.shields.io/badge/CMake-%3E%3D3.16-informational" alt="CMake" class="inline"/> <a href="docs/index.html"><img src="https://img.shields.io/badge/docs-Doxygen-blueviolet" alt="Docs" class="inline"/></a> <img src="https://img.shields.io/badge/version-0.1.3-blue" alt="Version" class="inline"/> ![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)</p>
-<p>Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt, com recursos de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.</p>
+<div class="textblock"><p><a class="anchor" id="md_GenAi-E-Book-Reader_2README"></a> <img src="https://visitor-badge.laobi.icu/badge?page_id=rapporttecnologia.genai-e-book-reader" alt="Visitantes do Projeto" class="inline"/> [<img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" alt="License: CC BY 4.0" style="pointer-events: none;" class="inline"/>](LICENSE) <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="C++" class="inline"/> <img src="https://img.shields.io/badge/Qt6-Widgets-brightgreen" alt="Qt" class="inline"/> <img src="https://img.shields.io/badge/CMake-%3E%3D3.16-informational" alt="CMake" class="inline"/> <a href="docs/index.html"><img src="https://img.shields.io/badge/docs-Doxygen-blueviolet" alt="Docs" class="inline"/></a> <img src="https://img.shields.io/badge/version-0.1.4-blue" alt="Version" class="inline"/> ![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)</p>
+<h1><a class="anchor" id="autotoc_md0"></a>
+GenAI E-Book Reader</h1>
+<p>Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt6, com recursos planejados de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.</p>
 <ul>
-<li>Requisitos e escopo completos: consulte <a class="el" href="d0/d89/md_GenAi-E-Book-Reader_2REQUISITOS.html">REQUISITOS.md</a>.</li>
+<li>Requisitos e escopo completos: consulte REQUIREMENTS.md.</li>
 <li>Plano do projeto (fases, sprints e critérios): consulte <a class="el" href="dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html">PLANO-DE-DESENVOLVIMENTO.md</a>.</li>
 <li>Histórico de mudanças: consulte <a class="el" href="dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html">CHANGELOG.md</a>.</li>
 <li>Planejamento de releases: consulte <a class="el" href="dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html">ROADMAP.md</a>.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md1"></a>
-Principais Recursos (MVP)</h1>
+<h2><a class="anchor" id="autotoc_md1"></a>
+Principais Recursos (MVP)</h2>
 <ul>
-<li>Leitura de PDF/EPUB com navegação básica e tema claro/escuro.</li>
+<li>Leitura de PDF com navegação básica e tema claro/escuro. (Suporte a EPUB/MOBI está no roadmap.)</li>
 <li>Marcações e anotações com painel lateral e exportação JSON.</li>
 <li>Dicionário on-click (mínimo 1 idioma).</li>
 <li>TTS para trechos selecionados, com controles básicos.</li>
@@ -114,19 +116,61 @@ Principais Recursos (MVP)</h1>
 <li>Estatísticas: tempo ativo, progresso, sessões.</li>
 <li>Restauração de sessão (reabre livros abertos anteriormente).</li>
 <li>Integração com Calibre para abrir livros da biblioteca.</li>
+<li>Painel de Sumário (TOC) com barra de ferramentas:<ul>
+<li>Alternar entre lista de páginas ("Páginas") e árvore de capítulos ("Conteúdo").</li>
+<li>Botões "Voltar" e "Avançar" que navegam página a página (modo Páginas) ou por item/capítulo (modo Conteúdo).</li>
+<li>Largura padrão do painel ~10% e área do leitor ~90% na primeira execução (pode ser ajustado via splitter).</li>
 </ul>
-<p>Nota (0.1.3): refinamento de UI — ícone do app a partir de <code>docs/imgs/logo-do-projeto.png</code>, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível.</p>
+</li>
+</ul>
+<p>Nota (0.1.3): refinamento de UI — ícone do app a partir de <code>docs/imgs/logo-do-projeto.png</code>, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível. Painel de TOC remodelado com barra de ferramentas (alternar entre "Páginas"/"Conteúdo" e botões de navegação) e tamanho padrão inicial do splitter ~10% (TOC) / ~90% (visualizador).</p>
 <p>Nota (0.1.2): implementado "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.</p>
 <p>Nota (0.1.1): adicionados seleção de página via combobox e restauração do último arquivo/diretório aberto.</p>
-<p>Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento.</p>
-<h1><a class="anchor" id="autotoc_md2"></a>
-Próximas versões</h1>
+<p>Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento. O painel de TOC inclui uma barra de ferramentas para alternar entre "Páginas" e "Conteúdo" e botões de navegação; por padrão o painel ocupa ~10% da largura da janela na primeira execução. Atualmente, o binário suporta apenas arquivos PDF.</p>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Sumário (TOC) e Navegação</h2>
+<ul>
+<li>Alternar modo do TOC:<ul>
+<li>"Páginas": lista plana de páginas; os botões "Voltar/Avançar" mudam a página atual.</li>
+<li>"Conteúdo": capítulos (grupos de páginas); os botões percorrem o item anterior/próximo (capítulo ou página filho).</li>
+</ul>
+</li>
+<li>Atalhos do painel: arraste o divisor para redimensionar; o tamanho fica salvo para as próximas sessões.</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md3"></a>
+Nota (0.1.4)</h2>
+<ul>
+<li>Preferência de granularidade do zoom (Ctrl+roda) configurável em Configurações.</li>
+<li>Modos de seleção no PDF: texto e retângulo (imagem); cópia com toast e exportação de seleção para TXT/Markdown.</li>
+<li>Diálogo "Dados do leitor" com envio opcional para PHPList via <code>.env</code>.</li>
+<li>"Recentes": novo diálogo rolável com busca e filtro, acessível em <code>Arquivo &gt; Documento &gt; Recentes &gt; Mostrar todos...</code>.<ul>
+<li>Persiste metadados de PDFs abertos (caminho, título, autor, resumo/subject, palavras‑chave) para facilitar a pesquisa.</li>
+<li>Busca por trecho do nome do arquivo, título, autor, resumo e palavras‑chave.</li>
+</ul>
+</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md4"></a>
+Preferências de Zoom e Seleção</h3>
+<ul>
+<li>Granularidade do zoom via roda do mouse com Ctrl: configurável em <code>Configurações &gt; Granularidade do zoom (Ctrl+roda)</code>. Valor padrão: 1.10 por incremento.</li>
+<li>Modos de seleção no PDF: texto ou retângulo (imagem). A cópia exibe um toast de confirmação. Exportar seleção para TXT/Markdown disponível no menu Editar.</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md5"></a>
+Arquivos Recentes e Pesquisa</h3>
+<ul>
+<li>Acesse itens recentes por <code>Arquivo &gt; Documento &gt; Recentes</code> (submenu) ou <code>Mostrar todos...</code> para abrir o diálogo completo.</li>
+<li>O diálogo de Recentes apresenta uma lista rolável com colunas "Título" e "Arquivo" e um campo de busca.</li>
+<li>Pesquise por trecho do nome do arquivo, título, autor, resumo (subject) ou palavras‑chave.</li>
+<li>Os metadados são persistidos em <code>QSettings</code> e atualizados quando você abre um PDF.</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md6"></a>
+Próximas versões</h2>
 <ul>
 <li>Planejamento contínuo em <code><a class="el" href="d9/d59/ROADMAP_8md.html">ROADMAP.md</a></code>.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md3"></a>
-Como rodar (Linux)</h1>
-<p>Pré-requisitos: CMake (&gt;=3.16), compilador C++17, Qt5/Qt6 (Widgets), Doxygen (opcional).</p>
+<h2><a class="anchor" id="autotoc_md7"></a>
+Como rodar (Linux)</h2>
+<p>Pré-requisitos: CMake (&gt;=3.16), compilador C++17, Qt6 (Widgets, PdfWidgets, Network), Doxygen (opcional).</p>
 <div class="fragment"><div class="line">cmake -S . -B build</div>
 <div class="line">cmake --build build -j</div>
 <div class="line"># Executável: build/bin/genai_reader</div>
@@ -136,15 +180,15 @@ Como rodar (Linux)</h1>
 <div class="line"># ou</div>
 <div class="line">doxygen docs/Doxyfile</div>
 <div class="line"># Abrir: docs/index.html</div>
-</div><!-- fragment --><p>Observação: se o Qt não estiver instalado, um placeholder de console será gerado. Para a UI, instale os headers de desenvolvimento do Qt (ex.: <code>qt6-base-dev</code> no Debian/Ubuntu) e recompile.</p>
-<h1><a class="anchor" id="autotoc_md4"></a>
-Dependências de Build por Plataforma</h1>
-<h2><a class="anchor" id="autotoc_md5"></a>
-Linux</h2>
+</div><!-- fragment --><p>Observação: o projeto exige Qt6 (Widgets, PdfWidgets, Network). Sem Qt6 a aplicação não compila.</p>
+<h2><a class="anchor" id="autotoc_md8"></a>
+Dependências de Build por Plataforma</h2>
+<h3><a class="anchor" id="autotoc_md9"></a>
+Linux</h3>
 <ul>
 <li>Geral:<ul>
 <li>Compilador C++17 (g++/clang), CMake (&gt;= 3.16)</li>
-<li>Qt Widgets (Qt5 ou Qt6). Para PDF, o módulo Qt PDF é recomendado; Poppler-Qt é alternativa.</li>
+<li>Qt6 Widgets + Qt6 PdfWidgets + Qt6 Network.</li>
 <li>Doxygen (opcional) para documentação</li>
 </ul>
 </li>
@@ -154,12 +198,6 @@ Linux</h2>
 <div class="line">    qt6-pdf-dev doxygen graphviz</div>
 <div class="line"># Alternativa (Poppler em vez de Qt PDF):</div>
 <div class="line"># sudo apt install -y libpoppler-qt6-dev</div>
-</div><!-- fragment --></li>
-<li>Ubuntu 22.04 / Debian estáveis com Qt5: <div class="fragment"><div class="line">sudo apt install -y build-essential cmake ninja-build \</div>
-<div class="line">    qtbase5-dev qttools5-dev qttools5-dev-tools \</div>
-<div class="line">    qtpdf5-dev doxygen graphviz</div>
-<div class="line"># Alternativa (Poppler-Qt5):</div>
-<div class="line"># sudo apt install -y libpoppler-qt5-dev</div>
 </div><!-- fragment --></li>
 <li>Fedora <div class="fragment"><div class="line">sudo dnf install -y gcc-c++ cmake ninja-build \</div>
 <div class="line">    qt6-qtbase-devel qt6-qttools-devel qt6-qttools \</div>
@@ -172,11 +210,11 @@ Linux</h2>
 </div><!-- fragment --></li>
 </ul>
 <p>Notas:</p><ul>
-<li>Se sua distro não tiver pacote de Qt PDF, use Poppler-Qt correspondente à sua versão do Qt.</li>
+<li>Se sua distro não tiver pacote de Qt PDF, use Poppler-Qt6 correspondente.</li>
 <li>Caso o include de <code>QPdfBookmarkModel</code> não esteja disponível, o TOC de PDFs cairá automaticamente para a listagem de páginas.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md6"></a>
-Windows</h2>
+<h3><a class="anchor" id="autotoc_md10"></a>
+Windows</h3>
 <ul>
 <li>Opção A: Visual Studio + Qt (recomendado) 1) Instale Visual Studio (Community) ou "Build Tools for Visual Studio" com MSVC C++. 2) Instale Qt via Qt Online Installer (mesmo compilador/versão do MSVC). Inclua Qt Widgets e Qt PDF. 3) Instale CMake e Ninja (opcional, melhora builds):<ul>
 <li>CMake: <a href="https://cmake.org/download/">https://cmake.org/download/</a></li>
@@ -192,11 +230,24 @@ Windows</h2>
 <div class="line">    mingw-w64-ucrt-x86_64-qt6-pdf doxygen graphviz</div>
 </div><!-- fragment --> 3) Abra o shell UCRT64/MinGW correspondente e compile com CMake.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md7"></a>
-Contribuindo</h1>
+<h2><a class="anchor" id="autotoc_md11"></a>
+Integração opcional com PHPList (.env)</h2>
+<ul>
+<li>O aplicativo possui um diálogo "Dados do leitor" (<code>Arquivo &gt; Leitor &gt; Dados do leitor...</code>) para registrar nome, e-mail e WhatsApp.</li>
+<li>Opcionalmente, é possível enviar esses dados para uma lista do PHPList. Para isso, crie um arquivo <code>.env</code> na raiz do projeto ou ao lado do executável com as variáveis:</li>
+</ul>
+<div class="fragment"><div class="line">PHPLIST_URL=http://seu-servidor/phplist/api/v2</div>
+<div class="line">PHPLIST_USER=usuario</div>
+<div class="line">PHPLIST_PASS=senha</div>
+</div><!-- fragment --><p>Observações:</p><ul>
+<li>As credenciais não são exibidas pela UI; o envio é sempre confirmado com o usuário.</li>
+<li>O <code>.env</code> é criado com valores vazios automaticamente no primeiro configure do CMake (veja <code>CMakeLists.txt</code>).</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md12"></a>
+Contribuindo</h2>
 <p>Contribuições são muito bem-vindas! Você pode ajudar de várias formas:</p><ul>
 <li>Reportando bugs e abrindo issues com sugestões de melhorias.</li>
-<li>Implementando funcionalidades do MVP conforme <code><a class="el" href="d9/d3f/REQUISITOS_8md.html">REQUISITOS.md</a></code>.</li>
+<li>Implementando funcionalidades do MVP conforme <code>REQUISITOS.md</code>.</li>
 <li>Propondo melhorias de UX, documentação ou exemplos.</li>
 </ul>
 <p>Passos sugeridos:</p><ol type="1">
@@ -205,11 +256,11 @@ Contribuindo</h1>
 <li>Commits pequenos e objetivos com mensagens claras.</li>
 <li>Abra um Pull Request descrevendo o problema/solução e referenciando RF/RNF/CA afetados.</li>
 </ol>
-<h1><a class="anchor" id="autotoc_md8"></a>
-Código de Conduta</h1>
+<h2><a class="anchor" id="autotoc_md13"></a>
+Código de Conduta</h2>
 <p>Seja respeitoso e colaborativo. Não serão tolerados comportamentos abusivos. Utilize linguagem cordial e empática nas interações.</p>
-<h1><a class="anchor" id="autotoc_md9"></a>
-Licença</h1>
+<h2><a class="anchor" id="autotoc_md14"></a>
+Licença</h2>
 <p>Este projeto é licenciado sob a licença Creative Commons Attribution 4.0 International (CC BY 4.0). Consulte o arquivo [<code>LICENSE</code>](LICENSE).</p>
 <p>Você é livre para:</p><ul>
 <li>Compartilhar — copiar e redistribuir o material em qualquer suporte ou formato.</li>
@@ -218,8 +269,8 @@ Licença</h1>
 <p>Desde que atribua o crédito apropriado e indique se mudanças foram feitas. Veja os termos completos em:</p><ul>
 <li><a href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></li>
 </ul>
-<h1><a class="anchor" id="autotoc_md10"></a>
-Agradecimentos</h1>
+<h2><a class="anchor" id="autotoc_md15"></a>
+Agradecimentos</h2>
 <ul>
 <li>Comunidade Qt e bibliotecas de leitura de documentos (Poppler/Qt PDF, etc.).</li>
 <li>Projeto Calibre pela inspiração de integração.</li>

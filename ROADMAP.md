@@ -26,9 +26,20 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Barra de título exibe o nome do livro em leitura (metadados quando disponíveis; senão, nome do arquivo).
 - Ajuste de layout para área de leitura ocupar 100% do espaço do frame.
 - Splash screen com `docs/imgs/logo-do-projeto.png`, versão e autor: Carlos Delfino <consultoria@carlosdelfino.eti.br>.
- - Painel de TOC com barra de ferramentas para alternar entre "Páginas" e "Conteúdo" (capítulos).
- - Botões "Voltar" e "Avançar" que respeitam o modo selecionado (página anterior/próxima ou item/capítulo anterior/próximo).
- - Tamanho padrão do splitter configurado para ~10% (TOC) e ~90% (visualizador) na primeira execução.
+- Painel de TOC com barra de ferramentas para alternar entre "Páginas" e "Conteúdo" (capítulos).
+- Botões "Voltar" e "Avançar" que respeitam o modo selecionado (página anterior/próxima ou item/capítulo anterior/próximo).
+- Tamanho padrão do splitter configurado para ~10% (TOC) e ~90% (visualizador) na primeira execução.
+- Preferência de granularidade de zoom via Ctrl+roda (configurável em Configurações).
+- Modos de seleção (texto/retângulo), cópia com toast e exportação de seleção para TXT/Markdown.
+- Diálogo "Dados do leitor" com envio opcional para PHPList via `.env`.
+
+## 0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)
+- Preferência de granularidade de zoom (Ctrl+roda) configurável em Configurações.
+- Modos de seleção (texto/retângulo) com cópia e toast de confirmação.
+- Exportação de seleção para TXT/Markdown.
+- Documentação revisada para Qt6 obrigatório e estado atual (PDF).
+ - "Recentes": diálogo rolável com busca e filtro por nome/título/autor/resumo/palavras‑chave e submenu com últimos itens.
+   - Persistência de metadados (caminho, título, autor, resumo, palavras‑chave) em `QSettings`.
 
 ## 0.2.0 – Anotações e Dicionário
 - Marcação de trechos e notas com exportação JSON

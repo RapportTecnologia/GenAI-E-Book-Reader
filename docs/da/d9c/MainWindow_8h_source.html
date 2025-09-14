@@ -102,90 +102,136 @@ $(document).ready(function(){initNavTree('da/d9c/MainWindow_8h_source.html','../
 <div class="contents">
 <a href="../../da/d9c/MainWindow_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#ifdef USE_QT</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;QMainWindow&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;QSettings&gt;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;QString&gt;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">class </span>QTreeWidget;</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">class </span>QTreeWidgetItem;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">class </span>QSplitter;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">class </span>QAction;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">class </span>QToolBar;</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">class </span>QStatusBar;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">class </span>QComboBox;</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">class </span>ViewerWidget;</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#ifdef HAVE_QT_NETWORK</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">class </span>QNetworkAccessManager;</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#ifdef HAVE_QT_PDF</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">class </span>PdfViewerWidget;</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &quot;<a class="code" href="../../d5/d49/Reader_8h.html">reader/Reader.h</a>&quot;</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">class </span>MainWindow : <span class="keyword">public</span> QMainWindow {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    Q_OBJECT</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keyword">explicit</span> MainWindow(QWidget* parent = <span class="keyword">nullptr</span>);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    ~MainWindow() <span class="keyword">override</span>;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">private</span> slots:</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordtype">void</span> openFile();</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordtype">void</span> saveAs();</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordtype">void</span> nextPage();</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">void</span> prevPage();</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordtype">void</span> zoomIn();</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordtype">void</span> zoomOut();</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordtype">void</span> zoomReset();</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keywordtype">void</span> toggleTheme();</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">void</span> onTocItemActivated(QTreeWidgetItem* item, <span class="keywordtype">int</span> column);</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordtype">void</span> editReaderData();</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">void</span> buildUi();</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordtype">void</span> createActions();</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">void</span> loadSettings();</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">void</span> saveSettings();</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">void</span> updateStatus();</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordtype">void</span> applyDarkPalette(<span class="keywordtype">bool</span> enable);</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordtype">void</span> updatePageCombo();</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordtype">bool</span> openPath(<span class="keyword">const</span> QString&amp; filePath);</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="comment">// Validation and integration helpers</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordtype">bool</span> validateReaderInputs(<span class="keyword">const</span> QString&amp; name, <span class="keyword">const</span> QString&amp; email, QString* errorMsg) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    QMap&lt;QString, QString&gt; loadEnvConfig() <span class="keyword">const</span>; <span class="comment">// reads .env near executable or CWD</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordtype">void</span> submitReaderDataToPhpList(<span class="keyword">const</span> QString&amp; name, <span class="keyword">const</span> QString&amp; email, <span class="keyword">const</span> QString&amp; whatsapp);</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    QWidget* viewer_ {<span class="keyword">nullptr</span>}; <span class="comment">// can be ViewerWidget or PdfViewerWidget</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    QTreeWidget* toc_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    QSplitter* splitter_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    QAction* actOpen_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    QAction* actSaveAs_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    QAction* actPrev_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    QAction* actNext_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    QAction* actZoomIn_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    QAction* actZoomOut_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    QAction* actZoomReset_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    QAction* actToggleTheme_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    QAction* actQuit_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    QAction* actReaderData_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    QComboBox* pageCombo_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    QSettings settings_;</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keywordtype">bool</span> darkTheme_ {<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;QMainWindow&gt;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;QSettings&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;QString&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">class </span>QTreeWidget;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">class </span>QTreeWidgetItem;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">class </span>QSplitter;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">class </span>QAction;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">class </span>QToolBar;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">class </span>QStatusBar;</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">class </span>QComboBox;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">class </span>ViewerWidget;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">class </span>QNetworkAccessManager;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">class </span><a class="code hl_class" href="../../dc/ddc/classPdfViewerWidget.html">PdfViewerWidget</a>;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;<a class="code" href="../../d5/d49/Reader_8h.html">reader/Reader.h</a>&quot;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="foldopen" id="foldopen00019" data-start="{" data-end="};">
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="../../d6/d1a/classMainWindow.html">   19</a></span><span class="keyword">class </span><a class="code hl_class" href="../../d6/d1a/classMainWindow.html">MainWindow</a> : <span class="keyword">public</span> QMainWindow {</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    Q_OBJECT</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keyword">explicit</span> <a class="code hl_class" href="../../d6/d1a/classMainWindow.html">MainWindow</a>(QWidget* parent = <span class="keyword">nullptr</span>);</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <a class="code hl_function" href="../../d6/d1a/classMainWindow.html#a1f7d2c56410fc1bfa135bb907d43313f">~MainWindow</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">private</span> slots:</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordtype">void</span> openFile();</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keywordtype">void</span> saveAs();</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordtype">void</span> closeDocument();</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordtype">void</span> nextPage();</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keywordtype">void</span> prevPage();</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordtype">void</span> zoomIn();</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordtype">void</span> zoomOut();</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordtype">void</span> zoomReset();</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">void</span> toggleTheme();</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordtype">void</span> onTocItemActivated(QTreeWidgetItem* item, <span class="keywordtype">int</span> column);</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordtype">void</span> editReaderData();</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordtype">void</span> onTocPrev();</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keywordtype">void</span> onTocNext();</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">void</span> setTocModePages();</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordtype">void</span> setTocModeChapters();</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="comment">// Edit menu handlers</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordtype">void</span> enableTextSelection();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">void</span> enableRectSelection();</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordtype">void</span> enableAutoSelection();</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">void</span> copySelection();</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">void</span> saveSelectionTxt();</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">void</span> saveSelectionMd();</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="comment">// Preferences</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordtype">void</span> setWheelZoomPreference();</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordtype">void</span> buildUi();</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordtype">void</span> createActions();</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordtype">void</span> loadSettings();</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordtype">void</span> saveSettings();</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordtype">void</span> updateStatus();</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordtype">void</span> applyDarkPalette(<span class="keywordtype">bool</span> enable);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordtype">void</span> updatePageCombo();</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordtype">bool</span> openPath(<span class="keyword">const</span> QString&amp; filePath);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="comment">// Recent files helpers</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordtype">void</span> addRecentFile(<span class="keyword">const</span> QString&amp; absPath);</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordtype">void</span> rebuildRecentMenu();</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="comment">// Validation and integration helpers</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordtype">bool</span> validateReaderInputs(<span class="keyword">const</span> QString&amp; name, <span class="keyword">const</span> QString&amp; email, QString* errorMsg) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    QMap&lt;QString, QString&gt; loadEnvConfig() <span class="keyword">const</span>; <span class="comment">// reads .env near executable or CWD</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordtype">void</span> submitReaderDataToPhpList(<span class="keyword">const</span> QString&amp; name, <span class="keyword">const</span> QString&amp; email, <span class="keyword">const</span> QString&amp; whatsapp);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordtype">void</span> applyDefaultSplitterSizesIfNeeded();</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    QWidget* viewer_ {<span class="keyword">nullptr</span>}; <span class="comment">// can be ViewerWidget or PdfViewerWidget</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    QTreeWidget* toc_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    QWidget* tocPanel_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    QToolBar* tocToolBar_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    QSplitter* splitter_ {<span class="keyword">nullptr</span>};</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    QString currentFilePath_;</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <a class="code hl_class" href="../../d5/de3/classgenai_1_1DummyReader.html">genai::DummyReader</a> reader_;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="preprocessor">#ifdef HAVE_QT_NETWORK</span></div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    QNetworkAccessManager* netManager_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>};</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="preprocessor">#endif </span><span class="comment">// USE_QT</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    QAction* actOpen_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    QAction* actSaveAs_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    QAction* actClose_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    QAction* actPrev_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    QAction* actNext_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    QAction* actZoomIn_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    QAction* actZoomOut_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    QAction* actZoomReset_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    QAction* actToggleTheme_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    QAction* actQuit_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    QAction* actReaderData_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="comment">// Edit actions</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    QAction* actSelText_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    QAction* actSelRect_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    QAction* actSelAuto_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    QAction* actSelCopy_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    QAction* actSelSaveTxt_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    QAction* actSelSaveMd_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="comment">// Preferences</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    QAction* actWheelZoomPref_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    QAction* actRecentConfig_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="comment">// TOC toolbar actions</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    QAction* actTocModePages_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    QAction* actTocModeChapters_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    QAction* actTocPrev_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    QAction* actTocNext_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keywordtype">bool</span> tocPagesMode_ {<span class="keyword">true</span>};</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    QComboBox* pageCombo_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    QSettings settings_;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordtype">bool</span> darkTheme_ {<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="comment">// Recent files menu</span></div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    QMenu* menuRecent_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    QAction* actRecentDialog_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">enum</span> { MaxRecentMenuItems = 6 };</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    QAction* recentActs_[MaxRecentMenuItems] {};</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="keyword">private</span> slots:</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="comment">// Recent files slots</span></div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keywordtype">void</span> openRecentFile();</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordtype">void</span> showRecentDialog();</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keywordtype">void</span> configureRecentDialogCount();</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    QString currentFilePath_;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <a class="code hl_class" href="../../d5/de3/classgenai_1_1DummyReader.html">genai::DummyReader</a> reader_;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    QNetworkAccessManager* netManager_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>};</div>
+</div>
 <div class="ttc" id="aReader_8h_html"><div class="ttname"><a href="../../d5/d49/Reader_8h.html">Reader.h</a></div><div class="ttdoc">Interface mínima para o leitor de e-books (MVP).</div></div>
+<div class="ttc" id="aclassMainWindow_html"><div class="ttname"><a href="../../d6/d1a/classMainWindow.html">MainWindow</a></div><div class="ttdef"><b>Definition</b> MainWindow.h:19</div></div>
+<div class="ttc" id="aclassMainWindow_html_a1f7d2c56410fc1bfa135bb907d43313f"><div class="ttname"><a href="../../d6/d1a/classMainWindow.html#a1f7d2c56410fc1bfa135bb907d43313f">MainWindow::~MainWindow</a></div><div class="ttdeci">~MainWindow() override</div><div class="ttdef"><b>Definition</b> MainWindow.cpp:449</div></div>
+<div class="ttc" id="aclassPdfViewerWidget_html"><div class="ttname"><a href="../../dc/ddc/classPdfViewerWidget.html">PdfViewerWidget</a></div><div class="ttdef"><b>Definition</b> PdfViewerWidget.h:11</div></div>
 <div class="ttc" id="aclassgenai_1_1DummyReader_html"><div class="ttname"><a href="../../d5/de3/classgenai_1_1DummyReader.html">genai::DummyReader</a></div><div class="ttdoc">Implementação de placeholder (sem renderização real).</div><div class="ttdef"><b>Definition</b> Reader.h:49</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

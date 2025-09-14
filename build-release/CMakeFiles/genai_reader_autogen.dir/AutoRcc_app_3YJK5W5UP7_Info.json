@@ -1,0 +1,23 @@
+{
+	"BUILD_DIR" : "/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/genai_reader_autogen",
+	"CMAKE_BINARY_DIR" : "/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release",
+	"CMAKE_CURRENT_BINARY_DIR" : "/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader",
+	"CMAKE_SOURCE_DIR" : "/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader",
+	"GENERATOR" : "Unix Makefiles",
+	"INCLUDE_DIR" : "/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/genai_reader_autogen/include",
+	"INPUTS" : 
+	[
+		"/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/docs/imgs/logo-do-projeto.png"
+	],
+	"LOCK_FILE" : "/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/CMakeFiles/genai_reader_autogen.dir/AutoRcc_app_3YJK5W5UP7_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "app" ],
+	"OUTPUT_CHECKSUM" : "3YJK5W5UP7",
+	"OUTPUT_NAME" : "qrc_app.cpp",
+	"RCC_EXECUTABLE" : "/usr/lib/qt6/libexec/rcc",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/CMakeFiles/genai_reader_autogen.dir/AutoRcc_app_3YJK5W5UP7_Used.txt",
+	"SOURCE" : "/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/resources/app.qrc",
+	"VERBOSITY" : 0
+}
