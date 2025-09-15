@@ -4,7 +4,7 @@
 ![Qt](https://img.shields.io/badge/Qt6-Widgets-brightgreen)
 ![CMake](https://img.shields.io/badge/CMake-%3E%3D3.16-informational)
 [![Docs](https://img.shields.io/badge/docs-Doxygen-blueviolet)](docs/index.html)
-![Version](https://img.shields.io/badge/version-0.1.4-blue)
+![Version](https://img.shields.io/badge/version-0.1.5-blue)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contribuindo)
 
 
@@ -16,6 +16,7 @@ Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/
 - Plano do projeto (fases, sprints e critérios): consulte [PLANO-DE-DESENVOLVIMENTO.md](PLANO-DE-DESENVOLVIMENTO.md).
 - Histórico de mudanças: consulte [CHANGELOG.md](CHANGELOG.md).
 - Planejamento de releases: consulte [ROADMAP.md](ROADMAP.md).
+- Tutorial passo a passo: consulte [TUTORIAL.md](TUTORIAL.md).
 
 ## Principais Recursos (MVP)
 - Leitura de PDF com navegação básica e tema claro/escuro. (Suporte a EPUB/MOBI está no roadmap.)
@@ -64,6 +65,46 @@ Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulo
 - Pesquise por trecho do nome do arquivo, título, autor, resumo (subject) ou palavras‑chave.
 - Os metadados são persistidos em `QSettings` e atualizados quando você abre um PDF.
 
+## IA (LLM): Configuração e Uso
+A aplicação possui integração com provedores compatíveis com a API da OpenAI para chat, resumos e sinônimos.
+Atualmente são suportados:
+- OpenAI (`https://api.openai.com`)
+- GenerAtiva (`https://generativa.rapport.tec.br`)
+
+Como configurar:
+- Abra o diálogo "Configurações de LLM" (menu de Configurações).
+- Selecione o provedor (OpenAI ou GenerAtiva) e o modelo (ex.: `gpt-4o-mini`).
+- Informe a API Key do provedor escolhido.
+- Opcional: preencha "Base URL" para apontar a um endpoint compatível com OpenAI.
+- Ajuste os prompts padrão para Sinônimos, Resumos, Explicações e Chat conforme sua preferência.
+
+Uso no leitor:
+- Sinônimos: selecione uma palavra/locução e acione a ação de IA para sinônimos; será solicitado consentimento antes do envio.
+- Resumo: selecione um trecho e acione a ação de IA para resumo; o resultado abre no diálogo de resumo.
+- Chat: envie um trecho ao chat da IA ou digite livremente no painel de chat.
+  - Renderização avançada no painel de chat (Markdown/HTML):
+    - Tabelas Markdown (GFM) com bordas, cabeçalho e rolagem horizontal quando necessário.
+    - Syntax highlighting para blocos de código (highlight.js, tema GitHub).
+    - MathJax v3 para fórmulas (inline e display), aplicado após o parse do Markdown.
+    - Auto-scroll para a última mensagem recebida/enviada.
+  - Sessões de chat:
+    - Botão "Novo" inicia uma nova conversa (pergunta se deseja salvar a conversa atual no histórico, com título automático).
+    - Botão "Histórico" lista e restaura conversas salvas (por arquivo aberto), mantendo o contexto da IA.
+  - Contexto contínuo: novos envios incluem o histórico completo de mensagens (system/user/assistant) para melhor continuidade.
+
+Persistência/Configurações (QSettings):
+- `ai/provider`: `openai` | `generativa` (padrão: `openai`)
+- `ai/base_url`: URL base para override (opcional)
+- `ai/api_key`: token secreto do provedor
+- `ai/model`: nome do modelo (ex.: `gpt-4o-mini`)
+- `ai/prompts/synonyms`, `ai/prompts/summaries`, `ai/prompts/explanations`, `ai/prompts/chat`
+
+Observações de privacidade:
+- Antes de qualquer envio de conteúdo à IA, a aplicação solicita sua confirmação.
+- Tokens são armazenados nas preferências do usuário (`QSettings`).
+
+Para um guia passo a passo com imagens e dicas, consulte o [TUTORIAL.md](TUTORIAL.md).
+
 ## Próximas versões
 - Planejamento contínuo em `ROADMAP.md`.
 
@@ -80,6 +121,41 @@ cmake --build build --target docs
 # ou
 doxygen docs/Doxyfile
 # Abrir: docs/index.html
+```
+
+## Como gerar um release no GitHub
+
+Pré-requisitos:
+- Ter o repositório remoto configurado (origin) e acesso de push.
+- Opcional: GitHub CLI (`gh`) autenticado: `gh auth login`.
+
+Passos sugeridos:
+
+```bash
+# 1) Garanta que CHANGELOG.md e README.md estão atualizados (ex.: 0.1.5)
+git add CHANGELOG.md README.md
+git commit -m "docs: atualiza changelog e readme para v0.1.5"
+
+# 2) Versione no código se aplicável (CMakeLists.txt, headers) e commite
+# Exemplo (se houve mudança de versão de build)
+# git add CMakeLists.txt include/app/App.h
+# git commit -m "chore(release): bump version to v0.1.5"
+
+# 3) Crie uma tag anotada e envie
+git tag -a v0.1.5 -m "v0.1.5"
+git push origin v0.1.5
+
+# 4A) Criar release via GitHub CLI (anexando notas do CHANGELOG)
+gh release create v0.1.5 \
+  --title "v0.1.5" \
+  --notes "Consulte CHANGELOG.md para detalhes desta versão."
+
+# 4B) Alternativa: criar release pela UI do GitHub
+# - Vá em Releases > Draft a new release > Escolha a tag v0.1.5 > Preencha título/notas > Publish
+
+# 5) (Opcional) Anexar binários
+# Se você tiver artefatos em dist/, anexe com:
+# gh release upload v0.1.5 dist/genai_reader-v0.1.5-linux-x86_64 dist/genai_reader-v0.1.5-linux-x86_64.tar.gz
 ```
 
 Observação: o projeto exige Qt6 (Widgets, PdfWidgets, Network). Sem Qt6 a aplicação não compila.

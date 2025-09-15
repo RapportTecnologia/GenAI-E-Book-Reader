@@ -6,6 +6,36 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [Unreleased]
 
+## [0.1.5] - 2025-09-14
+
+### Added
+- Integração com LLM (OpenAI/GenerAtiva) com diálogo de Configurações de LLM:
+  - Provedor, Modelo, Base URL (opcional), API Key e prompts personalizáveis para Sinônimos, Resumos, Explicações e Chat.
+- Painel de Chat com IA (dock à direita):
+  - Enviar mensagens, salvar a conversa em `.txt` e solicitar um compilado (resumo) do diálogo atual.
+- Ações de IA no leitor:
+  - Sinônimos e Resumo a partir da seleção, com confirmação prévia antes do envio do conteúdo.
+- Painel de Chat com renderização avançada:
+  - Suporte a Markdown GFM com tabelas corretamente renderizadas (bordas, cabeçalho e rolagem horizontal quando necessário).
+  - Syntax highlighting para blocos de código via highlight.js (tema GitHub).
+  - MathJax v3 configurado para inline/display LaTeX; typeset após o Markdown e highlighting.
+  - Auto-scroll para a última mensagem após cada atualização do chat.
+- Sessões de chat:
+  - Botão "Novo" para iniciar uma nova conversa (com confirmação para salvar a conversa atual).
+  - Botão "Histórico" para listar e restaurar conversas salvas.
+  - Título automático de cada conversa salva (baseado na última resposta da IA ou primeira mensagem do usuário).
+  - Persistência por arquivo em `QSettings` como lista JSON (título, HTML e turns role/content).
+- Contexto contínuo com a IA: envios passam a incluir todo o histórico da conversa para melhor continuidade.
+
+### Changed
+- Documentação: `README.md` ganhou seção de LLM e link para `TUTORIAL.md` com passo a passo.
+- Removido o fallback de QTextEdit no Chat: `QWebEngineView` passa a ser obrigatório, garantindo Markdown/MathJax/highlighting consistentes.
+
+### Fixed
+- Problemas de exibição de tabelas Markdown no chat.
+- Ordem de renderização para garantir MathJax consistente após parsing e highlighting.
+
+
 ---
 
 ## [0.1.4] - 2025-09-14
@@ -91,7 +121,9 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - If Qt is not installed, a console placeholder is built (see `CMakeLists.txt` message).
 - One unresolved reference in `README.md` badge/anchor noted by Doxygen (harmless).
 
-[Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.6
+[0.1.5]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.5
 [0.1.4]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.4
 [0.1.3]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.3
 [0.1.2]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.2

@@ -52,8 +52,17 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
    - RF-08: Ao rolar a página, o usuário deve ver o número da página atual.
    - RF-09: A rolagem deve ser continua entre páginas. Seja com o botão scroll do mouse ou com a tecla page up/page down.
 
+2. Integração com IA
+   - RF-10: Integração com a OpenAI para Sinonimos, Resumo, Explicação e etc.
+   - RF-11: Integração com a Anthropic para Sinonimos, Resumo, Explicação e etc.
+   - RF-12: Integração com a Claude para Sinonimos, Resumo, Explicação e etc.
+   - RF-13: Integração com a Cohere para Sinonimos, Resumo, Explicação e etc.
+   - RF-14: Integração com a Gemini para Sinonimos, Resumo, Explicação e etc.
+   - RF-15: Integração com a GenerAtiva (https://generativa.rapport.tec.br) para Sinonimos, Resumo, Explicação e etc.
+   - RF-16: Integração com a Ollama (http://localhost:11434) para Sinonimos, Resumo, Explicação e etc.
+   
 2. Integração com APIs externas
-   - RF-10: Integração com a OpenLibrary.org para obter informações do livro. Metadados, capa, ISBN, Editora e etc
+   - RF-10: Integração com a OpenLibrary.org para obter informações do livro. Metadados, capa, ISBN, Editora e etc. (https://openlibrary.org/dev/docs/restful_api)
    - RF-11: Integração com o Google para obter dados de livros.
    - RF-12: Integração com a Amazon para obter dados de livros.
 

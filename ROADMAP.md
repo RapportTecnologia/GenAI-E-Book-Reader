@@ -41,20 +41,21 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
  - "Recentes": diálogo rolável com busca e filtro por nome/título/autor/resumo/palavras‑chave e submenu com últimos itens.
    - Persistência de metadados (caminho, título, autor, resumo, palavras‑chave) em `QSettings`.
 
-## 0.2.0 – Anotações e Dicionário
-- Marcação de trechos e notas com exportação JSON
-- Dicionário on-click (mínimo 1 idioma)
+## 0.1.5 – Anotações e Dicionário
+- Integração com API de IA (pré cadastradas: OpenAI, GenerAtiva, Claude, Anthropic, Google, DeepSeek)
+- Resumo e explicação de trechos selecionados
+- Explicação dos trechos selecionados.
+- Histórico de prompts e respostas
+- Chat com IA (OpenAI) para explicar e resumir seleções, com RAG para contextualização.
+
+## 0.1.6 – Anotações e Dicionário
+- Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,
 - Busca full-text no documento
 
-## 0.3.0 – TTS e Controles
+## 0.1.7 – TTS e Controles
 - Reprodução TTS de seleção atual
 - Controles de velocidade/pausa/retomar
 - Output device selection
-
-## 0.4.0 – IA (RAG) e Resumos
-- Integração com API de IA (ex.: OpenAI)
-- Resumo e explicação de trechos selecionados
-- Histórico de prompts e respostas
 
 ## 0.5.0 – Estatísticas e Sessões
 - Tempo ativo de leitura, progresso, sessões
