@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['goto_0',['goto',['../d4/db7/classgenai_1_1Reader.html#a0d699841a9426ec1546538f709482d81',1,'genai::Reader::goTo()'],['../d5/de3/classgenai_1_1DummyReader.html#a37a177489c33b32029393bbb2d2154d6',1,'genai::DummyReader::goTo()']]]
+  ['entrymatches_0',['entryMatches',['../d3/db7/MainWindow_8cpp.html#a0fddc7689a83225c326a09bf5211bc29',1,'MainWindow.cpp']]],
+  ['eventfilter_1',['eventFilter',['../d0/daf/classChatDock.html#af323454c7769142ea83e530693844a45',1,'ChatDock']]],
+  ['extractpdfmeta_2',['extractPdfMeta',['../d3/db7/MainWindow_8cpp.html#aadbe7c9c750816cd1a670ecff73e5c7d',1,'MainWindow.cpp']]]
 ];

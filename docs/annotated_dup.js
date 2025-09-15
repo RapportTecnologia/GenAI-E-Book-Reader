@@ -7,6 +7,10 @@ var annotated_dup =
       [ "OpenResult", "d4/d22/structgenai_1_1OpenResult.html", "d4/d22/structgenai_1_1OpenResult" ],
       [ "Reader", "d4/db7/classgenai_1_1Reader.html", "d4/db7/classgenai_1_1Reader" ]
     ] ],
+    [ "ChatDock", "d0/daf/classChatDock.html", "d0/daf/classChatDock" ],
+    [ "LlmClient", "dd/dd6/classLlmClient.html", "dd/dd6/classLlmClient" ],
+    [ "LlmSettingsDialog", "d0/d17/classLlmSettingsDialog.html", "d0/d17/classLlmSettingsDialog" ],
     [ "MainWindow", "d6/d1a/classMainWindow.html", "d6/d1a/classMainWindow" ],
-    [ "PdfViewerWidget", "dc/ddc/classPdfViewerWidget.html", "dc/ddc/classPdfViewerWidget" ]
+    [ "PdfViewerWidget", "dc/ddc/classPdfViewerWidget.html", "dc/ddc/classPdfViewerWidget" ],
+    [ "SummaryDialog", "da/d99/classSummaryDialog.html", "da/d99/classSummaryDialog" ]
 ];

@@ -1,0 +1,25 @@
+var classChatDock =
+[
+    [ "ChatDock", "d0/daf/classChatDock.html#a33716aa17fed8481f3ba6e56f4abe3e0", null ],
+    [ "appendAssistant", "d0/daf/classChatDock.html#aa5c3776aed6d570060cd0691caf68cce", null ],
+    [ "appendAssistantImage", "d0/daf/classChatDock.html#a02a473ddad9cb527e0333a45287cc2dc", null ],
+    [ "appendUser", "d0/daf/classChatDock.html#a4f64136fa06a647278dea92f483f2893", null ],
+    [ "appendUserImage", "d0/daf/classChatDock.html#ac633104781177bca6f5f6aba7e2b3425", null ],
+    [ "clearConversation", "d0/daf/classChatDock.html#a72f97e5dd0e8eeb5cf96e4f570daf724", null ],
+    [ "clearPendingImage", "d0/daf/classChatDock.html#a852ebe7ce47989dfb96956f2712a113f", null ],
+    [ "conversationCleared", "d0/daf/classChatDock.html#aab28ef74a12fdccce233fc1fe7ea870e", null ],
+    [ "conversationForLlm", "d0/daf/classChatDock.html#a03a807d11fa4246ac23a852e7cfe08f2", null ],
+    [ "eventFilter", "d0/daf/classChatDock.html#af323454c7769142ea83e530693844a45", null ],
+    [ "hasPendingImage", "d0/daf/classChatDock.html#a0f2b693611148d452bec91935481f42b", null ],
+    [ "pendingImage", "d0/daf/classChatDock.html#a6100d8ec368035c24fec0082df115e04", null ],
+    [ "requestShowSavedChats", "d0/daf/classChatDock.html#a3d69db425d00daa1345cdb69fe10dcdf", null ],
+    [ "saveTranscriptRequested", "d0/daf/classChatDock.html#a997a65c777531a20fb51ecdab42c419a", null ],
+    [ "sendMessageRequested", "d0/daf/classChatDock.html#ac41f87c5a54ccafb28f182dfeb6f5e68", null ],
+    [ "setConversationForLlm", "d0/daf/classChatDock.html#a10bc16f5962e71956453463dcb347ea9", null ],
+    [ "setPendingImage", "d0/daf/classChatDock.html#ab4473c813a3a8b9e67e1aa4dbda7fa2f", null ],
+    [ "setTranscriptHtml", "d0/daf/classChatDock.html#a4728e24376b63cb196f3b4b500cefe27", null ],
+    [ "suggestTitle", "d0/daf/classChatDock.html#a7241111791a2370f8a4c0ba0cb6d4254", null ],
+    [ "summarizeTranscriptRequested", "d0/daf/classChatDock.html#a38a98e525f075cf63dcdd89571414c02", null ],
+    [ "transcriptHtml", "d0/daf/classChatDock.html#ab2ec69d369d5c7926b9c7e0797171b1f", null ],
+    [ "transcriptText", "d0/daf/classChatDock.html#ada3bcfc1b82945e00589b497af4c48b5", null ]
+];

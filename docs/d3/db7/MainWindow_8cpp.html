@@ -92,12 +92,18 @@ $(document).ready(function(){initNavTree('d3/db7/MainWindow_8cpp.html','../../')
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">MainWindow.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="../../da/d9c/MainWindow_8h_source.html">ui/MainWindow.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../db/dc8/ViewerWidget_8h_source.html">ui/ViewerWidget.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d4/d6d/PdfViewerWidget_8h_source.html">ui/PdfViewerWidget.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d3/da6/LlmClient_8h_source.html">ai/LlmClient.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d7/d5e/SummaryDialog_8h_source.html">ui/SummaryDialog.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d5/d11/LlmSettingsDialog_8h_source.html">ui/LlmSettingsDialog.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d4/d12/ChatDock_8h_source.html">ui/ChatDock.h</a>&quot;</code><br />
 <code>#include &lt;QApplication&gt;</code><br />
 <code>#include &lt;QCoreApplication&gt;</code><br />
 <code>#include &lt;QAction&gt;</code><br />
@@ -122,6 +128,7 @@ $(document).ready(function(){initNavTree('d3/db7/MainWindow_8cpp.html','../../')
 <code>#include &lt;QLineEdit&gt;</code><br />
 <code>#include &lt;QLabel&gt;</code><br />
 <code>#include &lt;QDialogButtonBox&gt;</code><br />
+<code>#include &lt;QPlainTextEdit&gt;</code><br />
 <code>#include &lt;QRegularExpression&gt;</code><br />
 <code>#include &lt;QRegularExpressionMatch&gt;</code><br />
 <code>#include &lt;QMap&gt;</code><br />
@@ -135,6 +142,7 @@ $(document).ready(function(){initNavTree('d3/db7/MainWindow_8cpp.html','../../')
 <code>#include &lt;QUrlQuery&gt;</code><br />
 <code>#include &lt;QJsonDocument&gt;</code><br />
 <code>#include &lt;QJsonObject&gt;</code><br />
+<code>#include &lt;QJsonArray&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;QModelIndex&gt;</code><br />
@@ -142,116 +150,92 @@ $(document).ready(function(){initNavTree('d3/db7/MainWindow_8cpp.html','../../')
 <code>#include &quot;<a class="el" href="../../de/d8b/App_8h_source.html">app/App.h</a>&quot;</code><br />
 <code>#include &lt;QPdfDocument&gt;</code><br />
 <code>#include &lt;QPdfBookmarkModel&gt;</code><br />
-</div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Include dependency graph for MainWindow.cpp:</div>
-<div id="dynsection-0-summary" class="dynsummary" style="display:block;">
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:af4f1932deaa3e660e8bc032c08af9829" id="r_af4f1932deaa3e660e8bc032c08af9829"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db7/MainWindow_8cpp.html#af4f1932deaa3e660e8bc032c08af9829">saveRecentEntries</a> (QSettings &amp;settings, const QVariantList &amp;entries)</td></tr>
+<tr class="separator:af4f1932deaa3e660e8bc032c08af9829"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadbe7c9c750816cd1a670ecff73e5c7d" id="r_aadbe7c9c750816cd1a670ecff73e5c7d"><td class="memItemLeft" align="right" valign="top">QVariantMap&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db7/MainWindow_8cpp.html#aadbe7c9c750816cd1a670ecff73e5c7d">extractPdfMeta</a> (const QString &amp;path)</td></tr>
+<tr class="separator:aadbe7c9c750816cd1a670ecff73e5c7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fddc7689a83225c326a09bf5211bc29" id="r_a0fddc7689a83225c326a09bf5211bc29"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db7/MainWindow_8cpp.html#a0fddc7689a83225c326a09bf5211bc29">entryMatches</a> (const QVariantMap &amp;e, const QString &amp;needle)</td></tr>
+<tr class="separator:a0fddc7689a83225c326a09bf5211bc29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a0fddc7689a83225c326a09bf5211bc29" name="a0fddc7689a83225c326a09bf5211bc29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fddc7689a83225c326a09bf5211bc29">&#9670;&#160;</a></span>entryMatches()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool entryMatches </td>
+          <td>(</td>
+          <td class="paramtype">const QVariantMap &amp;&#160;</td>
+          <td class="paramname"><em>e</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>needle</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
 </div>
-<div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><img src="../../dd/df2/MainWindow_8cpp__incl.png" border="0" usemap="#aGenAi-E-Book-Reader_2src_2ui_2MainWindow_8cpp" alt=""/></div>
-<map name="aGenAi-E-Book-Reader_2src_2ui_2MainWindow_8cpp" id="aGenAi-E-Book-Reader_2src_2ui_2MainWindow_8cpp">
-<area shape="rect" title=" " alt="" coords="2720,5,2895,45"/>
-<area shape="rect" href="../../da/d9c/MainWindow_8h.html" title=" " alt="" coords="59,93,193,119"/>
-<area shape="poly" title=" " alt="" coords="2720,30,2237,36,1515,48,768,68,451,81,207,96,206,91,451,76,768,63,1515,43,2237,31,2720,25"/>
-<area shape="rect" href="../../db/dc8/ViewerWidget_8h.html" title=" " alt="" coords="217,93,358,119"/>
-<area shape="poly" title=" " alt="" coords="2720,30,1591,50,895,70,599,82,372,96,371,91,599,77,895,65,1591,45,2720,25"/>
-<area shape="rect" href="../../d4/d6d/PdfViewerWidget_8h.html" title=" " alt="" coords="382,93,545,119"/>
-<area shape="poly" title=" " alt="" coords="2720,29,2373,32,1843,40,1211,60,884,76,564,96,559,96,559,91,563,91,884,71,1211,55,1843,35,2373,26,2720,24"/>
-<area shape="rect" title=" " alt="" coords="462,167,582,192"/>
-<area shape="poly" title=" " alt="" coords="2720,30,2236,36,1552,49,924,69,712,81,645,88,610,96,588,108,569,124,539,157,535,154,565,120,585,103,608,91,644,83,711,76,924,63,1552,44,2236,31,2719,25"/>
-<area shape="rect" title=" " alt="" coords="620,93,725,119"/>
-<area shape="poly" title=" " alt="" coords="2720,31,1760,50,1178,69,931,82,739,96,739,91,930,77,1178,64,1760,45,2720,25"/>
-<area shape="rect" title=" " alt="" coords="749,93,884,119"/>
-<area shape="poly" title=" " alt="" coords="2720,29,2421,31,1974,39,1444,60,1169,75,898,96,898,91,1169,70,1444,54,1974,34,2421,26,2720,24"/>
-<area shape="rect" title=" " alt="" coords="908,93,981,119"/>
-<area shape="poly" title=" " alt="" coords="2720,30,2371,36,1878,48,1375,67,1162,81,996,96,995,91,1161,75,1375,62,1878,42,2371,31,2720,25"/>
-<area shape="rect" title=" " alt="" coords="1006,93,1086,119"/>
-<area shape="poly" title=" " alt="" coords="2720,31,2389,37,1926,50,1456,69,1256,82,1100,96,1099,91,1255,76,1455,64,1926,45,2389,32,2719,25"/>
-<area shape="rect" title=" " alt="" coords="1110,93,1201,119"/>
-<area shape="poly" title=" " alt="" coords="2720,28,2463,29,2091,37,1657,57,1433,74,1214,96,1214,96,1213,91,1214,91,1433,69,1656,52,2091,31,2463,24,2720,23"/>
-<area shape="rect" title=" " alt="" coords="1225,93,1293,119"/>
-<area shape="poly" title=" " alt="" coords="2720,31,2426,38,2024,51,1616,70,1443,82,1307,96,1307,91,1442,77,1616,65,2023,45,2426,33,2720,26"/>
-<area shape="rect" title=" " alt="" coords="1317,93,1412,119"/>
-<area shape="poly" title=" " alt="" coords="2720,29,2496,32,2178,41,1807,61,1615,77,1426,96,1426,91,1615,71,1807,56,2177,36,2496,27,2720,24"/>
-<area shape="rect" title=" " alt="" coords="1436,93,1541,119"/>
-<area shape="poly" title=" " alt="" coords="2720,30,2515,35,2229,46,1897,65,1555,96,1555,91,1896,60,2228,41,2515,30,2720,25"/>
-<area shape="rect" title=" " alt="" coords="1565,93,1644,119"/>
-<area shape="poly" title=" " alt="" coords="2720,30,2530,33,2269,43,1968,63,1812,78,1658,96,1658,91,1811,72,1967,58,2269,38,2530,28,2720,24"/>
-<area shape="rect" title=" " alt="" coords="1668,93,1779,119"/>
-<area shape="poly" title=" " alt="" coords="2720,32,2323,51,2061,70,1793,96,1792,91,2061,65,2322,46,2720,27"/>
-<area shape="rect" title=" " alt="" coords="1803,93,1915,119"/>
-<area shape="poly" title=" " alt="" coords="2720,33,2377,54,2156,72,1929,96,1929,91,2156,67,2377,49,2719,28"/>
-<area shape="rect" title=" " alt="" coords="1939,93,1998,119"/>
-<area shape="poly" title=" " alt="" coords="2720,31,2585,37,2411,48,2214,67,2012,96,2011,91,2213,62,2410,43,2585,32,2720,26"/>
-<area shape="rect" title=" " alt="" coords="2022,93,2118,119"/>
-<area shape="poly" title=" " alt="" coords="2720,36,2456,58,2132,96,2131,96,2131,91,2131,91,2456,53,2719,30"/>
-<area shape="rect" title=" " alt="" coords="2143,93,2245,119"/>
-<area shape="poly" title=" " alt="" coords="2720,38,2514,62,2259,96,2259,91,2513,57,2719,33"/>
-<area shape="rect" title=" " alt="" coords="2270,93,2321,119"/>
-<area shape="poly" title=" " alt="" coords="2720,38,2541,60,2438,76,2335,96,2334,96,2333,91,2333,91,2437,71,2541,55,2720,32"/>
-<area shape="rect" title=" " alt="" coords="2345,93,2424,119"/>
-<area shape="poly" title=" " alt="" coords="2720,44,2438,96,2437,91,2719,39"/>
-<area shape="rect" title=" " alt="" coords="2449,93,2563,119"/>
-<area shape="poly" title=" " alt="" coords="2736,48,2564,92,2563,87,2734,43"/>
-<area shape="rect" title=" " alt="" coords="2588,93,2667,119"/>
-<area shape="poly" title=" " alt="" coords="2765,48,2667,90,2665,85,2763,43"/>
-<area shape="rect" title=" " alt="" coords="2691,93,2745,119"/>
-<area shape="poly" title=" " alt="" coords="2787,48,2743,86,2740,82,2784,44"/>
-<area shape="rect" title=" " alt="" coords="2770,93,2845,119"/>
-<area shape="poly" title=" " alt="" coords="2810,46,2810,79,2805,79,2805,46"/>
-<area shape="rect" title=" " alt="" coords="2869,93,2978,119"/>
-<area shape="poly" title=" " alt="" coords="2837,43,2896,83,2893,88,2834,48"/>
-<area shape="rect" title=" " alt="" coords="3003,93,3087,119"/>
-<area shape="poly" title=" " alt="" coords="2865,43,2998,87,2996,92,2863,48"/>
-<area shape="rect" title=" " alt="" coords="3111,93,3178,119"/>
-<area shape="poly" title=" " alt="" coords="2892,43,3098,90,3097,96,2891,48"/>
-<area shape="rect" title=" " alt="" coords="3203,93,3345,119"/>
-<area shape="poly" title=" " alt="" coords="2896,39,3193,88,3192,94,2895,44"/>
-<area shape="rect" title=" " alt="" coords="3369,93,3523,119"/>
-<area shape="poly" title=" " alt="" coords="2895,34,3356,90,3356,96,2895,40"/>
-<area shape="rect" title=" " alt="" coords="3547,93,3740,119"/>
-<area shape="poly" title=" " alt="" coords="2895,32,3533,90,3532,96,2895,37"/>
-<area shape="rect" title=" " alt="" coords="3764,93,3824,119"/>
-<area shape="poly" title=" " alt="" coords="2895,24,3053,28,3264,38,3505,58,3629,73,3751,91,3750,96,3628,78,3504,63,3264,44,3053,33,2895,30"/>
-<area shape="rect" title=" " alt="" coords="3849,93,3947,119"/>
-<area shape="poly" title=" " alt="" coords="2895,26,3297,44,3563,63,3835,91,3835,96,3562,68,3297,49,2895,32"/>
-<area shape="rect" title=" " alt="" coords="3972,93,4037,119"/>
-<area shape="poly" title=" " alt="" coords="2895,24,3085,26,3347,35,3649,55,3805,71,3958,91,3958,96,3804,76,3648,60,3347,40,3085,31,2895,29"/>
-<area shape="rect" title=" " alt="" coords="4062,93,4169,119"/>
-<area shape="poly" title=" " alt="" coords="2895,25,3098,30,3382,41,3711,60,4049,91,4048,96,3710,66,3382,46,3098,35,2895,30"/>
-<area shape="rect" title=" " alt="" coords="4193,93,4382,119"/>
-<area shape="poly" title=" " alt="" coords="2895,27,3433,47,3801,66,4179,91,4179,96,3800,71,3433,52,2895,32"/>
-<area shape="rect" title=" " alt="" coords="4407,93,4547,119"/>
-<area shape="poly" title=" " alt="" coords="2895,25,3148,29,3516,40,3948,59,4393,91,4393,96,3947,65,3516,45,3148,34,2895,30"/>
-<area shape="rect" title=" " alt="" coords="4571,93,4695,119"/>
-<area shape="poly" title=" " alt="" coords="2895,24,3172,26,3580,34,4061,54,4311,70,4557,91,4557,96,4311,76,4061,60,3580,40,3172,31,2895,29"/>
-<area shape="rect" title=" " alt="" coords="4719,93,4770,119"/>
-<area shape="poly" title=" " alt="" coords="2895,24,3259,26,3778,35,4050,44,4308,56,4532,71,4706,91,4706,96,4532,76,4307,61,4050,49,3778,41,3259,32,2895,29"/>
-<area shape="rect" title=" " alt="" coords="4794,93,4885,119"/>
-<area shape="poly" title=" " alt="" coords="2895,25,3273,31,3812,43,4364,63,4599,76,4781,91,4780,96,4598,81,4364,68,3812,49,3272,36,2895,30"/>
-<area shape="rect" title=" " alt="" coords="4909,93,5036,119"/>
-<area shape="poly" title=" " alt="" coords="2895,25,3864,47,4452,66,4702,78,4896,91,4896,96,4702,83,4452,71,3864,52,2895,31"/>
-<area shape="rect" title=" " alt="" coords="5061,93,5162,119"/>
-<area shape="poly" title=" " alt="" coords="2895,25,3318,30,3934,42,4569,62,4839,75,5047,91,5047,96,4839,80,4569,67,3934,48,3318,36,2895,30"/>
-<area shape="rect" title=" " alt="" coords="5186,93,5271,119"/>
-<area shape="poly" title=" " alt="" coords="2895,24,3339,28,3992,38,4666,58,4952,73,5172,91,5172,96,4952,78,4666,64,3992,44,3339,33,2895,30"/>
-<area shape="rect" title=" " alt="" coords="5296,93,5383,119"/>
-<area shape="poly" title=" " alt="" coords="2895,24,3358,28,4042,38,4750,58,5051,72,5282,91,5282,96,5050,78,4750,63,4042,43,3357,33,2895,30"/>
-<area shape="rect" title=" " alt="" coords="5407,93,5515,119"/>
-<area shape="poly" title=" " alt="" coords="2895,25,3376,29,4093,40,4836,60,5151,74,5393,91,5393,96,5151,79,4836,65,4093,45,3376,34,2895,30"/>
-<area shape="rect" title=" " alt="" coords="5539,93,5617,119"/>
-<area shape="poly" title=" " alt="" coords="2895,24,3398,25,4153,33,4556,41,4937,53,5270,69,5525,91,5524,96,5269,75,4937,58,4556,46,4153,38,3398,30,2895,29"/>
-<area shape="rect" href="../../de/d8b/App_8h.html" title="Declaração da classe principal da aplicação." alt="" coords="5641,93,5728,119"/>
-<area shape="poly" title=" " alt="" coords="2895,24,3415,26,4200,34,4619,42,5017,54,5363,70,5628,91,5628,96,5362,75,5016,59,4619,47,4200,39,3415,31,2895,29"/>
-<area shape="rect" title=" " alt="" coords="5753,93,5913,119"/>
-<area shape="poly" title=" " alt="" coords="2895,25,4250,43,5101,63,5462,76,5739,91,5739,96,5461,81,5100,69,4250,49,2895,30"/>
-<area shape="rect" title=" " alt="" coords="5,167,121,192"/>
-<area shape="poly" title=" " alt="" coords="118,121,85,158,81,154,114,117"/>
-<area shape="rect" title=" " alt="" coords="146,167,231,192"/>
-<area shape="poly" title=" " alt="" coords="138,117,171,154,167,158,134,121"/>
-<area shape="poly" title=" " alt="" coords="475,117,506,155,502,158,471,121"/>
-</map>
 </div>
-</div></div><!-- contents -->
+<a id="aadbe7c9c750816cd1a670ecff73e5c7d" name="aadbe7c9c750816cd1a670ecff73e5c7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aadbe7c9c750816cd1a670ecff73e5c7d">&#9670;&#160;</a></span>extractPdfMeta()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">QVariantMap extractPdfMeta </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af4f1932deaa3e660e8bc032c08af9829" name="af4f1932deaa3e660e8bc032c08af9829"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4f1932deaa3e660e8bc032c08af9829">&#9670;&#160;</a></span>saveRecentEntries()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void saveRecentEntries </td>
+          <td>(</td>
+          <td class="paramtype">QSettings &amp;&#160;</td>
+          <td class="paramname"><em>settings</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QVariantList &amp;&#160;</td>
+          <td class="paramname"><em>entries</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

@@ -1,6 +1,26 @@
 var searchData=
 [
-  ['_7emainwindow_0',['~MainWindow',['../d6/d1a/classMainWindow.html#a1f7d2c56410fc1bfa135bb907d43313f',1,'MainWindow']]],
-  ['_7epdfviewerwidget_1',['~PdfViewerWidget',['../dc/ddc/classPdfViewerWidget.html#a84ee4929baf8649f04a401ab296b8e28',1,'PdfViewerWidget']]],
-  ['_7ereader_2',['~Reader',['../d4/db7/classgenai_1_1Reader.html#a6182f5b3dd3efc12dd47e654e16279a1',1,'genai::Reader']]]
+  ['saverecententries_0',['saveRecentEntries',['../d3/db7/MainWindow_8cpp.html#af4f1932deaa3e660e8bc032c08af9829',1,'MainWindow.cpp']]],
+  ['saveselectionasmarkdown_1',['saveSelectionAsMarkdown',['../dc/ddc/classPdfViewerWidget.html#a5623bb122b381b2b68aca4b9e569c653',1,'PdfViewerWidget']]],
+  ['saveselectionastxt_2',['saveSelectionAsTxt',['../dc/ddc/classPdfViewerWidget.html#aa3ca1d2e554f63cdd67fe0da10aa345f',1,'PdfViewerWidget']]],
+  ['savetranscriptrequested_3',['saveTranscriptRequested',['../d0/daf/classChatDock.html#a997a65c777531a20fb51ecdab42c419a',1,'ChatDock']]],
+  ['scrollchanged_4',['scrollChanged',['../dc/ddc/classPdfViewerWidget.html#ae7dd0c29228f3d1fdabaea724350e9c2',1,'PdfViewerWidget']]],
+  ['selectionmode_5',['selectionMode',['../dc/ddc/classPdfViewerWidget.html#a9b196f4485d5d9672ee88acdc8beac7b',1,'PdfViewerWidget']]],
+  ['selectiontext_6',['selectionText',['../dc/ddc/classPdfViewerWidget.html#a8ade4d3ab943b162797299c56c747fa5',1,'PdfViewerWidget']]],
+  ['sendmessagerequested_7',['sendMessageRequested',['../d0/daf/classChatDock.html#ac41f87c5a54ccafb28f182dfeb6f5e68',1,'ChatDock']]],
+  ['sendtochatrequested_8',['sendToChatRequested',['../da/d99/classSummaryDialog.html#afe77a8319728a7dfadd342b6295bfb79',1,'SummaryDialog']]],
+  ['setconversationforllm_9',['setConversationForLlm',['../d0/daf/classChatDock.html#a10bc16f5962e71956453463dcb347ea9',1,'ChatDock']]],
+  ['setcurrentpage_10',['setCurrentPage',['../dc/ddc/classPdfViewerWidget.html#ae323d3076918ec66f7b2e5f7b89fddfb',1,'PdfViewerWidget']]],
+  ['setpendingimage_11',['setPendingImage',['../d0/daf/classChatDock.html#ab4473c813a3a8b9e67e1aa4dbda7fa2f',1,'ChatDock']]],
+  ['setselectionmode_12',['setSelectionMode',['../dc/ddc/classPdfViewerWidget.html#abef0c61de608322f93d3062ccc09070d',1,'PdfViewerWidget']]],
+  ['settext_13',['setText',['../da/d99/classSummaryDialog.html#a57d7c61370847a2d5f8744943b42eace',1,'SummaryDialog']]],
+  ['settranscripthtml_14',['setTranscriptHtml',['../d0/daf/classChatDock.html#a4728e24376b63cb196f3b4b500cefe27',1,'ChatDock']]],
+  ['setverticalscrollvalue_15',['setVerticalScrollValue',['../dc/ddc/classPdfViewerWidget.html#a028e9f2a4739e0b090dd64fcfe670aa5',1,'PdfViewerWidget']]],
+  ['setwheelzoomstep_16',['setWheelZoomStep',['../dc/ddc/classPdfViewerWidget.html#a51f21e6a21dc0c9b4fa8de58844e3dbf',1,'PdfViewerWidget']]],
+  ['setzoomfactor_17',['setZoomFactor',['../dc/ddc/classPdfViewerWidget.html#a1e95565876ced45e12bc0ad943c2bea6',1,'PdfViewerWidget']]],
+  ['suggesttitle_18',['suggestTitle',['../d0/daf/classChatDock.html#a7241111791a2370f8a4c0ba0cb6d4254',1,'ChatDock']]],
+  ['summarize_19',['summarize',['../dd/dd6/classLlmClient.html#a910f01acc686183532d8c3972eb98d4a',1,'LlmClient']]],
+  ['summarizetranscriptrequested_20',['summarizeTranscriptRequested',['../d0/daf/classChatDock.html#a38a98e525f075cf63dcdd89571414c02',1,'ChatDock']]],
+  ['summarydialog_21',['SummaryDialog',['../da/d99/classSummaryDialog.html#a86b43ad470568249f0130c078218aaf4',1,'SummaryDialog']]],
+  ['synonyms_22',['synonyms',['../dd/dd6/classLlmClient.html#afb88c33b21dad54f732196d426e855f6',1,'LlmClient']]]
 ];

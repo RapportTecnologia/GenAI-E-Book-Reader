@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['verticalscrollvalue_0',['verticalScrollValue',['../dc/ddc/classPdfViewerWidget.html#afc409e6ecfe9d41117984922b827943a',1,'PdfViewerWidget']]]
+  ['pdfviewerwidget_0',['PdfViewerWidget',['../dc/ddc/classPdfViewerWidget.html#a6df2d87dfa5ecff01864609a5387d00f',1,'PdfViewerWidget']]],
+  ['pendingimage_1',['pendingImage',['../d0/daf/classChatDock.html#a6100d8ec368035c24fec0082df115e04',1,'ChatDock']]],
+  ['prevpage_2',['prevPage',['../dc/ddc/classPdfViewerWidget.html#a580dc0ed0d4a36b83bed761dca4df435',1,'PdfViewerWidget']]]
 ];

@@ -1,16 +1,16 @@
 var searchData=
 [
-  ['métricas_20de_20projeto_0',['9) Métricas de Projeto',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md25',1,'']]],
-  ['main_1',['main',['../df/d0a/main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main.cpp']]],
-  ['main_2ecpp_2',['main.cpp',['../df/d0a/main_8cpp.html',1,'']]],
-  ['mainwindow_3',['mainwindow',['../d6/d1a/classMainWindow.html',1,'MainWindow'],['../d6/d1a/classMainWindow.html#a996c5a2b6f77944776856f08ec30858d',1,'MainWindow::MainWindow()']]],
-  ['mainwindow_2ecpp_4',['MainWindow.cpp',['../d3/db7/MainWindow_8cpp.html',1,'']]],
-  ['mainwindow_2eh_5',['MainWindow.h',['../da/d9c/MainWindow_8h.html',1,'']]],
-  ['matriz_20de_20rastreabilidade_20resumo_6',['5) Matriz de Rastreabilidade (resumo)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md21',1,'']]],
-  ['md_7',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
-  ['melhorias_20ux_8',['0.6.0 – Integração Calibre e Melhorias UX',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md69',1,'']]],
-  ['message_9',['message',['../d4/d22/structgenai_1_1OpenResult.html#ab7217863270e7dcb79c544a834c3eba4',1,'genai::OpenResult']]],
-  ['mitigações_20prioritários_10',['8) Riscos e Mitigações (prioritários)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md24',1,'']]],
-  ['mvp_11',['mvp',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md17',1,'1) Estratégia e Escopo do MVP'],['../index.html#autotoc_md1',1,'Principais Recursos (MVP)']]],
-  ['mvp_20leitura_20básica_20entregue_20na_20v0_201_200_12',['0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md61',1,'']]]
+  ['leitura_20básica_20entregue_20na_20v0_201_200_0',['0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md67',1,'']]],
+  ['leitura_20e_20integração_20entregue_20em_202025_2009_2014_1',['0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md70',1,'']]],
+  ['leitura_20entregue_20em_202025_2008_2018_2',['0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md68',1,'']]],
+  ['licença_3',['Licença',['../index.html#autotoc_md16',1,'']]],
+  ['linux_4',['linux',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md32',1,'Build da Aplicação (Linux)'],['../index.html#autotoc_md8',1,'Como rodar (Linux)'],['../index.html#autotoc_md11',1,'Linux']]],
+  ['llm_20_3a_20configuração_20e_20uso_5',['IA (LLM): Configuração e Uso',['../index.html#autotoc_md6',1,'']]],
+  ['llmclient_6',['llmclient',['../dd/dd6/classLlmClient.html#aeb8c96130963c9ba221668ce8466d580',1,'LlmClient::LlmClient()'],['../dd/dd6/classLlmClient.html',1,'LlmClient']]],
+  ['llmclient_2ecpp_7',['LlmClient.cpp',['../dc/df7/LlmClient_8cpp.html',1,'']]],
+  ['llmclient_2eh_8',['LlmClient.h',['../d3/da6/LlmClient_8h.html',1,'']]],
+  ['llmsettingsdialog_9',['llmsettingsdialog',['../d0/d17/classLlmSettingsDialog.html#a5f4bf94d9cc72300273fe8a1e8b97c6d',1,'LlmSettingsDialog::LlmSettingsDialog()'],['../d0/d17/classLlmSettingsDialog.html',1,'LlmSettingsDialog']]],
+  ['llmsettingsdialog_2ecpp_10',['LlmSettingsDialog.cpp',['../d5/dff/LlmSettingsDialog_8cpp.html',1,'']]],
+  ['llmsettingsdialog_2eh_11',['LlmSettingsDialog.h',['../d5/d11/LlmSettingsDialog_8h.html',1,'']]],
+  ['location_12',['Location',['../dd/d88/structgenai_1_1Location.html',1,'genai']]]
 ];

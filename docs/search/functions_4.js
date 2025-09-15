@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hasselection_0',['hasSelection',['../dc/ddc/classPdfViewerWidget.html#a02ad5b3e5418b770c144faf3044b64f1',1,'PdfViewerWidget']]]
+  ['fittowidth_0',['fitToWidth',['../dc/ddc/classPdfViewerWidget.html#a6616311485fd438b1432892df3d89e50',1,'PdfViewerWidget']]]
 ];

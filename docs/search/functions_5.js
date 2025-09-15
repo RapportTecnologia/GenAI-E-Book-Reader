@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['main_0',['main',['../df/d0a/main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main.cpp']]],
-  ['mainwindow_1',['MainWindow',['../d6/d1a/classMainWindow.html#a996c5a2b6f77944776856f08ec30858d',1,'MainWindow']]]
+  ['goto_0',['goto',['../d4/db7/classgenai_1_1Reader.html#a0d699841a9426ec1546538f709482d81',1,'genai::Reader::goTo()'],['../d5/de3/classgenai_1_1DummyReader.html#a37a177489c33b32029393bbb2d2154d6',1,'genai::DummyReader::goTo()']]]
 ];

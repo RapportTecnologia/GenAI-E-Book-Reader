@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['pdfviewerwidget_0',['PdfViewerWidget',['../dc/ddc/classPdfViewerWidget.html#a6df2d87dfa5ecff01864609a5387d00f',1,'PdfViewerWidget']]],
-  ['prevpage_1',['prevPage',['../dc/ddc/classPdfViewerWidget.html#a580dc0ed0d4a36b83bed761dca4df435',1,'PdfViewerWidget']]]
+  ['main_0',['main',['../df/d0a/main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main.cpp']]],
+  ['mainwindow_1',['MainWindow',['../d6/d1a/classMainWindow.html#a996c5a2b6f77944776856f08ec30858d',1,'MainWindow']]]
 ];

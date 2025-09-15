@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fittowidth_0',['fitToWidth',['../dc/ddc/classPdfViewerWidget.html#a6616311485fd438b1432892df3d89e50',1,'PdfViewerWidget']]]
+  ['document_0',['document',['../dc/ddc/classPdfViewerWidget.html#abd91077ce31e7c2ddab99c7c89b5b54b',1,'PdfViewerWidget']]]
 ];

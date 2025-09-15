@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['dummyreader_0',['DummyReader',['../d5/de3/classgenai_1_1DummyReader.html',1,'genai']]]
+  ['chatdock_0',['ChatDock',['../d0/daf/classChatDock.html',1,'']]]
 ];

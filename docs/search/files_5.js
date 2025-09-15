@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['viewerwidget_2ecpp_0',['ViewerWidget.cpp',['../d0/dd0/ViewerWidget_8cpp.html',1,'']]],
-  ['viewerwidget_2eh_1',['ViewerWidget.h',['../db/dc8/ViewerWidget_8h.html',1,'']]]
+  ['reader_2eh_0',['Reader.h',['../d5/d49/Reader_8h.html',1,'']]],
+  ['readme_2emd_1',['README.md',['../da/ddd/README_8md.html',1,'']]],
+  ['roadmap_2emd_2',['ROADMAP.md',['../d9/d59/ROADMAP_8md.html',1,'']]]
 ];

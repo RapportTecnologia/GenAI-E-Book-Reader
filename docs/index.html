@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
   <div class="headertitle"><div class="title">GenAI E-Book Reader </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_GenAi-E-Book-Reader_2README"></a> <img src="https://visitor-badge.laobi.icu/badge?page_id=rapporttecnologia.genai-e-book-reader" alt="Visitantes do Projeto" class="inline"/> [<img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" alt="License: CC BY 4.0" style="pointer-events: none;" class="inline"/>](LICENSE) <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="C++" class="inline"/> <img src="https://img.shields.io/badge/Qt6-Widgets-brightgreen" alt="Qt" class="inline"/> <img src="https://img.shields.io/badge/CMake-%3E%3D3.16-informational" alt="CMake" class="inline"/> <a href="docs/index.html"><img src="https://img.shields.io/badge/docs-Doxygen-blueviolet" alt="Docs" class="inline"/></a> <img src="https://img.shields.io/badge/version-0.1.4-blue" alt="Version" class="inline"/> ![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)</p>
+<div class="textblock"><p><a class="anchor" id="md_GenAi-E-Book-Reader_2README"></a> <img src="https://visitor-badge.laobi.icu/badge?page_id=rapporttecnologia.genai-e-book-reader" alt="Visitantes do Projeto" class="inline"/> [<img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" alt="License: CC BY 4.0" style="pointer-events: none;" class="inline"/>](LICENSE) <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="C++" class="inline"/> <img src="https://img.shields.io/badge/Qt6-Widgets-brightgreen" alt="Qt" class="inline"/> <img src="https://img.shields.io/badge/CMake-%3E%3D3.16-informational" alt="CMake" class="inline"/> <a href="docs/index.html"><img src="https://img.shields.io/badge/docs-Doxygen-blueviolet" alt="Docs" class="inline"/></a> <img src="https://img.shields.io/badge/version-0.1.5-blue" alt="Version" class="inline"/> ![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)</p>
 <h1><a class="anchor" id="autotoc_md0"></a>
 GenAI E-Book Reader</h1>
 <p>Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt6, com recursos planejados de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.</p>
@@ -104,6 +104,7 @@ GenAI E-Book Reader</h1>
 <li>Plano do projeto (fases, sprints e critérios): consulte <a class="el" href="dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html">PLANO-DE-DESENVOLVIMENTO.md</a>.</li>
 <li>Histórico de mudanças: consulte <a class="el" href="dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html">CHANGELOG.md</a>.</li>
 <li>Planejamento de releases: consulte <a class="el" href="dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html">ROADMAP.md</a>.</li>
+<li>Tutorial passo a passo: consulte TUTORIAL.md.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md1"></a>
 Principais Recursos (MVP)</h2>
@@ -164,11 +165,56 @@ Arquivos Recentes e Pesquisa</h3>
 <li>Os metadados são persistidos em <code>QSettings</code> e atualizados quando você abre um PDF.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md6"></a>
+IA (LLM): Configuração e Uso</h2>
+<p>A aplicação possui integração com provedores compatíveis com a API da OpenAI para chat, resumos e sinônimos. Atualmente são suportados:</p><ul>
+<li>OpenAI (<code><a href="https://api.openai.com">https://api.openai.com</a></code>)</li>
+<li>GenerAtiva (<code><a href="https://generativa.rapport.tec.br">https://generativa.rapport.tec.br</a></code>)</li>
+</ul>
+<p>Como configurar:</p><ul>
+<li>Abra o diálogo "Configurações de LLM" (menu de Configurações).</li>
+<li>Selecione o provedor (OpenAI ou GenerAtiva) e o modelo (ex.: <code>gpt-4o-mini</code>).</li>
+<li>Informe a API Key do provedor escolhido.</li>
+<li>Opcional: preencha "Base URL" para apontar a um endpoint compatível com OpenAI.</li>
+<li>Ajuste os prompts padrão para Sinônimos, Resumos, Explicações e Chat conforme sua preferência.</li>
+</ul>
+<p>Uso no leitor:</p><ul>
+<li>Sinônimos: selecione uma palavra/locução e acione a ação de IA para sinônimos; será solicitado consentimento antes do envio.</li>
+<li>Resumo: selecione um trecho e acione a ação de IA para resumo; o resultado abre no diálogo de resumo.</li>
+<li>Chat: envie um trecho ao chat da IA ou digite livremente no painel de chat.<ul>
+<li>Renderização avançada no painel de chat (Markdown/HTML):<ul>
+<li>Tabelas Markdown (GFM) com bordas, cabeçalho e rolagem horizontal quando necessário.</li>
+<li>Syntax highlighting para blocos de código (highlight.js, tema GitHub).</li>
+<li>MathJax v3 para fórmulas (inline e display), aplicado após o parse do Markdown.</li>
+<li>Auto-scroll para a última mensagem recebida/enviada.</li>
+</ul>
+</li>
+<li>Sessões de chat:<ul>
+<li>Botão "Novo" inicia uma nova conversa (pergunta se deseja salvar a conversa atual no histórico, com título automático).</li>
+<li>Botão "Histórico" lista e restaura conversas salvas (por arquivo aberto), mantendo o contexto da IA.</li>
+</ul>
+</li>
+<li>Contexto contínuo: novos envios incluem o histórico completo de mensagens (system/user/assistant) para melhor continuidade.</li>
+</ul>
+</li>
+</ul>
+<p>Persistência/Configurações (QSettings):</p><ul>
+<li><code>ai/provider</code>: <code>openai</code> | <code>generativa</code> (padrão: <code>openai</code>)</li>
+<li><code>ai/base_url</code>: URL base para override (opcional)</li>
+<li><code>ai/api_key</code>: token secreto do provedor</li>
+<li><code>ai/model</code>: nome do modelo (ex.: <code>gpt-4o-mini</code>)</li>
+<li><code>ai/prompts/synonyms</code>, <code>ai/prompts/summaries</code>, <code>ai/prompts/explanations</code>, <code>ai/prompts/chat</code></li>
+</ul>
+<p>Observações de privacidade:</p><ul>
+<li>Antes de qualquer envio de conteúdo à IA, a aplicação solicita sua confirmação.</li>
+<li>Tokens são armazenados nas preferências do usuário (<code>QSettings</code>).</li>
+</ul>
+<p>Para um guia passo a passo com imagens e dicas, consulte o TUTORIAL.md.</p>
+<h2><a class="anchor" id="autotoc_md7"></a>
 Próximas versões</h2>
 <ul>
 <li>Planejamento contínuo em <code><a class="el" href="d9/d59/ROADMAP_8md.html">ROADMAP.md</a></code>.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md7"></a>
+<h2><a class="anchor" id="autotoc_md8"></a>
 Como rodar (Linux)</h2>
 <p>Pré-requisitos: CMake (&gt;=3.16), compilador C++17, Qt6 (Widgets, PdfWidgets, Network), Doxygen (opcional).</p>
 <div class="fragment"><div class="line">cmake -S . -B build</div>
@@ -180,10 +226,41 @@ Como rodar (Linux)</h2>
 <div class="line"># ou</div>
 <div class="line">doxygen docs/Doxyfile</div>
 <div class="line"># Abrir: docs/index.html</div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md9"></a>
+Como gerar um release no GitHub</h2>
+<p>Pré-requisitos:</p><ul>
+<li>Ter o repositório remoto configurado (origin) e acesso de push.</li>
+<li>Opcional: GitHub CLI (<code>gh</code>) autenticado: <code>gh auth login</code>.</li>
+</ul>
+<p>Passos sugeridos:</p>
+<div class="fragment"><div class="line"># 1) Garanta que CHANGELOG.md e README.md estão atualizados (ex.: 0.1.5)</div>
+<div class="line">git add CHANGELOG.md README.md</div>
+<div class="line">git commit -m &quot;docs: atualiza changelog e readme para v0.1.5&quot;</div>
+<div class="line"> </div>
+<div class="line"># 2) Versione no código se aplicável (CMakeLists.txt, headers) e commite</div>
+<div class="line"># Exemplo (se houve mudança de versão de build)</div>
+<div class="line"># git add CMakeLists.txt include/app/App.h</div>
+<div class="line"># git commit -m &quot;chore(release): bump version to v0.1.5&quot;</div>
+<div class="line"> </div>
+<div class="line"># 3) Crie uma tag anotada e envie</div>
+<div class="line">git tag -a v0.1.5 -m &quot;v0.1.5&quot;</div>
+<div class="line">git push origin v0.1.5</div>
+<div class="line"> </div>
+<div class="line"># 4A) Criar release via GitHub CLI (anexando notas do CHANGELOG)</div>
+<div class="line">gh release create v0.1.5 \</div>
+<div class="line">  --title &quot;v0.1.5&quot; \</div>
+<div class="line">  --notes &quot;Consulte CHANGELOG.md para detalhes desta versão.&quot;</div>
+<div class="line"> </div>
+<div class="line"># 4B) Alternativa: criar release pela UI do GitHub</div>
+<div class="line"># - Vá em Releases &gt; Draft a new release &gt; Escolha a tag v0.1.5 &gt; Preencha título/notas &gt; Publish</div>
+<div class="line"> </div>
+<div class="line"># 5) (Opcional) Anexar binários</div>
+<div class="line"># Se você tiver artefatos em dist/, anexe com:</div>
+<div class="line"># gh release upload v0.1.5 dist/genai_reader-v0.1.5-linux-x86_64 dist/genai_reader-v0.1.5-linux-x86_64.tar.gz</div>
 </div><!-- fragment --><p>Observação: o projeto exige Qt6 (Widgets, PdfWidgets, Network). Sem Qt6 a aplicação não compila.</p>
-<h2><a class="anchor" id="autotoc_md8"></a>
+<h2><a class="anchor" id="autotoc_md10"></a>
 Dependências de Build por Plataforma</h2>
-<h3><a class="anchor" id="autotoc_md9"></a>
+<h3><a class="anchor" id="autotoc_md11"></a>
 Linux</h3>
 <ul>
 <li>Geral:<ul>
@@ -213,7 +290,7 @@ Linux</h3>
 <li>Se sua distro não tiver pacote de Qt PDF, use Poppler-Qt6 correspondente.</li>
 <li>Caso o include de <code>QPdfBookmarkModel</code> não esteja disponível, o TOC de PDFs cairá automaticamente para a listagem de páginas.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md10"></a>
+<h3><a class="anchor" id="autotoc_md12"></a>
 Windows</h3>
 <ul>
 <li>Opção A: Visual Studio + Qt (recomendado) 1) Instale Visual Studio (Community) ou "Build Tools for Visual Studio" com MSVC C++. 2) Instale Qt via Qt Online Installer (mesmo compilador/versão do MSVC). Inclua Qt Widgets e Qt PDF. 3) Instale CMake e Ninja (opcional, melhora builds):<ul>
@@ -230,7 +307,7 @@ Windows</h3>
 <div class="line">    mingw-w64-ucrt-x86_64-qt6-pdf doxygen graphviz</div>
 </div><!-- fragment --> 3) Abra o shell UCRT64/MinGW correspondente e compile com CMake.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md11"></a>
+<h2><a class="anchor" id="autotoc_md13"></a>
 Integração opcional com PHPList (.env)</h2>
 <ul>
 <li>O aplicativo possui um diálogo "Dados do leitor" (<code>Arquivo &gt; Leitor &gt; Dados do leitor...</code>) para registrar nome, e-mail e WhatsApp.</li>
@@ -243,7 +320,7 @@ Integração opcional com PHPList (.env)</h2>
 <li>As credenciais não são exibidas pela UI; o envio é sempre confirmado com o usuário.</li>
 <li>O <code>.env</code> é criado com valores vazios automaticamente no primeiro configure do CMake (veja <code>CMakeLists.txt</code>).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md14"></a>
 Contribuindo</h2>
 <p>Contribuições são muito bem-vindas! Você pode ajudar de várias formas:</p><ul>
 <li>Reportando bugs e abrindo issues com sugestões de melhorias.</li>
@@ -256,10 +333,10 @@ Contribuindo</h2>
 <li>Commits pequenos e objetivos com mensagens claras.</li>
 <li>Abra um Pull Request descrevendo o problema/solução e referenciando RF/RNF/CA afetados.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md13"></a>
+<h2><a class="anchor" id="autotoc_md15"></a>
 Código de Conduta</h2>
 <p>Seja respeitoso e colaborativo. Não serão tolerados comportamentos abusivos. Utilize linguagem cordial e empática nas interações.</p>
-<h2><a class="anchor" id="autotoc_md14"></a>
+<h2><a class="anchor" id="autotoc_md16"></a>
 Licença</h2>
 <p>Este projeto é licenciado sob a licença Creative Commons Attribution 4.0 International (CC BY 4.0). Consulte o arquivo [<code>LICENSE</code>](LICENSE).</p>
 <p>Você é livre para:</p><ul>
@@ -269,7 +346,7 @@ Licença</h2>
 <p>Desde que atribua o crédito apropriado e indique se mudanças foram feitas. Veja os termos completos em:</p><ul>
 <li><a href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></li>
 </ul>
-<h2><a class="anchor" id="autotoc_md15"></a>
+<h2><a class="anchor" id="autotoc_md17"></a>
 Agradecimentos</h2>
 <ul>
 <li>Comunidade Qt e bibliotecas de leitura de documentos (Poppler/Qt PDF, etc.).</li>

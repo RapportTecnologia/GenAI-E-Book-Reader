@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['clearselection_0',['clearSelection',['../dc/ddc/classPdfViewerWidget.html#abff39ebe2684fdd6172afa054e877c6b',1,'PdfViewerWidget']]],
-  ['copyselection_1',['copySelection',['../dc/ddc/classPdfViewerWidget.html#a5939711c319061b2cbcfaab57cee2409',1,'PdfViewerWidget']]],
-  ['current_2',['current',['../d4/db7/classgenai_1_1Reader.html#acac8f5f8b2b71e2c137dbf9b25b0951c',1,'genai::Reader::current()'],['../d5/de3/classgenai_1_1DummyReader.html#ad4516396e04ba0ca4908aebc6f58fd4b',1,'genai::DummyReader::current()']]],
-  ['currentpage_3',['currentPage',['../dc/ddc/classPdfViewerWidget.html#ab2d4ab926b7055698e65629d02defa78',1,'PdfViewerWidget']]]
+  ['appendassistant_0',['appendAssistant',['../d0/daf/classChatDock.html#aa5c3776aed6d570060cd0691caf68cce',1,'ChatDock']]],
+  ['appendassistantimage_1',['appendAssistantImage',['../d0/daf/classChatDock.html#a02a473ddad9cb527e0333a45287cc2dc',1,'ChatDock']]],
+  ['appenduser_2',['appendUser',['../d0/daf/classChatDock.html#a4f64136fa06a647278dea92f483f2893',1,'ChatDock']]],
+  ['appenduserimage_3',['appendUserImage',['../d0/daf/classChatDock.html#ac633104781177bca6f5f6aba7e2b3425',1,'ChatDock']]]
 ];
