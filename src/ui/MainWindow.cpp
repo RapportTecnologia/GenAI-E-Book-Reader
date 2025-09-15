@@ -44,6 +44,7 @@
 #include <QUrlQuery>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <algorithm>
 #include <functional>
 #include <QModelIndex>
@@ -283,6 +284,40 @@ MainWindow::MainWindow(QWidget* parent)
     if (!currentFilePath_.isEmpty()) {
         loadChatForFile(currentFilePath_);
     }
+}
+
+QJsonArray MainWindow::readChatSessions(const QString& filePath) const {
+    const QString key = QString("files/%1/chatSessions").arg(filePath);
+    const QString raw = settings_.value(key).toString();
+    if (raw.trimmed().isEmpty()) return {};
+    const QJsonDocument doc = QJsonDocument::fromJson(raw.toUtf8());
+    return doc.isArray() ? doc.array() : QJsonArray{};
+}
+
+void MainWindow::writeChatSessions(const QString& filePath, const QJsonArray& sessions) const {
+    const QString key = QString("files/%1/chatSessions").arg(filePath);
+    settings_.setValue(key, QJsonDocument(sessions).toJson(QJsonDocument::Compact));
+}
+
+void MainWindow::showSavedChatsPicker() {
+    if (currentFilePath_.isEmpty() || !chatDock_) return;
+    const QJsonArray sessions = readChatSessions(currentFilePath_);
+    if (sessions.isEmpty()) { QMessageBox::information(this, tr("Histórico"), tr("Nenhum chat salvo.")); return; }
+    // Build a simple list dialog with titles
+    QStringList titles; titles.reserve(sessions.size());
+    for (const auto& v : sessions) { titles << v.toObject().value("title").toString(); }
+    bool ok = false;
+    const QString chosen = QInputDialog::getItem(this, tr("Histórico de chats"), tr("Escolha uma conversa:"), titles, titles.size()-1, false, &ok);
+    if (!ok || chosen.isEmpty()) return;
+    const int idx = titles.indexOf(chosen);
+    if (idx < 0) return;
+    const QJsonObject obj = sessions.at(idx).toObject();
+    const QString html = obj.value("html").toString();
+    QList<QPair<QString,QString>> msgs;
+    const QJsonArray arr = obj.value("msgs").toArray();
+    for (const auto& m : arr) { const auto o = m.toObject(); msgs.append(QPair<QString,QString>(o.value("role").toString(), o.value("content").toString())); }
+    chatDock_->setTranscriptHtml(html);
+    chatDock_->setConversationForLlm(msgs);
 }
 
 void MainWindow::enableAutoSelection() {
@@ -534,6 +569,14 @@ void MainWindow::saveChatForCurrentFile() {
     if (!chatDock_) return;
     const QString key = QString("files/%1/chatHtml").arg(currentFilePath_);
     settings_.setValue(key, chatDock_->transcriptHtml());
+    // Save structured conversation for LLM context (role/content list)
+    const auto msgs = chatDock_->conversationForLlm();
+    QJsonArray arr;
+    for (const auto& rc : msgs) {
+        QJsonObject o; o.insert("role", rc.first); o.insert("content", rc.second); arr.append(o);
+    }
+    const QString keyMsgs = QString("files/%1/chatMsgs").arg(currentFilePath_);
+    settings_.setValue(keyMsgs, QJsonDocument(arr).toJson(QJsonDocument::Compact));
 }
 
 void MainWindow::loadChatForFile(const QString& filePath) {
@@ -542,6 +585,20 @@ void MainWindow::loadChatForFile(const QString& filePath) {
     const QString key = QString("files/%1/chatHtml").arg(filePath);
     const QString html = settings_.value(key).toString();
     if (!html.isEmpty()) chatDock_->setTranscriptHtml(html);
+    // Load structured conversation for LLM context
+    const QString keyMsgs = QString("files/%1/chatMsgs").arg(filePath);
+    const QString raw = settings_.value(keyMsgs).toString();
+    if (!raw.trimmed().isEmpty()) {
+        const QJsonDocument doc = QJsonDocument::fromJson(raw.toUtf8());
+        if (doc.isArray()) {
+            QList<QPair<QString, QString>> msgs;
+            for (const auto& v : doc.array()) {
+                const auto o = v.toObject();
+                msgs.append(QPair<QString,QString>(o.value("role").toString(), o.value("content").toString()));
+            }
+            chatDock_->setConversationForLlm(msgs);
+        }
+    }
 }
 
 void MainWindow::editReaderData() {
@@ -677,6 +734,16 @@ void MainWindow::buildUi() {
     connect(chatDock_, &ChatDock::sendMessageRequested, this, &MainWindow::onChatSendMessage);
     connect(chatDock_, &ChatDock::saveTranscriptRequested, this, &MainWindow::onChatSaveTranscript);
     connect(chatDock_, &ChatDock::summarizeTranscriptRequested, this, &MainWindow::onChatSummarizeTranscript);
+    connect(chatDock_, &ChatDock::conversationCleared, this, [this](const QString& title, const QString& html, const QList<QPair<QString,QString>>& msgs){
+        if (currentFilePath_.isEmpty()) return;
+        // Append to sessions list in QSettings as JSON array
+        QJsonArray sessions = readChatSessions(currentFilePath_);
+        QJsonObject obj; obj["title"] = title; obj["html"] = html;
+        QJsonArray arrMsgs; for (const auto& rc : msgs) { QJsonObject o; o["role"] = rc.first; o["content"] = rc.second; arrMsgs.append(o);} obj["msgs"] = arrMsgs;
+        sessions.append(obj);
+        writeChatSessions(currentFilePath_, sessions);
+    });
+    connect(chatDock_, &ChatDock::requestShowSavedChats, this, [this]{ showSavedChatsPicker(); });
     chatDock_->show();
     chatDock_->raise();
 }

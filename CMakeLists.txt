@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(GenAI_EBook_Reader VERSION 0.1.4 LANGUAGES C CXX)
+project(GenAI_EBook_Reader VERSION 0.1.5 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,15 +15,22 @@ file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS
     src/*.cpp
 )
 
-# Require Qt6 with Widgets, PdfWidgets and Network
+# Require Qt6 with Widgets, PdfWidgets and Network; WebEngineWidgets is optional
 find_package(Qt6 REQUIRED COMPONENTS Widgets PdfWidgets Network)
-message(STATUS "Building with mandatory Qt6 (Widgets, PdfWidgets, Network)")
+find_package(Qt6 REQUIRED COMPONENTS WebEngineWidgets QUIET)
+if (Qt6WebEngineWidgets_FOUND)
+  message(STATUS "Qt6 WebEngineWidgets found: enabling rich chat rendering")
+else()
+  message(STATUS "Qt6 WebEngineWidgets NOT found: building without rich chat (Markdown/MathJax disabled)")
+endif()
 
 add_executable(genai_reader ${APP_SOURCES})
 
 target_include_directories(genai_reader PRIVATE include ${CMAKE_SOURCE_DIR}/src)
 
 target_link_libraries(genai_reader PRIVATE Qt6::Widgets Qt6::PdfWidgets Qt6::Network)
+target_link_libraries(genai_reader PRIVATE Qt6::WebEngineWidgets)
+target_compile_definitions(genai_reader PRIVATE HAVE_QT_WEBENGINE)
 
 # Define to enable Qt-specific code paths unconditionally
 target_compile_definitions(genai_reader PRIVATE USE_QT HAVE_QT_PDF HAVE_QT_NETWORK)

@@ -13,6 +13,30 @@ LlmClient::LlmClient(QObject* parent) : QObject(parent) {
     reloadSettings();
 }
 
+void LlmClient::chatWithMessages(const QList<QPair<QString, QString>>& messagesIn,
+                                 std::function<void(QString, QString)> onFinished) {
+    const QUrl url(baseUrl_ + "/v1/chat/completions");
+    QJsonObject body; body["model"] = model_;
+    QJsonArray messages;
+    bool hasSystem = false;
+    for (const auto& rc : messagesIn) {
+        const QString role = rc.first.trimmed().toLower();
+        const QString content = rc.second;
+        QJsonObject m; m["role"] = role; m["content"] = content; messages.append(m);
+        if (role == QLatin1String("system")) hasSystem = true;
+    }
+    if (!hasSystem) {
+        QSettings s;
+        const QString sys = s.value("ai/prompts/chat").toString();
+        if (!sys.trimmed().isEmpty()) {
+            QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = sys;
+            messages.prepend(sysMsg);
+        }
+    }
+    body["messages"] = messages;
+    postJson(url, body, onFinished);
+}
+
 void LlmClient::chatWithImage(const QString& userPrompt, const QString& imageDataUrl, std::function<void(QString, QString)> onFinished) {
     const QUrl url(baseUrl_ + "/v1/chat/completions");
     QJsonObject body; body["model"] = model_;

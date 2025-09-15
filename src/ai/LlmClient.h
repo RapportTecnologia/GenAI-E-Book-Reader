@@ -25,6 +25,10 @@ public:
     // Send a chat completion request with a single user message
     void chat(const QString& userMessage, std::function<void(QString, QString)> onFinished); // (content, error)
 
+    // Send a chat completion request with the full history (role, content). Roles: "system"|"user"|"assistant"
+    void chatWithMessages(const QList<QPair<QString, QString>>& messages,
+                          std::function<void(QString, QString)> onFinished);
+
     // Helper prompts
     void summarize(const QString& text, std::function<void(QString, QString)> onFinished);
     void synonyms(const QString& wordOrLocution, const QString& locale, std::function<void(QString, QString)> onFinished);

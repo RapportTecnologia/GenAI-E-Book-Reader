@@ -1,6 +1,6 @@
 #include "ui/ChatDock.h"
 
-#include <QTextEdit>
+#include <QWebEngineView>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QToolButton>
@@ -11,7 +11,11 @@
 #include <QImage>
 #include <QBuffer>
 #include <QByteArray>
+#include <QMessageBox>
+#include <QDateTime>
 #include <QLabel>
+#include <QPixmap>
+#include <QRegularExpression>
 
 ChatDock::ChatDock(QWidget* parent)
     : QDockWidget(parent) {
@@ -22,10 +26,16 @@ ChatDock::ChatDock(QWidget* parent)
     v->setContentsMargins(6,6,6,6);
     v->setSpacing(6);
 
-    // History view (rich text for readability)
-    history_ = new QTextEdit(container_);
-    history_->setReadOnly(true);
-    v->addWidget(history_, 1);
+    // History view via WebEngine: supports Markdown + MathJax + Highlight.js
+    historyView_ = new QWebEngineView(container_);
+    v->addWidget(historyView_, 1);
+    // Scroll to bottom after each page load (connect once)
+    connect(historyView_, &QWebEngineView::loadFinished, this, [this](bool){
+        if (historyView_ && historyView_->page()) {
+            historyView_->page()->runJavaScript("window.scrollTo(0, document.body.scrollHeight);");
+        }
+    });
+    rebuildDocument();
 
     // Bottom bar with actions
     auto* bottom = new QHBoxLayout();
@@ -33,8 +43,14 @@ ChatDock::ChatDock(QWidget* parent)
     btnSave_->setText(tr("Salvar"));
     btnSummarize_ = new QToolButton(container_);
     btnSummarize_->setText(tr("Compilar"));
+    btnNewChat_ = new QToolButton(container_);
+    btnNewChat_->setText(tr("Novo"));
+    btnHistory_ = new QToolButton(container_);
+    btnHistory_->setText(tr("Histórico"));
     bottom->addWidget(btnSave_);
     bottom->addWidget(btnSummarize_);
+    bottom->addWidget(btnNewChat_);
+    bottom->addWidget(btnHistory_);
     bottom->addStretch();
     v->addLayout(bottom);
 
@@ -70,14 +86,34 @@ ChatDock::ChatDock(QWidget* parent)
     connect(btnSave_, &QToolButton::clicked, this, &ChatDock::onSaveClicked);
     connect(btnSummarize_, &QToolButton::clicked, this, &ChatDock::onSummarizeClicked);
     connect(pendingClear_, &QToolButton::clicked, this, &ChatDock::clearPendingImage);
+    connect(btnNewChat_, &QToolButton::clicked, this, [this]{ clearConversation(); });
+    connect(btnHistory_, &QToolButton::clicked, this, [this]{ emit requestShowSavedChats(); });
+}
+
+void ChatDock::rebuildDocument() {
+    const QString doc = transcriptHtml();
+    if (historyView_) {
+        historyView_->setHtml(doc);
+    }
 }
 
 void ChatDock::appendLine(const QString& who, const QString& text) {
-    history_->append(QString("<b>%1:</b> %2").arg(who, text.toHtmlEscaped()));
+    // Append as markdown block (rendered in WebEngine)
+    const QString block = QString(
+        "<div class=\"msg\"><div class=\"who\"><b>%1:</b></div><div class=\"md\">%2</div></div>"
+    ).arg(who.toHtmlEscaped(), text.toHtmlEscaped());
+    htmlBody_ += block;
+    rebuildDocument();
 }
 
-void ChatDock::appendUser(const QString& text) { appendLine(tr("Você"), text); }
-void ChatDock::appendAssistant(const QString& text) { appendLine(tr("IA"), text); }
+void ChatDock::appendUser(const QString& text) {
+    appendLine(tr("Você"), text);
+    historyMsgs_.append({QStringLiteral("user"), text});
+}
+void ChatDock::appendAssistant(const QString& text) {
+    appendLine(tr("IA"), text);
+    historyMsgs_.append({QStringLiteral("assistant"), text});
+}
 
 static QString toDataUrlPng(const QImage& img) {
     QByteArray bytes;
@@ -90,25 +126,117 @@ static QString toDataUrlPng(const QImage& img) {
 
 void ChatDock::appendImageLine(const QString& who, const QImage& img) {
     const QString url = toDataUrlPng(img);
-    const QString html = QString("<b>%1:</b><br><img src=\"%2\" style=\"max-width:100%%; border-radius:6px;\"><br>")
-                             .arg(who.toHtmlEscaped(), url);
-    history_->append(html);
+    const QString html = QString(
+        "<div class=\"msg\"><div class=\"who\"><b>%1:</b></div><div class=\"img\"><img src=\"%2\" style=\"max-width:100%%; border-radius:6px;\"></div></div>"
+    ).arg(who.toHtmlEscaped(), url);
+    htmlBody_ += html;
+    rebuildDocument();
 }
 
 void ChatDock::appendUserImage(const QImage& img) { appendImageLine(tr("Você"), img); }
 void ChatDock::appendAssistantImage(const QImage& img) { appendImageLine(tr("IA"), img); }
 
 QString ChatDock::transcriptText() const {
-    // Simple plain text export of the conversation
-    return history_->toPlainText();
+    // Naive strip of tags from our htmlBody_
+    QString t = htmlBody_;
+    t.remove(QRegularExpression("<[^>]*>"));
+    return t;
 }
 
 QString ChatDock::transcriptHtml() const {
-    return history_->toHtml();
+    // Return full HTML document (head + body + libs)
+    const QString doc = QString(
+        "<!DOCTYPE html><html><head>"
+        "<meta charset=\"utf-8\">"
+        "<script src=\"https://cdn.jsdelivr.net/npm/marked/marked.min.js\"></script>"
+        "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css\">"
+        "<script src=\"https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js\"></script>"
+        "<script>"
+        "// Configure marked to support GFM (including tables) and line breaks\n"
+        "marked.setOptions({ gfm: true, tables: true, breaks: true, headerIds: false, mangle: false, smartLists: true });\n"
+        "function renderAll(){\n"
+        "  document.querySelectorAll('.md').forEach(n=>{ n.innerHTML = marked.parse(n.textContent || ''); });\n"
+        "  document.querySelectorAll('pre code').forEach((el)=>{ try{ hljs.highlightElement(el); }catch(e){} });\n"
+        "}\n"
+        "function scrollToBottom(){ window.scrollTo(0, document.body.scrollHeight); }\n"
+        "window.addEventListener('load', async ()=>{\n"
+        "  renderAll();\n"
+        "  if(window.MathJax && MathJax.typesetPromise){ try { await MathJax.typesetPromise(); } catch(e){} }\n"
+        "  scrollToBottom();\n"
+        "});"
+        "</script>"
+        "<script>\n"
+        "window.MathJax = {\n"
+        "  tex: {\n"
+        "    inlineMath: [['$','$'], ['\\\\(','\\\\)']],\n"
+        "    displayMath: [['$$','$$'], ['\\\\[','\\\\]']],\n"
+        "    packages: { '[+]': ['noerrors','noundefined'] }\n"
+        "  },\n"
+        "  options: {\n"
+        "    skipHtmlTags: ['script','noscript','style','textarea','pre','code'],\n"
+        "    ignoreHtmlClass: 'tex2jax_ignore',\n"
+        "    processHtmlClass: 'tex2jax_process'\n"
+        "  }\n"
+        "};\n"
+        "</script>"
+        "<script src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\" id=\"MathJax-script\" async></script>"
+        "<style>"
+        "body{font-family:sans-serif;padding:8px;}"
+        ".msg{margin:8px 0;} .who{color:#666;margin-bottom:4px;}"
+        "/* Table styling for Markdown */"
+        "table{border-collapse:collapse;width:100%;margin:8px 0;display:block;overflow-x:auto;}"
+        "th,td{border:1px solid #ccc;padding:6px;vertical-align:top;}"
+        "thead th{background:#f5f5f5;}"
+        "code{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:4px;padding:2px 4px;}"
+        "pre{background:#f6f8fa;border:1px solid #e1e4e8;border-radius:4px;padding:10px;overflow:auto;}"
+        "pre code{display:block;padding:0;background:transparent;border:none;}"
+        "</style>"
+        "</head><body>%1</body></html>"
+    ).arg(htmlBody_);
+    return doc;
 }
 
 void ChatDock::setTranscriptHtml(const QString& html) {
-    history_->setHtml(html);
+    // Load provided HTML and also store its body best-effort
+    htmlBody_ = html;
+    historyView_->setHtml(html);
+}
+
+void ChatDock::clearConversation() {
+    const auto ret = QMessageBox::question(this, tr("Novo chat"),
+                                           tr("Deseja iniciar um novo chat?\n\nSalvar o chat atual no histórico?"),
+                                           QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel,
+                                           QMessageBox::Yes);
+    if (ret == QMessageBox::Cancel) return;
+    if (ret == QMessageBox::Yes) {
+        const QString title = suggestTitle();
+        emit conversationCleared(title, transcriptHtml(), historyMsgs_);
+    }
+    htmlBody_.clear();
+    historyMsgs_.clear();
+    rebuildDocument();
+}
+
+QString ChatDock::suggestTitle() const {
+    QString source;
+    for (int i = historyMsgs_.size() - 1; i >= 0; --i) {
+        if (historyMsgs_[i].first == QLatin1String("assistant")) { source = historyMsgs_[i].second; break; }
+    }
+    if (source.isEmpty()) {
+        for (const auto& p : historyMsgs_) { if (p.first == QLatin1String("user")) { source = p.second; break; } }
+    }
+    if (source.isEmpty()) source = tr("Novo chat %1").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm"));
+    QString t = source;
+    // Remove fenced code blocks
+    t.remove(QRegularExpression("```[\n\s\S]*?```"));
+    // Remove inline code
+    t.remove(QRegularExpression("`[^`]*`"));
+    // Remove HTML tags
+    t.remove(QRegularExpression("<[^>]*>"));
+    t.replace('\n', ' ');
+    t = t.simplified();
+    if (t.size() > 60) t = t.left(60) + QLatin1String("…");
+    return t;
 }
 
 void ChatDock::setPendingImage(const QImage& img) {

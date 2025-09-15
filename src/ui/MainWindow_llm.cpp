@@ -70,7 +70,9 @@ void MainWindow::onRequestSendToChat(const QString& text) {
     showChatPanel();
     if (chatDock_) chatDock_->appendUser(text);
     statusBar()->showMessage(tr("Enviando ao chat da IA..."));
-    llm_->chat(text, [this](QString out, QString err){
+    // Send full conversation for continuous context
+    const auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
+    llm_->chatWithMessages(msgs, [this](QString out, QString err){
         QMetaObject::invokeMethod(this, [this, out, err](){
             if (!err.isEmpty()) {
                 showLongAlert(tr("Erro na IA"), err);
@@ -79,6 +81,7 @@ void MainWindow::onRequestSendToChat(const QString& text) {
             }
             if (chatDock_) chatDock_->appendAssistant(out);
             statusBar()->clearMessage();
+            saveChatForCurrentFile();
         });
     });
 }
@@ -89,7 +92,8 @@ void MainWindow::onChatSendMessage(const QString& text) {
     if (text.trimmed().isEmpty() || !llm_) return;
     if (chatDock_) chatDock_->appendUser(text);
     statusBar()->showMessage(tr("Enviando ao chat da IA..."));
-    llm_->chat(text, [this](QString out, QString err){
+    const auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
+    llm_->chatWithMessages(msgs, [this](QString out, QString err){
         QMetaObject::invokeMethod(this, [this, out, err](){
             if (!err.isEmpty()) {
                 showLongAlert(tr("Erro na IA"), err);
@@ -98,6 +102,7 @@ void MainWindow::onChatSendMessage(const QString& text) {
             }
             if (chatDock_) chatDock_->appendAssistant(out);
             statusBar()->clearMessage();
+            saveChatForCurrentFile();
         });
     });
 }
