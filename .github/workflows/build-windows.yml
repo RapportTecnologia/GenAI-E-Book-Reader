@@ -28,9 +28,12 @@ jobs:
         run: |
           pip install aqtinstall
 
-      - name: Install Qt ${{ env.QT_VERSION }}
+      - name: Install Ninja and CMake
+        uses: lukka/get-cmake@v3
+
+      - name: Install Qt ${{ env.QT_VERSION }} with modules
         run: |
-          python -m aqt install-qt windows desktop $env:QT_VERSION $env:QT_ARCH -O C:/Qt --modules qt5compat
+          python -m aqt install-qt windows desktop $env:QT_VERSION $env:QT_ARCH -O C:/Qt --modules qtwebengine qtpdf qt5compat
 
       - name: Add Qt to PATH
         shell: bash
@@ -40,7 +43,7 @@ jobs:
       - name: Configure (CMake, Release)
         shell: bash
         run: |
-          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:/Qt/${QT_VERSION}/${QT_ARCH}" 
+          cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="C:/Qt/${QT_VERSION}/${QT_ARCH}"
 
       - name: Build
         shell: bash
