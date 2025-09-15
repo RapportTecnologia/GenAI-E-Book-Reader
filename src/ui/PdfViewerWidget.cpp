@@ -27,6 +27,8 @@
 #include <QLabel>
 #include <QGraphicsOpacityEffect>
 #include <QTimer>
+#include <QMenu>
+#include <QRegularExpression>
 #if __has_include(<QtPdf/QPdfSelection>)
 #  include <QtPdf/QPdfSelection>
 #  define HAS_QPDF_SELECTION 1
@@ -55,6 +57,35 @@ PdfViewerWidget::PdfViewerWidget(QWidget* parent)
         connect(vbar, &QScrollBar::valueChanged, this, [this](int v){ emit scrollChanged(v); });
     }
     rubber_ = new QRubberBand(QRubberBand::Rectangle, view_->viewport());
+}
+
+QString PdfViewerWidget::selectionText(bool* ok) {
+    if (ok) *ok = false;
+    QString out;
+    if (selMode_ == SelectionMode::Text) {
+        if (!selectedText_.trimmed().isEmpty()) {
+            out = selectedText_.trimmed();
+            if (ok) *ok = true;
+            return out;
+        }
+        // Try native extraction when available
+        out = extractTextFromSelectionNative().trimmed();
+        if (!out.isEmpty()) { if (ok) *ok = true; return out; }
+        // Fallback OCR if rectangle exists
+    }
+    if (selMode_ == SelectionMode::Rect && selRect_.isValid() && !selRect_.isEmpty()) {
+        bool ocrOk = false;
+        out = ocrSelectionText(&ocrOk).trimmed();
+        if (ok) *ok = ocrOk && !out.isEmpty();
+        return out;
+    }
+    // Attempt OCR even if mode mismatch but we have a rectangle
+    if (selRect_.isValid() && !selRect_.isEmpty()) {
+        bool ocrOk = false;
+        out = ocrSelectionText(&ocrOk).trimmed();
+        if (ok) *ok = ocrOk && !out.isEmpty();
+    }
+    return out;
 }
 
 PdfViewerWidget::~PdfViewerWidget() {
@@ -178,8 +209,68 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
             }
         } else if (event->type() == QEvent::MouseButtonPress) {
             auto* me = static_cast<QMouseEvent*>(event);
-            if (me->button() == Qt::LeftButton || me->button() == Qt::RightButton) {
-                // When no selection mode was chosen, default to rectangular selection on any button
+            if (me->button() == Qt::RightButton) {
+                // Do NOT alter current selection on right-click; just show context menu if any selection exists
+                bool ok = false;
+                const QString text = selectionText(&ok);
+                const bool hasImageSelection = selRect_.isValid() && !selRect_.isEmpty();
+                QMenu menu(this);
+                if (ok && !text.trimmed().isEmpty()) {
+                    const int wordCount = text.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts).size();
+                    if (wordCount <= 3 && text.size() <= 80) {
+                        QAction* actSyn = menu.addAction(tr("Obter sinônimos"));
+                        QObject::connect(actSyn, &QAction::triggered, this, [this, text]() { emit requestSynonyms(text.trimmed()); });
+                    }
+                    if (wordCount >= 10 || text.contains('\n')) {
+                        QAction* actSum = menu.addAction(tr("Gerar resumo"));
+                        QObject::connect(actSum, &QAction::triggered, this, [this, text]() { emit requestSummarize(text); });
+                    }
+                    QAction* actChat = menu.addAction(tr("Enviar ao chat (IA)"));
+                    QObject::connect(actChat, &QAction::triggered, this, [this, text]() { emit requestSendToChat(text); });
+                    // If there is an image selection rectangle too, offer image sending as well
+                    if (hasImageSelection) {
+                        menu.addSeparator();
+                        QPoint tl = view_->viewport()->mapTo(view_, selRect_.topLeft());
+                        QRect inView(tl, selRect_.size());
+                        QPixmap pm = view_->grab(inView);
+                        if (!pm.isNull()) {
+                            QAction* actChatImg = menu.addAction(tr("Enviar imagem ao chat (IA)"));
+                            QObject::connect(actChatImg, &QAction::triggered, this, [this, pm]() {
+                                emit requestSendImageToChat(pm.toImage());
+                            });
+                        }
+                    }
+                    menu.addSeparator();
+                    QAction* actCopy = menu.addAction(tr("Copiar (Ctrl+C)"));
+                    QObject::connect(actCopy, &QAction::triggered, this, [this]() { copySelection(); });
+                } else if (hasImageSelection) {
+                    // Build image from current rectangle selection (viewport coords to view coords)
+                    QPoint tl = view_->viewport()->mapTo(view_, selRect_.topLeft());
+                    QRect inView(tl, selRect_.size());
+                    QPixmap pm = view_->grab(inView);
+                    if (!pm.isNull()) {
+                        QAction* actChatImg = menu.addAction(tr("Enviar imagem ao chat (IA)"));
+                        QObject::connect(actChatImg, &QAction::triggered, this, [this, pm]() {
+                            emit requestSendImageToChat(pm.toImage());
+                        });
+                        menu.addSeparator();
+                        QAction* actCopy = menu.addAction(tr("Copiar (Ctrl+C)"));
+                        QObject::connect(actCopy, &QAction::triggered, this, [this]() { copySelection(); });
+                    } else {
+                        QAction* actCancel = menu.addAction(tr("Falha ao capturar imagem"));
+                        actCancel->setEnabled(false);
+                    }
+                } else {
+                    // Sem seleção válida
+                    QAction* actCancel = menu.addAction(tr("Sem seleção válida"));
+                    actCancel->setEnabled(false);
+                }
+                menu.exec(view_->viewport()->mapToGlobal(me->pos()));
+                event->accept();
+                return true;
+            }
+            if (me->button() == Qt::LeftButton) {
+                // Start a new selection only on left-click
                 if (selMode_ == SelectionMode::None) selMode_ = SelectionMode::Rect;
                 if (selMode_ != SelectionMode::None) {
                     selecting_ = true;
@@ -351,13 +442,13 @@ void PdfViewerWidget::copySelection() {
     if (copied) { showCopyToast(); }
 }
 
-void PdfViewerWidget::showCopyToast() {
+void PdfViewerWidget::showToast(const QString& message) {
     QWidget* host = view_ && view_->viewport() ? view_->viewport() : this;
     if (!toastLabel_) {
         toastLabel_ = new QLabel(host);
         toastLabel_->setWordWrap(true);
         toastLabel_->setAlignment(Qt::AlignCenter);
-        toastLabel_->setText(tr("Seleção copiada para a área de transferência."));
+        toastLabel_->setText(message);
         toastLabel_->setStyleSheet("QLabel{background-color: rgba(40,40,40,180); color: white; border-radius: 8px; padding: 10px 14px; font-weight: 500;}");
         toastLabel_->setAttribute(Qt::WA_TransparentForMouseEvents, true);
         toastOpacity_ = new QGraphicsOpacityEffect(toastLabel_);
@@ -377,7 +468,7 @@ void PdfViewerWidget::showCopyToast() {
             anim->start();
         });
     }
-    toastLabel_->setText(tr("Seleção copiada para a área de transferência."));
+    toastLabel_->setText(message);
     // Size to content with a max width relative to host
     int maxW = host->width() * 0.6;
     toastLabel_->setMaximumWidth(maxW);
@@ -398,6 +489,10 @@ void PdfViewerWidget::showCopyToast() {
         if (toastHideTimer_) toastHideTimer_->start(900);
     });
     animIn->start();
+}
+
+void PdfViewerWidget::showCopyToast() {
+    showToast(tr("Seleção copiada para a área de transferência."));
 }
 
 void PdfViewerWidget::saveSelectionAsTxt() {
@@ -494,6 +589,19 @@ QString PdfViewerWidget::ocrSelectionText(bool* ok) {
     const QString text = QString::fromUtf8(out).trimmed();
     if (ok) *ok = !text.isEmpty();
     return text;
+}
+
+QString PdfViewerWidget::extractTextFromSelectionNative() {
+#ifdef HAS_QPDF_SELECTION
+    // Best-effort: use current page selection API if available in this Qt build.
+    if (!doc_ || !navigation_) return {};
+    const int pageIdx = navigation_->currentPage();
+    Q_UNUSED(pageIdx);
+    // NOTE: Mapping viewport rect to page coordinates varies by Qt version.
+    // To keep this build-safe across Qt variants, we do not attempt coordinate mapping here.
+    // Hook point for future enhancement when a stable API is guaranteed.
+#endif
+    return {};
 }
 
 

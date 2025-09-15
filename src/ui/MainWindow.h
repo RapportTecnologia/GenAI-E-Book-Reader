@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QString>
+#include <QImage>
 class QTreeWidget;
 class QTreeWidgetItem;
 class QSplitter;
@@ -13,6 +14,9 @@ class QComboBox;
 class ViewerWidget;
 class QNetworkAccessManager;
 class PdfViewerWidget;
+class LlmClient;
+class SummaryDialog;
+class ChatDock;
 
 #include "reader/Reader.h"
 
@@ -47,6 +51,17 @@ private slots:
     void saveSelectionMd();
     // Preferences
     void setWheelZoomPreference();
+    void openLlmSettings();
+    void showChatPanel();
+    void onChatSendMessage(const QString& text);
+    void onChatSaveTranscript(const QString& text);
+    void onChatSummarizeTranscript(const QString& text);
+
+    // AI actions
+    void onRequestSynonyms(const QString& wordOrLocution);
+    void onRequestSummarize(const QString& text);
+    void onRequestSendToChat(const QString& text);
+    void onRequestSendImageToChat(const QImage& image);
 
 private:
     void buildUi();
@@ -57,6 +72,7 @@ private:
     void applyDarkPalette(bool enable);
     void updatePageCombo();
     bool openPath(const QString& filePath);
+    void showLongAlert(const QString& title, const QString& longText);
     // Recent files helpers
     void addRecentFile(const QString& absPath);
     void rebuildRecentMenu();
@@ -66,6 +82,9 @@ private:
     QMap<QString, QString> loadEnvConfig() const; // reads .env near executable or CWD
     void submitReaderDataToPhpList(const QString& name, const QString& email, const QString& whatsapp);
     void applyDefaultSplitterSizesIfNeeded();
+    // Chat persistence helpers
+    void saveChatForCurrentFile();
+    void loadChatForFile(const QString& absPath);
 
 private:
     QWidget* viewer_ {nullptr}; // can be ViewerWidget or PdfViewerWidget
@@ -85,6 +104,7 @@ private:
     QAction* actToggleTheme_ {nullptr};
     QAction* actQuit_ {nullptr};
     QAction* actReaderData_ {nullptr};
+    QAction* actChat_ {nullptr};
     // Edit actions
     QAction* actSelText_ {nullptr};
     QAction* actSelRect_ {nullptr};
@@ -95,6 +115,7 @@ private:
     // Preferences
     QAction* actWheelZoomPref_ {nullptr};
     QAction* actRecentConfig_ {nullptr};
+    QAction* actLlmSettings_ {nullptr};
     // TOC toolbar actions
     QAction* actTocModePages_ {nullptr};
     QAction* actTocModeChapters_ {nullptr};
@@ -123,4 +144,9 @@ private:
     genai::DummyReader reader_;
 
     QNetworkAccessManager* netManager_ {nullptr};
+
+    // AI integration
+    LlmClient* llm_ {nullptr};
+    SummaryDialog* summaryDlg_ {nullptr};
+    ChatDock* chatDock_ {nullptr};
 };

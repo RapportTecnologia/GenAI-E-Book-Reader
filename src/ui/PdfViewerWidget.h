@@ -7,6 +7,7 @@
 #include <QRubberBand>
 class QLabel;
 class QGraphicsOpacityEffect;
+class QMenu;
 
 class PdfViewerWidget : public QWidget {
     Q_OBJECT
@@ -44,6 +45,10 @@ public:
     // allow extracting text via Tesseract if present in PATH.
     QString ocrSelectionText(bool* ok = nullptr);
 
+    // Return current selection as text. If text selection is empty and a rect exists,
+    // try OCR when possible.
+    QString selectionText(bool* ok = nullptr);
+
     // Preferences
     void setWheelZoomStep(double step);
     // Scroll helpers
@@ -57,6 +62,7 @@ private:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void setZoomAnimated(double target);
+    void showToast(const QString& message);
     void showCopyToast();
     QString extractTextFromSelectionNative();
 
@@ -84,4 +90,10 @@ private:
 signals:
     void zoomFactorChanged(double factor);
     void scrollChanged(int value);
+
+    // Emitted when user requests actions from context menu
+    void requestSynonyms(const QString& wordOrLocution);
+    void requestSummarize(const QString& text);
+    void requestSendToChat(const QString& text);
+    void requestSendImageToChat(const QImage& image);
 };

@@ -1,6 +1,10 @@
 #include "ui/MainWindow.h"
 #include "ui/ViewerWidget.h"
 #include "ui/PdfViewerWidget.h"
+#include "ai/LlmClient.h"
+#include "ui/SummaryDialog.h"
+#include "ui/LlmSettingsDialog.h"
+#include "ui/ChatDock.h"
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -26,6 +30,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QDialogButtonBox>
+#include <QPlainTextEdit>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QMap>
@@ -62,10 +67,166 @@ QVariantList loadRecentEntries(QSettings& settings) {
         QVariantMap m; m["path"] = p; m["title"] = QFileInfo(p).completeBaseName();
         m["author"] = QString(); m["publisher"] = QString(); m["isbn"] = QString();
         m["summary"] = QString(); m["keywords"] = QString();
-        entries.push_back(m);
+        entries.append(m);
     }
     settings.setValue("recent/entries", entries);
     return entries;
+}
+
+} // end anonymous namespace
+
+void MainWindow::createActions() {
+    // Core actions
+    actOpen_ = new QAction(tr("Abrir"), this);
+    actSaveAs_ = new QAction(tr("Salvar como..."), this);
+    actClose_ = new QAction(tr("Fechar Ebook"), this);
+    actQuit_ = new QAction(tr("Sair"), this);
+    actReaderData_ = new QAction(tr("Dados do leitor..."), this);
+    actPrev_ = new QAction(tr("Anterior"), this);
+    actNext_ = new QAction(tr("Próxima"), this);
+    actZoomIn_ = new QAction(tr("Zoom +"), this);
+    actZoomOut_ = new QAction(tr("Zoom -"), this);
+    actZoomReset_ = new QAction(tr("Zoom 100%"), this);
+    actToggleTheme_ = new QAction(tr("Tema claro/escuro"), this);
+    actChat_ = new QAction(tr("Chat"), this);
+
+    // Edit actions (seleção)
+    actSelText_ = new QAction(tr("Selecionar texto"), this);
+    actSelRect_ = new QAction(tr("Selecionar retângulo (imagem)"), this);
+    actSelCopy_ = new QAction(tr("Copiar seleção"), this);
+    actSelSaveTxt_ = new QAction(tr("Salvar seleção como TXT"), this);
+    actSelSaveMd_ = new QAction(tr("Salvar seleção como Markdown"), this);
+    actSelCopy_->setShortcut(QKeySequence::Copy);
+    actSelCopy_->setShortcutContext(Qt::ApplicationShortcut);
+
+    // TOC toolbar actions and wiring
+    actTocModePages_ = new QAction(tr("Páginas"), this);
+    actTocModeChapters_ = new QAction(tr("Conteúdo"), this);
+    actTocPrev_ = new QAction(tr("Anterior"), this);
+    actTocNext_ = new QAction(tr("Próxima"), this);
+    actTocPrev_->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
+    actTocNext_->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
+    actTocModePages_->setCheckable(true);
+    actTocModeChapters_->setCheckable(true);
+    actTocModePages_->setChecked(true);
+    auto* tocModeGroup = new QActionGroup(this);
+    tocModeGroup->addAction(actTocModePages_);
+    tocModeGroup->addAction(actTocModeChapters_);
+    tocModeGroup->setExclusive(true);
+
+    // Shortcuts
+    actOpen_->setShortcut(QKeySequence::Open);
+    actSaveAs_->setShortcut(QKeySequence::SaveAs);
+    actClose_->setShortcut(QKeySequence::Close);
+    actQuit_->setShortcut(QKeySequence::Quit);
+    actPrev_->setShortcut(Qt::Key_Left);
+    actNext_->setShortcut(Qt::Key_Right);
+    actZoomIn_->setShortcut(QKeySequence::ZoomIn);
+    actZoomOut_->setShortcut(QKeySequence::ZoomOut);
+
+    // Signals
+    connect(actOpen_, &QAction::triggered, this, &MainWindow::openFile);
+    connect(actSaveAs_, &QAction::triggered, this, &MainWindow::saveAs);
+    connect(actPrev_, &QAction::triggered, this, &MainWindow::onTocPrev);
+    connect(actNext_, &QAction::triggered, this, &MainWindow::onTocNext);
+    connect(actZoomIn_, &QAction::triggered, this, &MainWindow::zoomIn);
+    connect(actZoomOut_, &QAction::triggered, this, &MainWindow::zoomOut);
+    connect(actZoomReset_, &QAction::triggered, this, &MainWindow::zoomReset);
+    connect(actToggleTheme_, &QAction::triggered, this, &MainWindow::toggleTheme);
+    connect(actQuit_, &QAction::triggered, qApp, &QApplication::quit);
+    connect(actReaderData_, &QAction::triggered, this, &MainWindow::editReaderData);
+    connect(actClose_, &QAction::triggered, this, &MainWindow::closeDocument);
+    connect(actChat_, &QAction::triggered, this, &MainWindow::showChatPanel);
+    connect(actTocModePages_, &QAction::triggered, this, &MainWindow::setTocModePages);
+    connect(actTocModeChapters_, &QAction::triggered, this, &MainWindow::setTocModeChapters);
+    connect(actTocPrev_, &QAction::triggered, this, &MainWindow::onTocPrev);
+    connect(actTocNext_, &QAction::triggered, this, &MainWindow::onTocNext);
+
+    // Menus
+    auto* menuArquivo = menuBar()->addMenu(tr("&Arquivo"));
+    auto* menuDocumento = menuArquivo->addMenu(tr("Documento"));
+    menuDocumento->addAction(actOpen_);
+    menuDocumento->addAction(actSaveAs_);
+    menuDocumento->addSeparator();
+    menuDocumento->addAction(actClose_);
+
+    menuRecent_ = menuDocumento->addMenu(tr("Recentes"));
+    for (int i = 0; i < MaxRecentMenuItems; ++i) {
+        recentActs_[i] = new QAction(this);
+        recentActs_[i]->setVisible(false);
+        connect(recentActs_[i], &QAction::triggered, this, &MainWindow::openRecentFile);
+        menuRecent_->addAction(recentActs_[i]);
+    }
+    menuRecent_->addSeparator();
+    actRecentDialog_ = new QAction(tr("Mostrar todos..."), this);
+    connect(actRecentDialog_, &QAction::triggered, this, &MainWindow::showRecentDialog);
+    menuRecent_->addAction(actRecentDialog_);
+
+    auto* menuLeitor = menuArquivo->addMenu(tr("Leitor"));
+    menuLeitor->addAction(actReaderData_);
+    menuArquivo->addSeparator();
+    menuArquivo->addAction(actQuit_);
+
+    auto* menuConfig = menuBar()->addMenu(tr("Configurações"));
+    menuConfig->addAction(actToggleTheme_);
+    actWheelZoomPref_ = new QAction(tr("Granularidade do zoom (Ctrl+roda)..."), this);
+    connect(actWheelZoomPref_, &QAction::triggered, this, &MainWindow::setWheelZoomPreference);
+    menuConfig->addAction(actWheelZoomPref_);
+    auto* menuLlm = menuConfig->addMenu(tr("LLM"));
+    actLlmSettings_ = new QAction(tr("Configurar LLM..."), this);
+    connect(actLlmSettings_, &QAction::triggered, this, &MainWindow::openLlmSettings);
+    menuLlm->addAction(actLlmSettings_);
+
+    auto* menuEdit = menuBar()->addMenu(tr("Editar"));
+    menuEdit->addAction(actSelText_);
+    menuEdit->addAction(actSelRect_);
+    menuEdit->addSeparator();
+    menuEdit->addAction(actSelCopy_);
+    menuEdit->addAction(actSelSaveTxt_);
+    menuEdit->addAction(actSelSaveMd_);
+
+    // Toolbar
+    auto* tb = addToolBar(tr("Leitura"));
+    tb->setObjectName("toolbar_reading");
+    QWidget* leftSpacer = new QWidget(tb);
+    leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    tb->addWidget(leftSpacer);
+    tb->addAction(actPrev_);
+    tb->addAction(actNext_);
+    pageCombo_ = new QComboBox(tb);
+    pageCombo_->setEditable(false);
+    pageCombo_->setMinimumContentsLength(6);
+    tb->addWidget(pageCombo_);
+    connect(pageCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx){
+        const unsigned int p = static_cast<unsigned int>(idx + 1);
+        if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) vw->setCurrentPage(p);
+        if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) pv->setCurrentPage(p);
+        updateStatus();
+    });
+    tb->addSeparator();
+    tb->addAction(actZoomOut_);
+    tb->addAction(actZoomIn_);
+    tb->addAction(actZoomReset_);
+    QWidget* rightSpacer = new QWidget(tb);
+    rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    tb->addWidget(rightSpacer);
+    tb->addAction(actChat_);
+
+    // TOC toolbar
+    if (tocToolBar_) {
+        tocToolBar_->addAction(actTocModePages_);
+        tocToolBar_->addAction(actTocModeChapters_);
+        tocToolBar_->addSeparator();
+        tocToolBar_->addAction(actTocPrev_);
+        tocToolBar_->addAction(actTocNext_);
+    }
+
+    connect(toc_, &QTreeWidget::itemActivated, this, &MainWindow::onTocItemActivated);
+    connect(toc_, &QTreeWidget::itemClicked, this, &MainWindow::onTocItemActivated);
+
+    // Initial state
+    actClose_->setEnabled(false);
+    rebuildRecentMenu();
 }
 
 void saveRecentEntries(QSettings& settings, const QVariantList& entries) {
@@ -106,7 +267,6 @@ bool entryMatches(const QVariantMap& e, const QString& needle) {
            contains(e.value("summary").toString()) ||
            contains(e.value("keywords").toString());
 }
-}
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), settings_() {
@@ -115,6 +275,14 @@ MainWindow::MainWindow(QWidget* parent)
     loadSettings();
     updateStatus();
     netManager_ = new QNetworkAccessManager(this);
+    // Initialize LLM and summary dialog
+    llm_ = new LlmClient(this);
+    summaryDlg_ = new SummaryDialog(this);
+    connect(summaryDlg_, &SummaryDialog::sendToChatRequested, this, &MainWindow::onRequestSendToChat);
+    // Ensure chat history is loaded for current file when panel opens
+    if (!currentFilePath_.isEmpty()) {
+        loadChatForFile(currentFilePath_);
+    }
 }
 
 void MainWindow::enableAutoSelection() {
@@ -361,6 +529,21 @@ void MainWindow::submitReaderDataToPhpList(const QString& name, const QString& e
     });
 }
 
+void MainWindow::saveChatForCurrentFile() {
+    if (currentFilePath_.isEmpty()) return;
+    if (!chatDock_) return;
+    const QString key = QString("files/%1/chatHtml").arg(currentFilePath_);
+    settings_.setValue(key, chatDock_->transcriptHtml());
+}
+
+void MainWindow::loadChatForFile(const QString& filePath) {
+    if (filePath.isEmpty()) return;
+    if (!chatDock_) return;
+    const QString key = QString("files/%1/chatHtml").arg(filePath);
+    const QString html = settings_.value(key).toString();
+    if (!html.isEmpty()) chatDock_->setTranscriptHtml(html);
+}
+
 void MainWindow::editReaderData() {
     QDialog dlg(this);
     dlg.setWindowTitle(tr("Dados do leitor"));
@@ -447,6 +630,8 @@ void MainWindow::saveAs() {
 }
 
 MainWindow::~MainWindow() {
+    // Persist chat transcript for current file before closing
+    saveChatForCurrentFile();
     saveSettings();
 }
 
@@ -483,174 +668,28 @@ void MainWindow::buildUi() {
     setCentralWidget(splitter_);
     statusBar();
     applyDefaultSplitterSizesIfNeeded();
+
+    // Create and show chat dock by default
+    chatDock_ = new ChatDock(this);
+    chatDock_->setAllowedAreas(Qt::RightDockWidgetArea);
+    chatDock_->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    addDockWidget(Qt::RightDockWidgetArea, chatDock_);
+    connect(chatDock_, &ChatDock::sendMessageRequested, this, &MainWindow::onChatSendMessage);
+    connect(chatDock_, &ChatDock::saveTranscriptRequested, this, &MainWindow::onChatSaveTranscript);
+    connect(chatDock_, &ChatDock::summarizeTranscriptRequested, this, &MainWindow::onChatSummarizeTranscript);
+    chatDock_->show();
+    chatDock_->raise();
 }
 
-void MainWindow::createActions() {
-    actOpen_ = new QAction(tr("Abrir"), this);
-    actSaveAs_ = new QAction(tr("Salvar como..."), this);
-    actClose_ = new QAction(tr("Fechar Ebook"), this);
-    actQuit_ = new QAction(tr("Sair"), this);
-    actReaderData_ = new QAction(tr("Dados do leitor..."), this);
-    actPrev_ = new QAction(tr("Anterior"), this);
-    actNext_ = new QAction(tr("Próxima"), this);
-    actZoomIn_ = new QAction(tr("Zoom +"), this);
-    actZoomOut_ = new QAction(tr("Zoom -"), this);
-    actZoomReset_ = new QAction(tr("Zoom 100%"), this);
-    actToggleTheme_ = new QAction(tr("Tema claro/escuro"), this);
-
-    // Edit actions (seleção)
-    actSelText_ = new QAction(tr("Selecionar texto"), this);
-    actSelRect_ = new QAction(tr("Selecionar retângulo (imagem)"), this);
-    actSelCopy_ = new QAction(tr("Copiar seleção"), this);
-    actSelSaveTxt_ = new QAction(tr("Salvar seleção como TXT"), this);
-    actSelSaveMd_ = new QAction(tr("Salvar seleção como Markdown"), this);
-    actSelCopy_->setShortcut(QKeySequence::Copy); // Ctrl+C
-    actSelCopy_->setShortcutContext(Qt::ApplicationShortcut);
-
-    connect(actSelText_, &QAction::triggered, this, &MainWindow::enableTextSelection);
-    connect(actSelRect_, &QAction::triggered, this, &MainWindow::enableRectSelection);
-    connect(actSelCopy_, &QAction::triggered, this, &MainWindow::copySelection);
-    connect(actSelSaveTxt_, &QAction::triggered, this, &MainWindow::saveSelectionTxt);
-    connect(actSelSaveMd_, &QAction::triggered, this, &MainWindow::saveSelectionMd);
-
-    // TOC toolbar actions and wiring
-    actTocModePages_ = new QAction(tr("Páginas"), this);
-    actTocModeChapters_ = new QAction(tr("Conteúdo"), this);
-    actTocPrev_ = new QAction(tr("Anterior"), this);
-    actTocNext_ = new QAction(tr("Proxima"), this);
-    // Provide standard navigation icons
-    actTocPrev_->setIcon(style()->standardIcon(QStyle::SP_ArrowBack));
-    actTocNext_->setIcon(style()->standardIcon(QStyle::SP_ArrowForward));
-    actTocModePages_->setCheckable(true);
-    actTocModeChapters_->setCheckable(true);
-    actTocModePages_->setChecked(true);
-    auto* tocModeGroup = new QActionGroup(this);
-    tocModeGroup->addAction(actTocModePages_);
-    tocModeGroup->addAction(actTocModeChapters_);
-    tocModeGroup->setExclusive(true);
-
-    // Clarify behavior of main toolbar navigation based on mode
-    actPrev_->setToolTip(tr("Voltar (página ou item do conteúdo, conforme modo)"));
-    actNext_->setToolTip(tr("Avançar (página ou item do conteúdo, conforme modo)"));
-
-    connect(actTocModePages_, &QAction::triggered, this, &MainWindow::setTocModePages);
-    connect(actTocModeChapters_, &QAction::triggered, this, &MainWindow::setTocModeChapters);
-    connect(actTocPrev_, &QAction::triggered, this, &MainWindow::onTocPrev);
-    connect(actTocNext_, &QAction::triggered, this, &MainWindow::onTocNext);
-
-    actOpen_->setShortcut(QKeySequence::Open);
-    actSaveAs_->setShortcut(QKeySequence::SaveAs);
-    actClose_->setShortcut(QKeySequence::Close); // Ctrl+W
-    actQuit_->setShortcut(QKeySequence::Quit);   // Ctrl+Q
-    actPrev_->setShortcut(Qt::Key_Left);
-    actNext_->setShortcut(Qt::Key_Right);
-    actZoomIn_->setShortcut(QKeySequence::ZoomIn);
-    actZoomOut_->setShortcut(QKeySequence::ZoomOut);
-
-    connect(actOpen_, &QAction::triggered, this, &MainWindow::openFile);
-    connect(actSaveAs_, &QAction::triggered, this, &MainWindow::saveAs);
-    // Mode-aware navigation: uses TOC handlers (pages vs capítulos)
-    connect(actPrev_, &QAction::triggered, this, &MainWindow::onTocPrev);
-    connect(actNext_, &QAction::triggered, this, &MainWindow::onTocNext);
-    connect(actZoomIn_, &QAction::triggered, this, &MainWindow::zoomIn);
-    connect(actZoomOut_, &QAction::triggered, this, &MainWindow::zoomOut);
-    connect(actZoomReset_, &QAction::triggered, this, &MainWindow::zoomReset);
-    connect(actToggleTheme_, &QAction::triggered, this, &MainWindow::toggleTheme);
-    connect(actQuit_, &QAction::triggered, qApp, &QApplication::quit);
-    connect(actReaderData_, &QAction::triggered, this, &MainWindow::editReaderData);
-    connect(actClose_, &QAction::triggered, this, &MainWindow::closeDocument);
-
-    // Menu Arquivo com submenus
-    auto* menuArquivo = menuBar()->addMenu(tr("&Arquivo"));
-    auto* menuDocumento = menuArquivo->addMenu(tr("Documento"));
-    menuDocumento->addAction(actOpen_);
-    menuDocumento->addAction(actSaveAs_);
-    menuDocumento->addSeparator();
-    menuDocumento->addAction(actClose_);
-
-    // Recent files submenu and actions
-    menuRecent_ = menuDocumento->addMenu(tr("Recentes"));
-    for (int i = 0; i < MaxRecentMenuItems; ++i) {
-        recentActs_[i] = new QAction(this);
-        recentActs_[i]->setVisible(false);
-        connect(recentActs_[i], &QAction::triggered, this, &MainWindow::openRecentFile);
-        menuRecent_->addAction(recentActs_[i]);
+void MainWindow::showChatPanel() {
+    if (chatDock_) {
+        chatDock_->show();
+        chatDock_->raise();
     }
-    menuRecent_->addSeparator();
-    actRecentDialog_ = new QAction(tr("Mostrar todos..."), this);
-    connect(actRecentDialog_, &QAction::triggered, this, &MainWindow::showRecentDialog);
-    menuRecent_->addAction(actRecentDialog_);
-    auto* menuLeitor = menuArquivo->addMenu(tr("Leitor"));
-    menuLeitor->addAction(actReaderData_);
-    menuArquivo->addSeparator();
-    menuArquivo->addAction(actQuit_); // Sair diretamente em Arquivo
-
-    // Menu Configurações
-    auto* menuConfig = menuBar()->addMenu(tr("Configurações"));
-    menuConfig->addAction(actToggleTheme_);
-    // Preferences: wheel zoom step
-    actWheelZoomPref_ = new QAction(tr("Granularidade do zoom (Ctrl+roda)..."), this);
-    connect(actWheelZoomPref_, &QAction::triggered, this, &MainWindow::setWheelZoomPreference);
-    menuConfig->addAction(actWheelZoomPref_);
-
-    // Menu Editar
-    auto* menuEdit = menuBar()->addMenu(tr("Editar"));
-    menuEdit->addAction(actSelText_);
-    menuEdit->addAction(actSelRect_);
-    menuEdit->addSeparator();
-    menuEdit->addAction(actSelCopy_);
-    menuEdit->addAction(actSelSaveTxt_);
-    menuEdit->addAction(actSelSaveMd_);
-
-    auto* tb = addToolBar(tr("Leitura"));
-    tb->setObjectName("toolbar_reading");
-
-    QWidget* leftSpacer = new QWidget(tb);
-    leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    tb->addWidget(leftSpacer);
-
-    tb->addAction(actPrev_);
-    tb->addAction(actNext_);
-
-    pageCombo_ = new QComboBox(tb);
-    pageCombo_->setEditable(false);
-    pageCombo_->setMinimumContentsLength(6);
-    tb->addWidget(pageCombo_);
-    connect(pageCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx){
-        const unsigned int p = static_cast<unsigned int>(idx + 1);
-        if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) vw->setCurrentPage(p);
-        if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) pv->setCurrentPage(p);
-        updateStatus();
-    });
-    tb->addSeparator();
-    tb->addAction(actZoomOut_);
-    tb->addAction(actZoomIn_);
-    tb->addAction(actZoomReset_);
-    // Removido: alternância de tema na toolbar (foi para Configurações)
-
-    QWidget* rightSpacer = new QWidget(tb);
-    rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    tb->addWidget(rightSpacer);
-
-    // Add actions to the TOC toolbar now that it exists
-    if (tocToolBar_) {
-        tocToolBar_->addAction(actTocModePages_);
-        tocToolBar_->addAction(actTocModeChapters_);
-        tocToolBar_->addSeparator();
-        tocToolBar_->addAction(actTocPrev_);
-        tocToolBar_->addAction(actTocNext_);
+    if (!currentFilePath_.isEmpty()) {
+        loadChatForFile(currentFilePath_);
     }
-
-    connect(toc_, &QTreeWidget::itemActivated, this, &MainWindow::onTocItemActivated);
-    connect(toc_, &QTreeWidget::itemClicked, this, &MainWindow::onTocItemActivated);
-
-    // Initial state
-    actClose_->setEnabled(false);
-
-    // Ensure recent menu reflects stored list
-    rebuildRecentMenu();
 }
-
 void MainWindow::loadSettings() {
     restoreGeometry(settings_.value("ui/geometry").toByteArray());
     restoreState(settings_.value("ui/state").toByteArray());
@@ -689,6 +728,14 @@ void MainWindow::setWheelZoomPreference() {
     }
 }
 
+void MainWindow::openLlmSettings() {
+    LlmSettingsDialog dlg(this);
+    if (dlg.exec() == QDialog::Accepted) {
+        if (llm_) llm_->reloadSettings();
+        statusBar()->showMessage(tr("Configurações de LLM atualizadas."), 2000);
+    }
+}
+
 void MainWindow::saveSettings() {
     settings_.setValue("ui/geometry", saveGeometry());
     settings_.setValue("ui/state", saveState());
@@ -705,6 +752,21 @@ void MainWindow::saveSettings() {
     settings_.setValue("view/zoom", z);
 }
 
+void MainWindow::showLongAlert(const QString& title, const QString& longText) {
+    QDialog dlg(this);
+    dlg.setWindowTitle(title);
+    dlg.resize(700, 500);
+    auto* lay = new QVBoxLayout(&dlg);
+    auto* txt = new QPlainTextEdit(&dlg);
+    txt->setReadOnly(true);
+    txt->setPlainText(longText);
+    lay->addWidget(txt, 1);
+    auto* btns = new QDialogButtonBox(QDialogButtonBox::Ok, &dlg);
+    lay->addWidget(btns);
+    connect(btns, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    dlg.exec();
+}
+
 void MainWindow::updateStatus() {
     unsigned int cur = 1, tot = 0; double z = 1.0;
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
@@ -719,6 +781,11 @@ void MainWindow::updateStatus() {
         z = pv->zoomFactor();
     }
 #endif
+    // Persist per-file reading position and zoom whenever we refresh status
+    if (!currentFilePath_.isEmpty()) {
+        settings_.setValue(QString("files/%1/page").arg(currentFilePath_), static_cast<uint>(cur));
+        settings_.setValue(QString("files/%1/zoom").arg(currentFilePath_), z);
+    }
     statusBar()->showMessage(tr("Página %1 de %2 | Zoom %3%")
         .arg(cur)
         .arg(tot == 0 ? 100 : tot)
@@ -767,12 +834,22 @@ bool MainWindow::openPath(const QString& file) {
             QMessageBox::warning(this, tr("Erro"), err.isEmpty() ? tr("Falha ao abrir PDF.") : err);
             return false;
         }
-
-        // swap widget in splitter
-        int idx = splitter_->indexOf(viewer_);
+        // Wire signals for AI actions from the PDF viewer
+        connect(newViewer, &PdfViewerWidget::requestSendToChat, this, &MainWindow::onRequestSendToChat);
+        connect(newViewer, &PdfViewerWidget::requestSendImageToChat, this, &MainWindow::onRequestSendImageToChat);
+        // Replace current viewer in the splitter
+        const int idx = splitter_->indexOf(viewer_);
         splitter_->replaceWidget(idx, newViewer);
         viewer_->deleteLater();
         viewer_ = newViewer;
+
+        // Connect context-menu AI actions from the PDF viewer to MainWindow slots
+        connect(newViewer, &PdfViewerWidget::requestSynonyms, this, &MainWindow::onRequestSynonyms);
+        connect(newViewer, &PdfViewerWidget::requestSummarize, this, &MainWindow::onRequestSummarize);
+        connect(newViewer, &PdfViewerWidget::requestSendToChat, this, &MainWindow::onRequestSendToChat);
+        // Keep status updated (and persistence) when user scrolls/zooms in the PDF viewer
+        connect(newViewer, &PdfViewerWidget::scrollChanged, this, &MainWindow::updateStatus);
+        connect(newViewer, &PdfViewerWidget::zoomFactorChanged, this, &MainWindow::updateStatus);
 
         // Build TOC according to current mode
         if (tocPagesMode_) setTocModePages(); else setTocModeChapters();
@@ -786,6 +863,18 @@ bool MainWindow::openPath(const QString& file) {
             // Fit to width initially for natural reading
             newViewer->fitToWidth();
         }
+        // Restore last-read page for this file if available
+        {
+            bool ok = false;
+            const QVariant v = settings_.value(QString("files/%1/page").arg(absPath));
+            unsigned int lastPage = v.toUInt(&ok);
+            if (ok && lastPage > 0) {
+                const unsigned int total = newViewer->totalPages();
+                if (lastPage >= 1 && lastPage <= total) {
+                    newViewer->setCurrentPage(lastPage);
+                }
+            }
+        }
         // Save last dir/file
         settings_.setValue("session/lastDir", fi.absolutePath());
         settings_.setValue("session/lastFile", fi.absoluteFilePath());
@@ -793,6 +882,9 @@ bool MainWindow::openPath(const QString& file) {
 
         // Track in recent files
         addRecentFile(currentFilePath_);
+
+        // Load chat history for this file
+        loadChatForFile(currentFilePath_);
 
         // Update window title with metadata Title when available (Qt6+), else filename
         QString titleText = fi.completeBaseName();
@@ -961,6 +1053,8 @@ void MainWindow::rebuildRecentMenu() {
 void MainWindow::closeDocument() {
     // Clear TOC
     toc_->clear();
+    // Save chat for current file before clearing
+    saveChatForCurrentFile();
     // Replace current viewer with a fresh ViewerWidget
     QWidget* newViewer = new ViewerWidget(this);
     int idx = splitter_->indexOf(viewer_);
@@ -1067,13 +1161,6 @@ void MainWindow::updatePageCombo() {
         for (unsigned int i=1; i<=total; ++i) {
             pageCombo_->addItem(QString::number(i));
         }
-        pageCombo_->blockSignals(false);
-    }
-    const unsigned int curPage = (cur == 0 ? 1u : cur);
-    const int desiredIndex = int(curPage) - 1;
-    if (pageCombo_->currentIndex() != desiredIndex && desiredIndex >= 0 && desiredIndex < pageCombo_->count()) {
-        pageCombo_->blockSignals(true);
-        pageCombo_->setCurrentIndex(desiredIndex);
         pageCombo_->blockSignals(false);
     }
 }
