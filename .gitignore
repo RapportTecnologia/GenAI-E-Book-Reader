@@ -1,6 +1,6 @@
 .cache
-build*
-dist*
+build*/
+dist*/
 .env
 tmp/
 *.tmp

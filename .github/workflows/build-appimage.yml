@@ -19,6 +19,8 @@ jobs:
           sudo apt-get install -y build-essential cmake ninja-build patchelf file wget
           # Qt6
           sudo apt-get install -y qt6-base-dev qt6-base-dev-tools qt6-tools-dev qt6-tools-dev-tools qt6-pdf-dev qt6-webengine-dev
+          # ImageMagick
+          sudo apt-get install -y imagemagick
 
       - name: Configure (Release)
         run: |
@@ -32,11 +34,15 @@ jobs:
         run: |
           mkdir -p AppDir/usr/bin
           mkdir -p AppDir/usr/share/applications
+          mkdir -p AppDir/usr/share/icons/hicolor/128x128/apps
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+          mkdir -p AppDir/usr/share/icons/hicolor/512x512/apps
           cp build/bin/genai_reader AppDir/usr/bin/
           # Desktop file and icon
           cp resources/appimage/genai-reader.desktop AppDir/usr/share/applications/
-          cp docs/imgs/logo-do-projeto.png AppDir/usr/share/icons/hicolor/256x256/apps/genai-reader.png
+          convert docs/imgs/logo-do-projeto.png -resize 128x128! AppDir/usr/share/icons/hicolor/128x128/apps/genai-reader.png
+          convert docs/imgs/logo-do-projeto.png -resize 256x256! AppDir/usr/share/icons/hicolor/256x256/apps/genai-reader.png
+          convert docs/imgs/logo-do-projeto.png -resize 512x512! AppDir/usr/share/icons/hicolor/512x512/apps/genai-reader.png
 
       - name: Download linuxdeploy and plugin-qt
         run: |
