@@ -1,6 +1,0 @@
-/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/CMakeFiles/genai_reader.dir
-/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/CMakeFiles/docs.dir
-/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/CMakeFiles/edit_cache.dir
-/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/CMakeFiles/rebuild_cache.dir
-/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/CMakeFiles/genai_reader_autogen_timestamp_deps.dir
-/home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/build-release/CMakeFiles/genai_reader_autogen.dir
