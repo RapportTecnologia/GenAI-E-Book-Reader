@@ -1,5 +1,6 @@
 .cache
 build*
+dist*
 .env
 tmp/
 *.tmp
