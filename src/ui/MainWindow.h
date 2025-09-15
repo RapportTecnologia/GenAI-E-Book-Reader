@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <QString>
 #include <QImage>
+#include <QJsonArray>
 class QTreeWidget;
 class QTreeWidgetItem;
 class QSplitter;
@@ -85,6 +86,10 @@ private:
     // Chat persistence helpers
     void saveChatForCurrentFile();
     void loadChatForFile(const QString& absPath);
+    // Chat sessions (history) helpers
+    QJsonArray readChatSessions(const QString& filePath);
+    void writeChatSessions(const QString& filePath, const QJsonArray& sessions);
+    void showSavedChatsPicker();
 
 private:
     QWidget* viewer_ {nullptr}; // can be ViewerWidget or PdfViewerWidget

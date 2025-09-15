@@ -228,7 +228,7 @@ QString ChatDock::suggestTitle() const {
     if (source.isEmpty()) source = tr("Novo chat %1").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm"));
     QString t = source;
     // Remove fenced code blocks
-    t.remove(QRegularExpression("```[\n\s\S]*?```"));
+    t.remove(QRegularExpression("```[\\s\\S]*?```"));
     // Remove inline code
     t.remove(QRegularExpression("`[^`]*`"));
     // Remove HTML tags

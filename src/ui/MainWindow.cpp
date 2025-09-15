@@ -286,7 +286,7 @@ MainWindow::MainWindow(QWidget* parent)
     }
 }
 
-QJsonArray MainWindow::readChatSessions(const QString& filePath) const {
+QJsonArray MainWindow::readChatSessions(const QString& filePath) {
     const QString key = QString("files/%1/chatSessions").arg(filePath);
     const QString raw = settings_.value(key).toString();
     if (raw.trimmed().isEmpty()) return {};
@@ -294,7 +294,7 @@ QJsonArray MainWindow::readChatSessions(const QString& filePath) const {
     return doc.isArray() ? doc.array() : QJsonArray{};
 }
 
-void MainWindow::writeChatSessions(const QString& filePath, const QJsonArray& sessions) const {
+void MainWindow::writeChatSessions(const QString& filePath, const QJsonArray& sessions) {
     const QString key = QString("files/%1/chatSessions").arg(filePath);
     settings_.setValue(key, QJsonDocument(sessions).toJson(QJsonDocument::Compact));
 }
