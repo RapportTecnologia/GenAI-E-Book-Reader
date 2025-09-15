@@ -1,6 +1,7 @@
 .cache
 build*/
 dist*/
+AppDir*/
 .env
 tmp/
 *.tmp
