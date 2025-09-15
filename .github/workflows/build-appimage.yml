@@ -62,8 +62,17 @@ jobs:
             -i AppDir/usr/share/icons/hicolor/256x256/apps/genai-reader.png \
             --output appimage \
             --plugin qt
-          ls -lh *.AppImage
-          mv *.AppImage genai_reader-${{ github.ref_name }}-x86_64.AppImage
+          set -euo pipefail
+          # List only the AppImage of the app (exclude linuxdeploy tools)
+          APPIMAGE="$(ls -1 *.AppImage | grep -v '^linuxdeploy' | head -n1 || true)"
+          if [ -z "${APPIMAGE:-}" ]; then
+            echo "Erro: nenhum AppImage do aplicativo foi encontrado."
+            ls -lh
+            exit 1
+          fi
+          echo "AppImage gerado: ${APPIMAGE}"
+          mv "${APPIMAGE}" "genai_reader-${{ github.ref_name }}-x86_64.AppImage"
+          ls -lh genai_reader-*.AppImage
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
