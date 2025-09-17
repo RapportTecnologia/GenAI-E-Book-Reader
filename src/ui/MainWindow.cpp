@@ -4,6 +4,7 @@
 #include "ai/LlmClient.h"
 #include "ui/SummaryDialog.h"
 #include "ui/LlmSettingsDialog.h"
+#include "ui/EmbeddingSettingsDialog.h"
 #include "ui/ChatDock.h"
 
 #include <QApplication>
@@ -45,12 +46,18 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QProgressDialog>
+#include <QProgressBar>
+#include <QTimer>
+#include <QProcess>
+#include <QThread>
 #include <algorithm>
 #include <functional>
 #include <QModelIndex>
 #include <QVariant>
 
 #include "app/App.h"
+#include "ai/EmbeddingIndexer.h"
 
 #include <QPdfDocument>
 #include <QPdfBookmarkModel>
@@ -75,6 +82,90 @@ QVariantList loadRecentEntries(QSettings& settings) {
 }
 
 } // end anonymous namespace
+
+void MainWindow::onRequestRebuildEmbeddings() {
+    if (currentFilePath_.isEmpty()) {
+        QMessageBox::information(this, tr("Recriar Embeddings"), tr("Abra um documento para recriar os embeddings."));
+        return;
+    }
+    const auto ret = QMessageBox::question(
+        this,
+        tr("Recriar Embeddings"),
+        tr("Este processo pode demorar, dependendo do tamanho do documento.\nDeseja continuar?"),
+        QMessageBox::Yes | QMessageBox::No,
+        QMessageBox::No
+    );
+    if (ret != QMessageBox::Yes) return;
+
+    // Progress UI
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("Recriando embeddings"));
+    dlg.setModal(true);
+    auto* lay = new QVBoxLayout(&dlg);
+    auto* lblStage = new QLabel(&dlg);
+    lblStage->setText(tr("Iniciando..."));
+    auto* bar = new QProgressBar(&dlg);
+    bar->setRange(0, 100);
+    bar->setValue(0);
+    auto* details = new QPlainTextEdit(&dlg);
+    details->setReadOnly(true);
+    auto* btns = new QDialogButtonBox(QDialogButtonBox::Cancel, &dlg);
+    lay->addWidget(lblStage);
+    lay->addWidget(bar);
+    lay->addWidget(details, 1);
+    lay->addWidget(btns);
+
+    // Load embedding settings
+    QSettings s;
+    const QString provider = s.value("emb/provider", "generativa").toString();
+    const QString model = s.value("emb/model", "nomic-embed-text:latest").toString();
+    const QString baseUrl = s.value("emb/base_url").toString();
+    const QString apiKey = s.value("emb/api_key").toString();
+    const QString dbPath = s.value("emb/db_path", QDir(QDir::home().filePath(".cache")).filePath("br.tec.rapport.genai-reader")).toString();
+    const int chunkSize = s.value("emb/chunk_size", 1000).toInt();
+    const int chunkOverlap = s.value("emb/chunk_overlap", 200).toInt();
+    const int batchSize = s.value("emb/batch_size", 16).toInt();
+    const int pagesPerStage = s.value("emb/pages_per_stage", -1).toInt();
+    const int pauseMsBetweenBatches = s.value("emb/pause_ms_between_batches", 0).toInt();
+    QDir().mkpath(dbPath);
+
+    // Configure worker
+    EmbeddingIndexer::Params params;
+    params.pdfPath = currentFilePath_;
+    params.dbDir = dbPath;
+    params.providerCfg.provider = provider;
+    params.providerCfg.model = model;
+    params.providerCfg.baseUrl = baseUrl;
+    params.providerCfg.apiKey = apiKey;
+    params.chunkSize = chunkSize;
+    params.chunkOverlap = chunkOverlap;
+    params.batchSize = batchSize;
+    params.pagesPerStage = pagesPerStage;
+    params.pauseMsBetweenBatches = pauseMsBetweenBatches;
+
+    auto* worker = new EmbeddingIndexer(params);
+    auto* thread = new QThread(&dlg);
+    worker->moveToThread(thread);
+
+    connect(thread, &QThread::started, worker, &EmbeddingIndexer::run);
+    connect(worker, &EmbeddingIndexer::stage, &dlg, [lblStage, details](const QString& name){ lblStage->setText(name); details->appendPlainText("[STAGE] " + name); });
+    connect(worker, &EmbeddingIndexer::metric, &dlg, [details](const QString& k, const QString& v){ details->appendPlainText("[METRIC] " + k + " " + v); });
+    connect(worker, &EmbeddingIndexer::progress, &dlg, [bar, details](int pct, const QString& info){ bar->setValue(qBound(0, pct, 100)); if (!info.isEmpty()) details->appendPlainText("[INFO] " + info); });
+    connect(worker, &EmbeddingIndexer::warn, &dlg, [details](const QString& m){ details->appendPlainText("[WARN] " + m); });
+    connect(worker, &EmbeddingIndexer::error, &dlg, [details](const QString& m){ details->appendPlainText("[ERROR] " + m); });
+    connect(worker, &EmbeddingIndexer::finished, &dlg, [&](bool ok, const QString& msg){ if (ok) { bar->setValue(100); details->appendPlainText(tr("Concluído: ") + msg); dlg.accept(); } else { details->appendPlainText(tr("Falha: ") + msg); dlg.reject(); } });
+    connect(&dlg, &QDialog::rejected, &dlg, [thread](){ if (thread->isRunning()) thread->requestInterruption(); });
+    connect(thread, &QThread::finished, worker, &QObject::deleteLater);
+    connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+
+    thread->start();
+    dlg.exec();
+    if (thread->isRunning()) { thread->requestInterruption(); thread->quit(); thread->wait(1000); }
+
+    if (bar->value() == 100) {
+        statusBar()->showMessage(tr("Embeddings recriados."), 3000);
+    }
+}
 
 void MainWindow::createActions() {
     // Core actions
@@ -177,6 +268,11 @@ void MainWindow::createActions() {
     actLlmSettings_ = new QAction(tr("Configurar LLM..."), this);
     connect(actLlmSettings_, &QAction::triggered, this, &MainWindow::openLlmSettings);
     menuLlm->addAction(actLlmSettings_);
+
+    auto* menuEmb = menuConfig->addMenu(tr("Embeddings"));
+    actEmbeddingSettings_ = new QAction(tr("Configurar Embeddings..."), this);
+    connect(actEmbeddingSettings_, &QAction::triggered, this, &MainWindow::openEmbeddingSettings);
+    menuEmb->addAction(actEmbeddingSettings_);
 
     auto* menuEdit = menuBar()->addMenu(tr("Editar"));
     menuEdit->addAction(actSelText_);
@@ -803,6 +899,31 @@ void MainWindow::openLlmSettings() {
     }
 }
 
+void MainWindow::openEmbeddingSettings() {
+    EmbeddingSettingsDialog dlg(this);
+    // Conecta ação de recriação de embeddings do documento atual
+    connect(&dlg, &EmbeddingSettingsDialog::rebuildRequested, this, [this]() {
+        QSettings s;
+        const QString dbPath = s.value("emb/db_path").toString();
+        QDir dir(dbPath);
+        if (!dir.exists()) {
+            dir.mkpath(".");
+        }
+        if (currentFilePath_.isEmpty()) {
+            QMessageBox::information(this, tr("Recriar Embeddings"), tr("Abra um documento para recriar os embeddings."));
+            return;
+        }
+        QMessageBox::information(
+            this,
+            tr("Recriar Embeddings"),
+            tr("Recriação de embeddings agendada para:\n%1\nBanco: %2")
+                .arg(QFileInfo(currentFilePath_).fileName(), dbPath)
+        );
+        // TODO: implementar pipeline de indexação RAG (chunking -> embeddings -> ChromaDB)
+    });
+    dlg.exec();
+}
+
 void MainWindow::saveSettings() {
     settings_.setValue("ui/geometry", saveGeometry());
     settings_.setValue("ui/state", saveState());
@@ -914,6 +1035,7 @@ bool MainWindow::openPath(const QString& file) {
         connect(newViewer, &PdfViewerWidget::requestSynonyms, this, &MainWindow::onRequestSynonyms);
         connect(newViewer, &PdfViewerWidget::requestSummarize, this, &MainWindow::onRequestSummarize);
         connect(newViewer, &PdfViewerWidget::requestSendToChat, this, &MainWindow::onRequestSendToChat);
+        connect(newViewer, &PdfViewerWidget::requestRebuildEmbeddings, this, &MainWindow::onRequestRebuildEmbeddings);
         // Keep status updated (and persistence) when user scrolls/zooms in the PDF viewer
         connect(newViewer, &PdfViewerWidget::scrollChanged, this, &MainWindow::updateStatus);
         connect(newViewer, &PdfViewerWidget::zoomFactorChanged, this, &MainWindow::updateStatus);

@@ -265,6 +265,10 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
                     QAction* actCancel = menu.addAction(tr("Sem seleção válida"));
                     actCancel->setEnabled(false);
                 }
+                // Always offer to rebuild embeddings
+                menu.addSeparator();
+                QAction* actRebuild = menu.addAction(tr("Recriar embeddings do documento..."));
+                QObject::connect(actRebuild, &QAction::triggered, this, [this]() { emit requestRebuildEmbeddings(); });
                 menu.exec(view_->viewport()->mapToGlobal(me->pos()));
                 event->accept();
                 return true;

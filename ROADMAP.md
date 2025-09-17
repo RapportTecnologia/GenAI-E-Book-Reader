@@ -41,14 +41,21 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
  - "Recentes": diálogo rolável com busca e filtro por nome/título/autor/resumo/palavras‑chave e submenu com últimos itens.
    - Persistência de metadados (caminho, título, autor, resumo, palavras‑chave) em `QSettings`.
 
-## 0.1.5 – Anotações e Dicionário
-- Integração com API de IA (pré cadastradas: OpenAI, GenerAtiva, Claude, Anthropic, Google, DeepSeek)
+## 0.1.5 - Itengração IA
+- Integração com APIs de IA (pré cadastradas: OpenAI, GenerAtiva, Claude, Anthropic, Google, DeepSeek)
 - Resumo e explicação de trechos selecionados
-- Explicação dos trechos selecionados.
 - Histórico de prompts e respostas
-- Chat com IA (OpenAI) para explicar e resumir seleções, com RAG para contextualização.
+- Chat com IA (OpenAI) para explicar e resumir seleções.
 
 ## 0.1.6 – Anotações e Dicionário
+- RAG (experimental):
+  - UI para ajuste fino de chunking/batching (chunk size, overlap, batch size)
+  - Execução por etapas (pages per stage) e pausa entre lotes (throttling)
+  - Detecção de dependências de extração (`pdftotext`, `pdftoppm`, `tesseract`) e fallbacks
+  - Escrita incremental de vetores/ids/metadados
+  - Métricas e logs de estágios no diálogo de indexação
+  - Documentação de uso e limitações
+  - Risco conhecido: sobrecarga de recursos em documentos grandes causando encerramento prematuro; mitigado por etapas/pausas
 - Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,
 - Busca full-text no documento
 

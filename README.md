@@ -105,6 +105,55 @@ Observações de privacidade:
 
 Para um guia passo a passo com imagens e dicas, consulte o [TUTORIAL.md](TUTORIAL.md).
 
+## RAG (Experimental)
+
+ATENÇÃO: Este recurso está em testes e pode causar sobrecarga de recursos em algumas máquinas, levando a travamentos ou encerramento prematuro da aplicação/terminal. Estamos estabilizando o pipeline com processamento em etapas e limites de consumo.
+
+### O que é
+- Indexação de PDFs em vetores para permitir buscas semânticas e respostas com contexto.
+- Pipelines 100% em C++ (sem Python no cliente), com provedores de embeddings via HTTP:
+  - `openai`, `generativa` (compatível com OpenAI) e `ollama` (local).
+- Armazenamento vetorial local em disco (formato binário simples + JSONs de ids/metadados) em `~/.cache/br.tec.rapport.genai-reader/`.
+
+### Como usar
+1. Abra um PDF no leitor.
+2. Clique com o botão direito dentro do PDF e escolha `Recriar embeddings do documento...`.
+3. Acompanhe o diálogo de progresso (estágios, percentuais, métricas). Se configurado por etapas, execute novamente para continuar do ponto onde parou.
+
+### Configuração (Configurações > Embeddings)
+- Provedor: `OpenAI`, `GenerAtiva` (Base URL e API Key) ou `Ollama` local.
+- Modelo de embeddings (ex.: `text-embedding-3-small`, `nomic-embed-text:latest`).
+- Banco (diretório de cache): padrão `~/.cache/br.tec.rapport.genai-reader`.
+- Tuning (ajustes finos):
+  - `Tamanho do chunk` (padrão 1000)
+  - `Sobreposição do chunk` (padrão 200)
+  - `Tamanho do lote (batch)` (padrão 16)
+  - `Páginas por etapa` (opcional; processa N páginas por execução para evitar exaustão)
+  - `Pausa entre lotes (ms)` (opcional; insere uma pausa entre batches)
+
+Sugestões de valores seguros:
+- Páginas por etapa: 10–25
+- Pausa entre lotes: 100–250 ms
+- Batch: 8–16
+- Chunk size: 800–1200
+- Overlap: 100–250
+
+### Dependências para extração de texto (recomendadas)
+- Preferencial: `poppler-utils` (fornece `pdftotext` e `pdftoppm`) — mais rápido e com menor uso de memória.
+- Fallback: `tesseract-ocr` (OCR por página; mais pesado e lento, usar apenas quando necessário).
+- A aplicação detecta automaticamente e alerta se estiverem ausentes, sugerindo instalação.
+
+### Estado atual e limitações
+- Experimental: pode ocorrer sobrecarga de CPU/RAM e encerramento da aplicação/terminal em documentos grandes.
+- Mitigações implementadas:
+  - Processamento em etapas (interrompe após N páginas; execute novamente para continuar).
+  - Escrita incremental de vetores/ids/metadados (sem buffers gigantes em memória).
+  - Throttling entre lotes (pausa configurável) e respeito ao cancelamento.
+  - Logs de estágios, métricas e progresso em tempo real na janela de indexação.
+- Próximas melhorias:
+  - Diagnóstico de dependências (status de `pdftotext`, `pdftoppm`, `tesseract`) na UI.
+  - Fallbacks adicionais e otimizações em I/O de metadados.
+
 ## Próximas versões
 - Planejamento contínuo em `ROADMAP.md`.
 

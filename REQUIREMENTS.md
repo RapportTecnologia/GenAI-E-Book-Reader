@@ -150,6 +150,19 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 - RNF-16: Adicionar documentação de segurança.
 - RNF-17: Adicionar documentação de suporte.
 
+### 6.1 RAG (Experimental) — Requisitos e Limitações
+
+- Dependências recomendadas de extração de texto:
+  - `poppler-utils` (fornece `pdftotext` e `pdftoppm`) para extração rápida e com menor uso de memória.
+  - `tesseract-ocr` como fallback (OCR por página; mais pesado/lento).
+- Configurações de ajuste fino (persistidas em `QSettings`):
+  - `emb/chunk_size` (padrão 1000), `emb/chunk_overlap` (padrão 200), `emb/batch_size` (padrão 16).
+  - `emb/pages_per_stage` (opcional; processar N páginas por execução) e `emb/pause_ms_between_batches` (opcional; pausa entre lotes).
+- Restrições atuais (estado experimental):
+  - Pode ocorrer sobrecarga de CPU/RAM e encerramento prematuro em documentos grandes.
+  - Mitigações implementadas: processamento em etapas, escrita incremental de vetores/ids/metadados, throttling entre batches, cancelamento.
+  - Recomenda-se valores conservadores: pages_per_stage=10–25, pause_ms_between_batches=100–250, batch_size=8–16, chunk_size=800–1200, chunk_overlap=100–250.
+
 ## 7. Arquitetura e Tecnologias
 - Qt6 (Widgets) para UI e renderização de documentos.
 - Bibliotecas para parsing/renderização:

@@ -53,6 +53,7 @@ private slots:
     // Preferences
     void setWheelZoomPreference();
     void openLlmSettings();
+    void openEmbeddingSettings();
     void showChatPanel();
     void onChatSendMessage(const QString& text);
     void onChatSaveTranscript(const QString& text);
@@ -63,6 +64,7 @@ private slots:
     void onRequestSummarize(const QString& text);
     void onRequestSendToChat(const QString& text);
     void onRequestSendImageToChat(const QImage& image);
+    void onRequestRebuildEmbeddings();
 
 private:
     void buildUi();
@@ -121,6 +123,7 @@ private:
     QAction* actWheelZoomPref_ {nullptr};
     QAction* actRecentConfig_ {nullptr};
     QAction* actLlmSettings_ {nullptr};
+    QAction* actEmbeddingSettings_ {nullptr};
     // TOC toolbar actions
     QAction* actTocModePages_ {nullptr};
     QAction* actTocModeChapters_ {nullptr};

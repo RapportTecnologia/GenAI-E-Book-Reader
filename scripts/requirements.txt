@@ -1,0 +1,5 @@
+chromadb>=0.5.0
+pypdf>=4.2.0
+openai>=1.40.0
+sentence-transformers>=3.0.0
+requests>=2.32.3
