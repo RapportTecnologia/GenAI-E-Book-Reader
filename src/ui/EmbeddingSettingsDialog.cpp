@@ -71,7 +71,7 @@ EmbeddingSettingsDialog::EmbeddingSettingsDialog(QWidget* parent)
     warningLabel_ = new QLabel(this);
     warningLabel_->setWordWrap(true);
     warningLabel_->setStyleSheet("color:#b36b00;font-weight:bold");
-    warningLabel_->setText(tr("Ao mudar o Modelo de Embeddings é preciso recriar os Vedores de Embbendings"));
+    warningLabel_->setText(tr("Ao mudar o modelo de embeddings, é preciso recriar os vetores de embeddings."));
     root->addWidget(warningLabel_);
 
     btnRebuild_ = new QPushButton(tr("Recriar Embeddings do documento aberto"), this);
@@ -95,6 +95,7 @@ void EmbeddingSettingsDialog::populateProviders() {
     providerCombo_->addItem(tr("GenerAtiva API"), "generativa");
     providerCombo_->addItem(tr("OpenAI"), "openai");
     providerCombo_->addItem(tr("Ollama local"), "ollama");
+    providerCombo_->addItem(tr("OpenWebUI (retrieval/ef)"), "openwebui");
     providerCombo_->addItem(tr("SentenceTransformers (local)"), "sentence_transformers");
     // Trigger initial model list
     onProviderChanged(providerCombo_->currentIndex());
@@ -103,13 +104,18 @@ void EmbeddingSettingsDialog::populateProviders() {
 void EmbeddingSettingsDialog::populateModelsFor(const QString& provider) {
     modelCombo_->clear();
     if (provider == QLatin1String("generativa")) {
-        modelCombo_->addItem(QStringLiteral("nomic-embed-text:latest"), QStringLiteral("nomic-embed-text:latest"));
+        // Model is internally defined by the provider
+        modelCombo_->addItem(QStringLiteral("(definido pelo provedor)"), QString());
     } else if (provider == QLatin1String("openai")) {
         // Only embedding-capable OpenAI models
         modelCombo_->addItem(QStringLiteral("text-embedding-3-large"), QStringLiteral("text-embedding-3-large"));
         modelCombo_->addItem(QStringLiteral("text-embedding-3-small"), QStringLiteral("text-embedding-3-small"));
+        modelCombo_->addItem(QStringLiteral("text-embedding-ada-002"), QStringLiteral("text-embedding-ada-002"));
     } else if (provider == QLatin1String("ollama")) {
         modelCombo_->addItem(QStringLiteral("nomic-embed-text:latest"), QStringLiteral("nomic-embed-text:latest"));
+    } else if (provider == QLatin1String("openwebui")) {
+        // Model is internally defined by the provider
+        modelCombo_->addItem(QStringLiteral("(definido pelo provedor)"), QString());
     } else { // sentence_transformers
         // Offer a few common local models
         modelCombo_->addItem(QStringLiteral("all-MiniLM-L6-v2"), QStringLiteral("sentence-transformers/all-MiniLM-L6-v2"));
@@ -122,12 +128,20 @@ void EmbeddingSettingsDialog::onProviderChanged(int) {
     const QString provider = providerCombo_->currentData().toString();
     populateModelsFor(provider);
     // Tweak field visibility/enabled based on provider
-    const bool needsHttp = (provider == QLatin1String("generativa") || provider == QLatin1String("openai"));
+    const bool needsHttp = (provider == QLatin1String("generativa") || provider == QLatin1String("openai") || provider == QLatin1String("openwebui"));
     baseUrlEdit_->setEnabled(needsHttp);
     apiKeyEdit_->setEnabled(needsHttp);
+    // Model selection is only meaningful for OpenAI, Ollama, and sentence_transformers
+    const bool usesModel = (provider == QLatin1String("openai") || provider == QLatin1String("ollama") || provider == QLatin1String("sentence_transformers"));
+    modelCombo_->setEnabled(usesModel);
+    modelCombo_->setToolTip(usesModel ? QString() : tr("O modelo é definido internamente pelo provedor."));
     if (provider == QLatin1String("openai")) {
         if (baseUrlEdit_->text().trimmed().isEmpty()) {
             baseUrlEdit_->setText(QStringLiteral("https://api.openai.com/v1"));
+        }
+    } else if (provider == QLatin1String("openwebui")) {
+        if (baseUrlEdit_->text().trimmed().isEmpty()) {
+            baseUrlEdit_->setText(QStringLiteral("http://localhost:8080"));
         }
     }
 }

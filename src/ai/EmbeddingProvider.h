@@ -10,7 +10,7 @@ class EmbeddingProvider : public QObject {
     Q_OBJECT
 public:
     struct Config {
-        QString provider;   // "openai", "generativa", "ollama"
+        QString provider;   // "openai", "generativa", "ollama", "openwebui"
         QString model;
         QString baseUrl;    // used for openai-compatible endpoints (generativa)
         QString apiKey;     // for openai/generativa
@@ -24,6 +24,7 @@ public:
 private:
     QList<QVector<float>> embedOpenAICompatible(const QStringList& texts, const QString& urlBase);
     QList<QVector<float>> embedOllama(const QStringList& texts);
+    QList<QVector<float>> embedRetrievalEf(const QStringList& texts, const QString& baseUrl);
 
     Config cfg_;
 };

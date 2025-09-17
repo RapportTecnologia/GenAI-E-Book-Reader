@@ -3,8 +3,12 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QStringView>
 #include <QVector>
 #include <QElapsedTimer>
+#include <QMutex>
+#include <QWaitCondition>
+#include <functional>
 
 #include "ai/EmbeddingProvider.h"
 #include "ai/VectorIndex.h"
@@ -35,12 +39,22 @@ signals:
 
 public slots:
     void run();
+    // Control from UI
+    void requestPause();
+    void requestResume();
 
 private:
     QStringList extractPagesText(); // tries pdftotext page-by-page; fallback returns empty pages
-    QStringList chunkText(const QString& text, int chunkSize, int overlap) const;
+    void forEachChunks(const QString& text, int chunkSize, int overlap,
+                       const std::function<bool(QStringView, int)>& consume);
     QString sha1(const QString& s) const;
+    void waitIfPaused();
 
 private:
     Params p_;
+    // Pause control
+    QMutex pauseMutex_;
+    QWaitCondition pauseCond_;
+    bool paused_ {false};
 };
+
