@@ -499,6 +499,30 @@ void PdfViewerWidget::showCopyToast() {
     showToast(tr("Seleção copiada para a área de transferência."));
 }
 
+void PdfViewerWidget::flashHighlight() {
+    QWidget* host = view_ && view_->viewport() ? view_->viewport() : this;
+    if (!highlightOverlay_) {
+        highlightOverlay_ = new QLabel(host);
+        highlightOverlay_->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        highlightOverlay_->setStyleSheet("QLabel{background-color: rgba(255, 230, 0, 90); border: 2px solid rgba(255,200,0,180);}");
+        highlightOverlay_->hide();
+    }
+    // Cover the viewport with small margins
+    const int margin = 6;
+    const QRect r(margin, margin, qMax(0, host->width() - 2*margin), qMax(0, host->height() - 2*margin));
+    highlightOverlay_->setGeometry(r);
+    highlightOverlay_->show();
+    // Auto-hide shortly
+    if (!highlightTimer_) {
+        highlightTimer_ = new QTimer(this);
+        highlightTimer_->setSingleShot(true);
+        connect(highlightTimer_, &QTimer::timeout, this, [this]() {
+            if (highlightOverlay_) highlightOverlay_->hide();
+        });
+    }
+    highlightTimer_->start(600);
+}
+
 void PdfViewerWidget::saveSelectionAsTxt() {
     if (selMode_ == SelectionMode::Rect) {
         const QString path = QFileDialog::getSaveFileName(this, tr("Salvar seleção"), QString(), tr("Texto (*.txt)"));

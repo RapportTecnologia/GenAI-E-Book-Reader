@@ -12,9 +12,28 @@
 #include <QUuid>
 #include <QThread>
 #include <QDebug>
+#include <QMutexLocker>
 
 EmbeddingIndexer::EmbeddingIndexer(const Params& p, QObject* parent)
     : QObject(parent), p_(p) {}
+
+void EmbeddingIndexer::requestPause() {
+    QMutexLocker locker(&pauseMutex_);
+    paused_ = true;
+}
+
+void EmbeddingIndexer::requestResume() {
+    QMutexLocker locker(&pauseMutex_);
+    paused_ = false;
+    pauseCond_.wakeAll();
+}
+
+void EmbeddingIndexer::waitIfPaused() {
+    QMutexLocker locker(&pauseMutex_);
+    while (paused_) {
+        pauseCond_.wait(&pauseMutex_);
+    }
+}
 
 void EmbeddingIndexer::forEachChunks(const QString& text, int chunkSize, int overlap,
                        const std::function<bool(QStringView, int)>& consume) {
@@ -145,6 +164,7 @@ QString EmbeddingIndexer::sha1(const QString& s) const {
 void EmbeddingIndexer::run() {
     QElapsedTimer total; total.start();
     emit stage(tr("Lendo PDF"));
+    waitIfPaused();
     const QStringList pages = extractPagesText();
     const int pageCount = pages.size();
     if (pageCount == 0) { emit error(tr("Sem páginas extraídas.")); emit finished(false, tr("Falha na extração de texto")); return; }
@@ -210,6 +230,7 @@ void EmbeddingIndexer::run() {
     int globalChunkIdx = 0;
     int pagesProcessed = 0;
     for (int i=0;i<pageCount;++i) {
+        waitIfPaused();
         if (QThread::currentThread()->isInterruptionRequested()) { emit warn(tr("Interrompido")); break; }
         emit metric(QStringLiteral("page"), QString::number(i+1));
         QStringList batchTexts; batchTexts.reserve(bs);
@@ -217,6 +238,7 @@ void EmbeddingIndexer::run() {
 
         auto processBatch = [&](bool finalFlush=false) -> bool {
             if (batchTexts.isEmpty()) return true;
+            waitIfPaused();
             // Embedding do lote
             QList<QVector<float>> vecs;
             // Log batch details prior to external API call
@@ -293,6 +315,7 @@ void EmbeddingIndexer::run() {
         bool aborted = false;
         int chunkIdx = 0;
         forEachChunks(pages[i], p_.chunkSize, p_.chunkOverlap, [&](QStringView v, int localIdx) -> bool {
+            waitIfPaused();
             // Convert view to QString only for the provider input
             batchTexts << v.toString();
             batchLocs << QPair<int,int>(i+1, localIdx);

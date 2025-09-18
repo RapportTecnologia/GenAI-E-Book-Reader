@@ -51,16 +51,22 @@
 #include <QTimer>
 #include <QProcess>
 #include <QThread>
+#include <QShortcut>
+#include <QStandardPaths>
 #include <algorithm>
 #include <functional>
 #include <QModelIndex>
 #include <QVariant>
+#include <QPushButton>
 
 #include "app/App.h"
 #include "ai/EmbeddingIndexer.h"
+#include "ai/EmbeddingProvider.h"
+#include "ai/VectorIndex.h"
 
 #include <QPdfDocument>
 #include <QPdfBookmarkModel>
+#include <QCryptographicHash>
 
 namespace {
 // Load recent entries as a list of QVariantMap with keys:
@@ -82,6 +88,188 @@ QVariantList loadRecentEntries(QSettings& settings) {
 }
 
 } // end anonymous namespace
+
+void MainWindow::focusSearchBar() {
+    if (!searchEdit_) return;
+    searchEdit_->setFocus();
+    searchEdit_->selectAll();
+}
+
+QString MainWindow::sha1(const QString& s) const {
+    QCryptographicHash h(QCryptographicHash::Sha1);
+    h.addData(s.toUtf8());
+    return QString::fromLatin1(h.result().toHex());
+}
+
+bool MainWindow::getIndexPaths(IndexPaths* out) const {
+    if (!out) return false;
+    out->base.clear(); out->binPath.clear(); out->idsPath.clear(); out->metaPath.clear();
+    if (currentFilePath_.isEmpty()) return false;
+    QSettings s;
+    const QString dbPath = s.value("emb/db_path", QDir(QDir::home().filePath(".cache")).filePath("br.tec.rapport.genai-reader")).toString();
+    const QString model = s.value("emb/model", "nomic-embed-text:latest").toString();
+    const QString fileHash = sha1(QFileInfo(currentFilePath_).absoluteFilePath());
+    QString fileBaseName = QStringLiteral("index_%1_%2").arg(fileHash, model);
+    fileBaseName.replace(':', '_');
+    fileBaseName.replace('/', '_');
+    out->base = QDir(dbPath).filePath(fileBaseName);
+    out->binPath = out->base + ".bin";
+    out->idsPath = out->base + ".ids.json";
+    out->metaPath = out->base + ".meta.json";
+    return QFileInfo::exists(out->binPath) && QFileInfo::exists(out->idsPath) && QFileInfo::exists(out->metaPath);
+}
+
+bool MainWindow::ensurePagesTextLoaded() {
+    if (pagesTextLoaded_) return true;
+    pagesText_.clear();
+    // Only for PDFs in this build
+    auto pv = qobject_cast<PdfViewerWidget*>(viewer_);
+    if (!pv || !pv->document()) return false;
+    QPdfDocument* doc = pv->document();
+    const int pageCount = doc->pageCount();
+    if (pageCount <= 0) return false;
+    const bool hasPdfToText = !QStandardPaths::findExecutable("pdftotext").isEmpty();
+    for (int i = 1; i <= pageCount; ++i) {
+        QString pageText;
+        if (hasPdfToText) {
+            QProcess proc;
+            QStringList args; args << "-q" << "-layout" << "-eol" << "unix" << "-f" << QString::number(i) << "-l" << QString::number(i) << currentFilePath_ << "-";
+            proc.start("pdftotext", args);
+            if (proc.waitForStarted(2000)) {
+                proc.waitForFinished(20000);
+                pageText = QString::fromUtf8(proc.readAllStandardOutput());
+            }
+        }
+        pagesText_ << pageText;
+    }
+    pagesTextLoaded_ = !pagesText_.isEmpty();
+    return pagesTextLoaded_;
+}
+
+QList<int> MainWindow::plainTextSearchPages(const QString& needle, int maxResults) {
+    QList<int> pages;
+    if (!ensurePagesTextLoaded()) return pages;
+    const QString n = needle.trimmed(); if (n.isEmpty()) return pages;
+    for (int i = 0; i < pagesText_.size(); ++i) {
+        if (pagesText_[i].contains(n, Qt::CaseInsensitive)) {
+            pages.append(i + 1);
+            if (pages.size() >= maxResults) break;
+        }
+    }
+    return pages;
+}
+
+QList<int> MainWindow::semanticSearchPages(const QString& query, int k) {
+    QList<int> pages;
+    IndexPaths paths; if (!getIndexPaths(&paths)) return pages;
+    // Load index
+    VectorIndex index;
+    QString err;
+    if (!index.load(paths.binPath, paths.idsPath, &err)) {
+        qWarning() << "[Search] Falha ao carregar índice:" << err;
+        return pages;
+    }
+    // Build embedding for query
+    QSettings s;
+    EmbeddingProvider::Config cfg;
+    cfg.provider = s.value("emb/provider", "generativa").toString();
+    cfg.model = s.value("emb/model", "nomic-embed-text:latest").toString();
+    cfg.baseUrl = s.value("emb/base_url").toString();
+    cfg.apiKey = s.value("emb/api_key").toString();
+    EmbeddingProvider prov(cfg);
+    QList<QVector<float>> qv;
+    try { qv = prov.embedBatch(QStringList{query}); }
+    catch (const std::exception& ex) {
+        qWarning() << "[Search] embed query failed:" << ex.what();
+        return pages;
+    }
+    if (qv.isEmpty()) return pages;
+    const auto hits = index.topK(qv.first(), qMax(1, k));
+    if (hits.isEmpty()) return pages;
+    QFile f(paths.metaPath);
+    if (!f.open(QIODevice::ReadOnly)) return pages;
+    const QJsonDocument doc = QJsonDocument::fromJson(f.readAll()); f.close();
+    if (!doc.isArray()) return pages;
+    const QJsonArray arr = doc.array();
+    QSet<int> seen;
+    for (const auto& h : hits) {
+        if (h.index < 0 || h.index >= arr.size()) continue;
+        const int page = arr.at(h.index).toObject().value("page").toInt();
+        if (page > 0 && !seen.contains(page)) { pages.append(page); seen.insert(page); }
+        if (pages.size() >= k) break;
+    }
+    return pages;
+}
+
+void MainWindow::onSearchTriggered() {
+    if (currentFilePath_.isEmpty() || !searchEdit_) return;
+    const QString q = searchEdit_->text().trimmed();
+    if (q.isEmpty()) return;
+    // 1) Plain text search across pages
+    QList<int> pages = plainTextSearchPages(q);
+    // 2) Semantic search if no plain hits
+    if (pages.isEmpty()) pages = semanticSearchPages(q, 5);
+    if (!pages.isEmpty()) {
+        searchResultsPages_ = pages;
+        searchResultIdx_ = 0;
+        const int page = searchResultsPages_.at(searchResultIdx_);
+        if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pv->setCurrentPage(static_cast<unsigned int>(page)); pv->flashHighlight(); }
+        if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(page)); }
+        updateStatus();
+        statusBar()->showMessage(tr("%1 resultado(s)").arg(searchResultsPages_.size()), 2000);
+
+        // Agentic mode: if query is longer, show constructed RAG prompt in chat dock and append a summary answer
+        const bool agentic = q.size() >= 120; // heuristic: long query triggers agentic prompt preview
+        if (agentic) {
+            showChatPanel();
+            if (chatDock_) {
+                // Build a readable agentic prompt describing the RAG procedure
+                QString prompt;
+                prompt += tr("Objetivo: Responder ao usuário em pt-BR com base no conteúdo do PDF atual, usando RAG.\n\n");
+                prompt += tr("Entrada do usuário (consulta longa):\n%1\n\n").arg(q);
+                prompt += tr("Passos (agentic):\n");
+                prompt += tr("1) Recuperar passagens mais relevantes por similaridade semântica.\n");
+                prompt += tr("2) Analisar passagens e redigir uma resposta objetiva, citando páginas quando possível.\n");
+                prompt += tr("3) Não inventar conteúdo que não conste no documento.\n");
+                prompt += tr("4) Responder em português do Brasil.\n");
+                prompt += tr("5) Se necessário, sugerir páginas correlatas para leitura.\n\n");
+                // Provide the retrieved page list in the prompt context
+                prompt += tr("Páginas recuperadas (topo): %1\n").arg(
+                    [&](){ QStringList s; for(int p: pages) s<<QString::number(p); return s.join(", "); }()
+                );
+                chatDock_->setAgenticPrompt(prompt);
+                chatDock_->showAgenticPrompt(true);
+
+                // Append a concise assistant message with suggested pages
+                QString summary = tr("Busquei via RAG pelas páginas: %1. Você pode navegar com Próximo/Anterior.")
+                                      .arg([&](){ QStringList s; for(int p: pages) s<<QString::number(p); return s.join(", "); }());
+                chatDock_->appendAssistant(summary);
+            }
+        }
+    } else {
+        statusBar()->showMessage(tr("Nenhum resultado encontrado."), 2000);
+    }
+}
+
+void MainWindow::onSearchNext() {
+    if (searchResultsPages_.isEmpty()) { onSearchTriggered(); return; }
+    searchResultIdx_ = (searchResultIdx_ + 1) % searchResultsPages_.size();
+    const int page = searchResultsPages_.at(searchResultIdx_);
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pv->setCurrentPage(static_cast<unsigned int>(page)); pv->flashHighlight(); }
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(page)); }
+    updateStatus();
+    statusBar()->showMessage(tr("Resultado %1 de %2").arg(searchResultIdx_+1).arg(searchResultsPages_.size()), 1500);
+}
+
+void MainWindow::onSearchPrev() {
+    if (searchResultsPages_.isEmpty()) { onSearchTriggered(); return; }
+    searchResultIdx_ = (searchResultIdx_ - 1 + searchResultsPages_.size()) % searchResultsPages_.size();
+    const int page = searchResultsPages_.at(searchResultIdx_);
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pv->setCurrentPage(static_cast<unsigned int>(page)); pv->flashHighlight(); }
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(page)); }
+    updateStatus();
+    statusBar()->showMessage(tr("Resultado %1 de %2").arg(searchResultIdx_+1).arg(searchResultsPages_.size()), 1500);
+}
 
 void MainWindow::onRequestRebuildEmbeddings() {
     if (currentFilePath_.isEmpty()) {
@@ -308,6 +496,31 @@ void MainWindow::createActions() {
     rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     tb->addWidget(rightSpacer);
     tb->addAction(actChat_);
+
+    // Place the search toolbar on a new row just below the reading toolbar
+    addToolBarBreak();
+    searchToolBar_ = addToolBar(tr("Busca"));
+    searchToolBar_->setObjectName("toolbar_search");
+    searchToolBar_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    searchEdit_ = new QLineEdit(searchToolBar_);
+    searchEdit_->setPlaceholderText(tr("/ Pesquisar no documento..."));
+    searchEdit_->setClearButtonEnabled(true);
+    searchToolBar_->addWidget(searchEdit_);
+    searchButton_ = new QPushButton(tr("Pesquisar"), searchToolBar_);
+    searchToolBar_->addWidget(searchButton_);
+    searchPrevButton_ = new QPushButton(tr("Anterior"), searchToolBar_);
+    searchNextButton_ = new QPushButton(tr("Próximo"), searchToolBar_);
+    searchToolBar_->addWidget(searchPrevButton_);
+    searchToolBar_->addWidget(searchNextButton_);
+    connect(searchEdit_, &QLineEdit::returnPressed, this, &MainWindow::onSearchTriggered);
+    connect(searchButton_, &QPushButton::clicked, this, &MainWindow::onSearchTriggered);
+    connect(searchPrevButton_, &QPushButton::clicked, this, &MainWindow::onSearchPrev);
+    connect(searchNextButton_, &QPushButton::clicked, this, &MainWindow::onSearchNext);
+
+    // Wire '/' shortcut to focus the search bar
+    slashShortcut_ = new QShortcut(QKeySequence("/"), this);
+    slashShortcut_->setContext(Qt::ApplicationShortcut);
+    connect(slashShortcut_, &QShortcut::activated, this, &MainWindow::focusSearchBar);
 
     // TOC toolbar
     if (tocToolBar_) {

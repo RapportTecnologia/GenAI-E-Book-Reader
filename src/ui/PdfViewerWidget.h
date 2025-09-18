@@ -55,6 +55,9 @@ public:
     int verticalScrollValue() const;
     void setVerticalScrollValue(int v);
 
+    // Visual hint for search hits
+    void flashHighlight();
+
 private:
     void keyPressEvent(QKeyEvent* event) override;
     bool eventFilter(QObject* watched, QEvent* event) override;
@@ -86,6 +89,10 @@ private:
     QLabel* toastLabel_ { nullptr };
     QGraphicsOpacityEffect* toastOpacity_ { nullptr };
     class QTimer* toastHideTimer_ { nullptr };
+
+    // Temporary highlight overlay
+    QLabel* highlightOverlay_ { nullptr };
+    class QTimer* highlightTimer_ { nullptr };
 
 signals:
     void zoomFactorChanged(double factor);

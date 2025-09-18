@@ -12,6 +12,9 @@ class QAction;
 class QToolBar;
 class QStatusBar;
 class QComboBox;
+class QLineEdit;
+class QPushButton;
+class QShortcut;
 class ViewerWidget;
 class QNetworkAccessManager;
 class PdfViewerWidget;
@@ -72,6 +75,10 @@ private:
     void loadSettings();
     void saveSettings();
     void updateStatus();
+    void focusSearchBar();
+    void onSearchTriggered();
+    void onSearchNext();
+    void onSearchPrev();
     void applyDarkPalette(bool enable);
     void updatePageCombo();
     bool openPath(const QString& filePath);
@@ -94,6 +101,14 @@ private:
     void showSavedChatsPicker();
 
 private:
+    // Search helpers
+    bool ensurePagesTextLoaded();
+    QList<int> plainTextSearchPages(const QString& needle, int maxResults = 20);
+    QList<int> semanticSearchPages(const QString& query, int k = 5);
+    QString sha1(const QString& s) const;
+    struct IndexPaths { QString base; QString binPath; QString idsPath; QString metaPath; };
+    bool getIndexPaths(IndexPaths* out) const;
+
     QWidget* viewer_ {nullptr}; // can be ViewerWidget or PdfViewerWidget
     QTreeWidget* toc_ {nullptr};
     QWidget* tocPanel_ {nullptr};
@@ -132,6 +147,14 @@ private:
     bool tocPagesMode_ {true};
     QComboBox* pageCombo_ {nullptr};
 
+    // Search UI
+    QToolBar* searchToolBar_ {nullptr};
+    QLineEdit* searchEdit_ {nullptr};
+    QPushButton* searchButton_ {nullptr};
+    QPushButton* searchPrevButton_ {nullptr};
+    QPushButton* searchNextButton_ {nullptr};
+    QShortcut* slashShortcut_ {nullptr};
+
     QSettings settings_;
     bool darkTheme_ {false};
     // Recent files menu
@@ -157,4 +180,12 @@ private:
     LlmClient* llm_ {nullptr};
     SummaryDialog* summaryDlg_ {nullptr};
     ChatDock* chatDock_ {nullptr};
+
+    // Cache for plain text pages of current PDF
+    QStringList pagesText_;
+    bool pagesTextLoaded_ {false};
+
+    // Search results state
+    QList<int> searchResultsPages_;
+    int searchResultIdx_ {-1};
 };

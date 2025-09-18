@@ -29,6 +29,11 @@ public:
     QString transcriptHtml() const; // rich transcript (full HTML document)
     void setTranscriptHtml(const QString& html);
 
+    // Agentic prompt preview panel
+    void setAgenticPrompt(const QString& prompt);
+    QString agenticPrompt() const;
+    void showAgenticPrompt(bool show);
+
     // LLM conversation history (role, content) for continuous context
     QList<QPair<QString, QString>> conversationForLlm() const { return historyMsgs_; }
     void setConversationForLlm(const QList<QPair<QString, QString>>& msgs) { historyMsgs_ = msgs; }
@@ -77,6 +82,11 @@ private:
     QLabel* pendingThumb_ {nullptr};
     QToolButton* pendingClear_ {nullptr};
     QImage pendingImage_ {};
+    // Agentic prompt area
+    QWidget* agenticContainer_ {nullptr};
+    QPlainTextEdit* agenticView_ {nullptr};
+    QToolButton* agenticToggle_ {nullptr};
+    QToolButton* agenticCopy_ {nullptr};
     // Accumulated HTML body content (message blocks). Full document is built on the fly.
     QString htmlBody_;
     // Parallel storage for plain conversation turns: role = "user" | "assistant"; content is Markdown/plain

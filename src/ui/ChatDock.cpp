@@ -16,6 +16,7 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QRegularExpression>
+#include <QClipboard>
 
 ChatDock::ChatDock(QWidget* parent)
     : QDockWidget(parent) {
@@ -36,6 +37,29 @@ ChatDock::ChatDock(QWidget* parent)
         }
     });
     rebuildDocument();
+
+    // Agentic prompt preview (collapsed by default), below history
+    agenticContainer_ = new QWidget(container_);
+    auto* agenticLayout = new QVBoxLayout(agenticContainer_);
+    agenticLayout->setContentsMargins(0,0,0,0);
+    agenticLayout->setSpacing(4);
+    auto* agenticTop = new QHBoxLayout();
+    agenticTop->setContentsMargins(0,0,0,0);
+    agenticToggle_ = new QToolButton(agenticContainer_);
+    agenticToggle_->setText(tr("Prompt Agentic"));
+    agenticCopy_ = new QToolButton(agenticContainer_);
+    agenticCopy_->setText(tr("Copiar"));
+    agenticTop->addWidget(agenticToggle_);
+    agenticTop->addStretch();
+    agenticTop->addWidget(agenticCopy_);
+    agenticLayout->addLayout(agenticTop);
+    agenticView_ = new QPlainTextEdit(agenticContainer_);
+    agenticView_->setReadOnly(true);
+    agenticView_->setPlaceholderText(tr("Prompt agentic (RAG) será exibido aqui quando aplicável..."));
+    agenticView_->setMinimumHeight(120);
+    agenticLayout->addWidget(agenticView_);
+    v->addWidget(agenticContainer_);
+    agenticContainer_->setVisible(false);
 
     // Bottom bar with actions
     auto* bottom = new QHBoxLayout();
@@ -88,6 +112,10 @@ ChatDock::ChatDock(QWidget* parent)
     connect(pendingClear_, &QToolButton::clicked, this, &ChatDock::clearPendingImage);
     connect(btnNewChat_, &QToolButton::clicked, this, [this]{ clearConversation(); });
     connect(btnHistory_, &QToolButton::clicked, this, [this]{ emit requestShowSavedChats(); });
+    connect(agenticToggle_, &QToolButton::clicked, this, [this]{ showAgenticPrompt(!agenticContainer_->isVisible()); });
+    connect(agenticCopy_, &QToolButton::clicked, this, [this]{
+        if (!agenticView_) return; auto* cb = QGuiApplication::clipboard(); if (cb) cb->setText(agenticView_->toPlainText());
+    });
 }
 
 void ChatDock::rebuildDocument() {
