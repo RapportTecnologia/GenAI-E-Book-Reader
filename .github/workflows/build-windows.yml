@@ -2,6 +2,8 @@ name: Build Windows Zip
 
 on:
   push:
+    branches:
+      - 'main'
     tags:
       - 'v*'
   workflow_dispatch:
