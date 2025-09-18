@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['llmclient_0',['LlmClient',['../dd/dd6/classLlmClient.html',1,'']]],
-  ['llmsettingsdialog_1',['LlmSettingsDialog',['../d0/d17/classLlmSettingsDialog.html',1,'']]],
-  ['location_2',['Location',['../dd/d88/structgenai_1_1Location.html',1,'genai']]]
+  ['embeddingindexer_0',['EmbeddingIndexer',['../de/d9c/classEmbeddingIndexer.html',1,'']]],
+  ['embeddingprovider_1',['EmbeddingProvider',['../db/def/classEmbeddingProvider.html',1,'']]],
+  ['embeddingsettingsdialog_2',['EmbeddingSettingsDialog',['../d0/d54/classEmbeddingSettingsDialog.html',1,'']]]
 ];

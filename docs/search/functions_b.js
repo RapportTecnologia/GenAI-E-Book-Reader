@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['pdfviewerwidget_0',['PdfViewerWidget',['../dc/ddc/classPdfViewerWidget.html#a6df2d87dfa5ecff01864609a5387d00f',1,'PdfViewerWidget']]],
-  ['pendingimage_1',['pendingImage',['../d0/daf/classChatDock.html#a6100d8ec368035c24fec0082df115e04',1,'ChatDock']]],
-  ['prevpage_2',['prevPage',['../dc/ddc/classPdfViewerWidget.html#a580dc0ed0d4a36b83bed761dca4df435',1,'PdfViewerWidget']]]
+  ['ocrselectiontext_0',['ocrSelectionText',['../dc/ddc/classPdfViewerWidget.html#a9fa285223abb0061d73494bf5f9c5dd9',1,'PdfViewerWidget']]],
+  ['open_1',['open',['../d4/db7/classgenai_1_1Reader.html#a28ff78317ab0f4ea7c935e5de49932a2',1,'genai::Reader::open()'],['../d5/de3/classgenai_1_1DummyReader.html#a150d13af5423d3a59fa0e95286612926',1,'genai::DummyReader::open()']]],
+  ['openfile_2',['openFile',['../dc/ddc/classPdfViewerWidget.html#a25c6d5268c0ef409794040f830201e27',1,'PdfViewerWidget']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['message_0',['message',['../d4/d22/structgenai_1_1OpenResult.html#ab7217863270e7dcb79c544a834c3eba4',1,'genai::OpenResult']]]
+  ['apikey_0',['apiKey',['../d1/dd6/structEmbeddingProvider_1_1Config.html#a9d94479def7eb825ff0848f6702290de',1,'EmbeddingProvider::Config']]]
 ];

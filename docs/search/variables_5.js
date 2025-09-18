@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['version_0',['Version',['../de/d5f/classgenai_1_1AppInfo.html#a6fbbd62c44efd2876818ec1df04a826f',1,'genai::AppInfo']]]
+  ['message_0',['message',['../d4/d22/structgenai_1_1OpenResult.html#ab7217863270e7dcb79c544a834c3eba4',1,'genai::OpenResult']]],
+  ['model_1',['model',['../d1/dd6/structEmbeddingProvider_1_1Config.html#ae1b4aeb7802b59f8fb2e63e1d9b3c57b',1,'EmbeddingProvider::Config']]]
 ];

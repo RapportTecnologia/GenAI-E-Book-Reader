@@ -1,0 +1,21 @@
+<map id="GenAi&#45;E&#45;Book&#45;Reader/src/ai/VectorIndex.h" name="GenAi&#45;E&#45;Book&#45;Reader/src/ai/VectorIndex.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="345,5,508,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,80,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="346,45,94,96,93,90,345,40"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="105,93,159,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="353,48,173,95,172,90,351,43"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="183,93,254,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="378,48,263,91,261,86,376,43"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="278,93,375,119"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="404,48,354,87,351,82,401,43"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="399,93,454,119"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="429,46,429,79,424,79,424,46"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="479,93,580,119"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="453,43,505,83,502,87,450,48"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="605,93,699,119"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="482,43,607,86,605,91,480,48"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="723,93,850,119"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="509,42,722,88,721,93,508,47"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="874,93,945,119"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="509,34,668,57,861,90,860,96,667,62,508,40"/>
+</map>

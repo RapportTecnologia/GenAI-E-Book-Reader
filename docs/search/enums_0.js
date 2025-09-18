@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['selectionmode_0',['SelectionMode',['../dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32',1,'PdfViewerWidget']]]
+  ['metric_0',['Metric',['../d3/db0/classVectorIndex.html#ace2651b1881aa059c7589434ebbc4174',1,'VectorIndex']]]
 ];

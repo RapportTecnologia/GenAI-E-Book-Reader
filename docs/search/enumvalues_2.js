@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rect_0',['Rect',['../dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32a69ad58d91eec91b5c152d21ca117dc81',1,'PdfViewerWidget']]]
+  ['dot_0',['Dot',['../d3/db0/classVectorIndex.html#ace2651b1881aa059c7589434ebbc4174aaf6c6cf7a454b4ef4a850ac4d960a2cc',1,'VectorIndex']]]
 ];

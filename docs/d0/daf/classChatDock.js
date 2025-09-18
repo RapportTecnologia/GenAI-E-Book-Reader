@@ -1,6 +1,7 @@
 var classChatDock =
 [
     [ "ChatDock", "d0/daf/classChatDock.html#a33716aa17fed8481f3ba6e56f4abe3e0", null ],
+    [ "agenticPrompt", "d0/daf/classChatDock.html#a06e9080b5d530893a71f887455cf6df7", null ],
     [ "appendAssistant", "d0/daf/classChatDock.html#aa5c3776aed6d570060cd0691caf68cce", null ],
     [ "appendAssistantImage", "d0/daf/classChatDock.html#a02a473ddad9cb527e0333a45287cc2dc", null ],
     [ "appendUser", "d0/daf/classChatDock.html#a4f64136fa06a647278dea92f483f2893", null ],
@@ -15,9 +16,11 @@ var classChatDock =
     [ "requestShowSavedChats", "d0/daf/classChatDock.html#a3d69db425d00daa1345cdb69fe10dcdf", null ],
     [ "saveTranscriptRequested", "d0/daf/classChatDock.html#a997a65c777531a20fb51ecdab42c419a", null ],
     [ "sendMessageRequested", "d0/daf/classChatDock.html#ac41f87c5a54ccafb28f182dfeb6f5e68", null ],
+    [ "setAgenticPrompt", "d0/daf/classChatDock.html#a459f8fe770e280cb0e39f3381024faf3", null ],
     [ "setConversationForLlm", "d0/daf/classChatDock.html#a10bc16f5962e71956453463dcb347ea9", null ],
     [ "setPendingImage", "d0/daf/classChatDock.html#ab4473c813a3a8b9e67e1aa4dbda7fa2f", null ],
     [ "setTranscriptHtml", "d0/daf/classChatDock.html#a4728e24376b63cb196f3b4b500cefe27", null ],
+    [ "showAgenticPrompt", "d0/daf/classChatDock.html#a7c21e7468f22c027d83b6037ab7f0c59", null ],
     [ "suggestTitle", "d0/daf/classChatDock.html#a7241111791a2370f8a4c0ba0cb6d4254", null ],
     [ "summarizeTranscriptRequested", "d0/daf/classChatDock.html#a38a98e525f075cf63dcdd89571414c02", null ],
     [ "transcriptHtml", "d0/daf/classChatDock.html#ab2ec69d369d5c7926b9c7e0797171b1f", null ],

@@ -95,14 +95,28 @@ $(document).ready(function(){initNavTree('dc/d9d/md_GenAi-E-Book-Reader_2CHANGEL
   <div class="headertitle"><div class="title">Changelog</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md34"></a> All notable changes to this project will be documented in this file.</p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md39"></a> All notable changes to this project will be documented in this file.</p>
 <p>The format is based on Keep a Changelog and this project adheres to Semantic Versioning.</p>
-<h1><a class="anchor" id="autotoc_md35"></a>
+<h1><a class="anchor" id="autotoc_md40"></a>
 &lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.6...HEAD"</h1>
-<p>&gt;Unreleased</p>
-<h1><a class="anchor" id="autotoc_md36"></a>
+<p>&gt;Unreleased</p><ul>
+<li>Tentativa de resolver o bug de rederização do mathjax e markdown. Sem sucesso. Issue #1</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md41"></a>
+Added</h2>
+<ul>
+<li>Indexação de embeddings por documento com controle de chunking/batching e escrita incremental. Issue #3</li>
+<li>Busca por frases usando embeddings (fallback semântico quando a busca por texto não encontra resultados), com opções rápidas: métrica (cosine/dot/L2), Top‑K e limiares. Issue #3</li>
+<li>Botão de Título central na barra superior exibindo o nome do documento atual e menu contextual com ações: abrir diretório, adicionar ao Calibre com migração de embeddings e renomear arquivo com migração. Issues #6, #7, #8</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md42"></a>
+Changed</h2>
+<ul>
+<li>Barra de busca unificada na toolbar com campo de pesquisa, botões Anterior/Próximo e menu de Opções para a busca semântica.</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md43"></a>
 &lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.5" &gt;0.1.5&lt;/a&gt; - 2025-09-14</h1>
-<h2><a class="anchor" id="autotoc_md37"></a>
+<h2><a class="anchor" id="autotoc_md44"></a>
 Added</h2>
 <ul>
 <li>Integração com LLM (OpenAI/GenerAtiva) com diálogo de Configurações de LLM:<ul>
@@ -133,22 +147,22 @@ Added</h2>
 </li>
 <li>Contexto contínuo com a IA: envios passam a incluir todo o histórico da conversa para melhor continuidade.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md38"></a>
+<h2><a class="anchor" id="autotoc_md45"></a>
 Changed</h2>
 <ul>
 <li>Documentação: <code><a class="el" href="../../da/ddd/README_8md.html">README.md</a></code> ganhou seção de LLM e link para <code>TUTORIAL.md</code> com passo a passo.</li>
 <li>Removido o fallback de QTextEdit no Chat: <code>QWebEngineView</code> passa a ser obrigatório, garantindo Markdown/MathJax/highlighting consistentes.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md39"></a>
+<h2><a class="anchor" id="autotoc_md46"></a>
 Fixed</h2>
 <ul>
 <li>Problemas de exibição de tabelas Markdown no chat.</li>
 <li>Ordem de renderização para garantir MathJax consistente após parsing e highlighting.</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md41"></a>
+<h1><a class="anchor" id="autotoc_md48"></a>
 &lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.4" &gt;0.1.4&lt;/a&gt; - 2025-09-14</h1>
-<h2><a class="anchor" id="autotoc_md42"></a>
+<h2><a class="anchor" id="autotoc_md49"></a>
 Added</h2>
 <ul>
 <li>Preferência de granularidade do zoom (Ctrl+roda) configurável em Configurações.</li>
@@ -162,16 +176,16 @@ Added</h2>
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md43"></a>
+<h2><a class="anchor" id="autotoc_md50"></a>
 Changed</h2>
 <ul>
 <li>Documentação atualizada (<code><a class="el" href="../../da/ddd/README_8md.html">README.md</a></code>, <code>REQUIREMENTS.md</code>, <code><a class="el" href="../../d9/dc6/PLANO-DE-DESENVOLVIMENTO_8md.html">PLANO-DE-DESENVOLVIMENTO.md</a></code>, <code><a class="el" href="../../d9/d59/ROADMAP_8md.html">ROADMAP.md</a></code>) para refletir Qt6 obrigatório e estado atual (suporte a PDF).</li>
 <li>Esclarecida a dependência de Qt6 (Widgets, PdfWidgets, Network) no guia de build.</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md45"></a>
+<h1><a class="anchor" id="autotoc_md52"></a>
 &lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.3" &gt;0.1.3&lt;/a&gt; - 2025-08-18</h1>
-<h2><a class="anchor" id="autotoc_md46"></a>
+<h2><a class="anchor" id="autotoc_md53"></a>
 Added</h2>
 <ul>
 <li>Ícone do aplicativo a partir de <code>docs/imgs/logo-do-projeto.png</code> (RF-29), aplicado globalmente.</li>
@@ -182,7 +196,7 @@ Added</h2>
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md47"></a>
+<h2><a class="anchor" id="autotoc_md54"></a>
 Changed</h2>
 <ul>
 <li>Barra de título agora mostra o nome do livro em leitura. Para PDFs no Qt6, usa metadados Title quando disponíveis; caso contrário, usa o nome do arquivo (RF-30).</li>
@@ -190,28 +204,28 @@ Changed</h2>
 <li>Tamanho padrão do divisor (splitter) aplicando ~10% da largura para o painel de TOC e ~90% para o visualizador na primeira execução (sem layout salvo).</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md49"></a>
+<h1><a class="anchor" id="autotoc_md56"></a>
 &lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.2" &gt;0.1.2&lt;/a&gt; - 2025-08-18</h1>
-<h2><a class="anchor" id="autotoc_md50"></a>
+<h2><a class="anchor" id="autotoc_md57"></a>
 Added</h2>
 <ul>
 <li>"Salvar como" (RF-28): salvar o livro/estado atual em um novo arquivo via menu Arquivo e toolbar.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md51"></a>
+<h2><a class="anchor" id="autotoc_md58"></a>
 Changed</h2>
 <ul>
 <li>Pequenos aprimoramentos de leitura e usabilidade.</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md53"></a>
+<h1><a class="anchor" id="autotoc_md60"></a>
 &lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.1" &gt;0.1.1&lt;/a&gt; - 2025-08-17</h1>
-<h2><a class="anchor" id="autotoc_md54"></a>
+<h2><a class="anchor" id="autotoc_md61"></a>
 Added</h2>
 <ul>
 <li>Combobox de seleção de página na toolbar para navegação direta.</li>
 <li>Restauração de sessão: reabre automaticamente o último arquivo e lembra o último diretório.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md55"></a>
+<h2><a class="anchor" id="autotoc_md62"></a>
 Changed</h2>
 <ul>
 <li>Ajuste do PDF para abrir com zoom adequado (base para "fit to width").</li>
@@ -222,14 +236,14 @@ Changed</h2>
 </li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md57"></a>
+<h1><a class="anchor" id="autotoc_md64"></a>
 &lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.0" &gt;0.1.0&lt;/a&gt; - 2025-08-17</h1>
-<h2><a class="anchor" id="autotoc_md58"></a>
+<h2><a class="anchor" id="autotoc_md65"></a>
 Added</h2>
 <ul>
 <li>Planejamento do MVP 0.1.0 conforme <code><a class="el" href="../../d9/d59/ROADMAP_8md.html">ROADMAP.md</a></code> (Leitura básica: abrir PDF/EPUB, navegação, tema claro/escuro, sumário, preferências mínimas).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md59"></a>
+<h2><a class="anchor" id="autotoc_md66"></a>
 Changed</h2>
 <ul>
 <li>Bump de versão para 0.1.0 em <code>CMakeLists.txt</code>, <code><a class="el" href="../../de/d8b/App_8h.html" title="Declaração da classe principal da aplicação.">include/app/App.h</a></code> e badge no <code><a class="el" href="../../da/ddd/README_8md.html">README.md</a></code>.</li>
@@ -238,14 +252,14 @@ Changed</h2>
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md60"></a>
+<h2><a class="anchor" id="autotoc_md67"></a>
 Notes</h2>
 <ul>
 <li>Esta release foca em alinhar a base do projeto e a documentação para iniciar a implementação do MVP de leitura básica.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md61"></a>
+<h1><a class="anchor" id="autotoc_md68"></a>
 &lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.0.10" &gt;0.0.10&lt;/a&gt; - 2025-08-17</h1>
-<h2><a class="anchor" id="autotoc_md62"></a>
+<h2><a class="anchor" id="autotoc_md69"></a>
 Added</h2>
 <ul>
 <li>Initial project scaffolding (CMake, C++17, optional Qt Widgets placeholder).</li>
@@ -254,13 +268,13 @@ Added</h2>
 <li>Documentation sources included in site: <code><a class="el" href="../../da/ddd/README_8md.html">README.md</a></code>, <code>REQUISITOS.md</code>, <code><a class="el" href="../../d9/dc6/PLANO-DE-DESENVOLVIMENTO_8md.html">PLANO-DE-DESENVOLVIMENTO.md</a></code>.</li>
 <li>New docs: <code><a class="el" href="../../d3/d02/CHANGELOG_8md.html">CHANGELOG.md</a></code>, <code><a class="el" href="../../d9/d59/ROADMAP_8md.html">ROADMAP.md</a></code>.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md63"></a>
+<h2><a class="anchor" id="autotoc_md70"></a>
 Changed</h2>
 <ul>
 <li>Set project version to 0.0.10 in <code>CMakeLists.txt</code>, <code><a class="el" href="../../da/ddd/README_8md.html">README.md</a></code> and headers.</li>
 <li>Improved Doxyfile to avoid copy-to-self issues and keep default header.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md64"></a>
+<h2><a class="anchor" id="autotoc_md71"></a>
 Known Issues</h2>
 <ul>
 <li>If Qt is not installed, a console placeholder is built (see <code>CMakeLists.txt</code> message).</li>

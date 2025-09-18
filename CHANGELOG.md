@@ -7,6 +7,14 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 ## [Unreleased]
 - Tentativa de resolver o bug de rederização do mathjax e markdown. Sem sucesso. Issue #1
 
+### Added
+- Indexação de embeddings por documento com controle de chunking/batching e escrita incremental. Issue #3
+- Busca por frases usando embeddings (fallback semântico quando a busca por texto não encontra resultados), com opções rápidas: métrica (cosine/dot/L2), Top‑K e limiares. Issue #3
+- Botão de Título central na barra superior exibindo o nome do documento atual e menu contextual com ações: abrir diretório, adicionar ao Calibre com migração de embeddings e renomear arquivo com migração. Issues #6, #7, #8
+
+### Changed
+- Barra de busca unificada na toolbar com campo de pesquisa, botões Anterior/Próximo e menu de Opções para a busca semântica.
+
 ## [0.1.5] - 2025-09-14
 
 ### Added

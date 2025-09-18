@@ -28,90 +28,99 @@ var NAVTREE =
     [ "GenAI E-Book Reader", "index.html#autotoc_md0", [
       [ "Principais Recursos (MVP)", "index.html#autotoc_md1", null ],
       [ "Sumário (TOC) e Navegação", "index.html#autotoc_md2", null ],
-      [ "Nota (0.1.4)", "index.html#autotoc_md3", [
-        [ "Preferências de Zoom e Seleção", "index.html#autotoc_md4", null ],
-        [ "Arquivos Recentes e Pesquisa", "index.html#autotoc_md5", null ]
+      [ "Busca no documento (texto e semântica)", "index.html#autotoc_md3", [
+        [ "Botão de Título (barra superior)", "index.html#autotoc_md4", null ]
       ] ],
-      [ "IA (LLM): Configuração e Uso", "index.html#autotoc_md6", null ],
-      [ "Próximas versões", "index.html#autotoc_md7", null ],
-      [ "Como rodar (Linux)", "index.html#autotoc_md8", null ],
-      [ "Como gerar um release no GitHub", "index.html#autotoc_md9", null ],
-      [ "Dependências de Build por Plataforma", "index.html#autotoc_md10", [
-        [ "Linux", "index.html#autotoc_md11", null ],
-        [ "Windows", "index.html#autotoc_md12", null ]
+      [ "IA (LLM): Configuração e Uso", "index.html#autotoc_md5", null ],
+      [ "RAG (Experimental)", "index.html#autotoc_md6", [
+        [ "O que é", "index.html#autotoc_md7", null ],
+        [ "Como usar", "index.html#autotoc_md8", null ],
+        [ "Configuração (Configurações > Embeddings)", "index.html#autotoc_md9", null ],
+        [ "Dependências para extração de texto (recomendadas)", "index.html#autotoc_md10", null ],
+        [ "Estado atual e limitações", "index.html#autotoc_md11", null ]
       ] ],
-      [ "Integração opcional com PHPList (.env)", "index.html#autotoc_md13", null ],
-      [ "Contribuindo", "index.html#autotoc_md14", null ],
-      [ "Código de Conduta", "index.html#autotoc_md15", null ],
-      [ "Licença", "index.html#autotoc_md16", null ],
-      [ "Agradecimentos", "index.html#autotoc_md17", null ]
+      [ "Próximas versões", "index.html#autotoc_md12", null ],
+      [ "Como rodar (Linux)", "index.html#autotoc_md13", null ],
+      [ "Como gerar um release no GitHub", "index.html#autotoc_md14", null ],
+      [ "Dependências de Build por Plataforma", "index.html#autotoc_md15", [
+        [ "Linux", "index.html#autotoc_md16", null ],
+        [ "Windows", "index.html#autotoc_md17", null ]
+      ] ],
+      [ "Integração opcional com PHPList (.env)", "index.html#autotoc_md18", null ],
+      [ "Contribuindo", "index.html#autotoc_md19", null ],
+      [ "Código de Conduta", "index.html#autotoc_md20", null ],
+      [ "Licença", "index.html#autotoc_md21", null ],
+      [ "Agradecimentos", "index.html#autotoc_md22", null ]
     ] ],
     [ "GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html", [
-      [ "1) Estratégia e Escopo do MVP", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md19", null ],
-      [ "2) Roadmap por Fases", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md20", null ],
-      [ "3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md21", null ],
-      [ "4) Entregas e Critérios de Aceitação (DoD)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md22", null ],
-      [ "5) Matriz de Rastreabilidade (resumo)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md23", null ],
-      [ "6) Decisões Técnicas Iniciais (a validar no Sprint 1)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md24", null ],
-      [ "7) Estrutura Inicial do Repositório", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md25", null ],
-      [ "8) Riscos e Mitigações (prioritários)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md26", null ],
-      [ "9) Métricas de Projeto", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md27", null ],
-      [ "10) Cronograma Base (exemplo)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md28", null ],
-      [ "11) Próximos Passos", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md29", [
-        [ "Notas de Progresso Recentes", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md30", null ]
+      [ "1) Estratégia e Escopo do MVP", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md24", null ],
+      [ "2) Roadmap por Fases", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md25", null ],
+      [ "3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md26", null ],
+      [ "4) Entregas e Critérios de Aceitação (DoD)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md27", null ],
+      [ "5) Matriz de Rastreabilidade (resumo)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md28", null ],
+      [ "6) Decisões Técnicas Iniciais (a validar no Sprint 1)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md29", null ],
+      [ "7) Estrutura Inicial do Repositório", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md30", null ],
+      [ "8) Riscos e Mitigações (prioritários)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md31", null ],
+      [ "9) Métricas de Projeto", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md32", null ],
+      [ "10) Cronograma Base (exemplo)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md33", null ],
+      [ "11) Próximos Passos", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md34", [
+        [ "Notas de Progresso Recentes", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md35", null ]
       ] ],
-      [ "12) Instruções de Build e Documentação", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md31", [
-        [ "Build da Aplicação (Linux)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md32", null ],
-        [ "Geração da Documentação (Doxygen)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md33", null ]
+      [ "12) Instruções de Build e Documentação", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md36", [
+        [ "Build da Aplicação (Linux)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md37", null ],
+        [ "Geração da Documentação (Doxygen)", "dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md38", null ]
       ] ]
     ] ],
     [ "Changelog", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html", [
-      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.6...HEAD\"", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md35", null ],
-      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.5\" >0.1.5</a> - 2025-09-14", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md36", [
-        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md37", null ],
-        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md38", null ],
-        [ "Fixed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md39", null ]
+      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.6...HEAD\"", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md40", [
+        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md41", null ],
+        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md42", null ]
       ] ],
-      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.4\" >0.1.4</a> - 2025-09-14", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md41", [
-        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md42", null ],
-        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md43", null ]
+      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.5\" >0.1.5</a> - 2025-09-14", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md43", [
+        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md44", null ],
+        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md45", null ],
+        [ "Fixed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md46", null ]
       ] ],
-      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.3\" >0.1.3</a> - 2025-08-18", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md45", [
-        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md46", null ],
-        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md47", null ]
+      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.4\" >0.1.4</a> - 2025-09-14", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md48", [
+        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md49", null ],
+        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md50", null ]
       ] ],
-      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.2\" >0.1.2</a> - 2025-08-18", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md49", [
-        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md50", null ],
-        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md51", null ]
+      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.3\" >0.1.3</a> - 2025-08-18", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md52", [
+        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md53", null ],
+        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md54", null ]
       ] ],
-      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.1\" >0.1.1</a> - 2025-08-17", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md53", [
-        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md54", null ],
-        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md55", null ]
+      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.2\" >0.1.2</a> - 2025-08-18", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md56", [
+        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md57", null ],
+        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md58", null ]
       ] ],
-      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.0\" >0.1.0</a> - 2025-08-17", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md57", [
-        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md58", null ],
-        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md59", null ],
-        [ "Notes", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md60", null ]
+      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.1\" >0.1.1</a> - 2025-08-17", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md60", [
+        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md61", null ],
+        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md62", null ]
       ] ],
-      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.0.10\" >0.0.10</a> - 2025-08-17", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md61", [
-        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md62", null ],
-        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md63", null ],
-        [ "Known Issues", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md64", null ]
+      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.0\" >0.1.0</a> - 2025-08-17", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md64", [
+        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md65", null ],
+        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md66", null ],
+        [ "Notes", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md67", null ]
+      ] ],
+      [ "<a href=\"https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.0.10\" >0.0.10</a> - 2025-08-17", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md68", [
+        [ "Added", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md69", null ],
+        [ "Changed", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md70", null ],
+        [ "Known Issues", "dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md71", null ]
       ] ]
     ] ],
     [ "Roadmap", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html", [
-      [ "0.0.1 – Bootstrap", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md66", null ],
-      [ "0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md67", null ],
-      [ "0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md68", null ],
-      [ "0.1.3 - Refinamento da interface de usuário (Entregue em 2025-08-18)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md69", null ],
-      [ "0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md70", null ],
-      [ "0.1.5 – Anotações e Dicionário", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md71", null ],
-      [ "0.1.6 – Anotações e Dicionário", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md72", null ],
-      [ "0.1.7 – TTS e Controles", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md73", null ],
-      [ "0.5.0 – Estatísticas e Sessões", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md74", null ],
-      [ "0.6.0 – Integração Calibre e Melhorias UX", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md75", null ],
-      [ "1.x – Estabilidade e Releases", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md76", null ],
-      [ "Backlog Técnico", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md77", null ]
+      [ "0.0.1 – Bootstrap", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md73", null ],
+      [ "0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md74", null ],
+      [ "0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md75", null ],
+      [ "0.1.3 - Refinamento da interface de usuário (Entregue em 2025-08-18)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md76", null ],
+      [ "0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md77", null ],
+      [ "0.1.5 - Itengração IA", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md78", null ],
+      [ "0.1.6 – Anotações e Dicionário", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md79", null ],
+      [ "0.1.7 – TTS e Controles", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md80", null ],
+      [ "0.5.0 – Estatísticas e Sessões", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md81", null ],
+      [ "0.6.0 – Integração Calibre e Melhorias UX", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md82", null ],
+      [ "1.x – Estabilidade e Releases", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md83", null ],
+      [ "Backlog Técnico", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md84", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ]
@@ -139,7 +148,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"annotated.html"
+"annotated.html",
+"de/d9c/classEmbeddingIndexer.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -27,11 +27,25 @@ Este guia passo a passo mostra como instalar, abrir seus livros, usar os recurso
 - Use os botões de navegação no topo do painel.
 - Arraste o divisor para ajustar a largura do painel; a preferência é lembrada.
 
+## 3.1) Recriar embeddings do documento (para busca semântica)
+
+- Clique com o botão direito dentro do PDF e escolha "Recriar embeddings do documento...".
+- A janela exibirá estágios, métricas e progresso. É possível configurar processamento por etapas em `Configurações > Embeddings`.
+- Nas configurações de Embeddings você também escolhe o provedor/modelo (`OpenAI`, `GenerAtiva` ou `Ollama`), diretório do banco local e parâmetros como `chunk_size`, `overlap`, `batch_size`, `pages_per_stage` e pausa entre lotes.
+
 ## 4) Seleção, cópia e exportação de trecho
 
 - Modos de seleção: texto ou retângulo (imagem).
 - Copie a seleção; um toast confirma a ação.
 - Exportação de seleção para TXT/Markdown está disponível pelo menu `Editar`.
+
+## 4.1) Buscar no documento (texto e semântica)
+
+- Use a barra de busca no topo:
+  - Digite a consulta e clique em "Pesquisar". Use "Anterior" / "Próximo" para navegar pelos resultados.
+  - Abra o menu "Opções" para ajustar: Métrica (Cosseno/Dot/L2), Top‑K, limiar de similaridade (cos/dot) e distância máxima (L2).
+- A busca tenta primeiro localizar o texto literal. Se não houver ocorrências, ativa a busca semântica por frases usando embeddings.
+- Pré‑requisito: o documento precisa ter embeddings indexados (veja 3.1 acima).
 
 ## 5) Recentes: localizar e abrir rapidamente
 
@@ -119,6 +133,15 @@ Observações:
 - Zoom/seleção no PDF:
   - Ajuste a granularidade do zoom em `Configurações`.
   - Alterne entre seleção de texto e retângulo conforme a sua necessidade.
+
+### Sobre o botão de Título (barra superior)
+
+- O botão central da barra superior mostra o título do documento (para PDF, usa metadados Title quando disponíveis; senão, nome do arquivo).
+- Clique para ver e copiar o caminho completo do arquivo.
+- Clique direito para abrir o menu com ações:
+  - "Abrir diretório no gerenciador"
+  - "Adicionar ao Calibre e migrar embeddings..."
+  - "Renomear arquivo e migrar embeddings..."
 
 ## 10) Atalhos úteis
 

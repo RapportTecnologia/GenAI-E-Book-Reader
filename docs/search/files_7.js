@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['viewerwidget_2ecpp_0',['ViewerWidget.cpp',['../d0/dd0/ViewerWidget_8cpp.html',1,'']]],
-  ['viewerwidget_2eh_1',['ViewerWidget.h',['../db/dc8/ViewerWidget_8h.html',1,'']]]
+  ['summarydialog_2ecpp_0',['SummaryDialog.cpp',['../d1/d40/SummaryDialog_8cpp.html',1,'']]],
+  ['summarydialog_2eh_1',['SummaryDialog.h',['../d7/d5e/SummaryDialog_8h.html',1,'']]]
 ];

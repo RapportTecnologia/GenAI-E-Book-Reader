@@ -95,15 +95,15 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
   <div class="headertitle"><div class="title">GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md18"></a> Documento de planejamento derivado de <code>REQUISITOS.md</code>. Toda decisão e escopo aqui devem manter rastreabilidade aos RF/RNF/CA descritos em <code>REQUISITOS.md</code>.</p>
-<h1><a class="anchor" id="autotoc_md19"></a>
+<div class="textblock"><p><a class="anchor" id="autotoc_md23"></a> Documento de planejamento derivado de <code>REQUISITOS.md</code>. Toda decisão e escopo aqui devem manter rastreabilidade aos RF/RNF/CA descritos em <code>REQUISITOS.md</code>.</p>
+<h1><a class="anchor" id="autotoc_md24"></a>
 1) Estratégia e Escopo do MVP</h1>
 <ul>
 <li>Objetivo: entregar os Critérios de Aceitação CA-01 a CA-08 (ver <code>REQUISITOS.md</code>, seção 12).</li>
 <li>Plataformas: Linux (principal). Windows: preparar portabilidade (sem entrega no MVP).</li>
 <li>Stack: C/C++ + Qt; CMake; Doxygen; persistência local (JSON ou SQLite — decidir no início).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md20"></a>
+<h1><a class="anchor" id="autotoc_md25"></a>
 2) Roadmap por Fases</h1>
 <ul>
 <li>Fase 1 — MVP (alinha com CA-01..CA-08):<ul>
@@ -137,7 +137,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md21"></a>
+<h1><a class="anchor" id="autotoc_md26"></a>
 3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)</h1>
 <ul>
 <li>Sprint 1: Fundações e Leitura<ul>
@@ -168,7 +168,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md22"></a>
+<h1><a class="anchor" id="autotoc_md27"></a>
 4) Entregas e Critérios de Aceitação (DoD)</h1>
 <ul>
 <li>Cada história deve ter:<ul>
@@ -180,7 +180,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 </li>
 <li>Encerramento do MVP: todos CA-01..CA-08 verificados em Linux.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md23"></a>
+<h1><a class="anchor" id="autotoc_md28"></a>
 5) Matriz de Rastreabilidade (resumo)</h1>
 <ul>
 <li>Leitura: RF-01..03 → CA-01 → Sprints 1–2.</li>
@@ -197,7 +197,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md24"></a>
+<h1><a class="anchor" id="autotoc_md29"></a>
 6) Decisões Técnicas Iniciais (a validar no Sprint 1)</h1>
 <ul>
 <li>UI Qt: Widgets (maior maturidade e estabilidade) vs QML (flexibilidade/anim.)</li>
@@ -205,7 +205,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 <li>Persistência: SQLite (transações/robustez) vs JSON (simplicidade). Sugestão: SQLite.</li>
 <li>Integração Calibre: CLI vs acesso ao DB; começar pela CLI para reduzir acoplamento.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md25"></a>
+<h1><a class="anchor" id="autotoc_md30"></a>
 7) Estrutura Inicial do Repositório</h1>
 <div class="fragment"><div class="line">/ (raiz)</div>
 <div class="line">  CMakeLists.txt</div>
@@ -228,7 +228,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 <div class="line">  /third_party</div>
 <div class="line">  /assets</div>
 <div class="line">  /tests</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md26"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md31"></a>
 8) Riscos e Mitigações (prioritários)</h1>
 <ul>
 <li>EPUB/MOBI libs: risco de licença/qualidade → PoC e revisão legal no Sprint 1.</li>
@@ -236,17 +236,17 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 <li>Custo/latência OpenAI: cache de contexto local; opção de desativar; permitir endpoint alternativo.</li>
 <li>Respeito à privacidade: opt-in para enviar conteúdo à IA; armazenamento seguro do token.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md27"></a>
+<h1><a class="anchor" id="autotoc_md32"></a>
 9) Métricas de Projeto</h1>
 <ul>
 <li>Velocidade por sprint; bugs por entrega; tempo médio de leitura de arquivos grandes; uso de memória; tempo de cold start.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md28"></a>
+<h1><a class="anchor" id="autotoc_md33"></a>
 10) Cronograma Base (exemplo)</h1>
 <ul>
 <li>8 semanas para MVP (4 sprints x 2 semanas). Ajustar conforme disponibilidade.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md29"></a>
+<h1><a class="anchor" id="autotoc_md34"></a>
 11) Próximos Passos</h1>
 <ul>
 <li>Decidir Qt (Widgets vs QML) após protótipo rápido.<ul>
@@ -258,7 +258,7 @@ $(document).ready(function(){initNavTree('dd/d0f/md_GenAi-E-Book-Reader_2PLANO-D
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md30"></a>
+<h2><a class="anchor" id="autotoc_md35"></a>
 Notas de Progresso Recentes</h2>
 <ul>
 <li>v0.1.2: "Salvar como" (RF-28) implementado; refinamentos de leitura.</li>
@@ -267,9 +267,9 @@ Notas de Progresso Recentes</h2>
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md31"></a>
+<h1><a class="anchor" id="autotoc_md36"></a>
 12) Instruções de Build e Documentação</h1>
-<h2><a class="anchor" id="autotoc_md32"></a>
+<h2><a class="anchor" id="autotoc_md37"></a>
 Build da Aplicação (Linux)</h2>
 <ul>
 <li>Pré-requisitos: CMake (&gt;=3.16), compilador C++17, Qt6 (Widgets, PdfWidgets, Network), Doxygen (opcional).</li>
@@ -278,7 +278,7 @@ Build da Aplicação (Linux)</h2>
 <div class="line"># Executável gerado em: build/bin/genai_reader</div>
 </div><!-- fragment --></li>
 </ul>
-<h2><a class="anchor" id="autotoc_md33"></a>
+<h2><a class="anchor" id="autotoc_md38"></a>
 Geração da Documentação (Doxygen)</h2>
 <ul>
 <li>Via target CMake: <div class="fragment"><div class="line">cmake --build build --target docs</div>

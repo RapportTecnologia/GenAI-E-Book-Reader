@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['name_0',['Name',['../de/d5f/classgenai_1_1AppInfo.html#a1e500fae80dafb28e5e73934cdfbfccc',1,'genai::AppInfo']]]
+  ['baseurl_0',['baseUrl',['../d1/dd6/structEmbeddingProvider_1_1Config.html#aaa5feddc39390e1f619a22aec376dc2f',1,'EmbeddingProvider::Config']]],
+  ['batchsize_1',['batchSize',['../d6/d43/structEmbeddingIndexer_1_1Params.html#a39c88206edff50c0f58c50b09a382d7c',1,'EmbeddingIndexer::Params']]]
 ];

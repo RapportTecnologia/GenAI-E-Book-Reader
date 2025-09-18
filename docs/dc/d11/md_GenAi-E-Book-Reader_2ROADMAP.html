@@ -95,8 +95,8 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
   <div class="headertitle"><div class="title">Roadmap</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md65"></a> Esta é uma visão de alto nível das entregas previstas. Ajuste conforme evoluírem requisitos e prioridades.</p>
-<h1><a class="anchor" id="autotoc_md66"></a>
+<div class="textblock"><p><a class="anchor" id="autotoc_md72"></a> Esta é uma visão de alto nível das entregas previstas. Ajuste conforme evoluírem requisitos e prioridades.</p>
+<h1><a class="anchor" id="autotoc_md73"></a>
 0.0.1 – Bootstrap</h1>
 <ul>
 <li>Infra CMake e esqueleto C++17</li>
@@ -104,7 +104,7 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
 <li>Pipeline de documentação com Doxygen (tema, sidebar, busca)</li>
 <li>Logo e estilo custom de docs</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md67"></a>
+<h1><a class="anchor" id="autotoc_md74"></a>
 0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)</h1>
 <ul>
 <li>Abrir PDF/EPUB (biblioteca: Qt PDF/Poppler)</li>
@@ -113,13 +113,13 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
 <li>Preferências mínimas persistidas</li>
 </ul>
 <p>Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta por combobox), sumário lateral, persistência via QSettings (tema, zoom, geometria/estado), restauração de sessão (último arquivo/diretório). Para PDFs, o TOC usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas.</p>
-<h1><a class="anchor" id="autotoc_md68"></a>
+<h1><a class="anchor" id="autotoc_md75"></a>
 0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)</h1>
 <ul>
 <li>"Salvar como" (RF-28)</li>
 <li>Pequenos aprimoramentos de usabilidade</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md69"></a>
+<h1><a class="anchor" id="autotoc_md76"></a>
 0.1.3 - Refinamento da interface de usuário (Entregue em 2025-08-18)</h1>
 <ul>
 <li>Ícone do app a partir de <code>docs/imgs/logo-do-projeto.png</code> aplicado globalmente.</li>
@@ -133,7 +133,7 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
 <li>Modos de seleção (texto/retângulo), cópia com toast e exportação de seleção para TXT/Markdown.</li>
 <li>Diálogo "Dados do leitor" com envio opcional para PHPList via <code>.env</code>.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md70"></a>
+<h1><a class="anchor" id="autotoc_md77"></a>
 0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)</h1>
 <ul>
 <li>Preferência de granularidade de zoom (Ctrl+roda) configurável em Configurações.</li>
@@ -147,49 +147,58 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
 </ul>
 </li>
 </ul>
-<h1><a class="anchor" id="autotoc_md71"></a>
-0.1.5 – Anotações e Dicionário</h1>
+<h1><a class="anchor" id="autotoc_md78"></a>
+0.1.5 - Itengração IA</h1>
 <ul>
-<li>Integração com API de IA (pré cadastradas: OpenAI, GenerAtiva, Claude, Anthropic, Google, DeepSeek)</li>
+<li>Integração com APIs de IA (pré cadastradas: OpenAI, GenerAtiva, Claude, Anthropic, Google, DeepSeek)</li>
 <li>Resumo e explicação de trechos selecionados</li>
-<li>Explicação dos trechos selecionados.</li>
 <li>Histórico de prompts e respostas</li>
-<li>Chat com IA (OpenAI) para explicar e resumir seleções, com RAG para contextualização.</li>
+<li>Chat com IA (OpenAI) para explicar e resumir seleções.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md72"></a>
+<h1><a class="anchor" id="autotoc_md79"></a>
 0.1.6 – Anotações e Dicionário</h1>
 <ul>
+<li>RAG (experimental):<ul>
+<li>UI para ajuste fino de chunking/batching (chunk size, overlap, batch size)</li>
+<li>Execução por etapas (pages per stage) e pausa entre lotes (throttling)</li>
+<li>Detecção de dependências de extração (<code>pdftotext</code>, <code>pdftoppm</code>, <code>tesseract</code>) e fallbacks</li>
+<li>Escrita incremental de vetores/ids/metadados</li>
+<li>Métricas e logs de estágios no diálogo de indexação</li>
+<li>Documentação de uso e limitações</li>
+<li>Risco conhecido: sobrecarga de recursos em documentos grandes causando encerramento prematuro; mitigado por etapas/pausas</li>
+</ul>
+</li>
 <li>Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,</li>
 <li>Busca full-text no documento</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md73"></a>
+<h1><a class="anchor" id="autotoc_md80"></a>
 0.1.7 – TTS e Controles</h1>
 <ul>
 <li>Reprodução TTS de seleção atual</li>
 <li>Controles de velocidade/pausa/retomar</li>
 <li>Output device selection</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md74"></a>
+<h1><a class="anchor" id="autotoc_md81"></a>
 0.5.0 – Estatísticas e Sessões</h1>
 <ul>
 <li>Tempo ativo de leitura, progresso, sessões</li>
 <li>Restauração de sessão (últimos livros abertos)</li>
 <li>Export de métricas</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md75"></a>
+<h1><a class="anchor" id="autotoc_md82"></a>
 0.6.0 – Integração Calibre e Melhorias UX</h1>
 <ul>
 <li>Abrir itens da biblioteca do Calibre</li>
 <li>Melhorias de performance e usabilidade</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md76"></a>
+<h1><a class="anchor" id="autotoc_md83"></a>
 1.x – Estabilidade e Releases</h1>
 <ul>
 <li>Testes automatizados</li>
 <li>Empacotamento (AppImage/Flatpak)</li>
 <li>Internacionalização (i18n)</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md77"></a>
+<h1><a class="anchor" id="autotoc_md84"></a>
 Backlog Técnico</h1>
 <ul>
 <li>CI (build + testes)</li>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['zoomfactor_0',['zoomFactor',['../dc/ddc/classPdfViewerWidget.html#a5420a9568c25a94134345ced0e83f1cc',1,'PdfViewerWidget']]],
-  ['zoomfactorchanged_1',['zoomFactorChanged',['../dc/ddc/classPdfViewerWidget.html#a2930a9789af388d306a177e755c3eca4',1,'PdfViewerWidget']]]
+  ['vectors_0',['vectors',['../d3/db0/classVectorIndex.html#a2a4c91ba619f0e741d15f72937e0d39c',1,'VectorIndex']]],
+  ['verticalscrollvalue_1',['verticalScrollValue',['../dc/ddc/classPdfViewerWidget.html#afc409e6ecfe9d41117984922b827943a',1,'PdfViewerWidget']]]
 ];

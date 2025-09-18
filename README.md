@@ -31,6 +31,8 @@ Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/
   - Alternar entre lista de páginas ("Páginas") e árvore de capítulos ("Conteúdo").
   - Botões "Voltar" e "Avançar" que navegam página a página (modo Páginas) ou por item/capítulo (modo Conteúdo).
   - Largura padrão do painel ~10% e área do leitor ~90% na primeira execução (pode ser ajustado via splitter).
+- Barra superior com botão de título central que mostra o nome do documento em leitura e oferece menu contextual (abrir diretório, adicionar ao Calibre com migração de embeddings, renomear com migração).
+- Barra de busca com pesquisa por texto e fallback para busca semântica por frases usando embeddings; inclui opções rápidas (métrica, Top‑K e limiares).
 
 Nota (0.1.3): refinamento de UI — ícone do app a partir de `docs/imgs/logo-do-projeto.png`, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível. Painel de TOC remodelado com barra de ferramentas (alternar entre "Páginas"/"Conteúdo" e botões de navegação) e tamanho padrão inicial do splitter ~10% (TOC) / ~90% (visualizador).
 
@@ -46,24 +48,26 @@ Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulo
   - "Conteúdo": capítulos (grupos de páginas); os botões percorrem o item anterior/próximo (capítulo ou página filho). 
 - Atalhos do painel: arraste o divisor para redimensionar; o tamanho fica salvo para as próximas sessões.
 
-## Nota (0.1.4)
+## Busca no documento (texto e semântica)
 
-- Preferência de granularidade do zoom (Ctrl+roda) configurável em Configurações.
-- Modos de seleção no PDF: texto e retângulo (imagem); cópia com toast e exportação de seleção para TXT/Markdown.
-- Diálogo "Dados do leitor" com envio opcional para PHPList via `.env`.
-- "Recentes": novo diálogo rolável com busca e filtro, acessível em `Arquivo > Documento > Recentes > Mostrar todos...`.
-  - Persiste metadados de PDFs abertos (caminho, título, autor, resumo/subject, palavras‑chave) para facilitar a pesquisa.
-  - Busca por trecho do nome do arquivo, título, autor, resumo e palavras‑chave.
+- A barra de busca fica na parte superior e contém:
+  - Campo de pesquisa, botões "Pesquisar", "Anterior" e "Próximo".
+  - Menu "Opções" com ajustes rápidos de similaridade: métrica (Cosseno, Dot ou L2), Top‑K, limiar de similaridade (para cosseno/dot) e distância máxima (para L2).
+- Funcionamento:
+  - A busca tenta primeiro localizar o texto literal no PDF (por página).
+  - Se nada for encontrado, a aplicação executa a busca semântica por frases usando o índice de embeddings do documento e navega para as páginas mais relevantes.
+- Pré‑requisito para a busca semântica: o documento precisa ter embeddings indexados.
+  - Para recriar o índice, clique com o botão direito dentro do PDF e escolha "Recriar embeddings do documento...".
+  - Também é possível ajustar o provedor/modelo e parâmetros em `Configurações > Embeddings`.
 
-### Preferências de Zoom e Seleção
-- Granularidade do zoom via roda do mouse com Ctrl: configurável em `Configurações > Granularidade do zoom (Ctrl+roda)`. Valor padrão: 1.10 por incremento.
-- Modos de seleção no PDF: texto ou retângulo (imagem). A cópia exibe um toast de confirmação. Exportar seleção para TXT/Markdown disponível no menu Editar.
+### Botão de Título (barra superior)
 
-### Arquivos Recentes e Pesquisa
-- Acesse itens recentes por `Arquivo > Documento > Recentes` (submenu) ou `Mostrar todos...` para abrir o diálogo completo.
-- O diálogo de Recentes apresenta uma lista rolável com colunas "Título" e "Arquivo" e um campo de busca.
-- Pesquise por trecho do nome do arquivo, título, autor, resumo (subject) ou palavras‑chave.
-- Os metadados são persistidos em `QSettings` e atualizados quando você abre um PDF.
+- Exibe o título do documento (para PDFs, usa metadados Title quando disponíveis; senão, nome do arquivo).
+- Clique para ver o caminho completo do arquivo e copiá‑lo para a área de transferência.
+- Menu contextual (clique direito):
+  - "Abrir diretório no gerenciador"
+  - "Adicionar ao Calibre e migrar embeddings..."
+  - "Renomear arquivo e migrar embeddings..."
 
 ## IA (LLM): Configuração e Uso
 A aplicação possui integração com provedores compatíveis com a API da OpenAI para chat, resumos e sinônimos.

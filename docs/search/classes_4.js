@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mainwindow_0',['MainWindow',['../d6/d1a/classMainWindow.html',1,'']]]
+  ['hit_0',['Hit',['../d9/d40/structVectorIndex_1_1Hit.html',1,'VectorIndex']]]
 ];

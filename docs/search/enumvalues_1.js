@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['none_0',['None',['../dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32a6adf97f83acf6453d4a6a4b1070f3754',1,'PdfViewerWidget']]]
+  ['cosine_0',['Cosine',['../d3/db0/classVectorIndex.html#ace2651b1881aa059c7589434ebbc4174a46ff06ae696616afdf3a695efd3db84c',1,'VectorIndex']]]
 ];

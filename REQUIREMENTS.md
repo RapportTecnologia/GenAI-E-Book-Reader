@@ -11,6 +11,8 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 - Suporte de leitura: PDF com Qt6 PdfWidgets.
 - UI e usabilidade:
   - Painel de Sumário (TOC) com alternância entre "Páginas" e "Conteúdo" (bookmarks quando disponíveis), com botões de navegação.
+  - Barra superior com botão de título central exibindo o nome do documento e oferecendo menu contextual (abrir diretório, adicionar ao Calibre com migração de embeddings, renomear com migração).
+  - Barra de busca com pesquisa por texto e fallback para busca semântica por frases usando embeddings; opções rápidas: métrica (cos/dot/L2), Top‑K, limiar/distance. Parâmetros de embeddings configuráveis em `Configurações > Embeddings`.
   - Preferência de granularidade do zoom via Ctrl+roda do mouse (configurável).
   - Modos de seleção: texto e retângulo (imagem), com cópia para área de transferência e exportação da seleção para TXT/Markdown. OCR opcional via Tesseract quando disponível no PATH.
   - "Salvar como" (RF-28).

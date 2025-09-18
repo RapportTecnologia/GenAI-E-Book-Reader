@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['main_0',['main',['../df/d0a/main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main.cpp']]],
-  ['mainwindow_1',['MainWindow',['../d6/d1a/classMainWindow.html#a996c5a2b6f77944776856f08ec30858d',1,'MainWindow']]]
+  ['llmclient_0',['LlmClient',['../dd/dd6/classLlmClient.html#aeb8c96130963c9ba221668ce8466d580',1,'LlmClient']]],
+  ['llmsettingsdialog_1',['LlmSettingsDialog',['../d0/d17/classLlmSettingsDialog.html#a5f4bf94d9cc72300273fe8a1e8b97c6d',1,'LlmSettingsDialog']]],
+  ['load_2',['load',['../d3/db0/classVectorIndex.html#a50af380c336a99129a070ed3698a0dd6',1,'VectorIndex']]]
 ];
