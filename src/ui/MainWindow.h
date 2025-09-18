@@ -180,6 +180,9 @@ private:
     QAction* actMetricL2_ {nullptr};
     QSpinBox* topKSpin_ {nullptr};
     QShortcut* slashShortcut_ {nullptr};
+    // Threshold controls
+    class QDoubleSpinBox* simThresholdSpin_ {nullptr}; // for cosine/dot: minimum similarity
+    class QDoubleSpinBox* l2MaxDistSpin_ {nullptr};    // for L2: maximum distance
 
     QSettings settings_;
     bool darkTheme_ {false};

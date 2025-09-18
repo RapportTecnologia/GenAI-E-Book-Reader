@@ -99,19 +99,28 @@ EmbeddingProvider::EmbeddingProvider(const Config& cfg, QObject* parent)
     : QObject(parent), cfg_(cfg) {}
 
 QList<QVector<float>> EmbeddingProvider::embedBatch(const QStringList& texts) {
+    // Normalize whitespace uniformly to keep indexing and querying consistent
+    QStringList normTexts; normTexts.reserve(texts.size());
+    for (const QString& t : texts) {
+        QString n = t;
+        n.replace(QRegularExpression("\\s+"), " ");
+        n = n.trimmed();
+        normTexts.append(n);
+    }
+
     if (cfg_.provider == QLatin1String("openai")) {
         // Allow overriding the base URL (useful for Azure/OpenAI-compatible endpoints)
         const QString base = cfg_.baseUrl.isEmpty() ? QStringLiteral("https://api.openai.com/v1") : cfg_.baseUrl;
-        return embedOpenAICompatible(texts, base);
+        return embedOpenAICompatible(normTexts, base);
     } else if (cfg_.provider == QLatin1String("generativa")) {
         const QString base = cfg_.baseUrl.isEmpty() ? QStringLiteral("https://generativa.rapport.tec.br") : cfg_.baseUrl;
-        return embedRetrievalEf(texts, base);
+        return embedRetrievalEf(normTexts, base);
     } else if (cfg_.provider == QLatin1String("ollama")) {
-        return embedOllama(texts);
+        return embedOllama(normTexts);
     } else if (cfg_.provider == QLatin1String("openwebui")) {
         // Use retrieval endpoint style for OpenWebUI as specified
         const QString base = cfg_.baseUrl.isEmpty() ? QStringLiteral("http://localhost:8080") : cfg_.baseUrl;
-        return embedRetrievalEf(texts, base);
+        return embedRetrievalEf(normTexts, base);
     }
     throw std::runtime_error("Unsupported provider");
 }

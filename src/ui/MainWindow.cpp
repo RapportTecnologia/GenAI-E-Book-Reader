@@ -56,6 +56,7 @@
 #include <QToolButton>
 #include <QMenu>
 #include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QWidgetAction>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -65,6 +66,10 @@
 #include <QModelIndex>
 #include <QVariant>
 #include <QPushButton>
+#include <QSettings>
+#include <QStringList>
+#include <QVariantList>
+#include <QVariantMap>
 
 #include "app/App.h"
 #include "ai/EmbeddingIndexer.h"
@@ -184,8 +189,12 @@ QList<int> MainWindow::semanticSearchPages(const QString& query, int k) {
     cfg.baseUrl = s.value("emb/base_url").toString();
     cfg.apiKey = s.value("emb/api_key").toString();
     EmbeddingProvider prov(cfg);
+    // Minimal normalization (match indexer behavior): collapse whitespace and trim
+    QString qnorm = query;
+    qnorm.replace(QRegularExpression("\\s+"), " ");
+    qnorm = qnorm.trimmed();
     QList<QVector<float>> qv;
-    try { qv = prov.embedBatch(QStringList{query}); }
+    try { qv = prov.embedBatch(QStringList{qnorm}); }
     catch (const std::exception& ex) {
         qWarning() << "[Search] embed query failed:" << ex.what();
         return pages;
@@ -197,8 +206,23 @@ QList<int> MainWindow::semanticSearchPages(const QString& query, int k) {
     VectorIndex::Metric metric = VectorIndex::Metric::Cosine;
     if (metricStr == QLatin1String("dot")) metric = VectorIndex::Metric::Dot;
     else if (metricStr == QLatin1String("l2")) metric = VectorIndex::Metric::L2;
-
-    const auto hits = index.topK(qv.first(), qMax(1, topK), metric);
+    const auto hitsAll = index.topK(qv.first(), qMax(1, topK), metric);
+    // Apply thresholds
+    const double simThreshold = s.value("emb/sim_threshold", 0.35).toDouble();
+    const double l2Max = s.value("emb/l2_max_distance", 1.5).toDouble();
+    QList<VectorIndex::Hit> hits;
+    hits.reserve(hitsAll.size());
+    for (const auto& h : hitsAll) {
+        bool keep = true;
+        if (metric == VectorIndex::Metric::L2) {
+            // score = -distance; keep if distance <= l2Max => score >= -l2Max
+            keep = (double(h.score) >= -l2Max);
+        } else {
+            // cosine/dot similarity: keep if score >= simThreshold
+            keep = (double(h.score) >= simThreshold);
+        }
+        if (keep) hits.append(h);
+    }
     if (hits.isEmpty()) return pages;
     QFile f(paths.metaPath);
     if (!f.open(QIODevice::ReadOnly)) return pages;
@@ -563,7 +587,7 @@ void MainWindow::createActions() {
     searchToolBar_->addWidget(searchPrevButton_);
     searchToolBar_->addWidget(searchNextButton_);
 
-    // Quick options: metric + topK
+    // Quick options: metric + topK + thresholds
     searchOptionsButton_ = new QToolButton(searchToolBar_);
     searchOptionsButton_->setText(tr("Opções"));
     searchOptionsButton_->setPopupMode(QToolButton::InstantPopup);
@@ -584,6 +608,38 @@ void MainWindow::createActions() {
     QWidgetAction* topKAction = new QWidgetAction(searchOptionsMenu_);
     topKAction->setDefaultWidget(topKWidget);
     searchOptionsMenu_->addAction(topKAction);
+
+    // Similarity threshold (for cosine/dot)
+    QWidget* simWidget = new QWidget(searchOptionsMenu_);
+    QHBoxLayout* simLayout = new QHBoxLayout(simWidget);
+    simLayout->setContentsMargins(8,4,8,4);
+    QLabel* simLabel = new QLabel(tr("Mín. similaridade (cos/dot):"), simWidget);
+    simThresholdSpin_ = new QDoubleSpinBox(simWidget);
+    simThresholdSpin_->setDecimals(3);
+    simThresholdSpin_->setRange(-1.0, 1.0);
+    simThresholdSpin_->setSingleStep(0.01);
+    simThresholdSpin_->setValue(0.35); // default
+    simLayout->addWidget(simLabel);
+    simLayout->addWidget(simThresholdSpin_);
+    QWidgetAction* simAction = new QWidgetAction(searchOptionsMenu_);
+    simAction->setDefaultWidget(simWidget);
+    searchOptionsMenu_->addAction(simAction);
+
+    // L2 distance threshold (max distance)
+    QWidget* l2Widget = new QWidget(searchOptionsMenu_);
+    QHBoxLayout* l2Layout = new QHBoxLayout(l2Widget);
+    l2Layout->setContentsMargins(8,4,8,4);
+    QLabel* l2Label = new QLabel(tr("Máx. distância (L2):"), l2Widget);
+    l2MaxDistSpin_ = new QDoubleSpinBox(l2Widget);
+    l2MaxDistSpin_->setDecimals(3);
+    l2MaxDistSpin_->setRange(0.0, 100000.0);
+    l2MaxDistSpin_->setSingleStep(0.1);
+    l2MaxDistSpin_->setValue(1.5); // conservative default, depends on model scale
+    l2Layout->addWidget(l2Label);
+    l2Layout->addWidget(l2MaxDistSpin_);
+    QWidgetAction* l2Action = new QWidgetAction(searchOptionsMenu_);
+    l2Action->setDefaultWidget(l2Widget);
+    searchOptionsMenu_->addAction(l2Action);
     searchOptionsButton_->setMenu(searchOptionsMenu_);
     searchToolBar_->addWidget(searchOptionsButton_);
 
@@ -592,6 +648,9 @@ void MainWindow::createActions() {
     connect(actMetricDot_, &QAction::triggered, this, &MainWindow::onSearchMetricDot);
     connect(actMetricL2_, &QAction::triggered, this, &MainWindow::onSearchMetricL2);
     connect(topKSpin_, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onSearchTopKChanged);
+    // Persist threshold changes immediately
+    connect(simThresholdSpin_, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this](double v){ QSettings s; s.setValue("emb/sim_threshold", v); });
+    connect(l2MaxDistSpin_, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [this](double v){ QSettings s; s.setValue("emb/l2_max_distance", v); });
     connect(searchEdit_, &QLineEdit::returnPressed, this, &MainWindow::onSearchTriggered);
     connect(searchButton_, &QPushButton::clicked, this, &MainWindow::onSearchTriggered);
     connect(searchPrevButton_, &QPushButton::clicked, this, &MainWindow::onSearchPrev);
@@ -743,34 +802,51 @@ void MainWindow::loadSearchOptionsFromSettings() {
     QSettings s;
     const QString metric = s.value("emb/similarity_metric", "cosine").toString();
     const int topK = s.value("emb/top_k", 5).toInt();
+    const double simTh = s.value("emb/sim_threshold", 0.35).toDouble();
+    const double l2Max = s.value("emb/l2_max_distance", 1.5).toDouble();
     if (actMetricCosine_) actMetricCosine_->setChecked(metric == QLatin1String("cosine"));
     if (actMetricDot_) actMetricDot_->setChecked(metric == QLatin1String("dot"));
     if (actMetricL2_) actMetricL2_->setChecked(metric == QLatin1String("l2"));
     if (topKSpin_) topKSpin_->setValue(qMax(1, topK));
+    if (simThresholdSpin_) simThresholdSpin_->setValue(simTh);
+    if (l2MaxDistSpin_) l2MaxDistSpin_->setValue(l2Max);
+    // Enable only relevant controls according to metric
+    const bool isCosOrDot = (metric == QLatin1String("cosine")) || (metric == QLatin1String("dot"));
+    if (simThresholdSpin_) simThresholdSpin_->setEnabled(isCosOrDot);
+    if (l2MaxDistSpin_) l2MaxDistSpin_->setEnabled(metric == QLatin1String("l2"));
 }
 
 void MainWindow::saveSearchOptionsToSettings(const QString& metricKey, int topK) {
     QSettings s;
     s.setValue("emb/similarity_metric", metricKey);
     s.setValue("emb/top_k", qMax(1, topK));
+    if (simThresholdSpin_) s.setValue("emb/sim_threshold", simThresholdSpin_->value());
+    if (l2MaxDistSpin_) s.setValue("emb/l2_max_distance", l2MaxDistSpin_->value());
 }
 
 void MainWindow::onSearchMetricCosine() {
     mw_setExclusive(actMetricCosine_, actMetricDot_, actMetricL2_, actMetricCosine_);
     const int topK = topKSpin_ ? topKSpin_->value() : 5;
     saveSearchOptionsToSettings("cosine", topK);
+    // Update controls availability
+    if (simThresholdSpin_) simThresholdSpin_->setEnabled(true);
+    if (l2MaxDistSpin_) l2MaxDistSpin_->setEnabled(false);
 }
 
 void MainWindow::onSearchMetricDot() {
     mw_setExclusive(actMetricCosine_, actMetricDot_, actMetricL2_, actMetricDot_);
     const int topK = topKSpin_ ? topKSpin_->value() : 5;
     saveSearchOptionsToSettings("dot", topK);
+    if (simThresholdSpin_) simThresholdSpin_->setEnabled(true);
+    if (l2MaxDistSpin_) l2MaxDistSpin_->setEnabled(false);
 }
 
 void MainWindow::onSearchMetricL2() {
     mw_setExclusive(actMetricCosine_, actMetricDot_, actMetricL2_, actMetricL2_);
     const int topK = topKSpin_ ? topKSpin_->value() : 5;
     saveSearchOptionsToSettings("l2", topK);
+    if (simThresholdSpin_) simThresholdSpin_->setEnabled(false);
+    if (l2MaxDistSpin_) l2MaxDistSpin_->setEnabled(true);
 }
 
 void MainWindow::onSearchTopKChanged(int value) {
