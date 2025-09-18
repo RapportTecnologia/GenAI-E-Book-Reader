@@ -5,10 +5,17 @@
 #include <QString>
 #include <QImage>
 #include <QJsonArray>
+#include <QJsonObject>
+#include <QPixmap>
+
+// Forward declarations for UI types used as pointers in this header
+class QToolButton;
+class QSpinBox;
+class QMenu;
+class QAction;
 class QTreeWidget;
 class QTreeWidgetItem;
 class QSplitter;
-class QAction;
 class QToolBar;
 class QStatusBar;
 class QComboBox;
@@ -79,6 +86,10 @@ private:
     void onSearchTriggered();
     void onSearchNext();
     void onSearchPrev();
+    void onSearchMetricCosine();
+    void onSearchMetricDot();
+    void onSearchMetricL2();
+    void onSearchTopKChanged(int value);
     void applyDarkPalette(bool enable);
     void updatePageCombo();
     bool openPath(const QString& filePath);
@@ -108,6 +119,15 @@ private:
     QString sha1(const QString& s) const;
     struct IndexPaths { QString base; QString binPath; QString idsPath; QString metaPath; };
     bool getIndexPaths(IndexPaths* out) const;
+    void loadSearchOptionsFromSettings();
+    void saveSearchOptionsToSettings(const QString& metricKey, int topK);
+    // RAG pipeline helpers
+    void startRagSearch(const QString& userQuery);
+    void ensureIndexAvailableThen(const QString& translatedQuery);
+    void continueRagAfterEnsureIndex(const QString& translatedQuery);
+    QString detectDocumentLanguageSample() const;
+    void detectDocumentLanguageAsync(std::function<void(QString)> onLang);
+    void translateQueryIfNeededAsync(const QString& query, const QString& docLang, std::function<void(QString)> onReady);
 
     QWidget* viewer_ {nullptr}; // can be ViewerWidget or PdfViewerWidget
     QTreeWidget* toc_ {nullptr};
@@ -153,6 +173,12 @@ private:
     QPushButton* searchButton_ {nullptr};
     QPushButton* searchPrevButton_ {nullptr};
     QPushButton* searchNextButton_ {nullptr};
+    QToolButton* searchOptionsButton_ {nullptr};
+    QMenu* searchOptionsMenu_ {nullptr};
+    QAction* actMetricCosine_ {nullptr};
+    QAction* actMetricDot_ {nullptr};
+    QAction* actMetricL2_ {nullptr};
+    QSpinBox* topKSpin_ {nullptr};
     QShortcut* slashShortcut_ {nullptr};
 
     QSettings settings_;
@@ -188,4 +214,7 @@ private:
     // Search results state
     QList<int> searchResultsPages_;
     int searchResultIdx_ {-1};
+
+    // Pending state for async RAG
+    QString pendingRagQuery_;
 };

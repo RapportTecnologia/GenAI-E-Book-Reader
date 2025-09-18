@@ -40,17 +40,26 @@ EmbeddingSettingsDialog::EmbeddingSettingsDialog(QWidget* parent)
     batchSizeEdit_ = new QLineEdit(this);
     pagesPerStageEdit_ = new QLineEdit(this);
     pauseMsBetweenBatchesEdit_ = new QLineEdit(this);
+    similarityCombo_ = new QComboBox(this);
+    topKEdit_ = new QLineEdit(this);
     // validators
     chunkSizeEdit_->setValidator(new QIntValidator(1, 20000, chunkSizeEdit_));
     chunkOverlapEdit_->setValidator(new QIntValidator(0, 10000, chunkOverlapEdit_));
     batchSizeEdit_->setValidator(new QIntValidator(1, 512, batchSizeEdit_));
     pagesPerStageEdit_->setValidator(new QIntValidator(1, 100000, pagesPerStageEdit_));
     pauseMsBetweenBatchesEdit_->setValidator(new QIntValidator(0, 60000, pauseMsBetweenBatchesEdit_));
+    topKEdit_->setValidator(new QIntValidator(1, 1000, topKEdit_));
     chunkSizeEdit_->setPlaceholderText(tr("ex.: 1000"));
     chunkOverlapEdit_->setPlaceholderText(tr("ex.: 200"));
     batchSizeEdit_->setPlaceholderText(tr("ex.: 16"));
     pagesPerStageEdit_->setPlaceholderText(tr("ex.: 25 (páginas por etapa)"));
     pauseMsBetweenBatchesEdit_->setPlaceholderText(tr("ex.: 150 (ms entre lotes)"));
+    topKEdit_->setPlaceholderText(tr("ex.: 5"));
+
+    // Similarity metric options
+    similarityCombo_->addItem(tr("Cosseno"), QStringLiteral("cosine"));
+    similarityCombo_->addItem(tr("Produto interno (dot)"), QStringLiteral("dot"));
+    similarityCombo_->addItem(tr("Distância L2"), QStringLiteral("l2"));
 
     populateProviders();
 
@@ -64,6 +73,8 @@ EmbeddingSettingsDialog::EmbeddingSettingsDialog(QWidget* parent)
     form->addRow(tr("Tamanho do lote (batch)"), batchSizeEdit_);
     form->addRow(tr("Páginas por etapa"), pagesPerStageEdit_);
     form->addRow(tr("Pausa entre lotes (ms)"), pauseMsBetweenBatchesEdit_);
+    form->addRow(tr("Métrica de similaridade"), similarityCombo_);
+    form->addRow(tr("Top-K (resultados)"), topKEdit_);
 
     root->addLayout(form);
 
@@ -158,6 +169,8 @@ void EmbeddingSettingsDialog::loadFromSettings() {
     const int batchSize = s.value("emb/batch_size", 16).toInt();
     const int pagesPerStage = s.value("emb/pages_per_stage", -1).toInt();
     const int pauseMsBetweenBatches = s.value("emb/pause_ms_between_batches", 0).toInt();
+    const QString similarity = s.value("emb/similarity_metric", "cosine").toString();
+    const int topK = s.value("emb/top_k", 5).toInt();
 
     int pidx = providerCombo_->findData(provider);
     if (pidx < 0) pidx = 0;
@@ -176,6 +189,10 @@ void EmbeddingSettingsDialog::loadFromSettings() {
     batchSizeEdit_->setText(QString::number(batchSize));
     if (pagesPerStage > 0) pagesPerStageEdit_->setText(QString::number(pagesPerStage)); else pagesPerStageEdit_->clear();
     pauseMsBetweenBatchesEdit_->setText(QString::number(pauseMsBetweenBatches));
+    int sidx = similarityCombo_->findData(similarity);
+    if (sidx < 0) sidx = 0;
+    similarityCombo_->setCurrentIndex(sidx);
+    topKEdit_->setText(QString::number(qMax(1, topK)));
 }
 
 void EmbeddingSettingsDialog::saveToSettings() {
@@ -197,6 +214,9 @@ void EmbeddingSettingsDialog::saveToSettings() {
     const int pauseMsBetweenBatches = pauseMsBetweenBatchesEdit_->text().toInt(&ok5);
     s.setValue("emb/pages_per_stage", ok4 && pagesPerStage>0 ? pagesPerStage : -1);
     s.setValue("emb/pause_ms_between_batches", ok5 && pauseMsBetweenBatches>=0 ? pauseMsBetweenBatches : 0);
+    s.setValue("emb/similarity_metric", similarityCombo_->currentData().toString());
+    bool ok6=false; const int topK = topKEdit_->text().toInt(&ok6);
+    s.setValue("emb/top_k", ok6 && topK>0 ? topK : 5);
 }
 
 void EmbeddingSettingsDialog::onRebuildClicked() {

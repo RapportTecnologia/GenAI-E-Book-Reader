@@ -17,6 +17,7 @@
 #include <QPixmap>
 #include <QRegularExpression>
 #include <QClipboard>
+#include <QGuiApplication>
 
 ChatDock::ChatDock(QWidget* parent)
     : QDockWidget(parent) {
@@ -343,6 +344,18 @@ void ChatDock::setTranscriptHtml(const QString& html) {
     // Load provided HTML and also store its body best-effort
     htmlBody_ = html;
     historyView_->setHtml(html);
+}
+
+void ChatDock::setAgenticPrompt(const QString& prompt) {
+    if (agenticView_) agenticView_->setPlainText(prompt);
+}
+
+QString ChatDock::agenticPrompt() const {
+    return agenticView_ ? agenticView_->toPlainText() : QString();
+}
+
+void ChatDock::showAgenticPrompt(bool show) {
+    if (agenticContainer_) agenticContainer_->setVisible(show);
 }
 
 void ChatDock::clearConversation() {

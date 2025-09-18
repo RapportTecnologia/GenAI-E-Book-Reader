@@ -38,6 +38,9 @@ private:
     QLineEdit* batchSizeEdit_ {nullptr};
     QLineEdit* pagesPerStageEdit_ {nullptr};
     QLineEdit* pauseMsBetweenBatchesEdit_ {nullptr};
+    // Retrieval params
+    QComboBox* similarityCombo_ {nullptr};
+    QLineEdit* topKEdit_ {nullptr};
 
     QLabel* warningLabel_ {nullptr};
     QPushButton* btnRebuild_ {nullptr};

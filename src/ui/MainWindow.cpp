@@ -53,6 +53,13 @@
 #include <QThread>
 #include <QShortcut>
 #include <QStandardPaths>
+#include <QToolButton>
+#include <QMenu>
+#include <QSpinBox>
+#include <QWidgetAction>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QMessageBox>
 #include <algorithm>
 #include <functional>
 #include <QModelIndex>
@@ -184,7 +191,14 @@ QList<int> MainWindow::semanticSearchPages(const QString& query, int k) {
         return pages;
     }
     if (qv.isEmpty()) return pages;
-    const auto hits = index.topK(qv.first(), qMax(1, k));
+    // Resolve Top-K and metric from settings
+    const int topK = s.value("emb/top_k", qMax(1, k)).toInt();
+    const QString metricStr = s.value("emb/similarity_metric", "cosine").toString();
+    VectorIndex::Metric metric = VectorIndex::Metric::Cosine;
+    if (metricStr == QLatin1String("dot")) metric = VectorIndex::Metric::Dot;
+    else if (metricStr == QLatin1String("l2")) metric = VectorIndex::Metric::L2;
+
+    const auto hits = index.topK(qv.first(), qMax(1, topK), metric);
     if (hits.isEmpty()) return pages;
     QFile f(paths.metaPath);
     if (!f.open(QIODevice::ReadOnly)) return pages;
@@ -207,8 +221,11 @@ void MainWindow::onSearchTriggered() {
     if (q.isEmpty()) return;
     // 1) Plain text search across pages
     QList<int> pages = plainTextSearchPages(q);
-    // 2) Semantic search if no plain hits
-    if (pages.isEmpty()) pages = semanticSearchPages(q, 5);
+    // 2) Semantic search (RAG) if no plain hits
+    if (pages.isEmpty()) {
+        startRagSearch(q);
+        return;
+    }
     if (!pages.isEmpty()) {
         searchResultsPages_ = pages;
         searchResultIdx_ = 0;
@@ -218,7 +235,8 @@ void MainWindow::onSearchTriggered() {
         updateStatus();
         statusBar()->showMessage(tr("%1 resultado(s)").arg(searchResultsPages_.size()), 2000);
 
-        // Agentic mode: if query is longer, show constructed RAG prompt in chat dock and append a summary answer
+        // Agentic mode: if query is longer, show constructed RAG prompt in chat dock and use LLM (LlmClient)
+        // with retrieved context. Retrieval uses EmbeddingProvider (emb/*). Generation uses LlmClient settings (ai/*).
         const bool agentic = q.size() >= 120; // heuristic: long query triggers agentic prompt preview
         if (agentic) {
             showChatPanel();
@@ -240,10 +258,42 @@ void MainWindow::onSearchTriggered() {
                 chatDock_->setAgenticPrompt(prompt);
                 chatDock_->showAgenticPrompt(true);
 
-                // Append a concise assistant message with suggested pages
-                QString summary = tr("Busquei via RAG pelas páginas: %1. Você pode navegar com Próximo/Anterior.")
-                                      .arg([&](){ QStringList s; for(int p: pages) s<<QString::number(p); return s.join(", "); }());
-                chatDock_->appendAssistant(summary);
+                // Build RAG context from retrieved pages (use cached plain text if available)
+                ensurePagesTextLoaded();
+                QString ctx;
+                int take = qMin(5, pages.size());
+                for (int i = 0; i < take; ++i) {
+                    const int pg = pages.at(i);
+                    QString snippet;
+                    if (pg-1 >= 0 && pg-1 < pagesText_.size()) {
+                        snippet = pagesText_.at(pg-1).left(1000);
+                    }
+                    ctx += tr("[Página %1]\n%2\n\n").arg(pg).arg(snippet);
+                }
+
+                // Send to chat using LlmClient settings (ai/*)
+                if (chatDock_) chatDock_->appendUser(q);
+                if (llm_) {
+                    QList<QPair<QString,QString>> msgs;
+                    const QString sys = tr("Você é um assistente que responde com base no conteúdo do documento fornecido.\n"
+                                           "Use apenas as informações relevantes do contexto, cite páginas quando útil, não invente.");
+                    msgs.append({QStringLiteral("system"), sys});
+                    const QString user = tr("Pergunta:\n%1\n\nContexto (trechos do PDF):\n%2").arg(q, ctx);
+                    msgs.append({QStringLiteral("user"), user});
+                    statusBar()->showMessage(tr("Consultando IA com contexto RAG..."));
+                    llm_->chatWithMessages(msgs, [this](QString out, QString err){
+                        QMetaObject::invokeMethod(this, [this, out, err](){
+                            if (!err.isEmpty()) {
+                                showLongAlert(tr("Erro na IA"), err);
+                                statusBar()->clearMessage();
+                                return;
+                            }
+                            if (chatDock_) chatDock_->appendAssistant(out);
+                            statusBar()->clearMessage();
+                            saveChatForCurrentFile();
+                        });
+                    });
+                }
             }
         }
     } else {
@@ -512,6 +562,36 @@ void MainWindow::createActions() {
     searchNextButton_ = new QPushButton(tr("Próximo"), searchToolBar_);
     searchToolBar_->addWidget(searchPrevButton_);
     searchToolBar_->addWidget(searchNextButton_);
+
+    // Quick options: metric + topK
+    searchOptionsButton_ = new QToolButton(searchToolBar_);
+    searchOptionsButton_->setText(tr("Opções"));
+    searchOptionsButton_->setPopupMode(QToolButton::InstantPopup);
+    searchOptionsMenu_ = new QMenu(searchOptionsButton_);
+    actMetricCosine_ = searchOptionsMenu_->addAction(tr("Métrica: Cosseno")); actMetricCosine_->setCheckable(true);
+    actMetricDot_ = searchOptionsMenu_->addAction(tr("Métrica: Dot")); actMetricDot_->setCheckable(true);
+    actMetricL2_ = searchOptionsMenu_->addAction(tr("Métrica: L2")); actMetricL2_->setCheckable(true);
+    searchOptionsMenu_->addSeparator();
+    QWidget* topKWidget = new QWidget(searchOptionsMenu_);
+    QHBoxLayout* topKLayout = new QHBoxLayout(topKWidget);
+    topKLayout->setContentsMargins(8,4,8,4);
+    QLabel* topKLabel = new QLabel(tr("Top-K:"), topKWidget);
+    topKSpin_ = new QSpinBox(topKWidget);
+    topKSpin_->setRange(1, 1000);
+    topKSpin_->setValue(5);
+    topKLayout->addWidget(topKLabel);
+    topKLayout->addWidget(topKSpin_);
+    QWidgetAction* topKAction = new QWidgetAction(searchOptionsMenu_);
+    topKAction->setDefaultWidget(topKWidget);
+    searchOptionsMenu_->addAction(topKAction);
+    searchOptionsButton_->setMenu(searchOptionsMenu_);
+    searchToolBar_->addWidget(searchOptionsButton_);
+
+    // Wire options
+    connect(actMetricCosine_, &QAction::triggered, this, &MainWindow::onSearchMetricCosine);
+    connect(actMetricDot_, &QAction::triggered, this, &MainWindow::onSearchMetricDot);
+    connect(actMetricL2_, &QAction::triggered, this, &MainWindow::onSearchMetricL2);
+    connect(topKSpin_, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onSearchTopKChanged);
     connect(searchEdit_, &QLineEdit::returnPressed, this, &MainWindow::onSearchTriggered);
     connect(searchButton_, &QPushButton::clicked, this, &MainWindow::onSearchTriggered);
     connect(searchPrevButton_, &QPushButton::clicked, this, &MainWindow::onSearchPrev);
@@ -521,6 +601,9 @@ void MainWindow::createActions() {
     slashShortcut_ = new QShortcut(QKeySequence("/"), this);
     slashShortcut_->setContext(Qt::ApplicationShortcut);
     connect(slashShortcut_, &QShortcut::activated, this, &MainWindow::focusSearchBar);
+
+    // Initialize options from settings
+    loadSearchOptionsFromSettings();
 
     // TOC toolbar
     if (tocToolBar_) {
@@ -644,6 +727,178 @@ void MainWindow::enableTextSelection() {
 void MainWindow::enableRectSelection() {
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
         pv->setSelectionMode(PdfViewerWidget::SelectionMode::Rect);
+    }
+}
+
+// ===== Quick options (metric / topK) and RAG helpers (definitions) =====
+
+static void mw_setExclusive(QAction* a, QAction* b, QAction* c, QAction* on) {
+    if (!a||!b||!c||!on) return;
+    a->setChecked(a==on);
+    b->setChecked(b==on);
+    c->setChecked(c==on);
+}
+
+void MainWindow::loadSearchOptionsFromSettings() {
+    QSettings s;
+    const QString metric = s.value("emb/similarity_metric", "cosine").toString();
+    const int topK = s.value("emb/top_k", 5).toInt();
+    if (actMetricCosine_) actMetricCosine_->setChecked(metric == QLatin1String("cosine"));
+    if (actMetricDot_) actMetricDot_->setChecked(metric == QLatin1String("dot"));
+    if (actMetricL2_) actMetricL2_->setChecked(metric == QLatin1String("l2"));
+    if (topKSpin_) topKSpin_->setValue(qMax(1, topK));
+}
+
+void MainWindow::saveSearchOptionsToSettings(const QString& metricKey, int topK) {
+    QSettings s;
+    s.setValue("emb/similarity_metric", metricKey);
+    s.setValue("emb/top_k", qMax(1, topK));
+}
+
+void MainWindow::onSearchMetricCosine() {
+    mw_setExclusive(actMetricCosine_, actMetricDot_, actMetricL2_, actMetricCosine_);
+    const int topK = topKSpin_ ? topKSpin_->value() : 5;
+    saveSearchOptionsToSettings("cosine", topK);
+}
+
+void MainWindow::onSearchMetricDot() {
+    mw_setExclusive(actMetricCosine_, actMetricDot_, actMetricL2_, actMetricDot_);
+    const int topK = topKSpin_ ? topKSpin_->value() : 5;
+    saveSearchOptionsToSettings("dot", topK);
+}
+
+void MainWindow::onSearchMetricL2() {
+    mw_setExclusive(actMetricCosine_, actMetricDot_, actMetricL2_, actMetricL2_);
+    const int topK = topKSpin_ ? topKSpin_->value() : 5;
+    saveSearchOptionsToSettings("l2", topK);
+}
+
+void MainWindow::onSearchTopKChanged(int value) {
+    QString metric = "cosine";
+    if (actMetricDot_ && actMetricDot_->isChecked()) metric = "dot";
+    else if (actMetricL2_ && actMetricL2_->isChecked()) metric = "l2";
+    saveSearchOptionsToSettings(metric, value);
+}
+
+QString MainWindow::detectDocumentLanguageSample() const {
+    if (!pagesTextLoaded_) return QString();
+    QString accum;
+    for (int i=0;i<qMin(pagesText_.size(), 3); ++i) {
+        if (!pagesText_[i].trimmed().isEmpty()) accum += pagesText_[i].left(800) + "\n";
+    }
+    return accum;
+}
+
+void MainWindow::detectDocumentLanguageAsync(std::function<void(QString)> onLang) {
+    const QString sample = detectDocumentLanguageSample();
+    if (!llm_ || sample.trimmed().isEmpty()) { if (onLang) onLang(QStringLiteral("pt")); return; }
+    showChatPanel();
+    if (chatDock_) {
+        chatDock_->appendAssistant(tr("[LLM] Detectando idioma do documento a partir de amostra..."));
+    }
+    QList<QPair<QString,QString>> msgs;
+    msgs.append({QStringLiteral("system"), tr("Responda apenas com o código ISO 639-1 do idioma predominante do texto do usuário.")});
+    msgs.append({QStringLiteral("user"), sample});
+    llm_->chatWithMessages(msgs, [this, onLang](QString out, QString err){
+        QMetaObject::invokeMethod(this, [this, onLang, out, err]{
+            QString lang = QStringLiteral("pt");
+            if (err.isEmpty()) {
+                lang = out.trimmed().toLower();
+                if (lang.size()>2) lang = lang.left(2);
+                if (lang.isEmpty()) lang = QStringLiteral("pt");
+            }
+            if (auto cd = this->chatDock_) {
+                if (!err.isEmpty()) cd->appendAssistant(tr("[LLM] Erro ao detectar idioma: %1").arg(err));
+                else cd->appendAssistant(tr("[LLM] Idioma detectado: %1").arg(lang));
+            }
+            if (onLang) onLang(lang);
+        });
+    });
+}
+
+void MainWindow::translateQueryIfNeededAsync(const QString& query, const QString& docLang, std::function<void(QString)> onReady) {
+    if (!llm_ || docLang.isEmpty() || docLang == QLatin1String("pt")) { if (onReady) onReady(query); return; }
+    showChatPanel();
+    if (chatDock_) chatDock_->appendAssistant(tr("[LLM] Traduzindo consulta para '%1'...").arg(docLang));
+    QList<QPair<QString,QString>> msgs;
+    const QString sys = tr("Você traduzirá frases para o idioma alvo indicado, respondendo apenas a tradução, sem comentários.");
+    msgs.append({QStringLiteral("system"), sys});
+    msgs.append({QStringLiteral("user"), tr("Traduza para %1: %2").arg(docLang, query)});
+    llm_->chatWithMessages(msgs, [this, onReady](QString out, QString err){
+        QMetaObject::invokeMethod(this, [this, onReady, out, err]{
+            const QString translated = err.isEmpty() ? out.trimmed() : QString();
+            if (auto cd = this->chatDock_) {
+                if (!err.isEmpty()) cd->appendAssistant(tr("[LLM] Erro ao traduzir: %1").arg(err));
+                else cd->appendAssistant(tr("[LLM] Tradução: %1").arg(translated.isEmpty() ? out.trimmed() : translated));
+            }
+            if (onReady) onReady(translated.isEmpty() ? out.trimmed() : translated);
+        });
+    });
+}
+
+void MainWindow::startRagSearch(const QString& userQuery) {
+    pendingRagQuery_ = userQuery;
+    ensurePagesTextLoaded();
+    // Mirror the user's search query into chat
+    showChatPanel();
+    if (chatDock_) chatDock_->appendUser(tr("/buscar: %1").arg(userQuery));
+    statusBar()->showMessage(tr("Detectando idioma do documento..."));
+    detectDocumentLanguageAsync([this, userQuery](QString lang){
+        statusBar()->showMessage(tr("Traduzindo consulta se necessário (%1)...").arg(lang), 1500);
+        translateQueryIfNeededAsync(userQuery, lang, [this](QString translated){
+            ensureIndexAvailableThen(translated);
+        });
+    });
+}
+
+void MainWindow::ensureIndexAvailableThen(const QString& translatedQuery) {
+    IndexPaths paths; if (getIndexPaths(&paths)) { continueRagAfterEnsureIndex(translatedQuery); return; }
+    const auto ret = QMessageBox::question(this, tr("Criar índice de embeddings?"),
+        tr("Este documento ainda não possui índice de embeddings.\nDeseja criar agora? Este processo pode ser demorado."),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    if (ret != QMessageBox::Yes) { statusBar()->showMessage(tr("Busca semântica cancelada (sem índice)."), 2500); return; }
+
+    QSettings s;
+    EmbeddingIndexer::Params p;
+    p.pdfPath = currentFilePath_;
+    p.providerCfg.provider = s.value("emb/provider", "generativa").toString();
+    p.providerCfg.model = s.value("emb/model", "nomic-embed-text:latest").toString();
+    p.providerCfg.baseUrl = s.value("emb/base_url").toString();
+    p.providerCfg.apiKey = s.value("emb/api_key").toString();
+    p.dbDir = s.value("emb/db_path", QDir(QDir::home().filePath(".cache")).filePath("br.tec.rapport.genai-reader")).toString();
+    p.chunkSize = s.value("emb/chunk_size", 1000).toInt();
+    p.chunkOverlap = s.value("emb/chunk_overlap", 200).toInt();
+    p.batchSize = s.value("emb/batch_size", 16).toInt();
+    p.pagesPerStage = s.value("emb/pages_per_stage", -1).toInt();
+    p.pauseMsBetweenBatches = s.value("emb/pause_ms_between_batches", 0).toInt();
+
+    auto* thread = new QThread(this);
+    auto* indexer = new EmbeddingIndexer(p);
+    indexer->moveToThread(thread);
+    connect(thread, &QThread::started, indexer, &EmbeddingIndexer::run);
+    connect(indexer, &EmbeddingIndexer::finished, this, [this, thread, indexer, translatedQuery](bool ok, const QString&){
+        thread->quit();
+        thread->wait();
+        indexer->deleteLater();
+        thread->deleteLater();
+        if (!ok) { statusBar()->showMessage(tr("Falha ao criar o índice."), 3000); return; }
+        continueRagAfterEnsureIndex(translatedQuery);
+    });
+    thread->start();
+}
+
+void MainWindow::continueRagAfterEnsureIndex(const QString& translatedQuery) {
+    QList<int> pages = semanticSearchPages(translatedQuery);
+    if (!pages.isEmpty()) {
+        searchResultsPages_ = pages;
+        searchResultIdx_ = 0;
+        const int page = searchResultsPages_.at(searchResultIdx_);
+        if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pv->setCurrentPage(static_cast<unsigned int>(page)); pv->flashHighlight(); }
+        if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(page)); }
+        updateStatus();
+        statusBar()->showMessage(tr("%1 resultado(s)").arg(searchResultsPages_.size()), 2000);
+    } else {
+        statusBar()->showMessage(tr("Nenhum resultado encontrado."), 2000);
     }
 }
 

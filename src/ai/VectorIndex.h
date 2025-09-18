@@ -13,6 +13,7 @@
 // Minimal cosine-similarity index (linear scan). Stores vectors and metadata ids.
 class VectorIndex {
 public:
+    enum class Metric { Cosine, Dot, L2 };
     void setVectors(const QList<QVector<float>>& vecs) { vecs_ = vecs; }
     void setIds(const QStringList& ids) { ids_ = ids; }
 
@@ -59,14 +60,32 @@ public:
 
     struct Hit { int index; float score; };
 
+    // Backward-compatible: defaults to cosine similarity
     QList<Hit> topK(const QVector<float>& query, int k) const {
+        return topK(query, k, Metric::Cosine);
+    }
+
+    QList<Hit> topK(const QVector<float>& query, int k, Metric metric) const {
         QList<Hit> hits;
         if (vecs_.isEmpty()) return hits;
         const int dim = vecs_.first().size();
         auto dot = [&](const QVector<float>& a, const QVector<float>& b){ double s=0; for(int i=0;i<dim;++i) s += double(a[i])*double(b[i]); return s; };
         auto norm = [&](const QVector<float>& a){ double s=0; for(float v: a) s += double(v)*double(v); return std::sqrt(s); };
         const double nq = norm(query);
-        for (int i=0;i<vecs_.size();++i){ const double d = dot(query, vecs_[i]); const double nv = norm(vecs_[i]); const float cos = (nq>0 && nv>0) ? float(d/(nq*nv)) : 0.f; hits.append({i, cos}); }
+        for (int i=0;i<vecs_.size();++i){
+            double score = 0.0;
+            if (metric == Metric::Cosine) {
+                const double nv = norm(vecs_[i]);
+                const double d = dot(query, vecs_[i]);
+                score = (nq>0 && nv>0) ? (d/(nq*nv)) : 0.0;
+            } else if (metric == Metric::Dot) {
+                score = dot(query, vecs_[i]);
+            } else { // L2: use negative distance so that higher is better
+                double s=0; for (int j=0;j<dim;++j){ const double dv = double(query[j]) - double(vecs_[i][j]); s += dv*dv; }
+                score = -std::sqrt(s);
+            }
+            hits.append({i, float(score)});
+        }
         std::sort(hits.begin(), hits.end(), [](const Hit& a, const Hit& b){ return a.score > b.score; });
         if (k < hits.size()) hits = hits.mid(0, k);
         return hits;
