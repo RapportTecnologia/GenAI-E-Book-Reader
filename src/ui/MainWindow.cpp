@@ -70,6 +70,9 @@
 #include <QStringList>
 #include <QVariantList>
 #include <QVariantMap>
+#include <QDesktopServices>
+#include <QClipboard>
+#include <QGuiApplication>
 
 #include "app/App.h"
 #include "ai/EmbeddingIndexer.h"
@@ -101,6 +104,134 @@ QVariantList loadRecentEntries(QSettings& settings) {
 
 } // end anonymous namespace
 
+void MainWindow::updateTitleWidget() {
+    if (!titleButton_) return;
+    QString label = tr("Leitor");
+    QString tip;
+    if (!currentFilePath_.isEmpty()) {
+        // Prefer PDF metadata title if available, else filename
+        QString title = QFileInfo(currentFilePath_).completeBaseName();
+#ifdef HAVE_QT_PDF
+        if (QFileInfo(currentFilePath_).suffix().compare("pdf", Qt::CaseInsensitive) == 0) {
+            QPdfDocument doc;
+            if (doc.load(currentFilePath_) == static_cast<QPdfDocument::Error>(0)) {
+                const auto t = doc.metaData(QPdfDocument::MetaDataField::Title).toString().trimmed();
+                if (!t.isEmpty()) title = t;
+            }
+        }
+#endif
+        label = title;
+        tip = QFileInfo(currentFilePath_).absoluteFilePath();
+    }
+    titleButton_->setText(label);
+    titleButton_->setToolTip(tip);
+}
+
+void MainWindow::showCurrentPathInfo() {
+    if (currentFilePath_.isEmpty()) return;
+    const QString abs = QFileInfo(currentFilePath_).absoluteFilePath();
+    QMessageBox msg(this);
+    msg.setIcon(QMessageBox::Information);
+    msg.setWindowTitle(tr("Arquivo atual"));
+    msg.setText(tr("Caminho completo do arquivo:"));
+    msg.setInformativeText(abs);
+    QPushButton* copyBtn = msg.addButton(tr("Copiar"), QMessageBox::ActionRole);
+    msg.addButton(QMessageBox::Ok);
+    msg.exec();
+    if (msg.clickedButton() == copyBtn) {
+        QGuiApplication::clipboard()->setText(abs);
+        statusBar()->showMessage(tr("Caminho copiado para a área de transferência."), 2000);
+    }
+}
+
+void MainWindow::onTitleOpenDir() {
+    if (currentFilePath_.isEmpty()) return;
+    const QString dir = QFileInfo(currentFilePath_).absolutePath();
+    QDesktopServices::openUrl(QUrl::fromLocalFile(dir));
+}
+
+bool MainWindow::migrateEmbeddingsForPathChange(const QString& oldPath, const QString& newPath, QString* errorMsg) {
+    IndexPaths oldIdx, newIdx;
+    if (!computeIndexPathsFor(oldPath, &oldIdx)) { if (errorMsg) *errorMsg = tr("Falha ao calcular índice antigo."); return false; }
+    if (!computeIndexPathsFor(newPath, &newIdx)) { if (errorMsg) *errorMsg = tr("Falha ao calcular índice novo."); return false; }
+    // If old files don't exist, nothing to do
+    const QStringList oldFiles{ oldIdx.binPath, oldIdx.idsPath, oldIdx.metaPath };
+    bool anyExist = std::any_of(oldFiles.begin(), oldFiles.end(), [](const QString& p){ return QFileInfo::exists(p); });
+    if (!anyExist) return true;
+    // Ensure target dir exists
+    QDir().mkpath(QFileInfo(newIdx.base).absolutePath());
+    auto moveFile = [&](const QString& src, const QString& dst)->bool{
+        if (!QFileInfo::exists(src)) return true; // nothing to move
+        if (QFileInfo::exists(dst)) QFile::remove(dst);
+        return QFile::rename(src, dst);
+    };
+    if (!moveFile(oldIdx.binPath, newIdx.binPath)) { if (errorMsg) *errorMsg = tr("Não foi possível mover %1 para %2").arg(oldIdx.binPath, newIdx.binPath); return false; }
+    if (!moveFile(oldIdx.idsPath, newIdx.idsPath)) { if (errorMsg) *errorMsg = tr("Não foi possível mover %1 para %2").arg(oldIdx.idsPath, newIdx.idsPath); return false; }
+    if (!moveFile(oldIdx.metaPath, newIdx.metaPath)) { if (errorMsg) *errorMsg = tr("Não foi possível mover %1 para %2").arg(oldIdx.metaPath, newIdx.metaPath); return false; }
+    return true;
+}
+
+void MainWindow::onTitleAddToCalibre() {
+    if (currentFilePath_.isEmpty()) return;
+    // Ask for Calibre library path
+    const QString lastLib = settings_.value("calibre/library").toString();
+    QString lib = QFileDialog::getExistingDirectory(this, tr("Selecione a biblioteca do Calibre"), lastLib.isEmpty()? QDir::homePath() : lastLib);
+    if (lib.isEmpty()) return;
+    settings_.setValue("calibre/library", lib);
+
+    // Run calibredb add --with-library <lib> --copy <file>
+    QProcess proc;
+    QStringList args;
+    args << "--with-library" << lib << "add" << "--copy" << currentFilePath_;
+    proc.start("calibredb", args);
+    if (!proc.waitForStarted(3000)) {
+        QMessageBox::warning(this, tr("Calibre"), tr("Não foi possível iniciar 'calibredb'. Verifique a instalação."));
+        return;
+    }
+    proc.waitForFinished(-1);
+    const QString out = QString::fromUtf8(proc.readAllStandardOutput());
+    const QString err = QString::fromUtf8(proc.readAllStandardError());
+    if (proc.exitStatus() != QProcess::NormalExit || proc.exitCode() != 0) {
+        showLongAlert(tr("Falha ao adicionar ao Calibre"), out + "\n" + err);
+        return;
+    }
+
+    // Ask user to select the new managed file path (Calibre organizes by Author/Title)
+    QMessageBox::information(this, tr("Calibre"), tr("Arquivo adicionado ao Calibre. Selecione o novo caminho do arquivo\nna biblioteca para migrar os embeddings."));
+    const QString newPath = QFileDialog::getOpenFileName(this, tr("Selecione o arquivo gerenciado pelo Calibre"), lib);
+    if (newPath.isEmpty()) return;
+    QString emsg;
+    if (!migrateEmbeddingsForPathChange(currentFilePath_, newPath, &emsg)) {
+        showLongAlert(tr("Migração de embeddings"), tr("Falhou: %1").arg(emsg));
+        return;
+    }
+    // Open the new path in the reader
+    openPath(newPath);
+}
+
+void MainWindow::onTitleRenameFile() {
+    if (currentFilePath_.isEmpty()) return;
+    const QFileInfo fi(currentFilePath_);
+    bool ok = false;
+    const QString suggestion = fi.completeBaseName();
+    const QString newBase = QInputDialog::getText(this, tr("Renomear e-book"), tr("Nome atual: %1\nNovo nome (sem extensão):").arg(fi.fileName()), QLineEdit::Normal, suggestion, &ok);
+    if (!ok || newBase.trimmed().isEmpty()) return;
+    const QString newPath = fi.dir().filePath(newBase + "." + fi.suffix());
+    if (QFileInfo::exists(newPath)) {
+        QMessageBox::warning(this, tr("Renomear"), tr("Já existe um arquivo com este nome."));
+        return;
+    }
+    if (!QFile::rename(currentFilePath_, newPath)) {
+        QMessageBox::warning(this, tr("Renomear"), tr("Falha ao renomear o arquivo."));
+        return;
+    }
+    QString emsg;
+    if (!migrateEmbeddingsForPathChange(currentFilePath_, newPath, &emsg)) {
+        showLongAlert(tr("Migração de embeddings"), tr("Falhou: %1").arg(emsg));
+    }
+    openPath(newPath);
+}
+
 void MainWindow::focusSearchBar() {
     if (!searchEdit_) return;
     searchEdit_->setFocus();
@@ -129,6 +260,24 @@ bool MainWindow::getIndexPaths(IndexPaths* out) const {
     out->idsPath = out->base + ".ids.json";
     out->metaPath = out->base + ".meta.json";
     return QFileInfo::exists(out->binPath) && QFileInfo::exists(out->idsPath) && QFileInfo::exists(out->metaPath);
+}
+
+bool MainWindow::computeIndexPathsFor(const QString& filePath, IndexPaths* out) const {
+    if (!out) return false;
+    out->base.clear(); out->binPath.clear(); out->idsPath.clear(); out->metaPath.clear();
+    if (filePath.isEmpty()) return false;
+    QSettings s;
+    const QString dbPath = s.value("emb/db_path", QDir(QDir::home().filePath(".cache")).filePath("br.tec.rapport.genai-reader")).toString();
+    const QString model = s.value("emb/model", "nomic-embed-text:latest").toString();
+    const QString fileHash = sha1(QFileInfo(filePath).absoluteFilePath());
+    QString fileBaseName = QStringLiteral("index_%1_%2").arg(fileHash, model);
+    fileBaseName.replace(':', '_');
+    fileBaseName.replace('/', '_');
+    out->base = QDir(dbPath).filePath(fileBaseName);
+    out->binPath = out->base + ".bin";
+    out->idsPath = out->base + ".ids.json";
+    out->metaPath = out->base + ".meta.json";
+    return true;
 }
 
 bool MainWindow::ensurePagesTextLoaded() {
@@ -544,7 +693,38 @@ void MainWindow::createActions() {
     menuEdit->addAction(actSelSaveTxt_);
     menuEdit->addAction(actSelSaveMd_);
 
-    // Toolbar
+    // Top toolbar: centered title button
+    auto* tbTitle = addToolBar(tr("Título"));
+    tbTitle->setObjectName("toolbar_title");
+    QWidget* titleLeftSpacer = new QWidget(tbTitle);
+    titleLeftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    tbTitle->addWidget(titleLeftSpacer);
+    // Title button (shows current document title/name; left-click shows full path; right-click opens menu)
+    titleButton_ = new QToolButton(tbTitle);
+    titleButton_->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    titleButton_->setPopupMode(QToolButton::InstantPopup); // context menu appears on right-click; left-click handled via clicked()
+    titleMenu_ = new QMenu(titleButton_);
+    actTitleOpenDir_ = new QAction(tr("Abrir diretório no gerenciador"), titleMenu_);
+    actTitleAddToCalibre_ = new QAction(tr("Adicionar ao Calibre e migrar embeddings..."), titleMenu_);
+    actTitleRename_ = new QAction(tr("Renomear arquivo e migrar embeddings..."), titleMenu_);
+    titleMenu_->addAction(actTitleOpenDir_);
+    titleMenu_->addSeparator();
+    titleMenu_->addAction(actTitleAddToCalibre_);
+    titleMenu_->addAction(actTitleRename_);
+    titleButton_->setMenu(titleMenu_);
+    connect(titleButton_, &QToolButton::clicked, this, &MainWindow::showCurrentPathInfo);
+    connect(actTitleOpenDir_, &QAction::triggered, this, &MainWindow::onTitleOpenDir);
+    connect(actTitleAddToCalibre_, &QAction::triggered, this, &MainWindow::onTitleAddToCalibre);
+    connect(actTitleRename_, &QAction::triggered, this, &MainWindow::onTitleRenameFile);
+    tbTitle->addWidget(titleButton_);
+    QWidget* titleRightSpacer = new QWidget(tbTitle);
+    titleRightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    tbTitle->addWidget(titleRightSpacer);
+
+    // Break to start second row
+    addToolBarBreak();
+
+    // Second toolbar: reading controls
     auto* tb = addToolBar(tr("Leitura"));
     tb->setObjectName("toolbar_reading");
     QWidget* leftSpacer = new QWidget(tb);
@@ -571,8 +751,7 @@ void MainWindow::createActions() {
     tb->addWidget(rightSpacer);
     tb->addAction(actChat_);
 
-    // Place the search toolbar on a new row just below the reading toolbar
-    addToolBarBreak();
+    // Place the search toolbar on the same second row (no extra break)
     searchToolBar_ = addToolBar(tr("Busca"));
     searchToolBar_->setObjectName("toolbar_search");
     searchToolBar_->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -679,6 +858,8 @@ void MainWindow::createActions() {
     // Initial state
     actClose_->setEnabled(false);
     rebuildRecentMenu();
+
+    updateTitleWidget();
 }
 
 void saveRecentEntries(QSettings& settings, const QVariantList& entries) {
@@ -1637,6 +1818,7 @@ bool MainWindow::openPath(const QString& file) {
                            .arg(genai::AppInfo::Name)
                            .arg(genai::AppInfo::Version)
                            .arg(titleText));
+        updateTitleWidget();
         updateStatus();
         actClose_->setEnabled(true);
         return true;
@@ -1803,6 +1985,7 @@ void MainWindow::closeDocument() {
     setWindowTitle(QString("%1 v%2 — Leitor")
                        .arg(genai::AppInfo::Name)
                        .arg(genai::AppInfo::Version));
+    updateTitleWidget();
 }
 
 void MainWindow::nextPage() {

@@ -119,6 +119,7 @@ private:
     QString sha1(const QString& s) const;
     struct IndexPaths { QString base; QString binPath; QString idsPath; QString metaPath; };
     bool getIndexPaths(IndexPaths* out) const;
+    bool computeIndexPathsFor(const QString& filePath, IndexPaths* out) const;
     void loadSearchOptionsFromSettings();
     void saveSearchOptionsToSettings(const QString& metricKey, int topK);
     // RAG pipeline helpers
@@ -200,6 +201,19 @@ private slots:
 
 private:
     QString currentFilePath_;
+
+    // Title/button UI and actions
+    QToolButton* titleButton_ {nullptr};
+    QMenu* titleMenu_ {nullptr};
+    QAction* actTitleOpenDir_ {nullptr};
+    QAction* actTitleAddToCalibre_ {nullptr};
+    QAction* actTitleRename_ {nullptr};
+    void updateTitleWidget();
+    void showCurrentPathInfo();
+    void onTitleOpenDir();
+    void onTitleAddToCalibre();
+    void onTitleRenameFile();
+    bool migrateEmbeddingsForPathChange(const QString& oldPath, const QString& newPath, QString* errorMsg);
 
     genai::DummyReader reader_;
 
