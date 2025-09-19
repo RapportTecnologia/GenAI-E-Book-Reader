@@ -4,7 +4,7 @@
 ![Qt](https://img.shields.io/badge/Qt6-Widgets-brightgreen)
 ![CMake](https://img.shields.io/badge/CMake-%3E%3D3.16-informational)
 [![Docs](https://img.shields.io/badge/docs-Doxygen-blueviolet)](docs/index.html)
-![Version](https://img.shields.io/badge/version-0.1.5-blue)
+![Version](https://img.shields.io/badge/version-0.1.6-blue)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contribuindo)
 
 

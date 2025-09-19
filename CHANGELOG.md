@@ -10,6 +10,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ### Changed
 - Otimizada a renderização do painel de chat, movendo a conversão de Markdown do front-end (JavaScript, `marked.js`) para o back-end (C++ com a biblioteca `cmark`). Isso simplifica o código do cliente e melhora a manutenibilidade.
+- Barra de busca unificada na toolbar com campo de pesquisa, botões Anterior/Próximo e menu de Opções para a busca semântica.
 
 ### Fixed
 - Corrigidos travamentos e erros de renderização (`Uncaught TypeError`) do MathJax que ocorriam durante a atualização do conteúdo do chat. (Resolve Issue #1)
@@ -18,9 +19,6 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - Indexação de embeddings por documento com controle de chunking/batching e escrita incremental. Issue #3
 - Busca por frases usando embeddings (fallback semântico quando a busca por texto não encontra resultados), com opções rápidas: métrica (cosine/dot/L2), Top‑K e limiares. Issue #3
 - Botão de Título central na barra superior exibindo o nome do documento atual e menu contextual com ações: abrir diretório, adicionar ao Calibre com migração de embeddings e renomear arquivo com migração. Issues #6, #7, #8
-
-### Changed
-- Barra de busca unificada na toolbar com campo de pesquisa, botões Anterior/Próximo e menu de Opções para a busca semântica.
 
 ## [0.1.5] - 2025-09-14
 
@@ -137,7 +135,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - If Qt is not installed, a console placeholder is built (see `CMakeLists.txt` message).
 - One unresolved reference in `README.md` badge/anchor noted by Doxygen (harmless).
 
-[Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.6
 [0.1.5]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.5
 [0.1.4]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.4
 [0.1.3]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.3

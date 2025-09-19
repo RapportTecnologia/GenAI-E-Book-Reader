@@ -51,19 +51,23 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Histórico de prompts e respostas
 - Chat com IA (OpenAI) para explicar e resumir seleções.
 
-## 0.1.6 – Anotações e Dicionário
+## 0.1.6 – RAG, MathJax e Markdown
 - RAG (experimental):
+  - Risco conhecido: sobrecarga de recursos em documentos grandes causando encerramento prematuro; mitigado por etapas/pausas
   - UI para ajuste fino de chunking/batching (chunk size, overlap, batch size)
   - Execução por etapas (pages per stage) e pausa entre lotes (throttling)
   - Detecção de dependências de extração (`pdftotext`, `pdftoppm`, `tesseract`) e fallbacks
-  - Escrita incremental de vetores/ids/metadados
   - Métricas e logs de estágios no diálogo de indexação
-  - Documentação de uso e limitações
-  - Risco conhecido: sobrecarga de recursos em documentos grandes causando encerramento prematuro; mitigado por etapas/pausas
-- Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,
+- MathJax no painel de chat
+- Markdown no painel de chat
 - Busca full-text no documento
 
-## 0.1.7 – TTS e Controles
+## 0.1.7 – Anotações e Dicionário
+  - Escrita incremental de vetores/ids/metadados
+  - Documentação de uso e limitações
+- Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,
+
+## 0.1.8 – TTS e Controles
 - Reprodução TTS de seleção atual
 - Controles de velocidade/pausa/retomar
 - Output device selection
