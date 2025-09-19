@@ -91,4 +91,9 @@ private:
     QString htmlBody_;
     // Parallel storage for plain conversation turns: role = "user" | "assistant"; content is Markdown/plain
     QList<QPair<QString, QString>> historyMsgs_;
+
+    // Debounce rebuilds to avoid overlapping MathJax loads and reinitializations
+    QTimer* rebuildTimer_ {nullptr};
+    bool pageLoading_ {false};
+    bool rebuildPending_ {false};
 };

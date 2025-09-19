@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
-- Tentativa de resolver o bug de rederização do mathjax e markdown. Sem sucesso. Issue #1
+
+## [0.1.6] - 2025-09-18
+
+### Changed
+- Otimizada a renderização do painel de chat, movendo a conversão de Markdown do front-end (JavaScript, `marked.js`) para o back-end (C++ com a biblioteca `cmark`). Isso simplifica o código do cliente e melhora a manutenibilidade.
+
+### Fixed
+- Corrigidos travamentos e erros de renderização (`Uncaught TypeError`) do MathJax que ocorriam durante a atualização do conteúdo do chat. (Resolve Issue #1)
 
 ### Added
 - Indexação de embeddings por documento com controle de chunking/batching e escrita incremental. Issue #3
@@ -131,7 +138,6 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - One unresolved reference in `README.md` badge/anchor noted by Doxygen (harmless).
 
 [Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.6...HEAD
-[0.1.6]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.6
 [0.1.5]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.5
 [0.1.4]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.4
 [0.1.3]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.3

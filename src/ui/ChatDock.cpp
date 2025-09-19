@@ -18,6 +18,8 @@
 #include <QRegularExpression>
 #include <QClipboard>
 #include <QGuiApplication>
+#include <QTimer>
+#include <cmark.h>
 
 ChatDock::ChatDock(QWidget* parent)
     : QDockWidget(parent) {
@@ -32,10 +34,29 @@ ChatDock::ChatDock(QWidget* parent)
     historyView_ = new QWebEngineView(container_);
     v->addWidget(historyView_, 1);
     // Scroll to bottom after each page load (connect once)
+    connect(historyView_, &QWebEngineView::loadStarted, this, [this](){ pageLoading_ = true; });
     connect(historyView_, &QWebEngineView::loadFinished, this, [this](bool){
+        pageLoading_ = false;
         if (historyView_ && historyView_->page()) {
             historyView_->page()->runJavaScript("window.scrollTo(0, document.body.scrollHeight);");
+            // After rendering new HTML, ask MathJax to re-typeset the page
+            historyView_->page()->runJavaScript("if (window.MathJax) { window.MathJax.typeset(); }");
         }
+        // If a rebuild was requested during load, trigger it now (debounced)
+        if (rebuildPending_ && rebuildTimer_) {
+            rebuildPending_ = false;
+            rebuildTimer_->start();
+        }
+    });
+    // Debounce timer to throttle rebuilds and avoid overlapping MathJax init
+    rebuildTimer_ = new QTimer(this);
+    rebuildTimer_->setSingleShot(true);
+    rebuildTimer_->setInterval(80); // ~1 frame delay
+    connect(rebuildTimer_, &QTimer::timeout, this, [this](){
+        if (!historyView_) return;
+        const QString doc = transcriptHtml();
+        pageLoading_ = true;
+        historyView_->setHtml(doc);
     });
     rebuildDocument();
 
@@ -120,17 +141,29 @@ ChatDock::ChatDock(QWidget* parent)
 }
 
 void ChatDock::rebuildDocument() {
-    const QString doc = transcriptHtml();
-    if (historyView_) {
-        historyView_->setHtml(doc);
+    // If a load is in progress, mark a pending rebuild
+    if (pageLoading_) { rebuildPending_ = true; return; }
+    // Debounce multiple quick calls
+    if (rebuildTimer_) {
+        rebuildTimer_->start();
+        return;
     }
+    // Fallback (shouldn't hit if timer exists)
+    const QString doc = transcriptHtml();
+    if (historyView_) { pageLoading_ = true; historyView_->setHtml(doc); }
 }
 
 void ChatDock::appendLine(const QString& who, const QString& text) {
-    // Append as markdown block (rendered in WebEngine)
+    // Convert markdown to HTML using cmark
+    QByteArray textUtf8 = text.toUtf8();
+    char* html = cmark_markdown_to_html(textUtf8.constData(), textUtf8.size(), CMARK_OPT_DEFAULT);
+    QString renderedHtml = QString::fromUtf8(html);
+    free(html);
+
+    // Append as a block with the rendered HTML
     const QString block = QString(
         "<div class=\"msg\"><div class=\"who\"><b>%1:</b></div><div class=\"md\">%2</div></div>"
-    ).arg(who.toHtmlEscaped(), text.toHtmlEscaped());
+    ).arg(who.toHtmlEscaped(), renderedHtml);
     htmlBody_ += block;
     rebuildDocument();
 }
@@ -177,149 +210,22 @@ QString ChatDock::transcriptHtml() const {
     const QString doc = QString(
         "<!DOCTYPE html><html><head>"
         "<meta charset=\"utf-8\">"
-        "<script src=\"https://cdn.jsdelivr.net/npm/marked/marked.min.js\"></script>"
-        "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css\">"
-        "<script src=\"https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js\"></script>"
         "<script>"
-        "// Configure marked to support GFM (including tables) and line breaks\n"
-        "marked.setOptions({ gfm: true, tables: true, breaks: true, headerIds: false, mangle: false, smartLists: true });\n"
-        "// Protect math segments ($...$, $$...$$, \\(...\\), \\[...\\]) from marked, then restore after parsing\n"
-        "function extractMathAndCode(src){\n"
-        "  const placeholders = [];\n"
-        "  let out = '';\n"
-        "  let i = 0;\n"
-        "  let state = 'text'; // 'text' | 'inlineCode' | 'codeFence' | 'inlineMath' | 'displayMath' | 'parenMath' | 'bracketMath'\n"
-        "  let fenceTickCount = 0;\n"
-        "  let buf = '';\n"
-        "  function pushPlaceholder(kind, content){\n"
-        "    const idx = placeholders.length;\n"
-        "    placeholders.push({ kind, content });\n"
-        "    out += `@@PLACEHOLDER_${idx}@@`;\n"
-        "  }\n"
-        "  while (i < src.length){\n"
-        "    const c = src[i];\n"
-        "    const c2 = src.slice(i, i+2);\n"
-        "    const c4 = src.slice(i, i+4);\n"
-        "    if (state === 'text'){\n"
-        "      // code fence start ```\n"
-        "      { const c3 = src.slice(i, i+3); if (c3 === '```'){\n"
-        "        if (buf){ out += buf; buf = ''; }\n"
-        "        // capture until matching ```\n"
-        "        i += 3;\n"
-        "        let start = i;\n"
-        "        const end = src.indexOf('```', i);\n"
-        "        const content = end !== -1 ? src.slice(start, end) : src.slice(start);\n"
-        "        pushPlaceholder('codeFence', content);\n"
-        "        i = end !== -1 ? end + 3 : src.length;\n"
-        "        continue; } }\n"
-        "      // inline code `...`\n"
-        "      if (c === '`'){\n"
-        "        if (buf){ out += buf; buf = ''; }\n"
-        "        i++; let start = i;\n"
-        "        while (i < src.length && src[i] !== '`'){ i++; }\n"
-        "        const content = src.slice(start, i);\n"
-        "        pushPlaceholder('inlineCode', content);\n"
-        "        if (i < src.length && src[i] === '`') i++;\n"
-        "        continue;\n"
-        "      }\n"
-        "      // display math $$...$$ (multiline)\n"
-        "      if (c2 === '$$'){\n"
-        "        if (buf){ out += buf; buf = ''; }\n"
-        "        i += 2; let start = i;\n"
-        "        const end = src.indexOf('$$', i);\n"
-        "        const content = end !== -1 ? src.slice(start, end) : src.slice(start);\n"
-        "        pushPlaceholder('displayMath', content);\n"
-        "        i = end !== -1 ? end + 2 : src.length;\n"
-        "        continue;\n"
-        "      }\n"
-        "      // paren math \\(...\\)\n"
-        "      if (c2 === '\\('){\n"
-        "        if (buf){ out += buf; buf = ''; }\n"
-        "        i += 2; let start = i;\n"
-        "        const end = src.indexOf('\\)', i);\n"
-        "        const content = end !== -1 ? src.slice(start, end) : src.slice(start);\n"
-        "        pushPlaceholder('parenMath', content);\n"
-        "        i = end !== -1 ? end + 2 : src.length;\n"
-        "        continue;\n"
-        "      }\n"
-        "      // bracket math \\[...\\]\n"
-        "      if (c2 === '\\['){\n"
-        "        if (buf){ out += buf; buf = ''; }\n"
-        "        i += 2; let start = i;\n"
-        "        const end = src.indexOf('\\]', i);\n"
-        "        const content = end !== -1 ? src.slice(start, end) : src.slice(start);\n"
-        "        pushPlaceholder('bracketMath', content);\n"
-        "        i = end !== -1 ? end + 2 : src.length;\n"
-        "        continue;\n"
-        "      }\n"
-        "      // inline math $...$ (avoid $$ handled above)\n"
-        "      if (c === '$'){\n"
-        "        // avoid treating '$ ' as start; basic check for a following non-space and not another '$'\n"
-        "        const next = src[i+1];\n"
-        "        if (next && next !== '$' && next !== ' ' && next !== '\\n'){\n"
-        "          if (buf){ out += buf; buf = ''; }\n"
-        "          i++; let start = i;\n"
-        "          let end = src.indexOf('$', i);\n"
-        "          // ensure it's not '$$' end; if so, take the first single '$'\n"
-        "          while (end !== -1 && src[end+1] === '$'){ end = src.indexOf('$', end+2); }\n"
-        "          const content = end !== -1 ? src.slice(start, end) : src.slice(start);\n"
-        "          pushPlaceholder('inlineMath', content);\n"
-        "          i = end !== -1 ? end + 1 : src.length;\n"
-        "          continue;\n"
-        "        }\n"
-        "      }\n"
-        "      buf += c; i++;\n"
-        "      continue;\n"
-        "    }\n"
-        "  }\n"
-        "  if (buf){ out += buf; }\n"
-        "  return { text: out, placeholders };\n"
-        "}\n"
-        "function restorePlaceholders(html, placeholders){\n"
-        "  return html.replace(/@@PLACEHOLDER_(\\d+)@@/g, (m, g1)=>{\n"
-        "    const ph = placeholders[parseInt(g1,10)];\n"
-        "    if (!ph) return m;\n"
-        "    switch(ph.kind){\n"
-        "      case 'codeFence': return '```' + ph.content + '```';\n"
-        "      case 'inlineCode': return '`' + ph.content + '`';\n"
-        "      case 'displayMath': return '$$' + ph.content + '$$';\n"
-        "      case 'inlineMath': return '$' + ph.content + '$';\n"
-        "      case 'parenMath': return '\\(' + ph.content + '\\)';\n"
-        "      case 'bracketMath': return '\\[' + ph.content + '\\]';\n"
-        "      default: return m;\n"
-        "    }\n"
-        "  });\n"
-        "}\n"
-        "function renderAll(){\n"
-        "  document.querySelectorAll('.md').forEach(n=>{\n"
-        "    const raw = n.textContent || '';\n"
-        "    const { text, placeholders } = extractMathAndCode(raw);\n"
-        "    let html = marked.parse(text);\n"
-        "    html = restorePlaceholders(html, placeholders);\n"
-        "    n.innerHTML = html;\n"
-        "  });\n"
-        "  document.querySelectorAll('pre code').forEach((el)=>{ try{ hljs.highlightElement(el); }catch(e){} });\n"
-        "  // Typeset math within the body (or only in .md containers)\n"
-        "  if(window.MathJax && MathJax.typesetPromise){ try { MathJax.typesetPromise(); } catch(e){} }\n"
-        "}\n"
         "function scrollToBottom(){ window.scrollTo(0, document.body.scrollHeight); }\n"
         "window.addEventListener('load', ()=>{\n"
-        "  renderAll();\n"
         "  scrollToBottom();\n"
         "});"
         "</script>"
         "<script>\n"
         "window.MathJax = {\n"
-        "  loader: { load: ['[tex]/noerrors', '[tex]/noundefined'] },\n"
         "  tex: {\n"
         "    inlineMath: [['$','$'], ['\\\\(','\\\\)']],\n"
         "    displayMath: [['$$','$$'], ['\\\\[','\\\\]']],\n"
-        "    packages: { '[+]': ['noerrors','noundefined'] }\n"
         "  },\n"
         "  options: {\n"
         "    skipHtmlTags: ['script','noscript','style','textarea','pre','code'],\n"
-        "    ignoreHtmlClass: 'tex2jax_ignore',\n"
-        "    processHtmlClass: 'tex2jax_process'\n"
+//        "    ignoreHtmlClass: 'tex2jax_ignore',\n"
+//        "    processHtmlClass: 'tex2jax_process'\n"
         "  }\n"
         "};\n"
         "</script>"
@@ -415,7 +321,8 @@ void ChatDock::clearPendingImage() {
 }
 
 void ChatDock::onSendClicked() {
-    const QString text = input_->toPlainText().trimmed();
+    // Preserve exact formatting (do not trim) to avoid breaking Markdown/LaTeX blocks
+    const QString text = input_->toPlainText();
     if (text.isEmpty()) return;
     emit sendMessageRequested(text);
     input_->clear();

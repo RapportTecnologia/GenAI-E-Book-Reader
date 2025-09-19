@@ -131,6 +131,7 @@ Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aq
   - Próxima: iniciar 0.2.0 (Anotações e Dicionário) conforme `ROADMAP.md`.
 
 ### Notas de Progresso Recentes
+- v0.1.6 (interno): Otimização da renderização do chat. A conversão de Markdown para HTML foi movida do front-end (JavaScript, `marked.js`) para o back-end (C++, biblioteca `cmark`), simplificando o código do cliente e centralizando a lógica de formatação.
 - v0.1.2: "Salvar como" (RF-28) implementado; refinamentos de leitura.
 - v0.1.1: Navegação por combobox cobrindo todas as páginas de PDFs e TOC simples para todas as páginas; restauração de sessão; melhorias de status e zoom.
  - v0.1.3: TOC aprimorado com toolbar (modos "Páginas"/"Conteúdo") e navegação context-aware; splitter com tamanho inicial ~10% (TOC) / ~90% (visualizador). Branding/UI entregue: ícone do app (RF-48), título com nome do livro (RF-49) e splash screen (RF-50). Preferência de granularidade do zoom (Ctrl+roda) adicionada. Modos de seleção no PDF (texto/retângulo), cópia com toast e exportação de seleção para TXT/Markdown. Diálogo "Dados do leitor" com envio opcional para PHPList via `.env`.

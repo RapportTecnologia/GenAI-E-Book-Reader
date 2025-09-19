@@ -30,6 +30,7 @@ target_include_directories(genai_reader PRIVATE include ${CMAKE_SOURCE_DIR}/src)
 
 target_link_libraries(genai_reader PRIVATE Qt6::Widgets Qt6::PdfWidgets Qt6::Network)
 target_link_libraries(genai_reader PRIVATE Qt6::WebEngineWidgets)
+target_link_libraries(genai_reader PRIVATE cmark)
 target_compile_definitions(genai_reader PRIVATE HAVE_QT_WEBENGINE)
 
 # Define to enable Qt-specific code paths unconditionally
@@ -41,6 +42,15 @@ set_target_properties(genai_reader PROPERTIES
   AUTORCC ON
   AUTOUIC ON
 )
+
+# Add cmark for Markdown to HTML conversion
+include(FetchContent)
+FetchContent_Declare(
+  cmark
+  GIT_REPOSITORY https://github.com/commonmark/cmark.git
+  GIT_TAG 0.30.2 # Using a stable version
+)
+FetchContent_MakeAvailable(cmark)
 
 # Add application resources (logo, etc.)
 target_sources(genai_reader PRIVATE ${CMAKE_SOURCE_DIR}/resources/app.qrc)
@@ -67,7 +77,7 @@ if(DOXYGEN_FOUND)
   set(DOXYGEN_IN ${CMAKE_SOURCE_DIR}/docs/Doxyfile)
   add_custom_target(docs
     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_IN}
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/docs
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/
     COMMENT "Generating API documentation with Doxygen"
     VERBATIM)
 else()

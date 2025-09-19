@@ -41,6 +41,10 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
  - "Recentes": diálogo rolável com busca e filtro por nome/título/autor/resumo/palavras‑chave e submenu com últimos itens.
    - Persistência de metadados (caminho, título, autor, resumo, palavras‑chave) em `QSettings`.
 
+## 0.1.6 - Otimização e Estabilidade
+- Otimizada a renderização do chat movendo a conversão de Markdown para o back-end (C++ com `cmark`).
+- Corrigidos bugs de renderização e travamentos relacionados ao MathJax no painel de chat.
+
 ## 0.1.5 - Itengração IA
 - Integração com APIs de IA (pré cadastradas: OpenAI, GenerAtiva, Claude, Anthropic, Google, DeepSeek)
 - Resumo e explicação de trechos selecionados
