@@ -288,11 +288,14 @@ QString ChatDock::suggestTitle() const {
         for (const auto& p : historyMsgs_) { if (p.first == QLatin1String("user")) { source = p.second; break; } }
     }
     if (source.isEmpty()) source = tr("Novo chat %1").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm"));
+    // Create a temporary copy for manipulation
     QString t = source;
     // Remove fenced code blocks
     t.remove(QRegularExpression("```[\\s\\S]*?```"));
     // Remove inline code
     t.remove(QRegularExpression("`[^`]*`"));
+    // Remove MathJax delimiters so they don't linger in the title
+    t.remove(QRegularExpression("\\$[^\\$]*\\$"));
     // Remove HTML tags
     t.remove(QRegularExpression("<[^>]*>"));
     t.replace('\n', ' ');
