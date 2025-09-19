@@ -16,8 +16,16 @@ file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS
 )
 
 # Require Qt6 with Widgets, PdfWidgets and Network; WebEngineWidgets is optional
-find_package(Qt6 6.9.2 REQUIRED COMPONENTS Widgets PdfWidgets Network)
-find_package(Qt6 6.9.2 REQUIRED COMPONENTS WebEngineWidgets QUIET)
+if(WIN32)
+  # For Windows cross-compilation, use the version downloaded by the script
+  set(QT_VERSION_REQ "6.9.2")
+else()
+  # For native Linux builds, use the system-installed version
+  set(QT_VERSION_REQ "6.4.2")
+endif()
+
+find_package(Qt6 ${QT_VERSION_REQ} REQUIRED COMPONENTS Widgets PdfWidgets Network)
+find_package(Qt6 ${QT_VERSION_REQ} COMPONENTS WebEngineWidgets QUIET)
 if (Qt6WebEngineWidgets_FOUND)
   message(STATUS "Qt6 WebEngineWidgets found: enabling rich chat rendering")
 else()
@@ -29,8 +37,10 @@ add_executable(genai_reader ${APP_SOURCES})
 target_include_directories(genai_reader PRIVATE include ${CMAKE_SOURCE_DIR}/src)
 
 target_link_libraries(genai_reader PRIVATE Qt6::Widgets Qt6::PdfWidgets Qt6::Network)
-target_link_libraries(genai_reader PRIVATE Qt6::WebEngineWidgets)
-target_compile_definitions(genai_reader PRIVATE HAVE_QT_WEBENGINE)
+if(Qt6WebEngineWidgets_FOUND)
+  target_link_libraries(genai_reader PRIVATE Qt6::WebEngineWidgets)
+  target_compile_definitions(genai_reader PRIVATE HAVE_QT_WEBENGINE)
+endif()
 
 # Define to enable Qt-specific code paths unconditionally
 target_compile_definitions(genai_reader PRIVATE USE_QT HAVE_QT_PDF HAVE_QT_NETWORK)
