@@ -16,8 +16,8 @@ file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS
 )
 
 # Require Qt6 with Widgets, PdfWidgets and Network; WebEngineWidgets is optional
-find_package(Qt6 REQUIRED COMPONENTS Widgets PdfWidgets Network)
-find_package(Qt6 REQUIRED COMPONENTS WebEngineWidgets QUIET)
+find_package(Qt6 6.9.2 REQUIRED COMPONENTS Widgets PdfWidgets Network)
+find_package(Qt6 6.9.2 REQUIRED COMPONENTS WebEngineWidgets QUIET)
 if (Qt6WebEngineWidgets_FOUND)
   message(STATUS "Qt6 WebEngineWidgets found: enabling rich chat rendering")
 else()
