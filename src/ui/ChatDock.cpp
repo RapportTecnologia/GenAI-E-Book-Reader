@@ -40,7 +40,7 @@ ChatDock::ChatDock(QWidget* parent)
         if (historyView_ && historyView_->page()) {
             historyView_->page()->runJavaScript("window.scrollTo(0, document.body.scrollHeight);");
             // After rendering new HTML, ask MathJax to re-typeset the page
-            historyView_->page()->runJavaScript("if (window.MathJax) { window.MathJax.typeset(); }");
+            historyView_->page()->runJavaScript("if (window.MathJax) { window.MathJax.typesetPromise(); }");
         }
         // If a rebuild was requested during load, trigger it now (debounced)
         if (rebuildPending_ && rebuildTimer_) {
@@ -154,9 +154,25 @@ void ChatDock::rebuildDocument() {
 }
 
 void ChatDock::appendLine(const QString& who, const QString& text) {
+    QString processedText = text;
+    qCritical() << "text" << text;
+    // Protect MathJax content from cmark parser by wrapping it in spans
+    // Process display math first ($$ ... $$) to avoid conflict with inline
+    processedText.replace(QStringLiteral("\\$\\$\\"), QStringLiteral("\\\\$\\\\$"));
+    processedText.replace(QStringLiteral("\\$\\$\\"), QStringLiteral("\\\\$\\\\$"));
+    // Use simple string replacement to avoid regex issues
+    processedText.replace(QStringLiteral("\\("), QStringLiteral("\\\\("));
+    processedText.replace(QStringLiteral("\\)"), QStringLiteral("\\\\)"));
+    processedText.replace(QStringLiteral("\\["), QStringLiteral("\\\\["));
+    processedText.replace(QStringLiteral("\\]"), QStringLiteral("\\\\]"));
+    // Process inline math second ($ ... $)
+    //processedText.replace(QRegularExpression("\\$([^\\$]+?)\\/$"), "<span class=\"math-inline\">\\1</span>");
+    qCritical() << "processedText" << processedText;
+    
     // Convert markdown to HTML using cmark
-    QByteArray textUtf8 = text.toUtf8();
-    char* html = cmark_markdown_to_html(textUtf8.constData(), textUtf8.size(), CMARK_OPT_DEFAULT);
+    QByteArray textUtf8 = processedText.toUtf8();
+    char* html = cmark_markdown_to_html(textUtf8.constData(), textUtf8.size(), CMARK_OPT_SMART);
+    qCritical() << "html" << html;
     QString renderedHtml = QString::fromUtf8(html);
     free(html);
 
@@ -221,12 +237,11 @@ QString ChatDock::transcriptHtml() const {
         "  tex: {\n"
         "    inlineMath: [['$','$'], ['\\\\(','\\\\)']],\n"
         "    displayMath: [['$$','$$'], ['\\\\[','\\\\]']],\n"
+        "    processEscapes: true\n"
         "  },\n"
         "  options: {\n"
-        "    skipHtmlTags: ['script','noscript','style','textarea','pre','code'],\n"
-//        "    ignoreHtmlClass: 'tex2jax_ignore',\n"
-//        "    processHtmlClass: 'tex2jax_process'\n"
-        "  }\n"
+        "    skipHtmlTags: ['script','noscript','style','textarea','pre','code']\n"
+        "  },\n"
         "};\n"
         "</script>"
         "<script src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js\" id=\"MathJax-script\" async></script>"
