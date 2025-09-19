@@ -18,6 +18,15 @@ void LlmClient::chatWithMessages(const QList<QPair<QString, QString>>& messagesI
     const QUrl url(baseUrl_ + "/v1/chat/completions");
     QJsonObject body; body["model"] = model_;
     QJsonArray messages;
+    // Always prepend a MathJax/LaTeX directive to avoid ambiguity in rendering formulas
+    const QString mathDirective = QStringLiteral(
+        "Quando incluir fórmulas ou equações matemáticas nas respostas, formate-as usando LaTeX adequado ao MathJax: "
+        "use $...$ para inline e $$...$$ para exibição. Você também pode usar \\(...\\) e \\[...\\]. "
+        "Não use imagens para fórmulas; sempre use notação LaTeX renderizável."
+    );
+    {
+        QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = mathDirective; messages.append(sysMsg);
+    }
     bool hasSystem = false;
     for (const auto& rc : messagesIn) {
         const QString role = rc.first.trimmed().toLower();
@@ -43,6 +52,14 @@ void LlmClient::chatWithImage(const QString& userPrompt, const QString& imageDat
     QJsonArray messages;
     // Optional system prompt
     {
+        // Always add MathJax/LaTeX directive first
+        const QString mathDirective = QStringLiteral(
+            "Quando incluir fórmulas ou equações matemáticas nas respostas, formate-as usando LaTeX adequado ao MathJax: "
+            "use $...$ para inline e $$...$$ para exibição. Você também pode usar \\(...\\) e \\[...\\]. "
+            "Não use imagens para fórmulas; sempre use notação LaTeX renderizável."
+        );
+        QJsonObject sysMath; sysMath["role"] = "system"; sysMath["content"] = mathDirective; messages.append(sysMath);
+
         QSettings s;
         const QString sys = s.value("ai/prompts/chat").toString();
         if (!sys.trimmed().isEmpty()) {
@@ -126,6 +143,14 @@ void LlmClient::chat(const QString& userMessage, std::function<void(QString, QSt
     QJsonArray messages;
     // Optional system prompt for chat
     {
+        // MathJax/LaTeX directive to ensure math formatting
+        const QString mathDirective = QStringLiteral(
+            "Quando incluir fórmulas ou equações matemáticas nas respostas, formate-as usando LaTeX adequado ao MathJax: "
+            "use $...$ para inline e $$...$$ para exibição. Você também pode usar \\(...\\) e \\[...\\]. "
+            "Não use imagens para fórmulas; sempre use notação LaTeX renderizável."
+        );
+        { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = mathDirective; messages.append(sysMsg); }
+
         QSettings s;
         const QString sys = s.value("ai/prompts/chat").toString();
         if (!sys.trimmed().isEmpty()) {
@@ -146,6 +171,14 @@ void LlmClient::summarize(const QString& text, std::function<void(QString, QStri
     QJsonArray messages;
     // system from settings
     {
+        // MathJax directive for potential formulas in summaries
+        const QString mathDirective = QStringLiteral(
+            "Quando incluir fórmulas ou equações matemáticas nas respostas, formate-as usando LaTeX adequado ao MathJax: "
+            "use $...$ para inline e $$...$$ para exibição. Você também pode usar \\(...\\) e \\[...\\]. "
+            "Não use imagens para fórmulas; sempre use notação LaTeX renderizável."
+        );
+        { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = mathDirective; messages.append(sysMsg); }
+
         QSettings s;
         const QString sys = s.value("ai/prompts/summaries").toString();
         if (!sys.trimmed().isEmpty()) { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = sys; messages.append(sysMsg); }
@@ -165,6 +198,14 @@ void LlmClient::synonyms(const QString& wordOrLocution, const QString& locale, s
     QJsonObject body; body["model"] = model_;
     QJsonArray messages;
     {
+        // MathJax directive in case definitions or examples include math
+        const QString mathDirective = QStringLiteral(
+            "Quando incluir fórmulas ou equações matemáticas nas respostas, formate-as usando LaTeX adequado ao MathJax: "
+            "use $...$ para inline e $$...$$ para exibição. Você também pode usar \\(...\\) e \\[...\\]. "
+            "Não use imagens para fórmulas; sempre use notação LaTeX renderizável."
+        );
+        { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = mathDirective; messages.append(sysMsg); }
+
         QSettings s;
         const QString sys = s.value("ai/prompts/synonyms").toString();
         if (!sys.trimmed().isEmpty()) { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = sys; messages.append(sysMsg); }
