@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+- Compilação para o Windows, ainda em implementação, Ajuda será bem vinda. 
 
 ## [0.1.7] - 2025-09-20
 
 ### Added
-- Compilação para o Windows, ainda em implementação, Ajuda será bem vinda. 
 - Ajustado painel de Informações da Aplicação
 - Carga de e-books pela linha de comando ou menu no explorador (Abrir Com).
 - Associação de extenção com o applicativo.

@@ -63,9 +63,10 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Busca full-text no documento
 
 ## 0.1.7 – Anotações e Dicionário
-- Iniciado a implementação do dicionário, funcionando com LLM apenas
 - Ajustado painel de Informações da Aplicação
-
+- Carga de e-books pela linha de comando ou menu no explorador (Abrir Com).
+- Associação de extenção com o applicativo.
+- Dicionário iniciado, funcionando apenas com LLM. preciso testar com APIs especializadas.
 
 ## 0.1.8 – TTS e Controles
 - Continuar o desenvolvimento: Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,
