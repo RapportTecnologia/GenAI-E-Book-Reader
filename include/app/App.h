@@ -16,7 +16,7 @@ public:
     static constexpr const char* Name = "GenAI E-Book Reader";
 
     /** \brief Versão corrente do aplicativo. Sincronizada com CMake/README/Doxygen. */
-    static constexpr const char* Version = "0.1.6";
+    static constexpr const char* Version = "0.1.7";
 
     /** \brief Descrição do aplicativo. */
     static constexpr const char* Description = "GenAI E-Book Reader é um leitor de e-books com recursos de IA integrados para aprimorar a experiência de leitura.";

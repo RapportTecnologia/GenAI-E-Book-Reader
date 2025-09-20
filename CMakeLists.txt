@@ -178,15 +178,22 @@ endif()
 
 add_custom_target(github_release
     DEPENDS docs dist
-    COMMAND git add -A
-    COMMAND git commit -m "Release version ${PROJECT_VERSION}"
-    COMMAND git push
-    COMMAND git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}"
-    COMMAND git push origin "v${PROJECT_VERSION}"
-#    COMMAND ${GH_BIN} release create "v${PROJECT_VERSION}" --title "Release v${PROJECT_VERSION}" --notes "See CHANGELOG.md for details."
-#    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git add -A
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git commit -m "Release version ${PROJECT_VERSION}"
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}" --force
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push origin "v${PROJECT_VERSION}" --force
+
+    # Extract release notes from CHANGELOG.md
+    COMMAND ${CMAKE_COMMAND} -E echo "Extracting release notes for v${PROJECT_VERSION}..."
+    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ExtractChangelog.cmake"
+
+    # Create GitHub release
+    COMMAND ${GH_BIN} release create "v${PROJECT_VERSION}" --title "Release v${PROJECT_VERSION}" --notes-file "${CMAKE_BINARY_DIR}/release_notes.md"
+    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
     COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${CMAKE_SOURCE_DIR}/APPIMAGE.md"
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Creating GitHub release and uploading artifacts for v${PROJECT_VERSION}"
     VERBATIM
 )
