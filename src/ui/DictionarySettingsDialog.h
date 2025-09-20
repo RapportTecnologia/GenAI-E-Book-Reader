@@ -6,7 +6,7 @@ class QTabWidget;
 class QLineEdit;
 class QComboBox;
 class QDialogButtonBox;
-class QCheckBox;
+class QPlainTextEdit;
 
 class DictionarySettingsDialog : public QDialog {
     Q_OBJECT
@@ -25,8 +25,7 @@ private:
 
     // Service selection
     QComboBox* serviceCombo_ {nullptr};
-    QCheckBox* useLlmCheckBox_ {nullptr};
-    QLineEdit* llmPromptEdit_ {nullptr};
+    QPlainTextEdit* llmPromptEdit_ {nullptr};
 
     // LibreTranslate settings
     QLineEdit* libreApiUrlEdit_ {nullptr};

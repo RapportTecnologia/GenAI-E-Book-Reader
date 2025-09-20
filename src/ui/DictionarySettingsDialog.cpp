@@ -8,7 +8,7 @@
 #include <QDialogButtonBox>
 #include <QSettings>
 #include <QLabel>
-#include <QCheckBox>
+#include <QPlainTextEdit>
 
 DictionarySettingsDialog::DictionarySettingsDialog(QWidget* parent)
     : QDialog(parent) {
@@ -18,19 +18,23 @@ DictionarySettingsDialog::DictionarySettingsDialog(QWidget* parent)
     auto* root = new QVBoxLayout(this);
     auto* form = new QFormLayout();
 
-    useLlmCheckBox_ = new QCheckBox(tr("Usar LLM para pesquisa de palavras"), this);
-    form->addRow(useLlmCheckBox_);
-
-    llmPromptEdit_ = new QLineEdit(this);
-    form->addRow(tr("Prompt da LLM para Dicionário"), llmPromptEdit_);
 
     serviceCombo_ = new QComboBox(this);
+    serviceCombo_->addItem("LLM", "llm");
     serviceCombo_->addItem("LibreTranslate", "libre");
     serviceCombo_->addItem("Open Multilingual Wordnet", "omw");
     form->addRow(tr("Serviço de Dicionário"), serviceCombo_);
     root->addLayout(form);
 
     tabs_ = new QTabWidget(this);
+
+    // LLM Tab
+    auto* llmWidget = new QWidget(this);
+    auto* llmForm = new QFormLayout(llmWidget);
+    llmPromptEdit_ = new QPlainTextEdit(this);
+    llmPromptEdit_->setPlaceholderText(tr("Ex: Forneça o significado, a etimologia e os sinônimos da palavra: {palavra}"));
+    llmForm->addRow(tr("Prompt do Dicionário"), llmPromptEdit_);
+    tabs_->addTab(llmWidget, "LLM");
 
     // LibreTranslate Tab
     auto* libreWidget = new QWidget(this);
@@ -65,28 +69,19 @@ DictionarySettingsDialog::DictionarySettingsDialog(QWidget* parent)
         serviceCombo_->setCurrentIndex(index);
     });
 
-    connect(useLlmCheckBox_, &QCheckBox::toggled, this, [this](bool checked) {
-        serviceCombo_->setEnabled(!checked);
-        tabs_->setEnabled(!checked);
-        llmPromptEdit_->setVisible(checked);
-    });
 
     loadFromSettings();
 }
 
 void DictionarySettingsDialog::loadFromSettings() {
     QSettings s;
-    useLlmCheckBox_->setChecked(s.value("dictionary/use_llm", true).toBool());
-    llmPromptEdit_->setText(s.value("dictionary/llm_prompt", tr("Forneça o significado, a etimologia e os sinônimos da palavra: {palavra}")).toString());
-    const QString service = s.value("dictionary/service", "libre").toString();
+    const QString service = s.value("dictionary/service", "llm").toString();
+    llmPromptEdit_->setPlainText(s.value("dictionary/llm_prompt", tr("Forneça o significado, a etimologia e os sinônimos da palavra: {palavra}")).toString());
     int idx = serviceCombo_->findData(service);
     if (idx < 0) idx = 0;
     serviceCombo_->setCurrentIndex(idx);
     tabs_->setCurrentIndex(idx);
 
-    // Trigger the enable/disable logic based on the loaded setting
-    serviceCombo_->setEnabled(!useLlmCheckBox_->isChecked());
-    tabs_->setEnabled(!useLlmCheckBox_->isChecked());
 
     // LibreTranslate
     libreApiUrlEdit_->setText(s.value("dictionary/libre/api_url", "https://libretranslate.de/translate").toString());
@@ -100,8 +95,7 @@ void DictionarySettingsDialog::loadFromSettings() {
 
 void DictionarySettingsDialog::saveToSettings() {
     QSettings s;
-    s.setValue("dictionary/use_llm", useLlmCheckBox_->isChecked());
-    s.setValue("dictionary/llm_prompt", llmPromptEdit_->text());
+    s.setValue("dictionary/llm_prompt", llmPromptEdit_->toPlainText());
     s.setValue("dictionary/service", serviceCombo_->currentData().toString());
 
     // LibreTranslate

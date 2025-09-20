@@ -502,11 +502,11 @@ void MainWindow::onDictionaryLookup(const QString& term) {
     if (!chatDock_) return;
 
     QSettings s;
-    const bool useLlm = s.value("dictionary/use_llm", false).toBool();
+    const QString service = s.value("dictionary/service", "llm").toString();
 
     showChatPanel();
 
-    if (useLlm) {
+    if (service == "llm") {
         if (llm_) {
             QList<QPair<QString,QString>> msgs;
             QString prompt = s.value("dictionary/llm_prompt", tr("Forneça o significado, a etimologia e os sinônimos da palavra: {palavra}")).toString();
@@ -529,11 +529,7 @@ void MainWindow::onDictionaryLookup(const QString& term) {
                 });
             });
         }
-        return;
-    }
-
-    const QString service = s.value("dictionary/service", "libre").toString();
-    if (service == "libre") {
+    } else if (service == "libre") {
         const QString apiUrl = s.value("dictionary/libre/api_url", "https://libretranslate.de/translate").toString();
         const QString apiKey = s.value("dictionary/libre/api_key").toString();
         const QString sourceLang = s.value("dictionary/libre/source_lang", "en").toString();
