@@ -181,11 +181,10 @@ add_custom_target(github_release
     COMMAND git add -A
     COMMAND git commit -m "Release version ${PROJECT_VERSION}"
     COMMAND git push
-    COMMAND git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}" --force
+    COMMAND git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}"
     COMMAND git push origin "v${PROJECT_VERSION}"
-    COMMAND ${GH_BIN} release create "v${PROJECT_VERSION}" --title "Release v${PROJECT_VERSION}" --notes "See CHANGELOG.md for details."
-    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
-    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage.zsync"
+#    COMMAND ${GH_BIN} release create "v${PROJECT_VERSION}" --title "Release v${PROJECT_VERSION}" --notes "See CHANGELOG.md for details."
+#    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
     COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${CMAKE_SOURCE_DIR}/APPIMAGE.md"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Creating GitHub release and uploading artifacts for v${PROJECT_VERSION}"
