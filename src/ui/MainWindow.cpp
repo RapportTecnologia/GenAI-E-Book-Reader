@@ -5,6 +5,7 @@
 #include "ui/SummaryDialog.h"
 #include "ui/LlmSettingsDialog.h"
 #include "ui/EmbeddingSettingsDialog.h"
+#include "ui/DictionarySettingsDialog.h"
 #include "ui/ChatDock.h"
 #include "ui/AboutDialog.h"
 #include <QApplication>
@@ -501,58 +502,68 @@ void MainWindow::onDictionaryLookup(const QString& term) {
     if (!chatDock_) return;
 
     QSettings s;
-    const QString apiUrl = s.value("dictionary/api_url", "https://libretranslate.de/translate").toString();
-    const QString sourceLang = s.value("dictionary/source_lang", "en").toString();
-    const QString targetLang = s.value("dictionary/target_lang", "pt").toString();
-
-    if (apiUrl.isEmpty()) {
-        if (chatDock_)
-            chatDock_->appendAssistant(tr("[dicionário] A URL da API do dicionário não está configurada."));
-        return;
-    }
+    const QString service = s.value("dictionary/service", "libre").toString();
 
     showChatPanel();
-    statusBar()->showMessage(tr("Consultando dicionário..."));
 
-    QUrl url(apiUrl);
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    if (service == "libre") {
+        const QString apiUrl = s.value("dictionary/libre/api_url", "https://libretranslate.de/translate").toString();
+        const QString apiKey = s.value("dictionary/libre/api_key").toString();
+        const QString sourceLang = s.value("dictionary/libre/source_lang", "en").toString();
+        const QString targetLang = s.value("dictionary/libre/target_lang", "pt").toString();
 
-    QJsonObject json;
-    json["q"] = term;
-    json["source"] = sourceLang;
-    json["target"] = targetLang;
-
-    QJsonDocument doc(json);
-    QByteArray data = doc.toJson();
-
-    QNetworkReply* reply = netManager_->post(request, data);
-
-    connect(reply, &QNetworkReply::finished, this, [this, reply, term]() {
-        statusBar()->clearMessage();
-        if (reply->error() != QNetworkReply::NoError) {
-            if (chatDock_)
-                chatDock_->appendAssistant(tr("[dicionário] Erro: %1").arg(reply->errorString()));
-            reply->deleteLater();
+        if (apiUrl.isEmpty()) {
+            chatDock_->appendAssistant(tr("[dicionário] A URL da API do LibreTranslate não está configurada."));
             return;
         }
 
-        const QByteArray responseData = reply->readAll();
-        const QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
-        const QJsonObject jsonObj = jsonDoc.object();
-        const QString translatedText = jsonObj.value("translatedText").toString();
+        statusBar()->showMessage(tr("Consultando dicionário (LibreTranslate)..."));
 
-        if (chatDock_) {
+        QUrl url(apiUrl);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        if (!apiKey.isEmpty()) {
+            request.setRawHeader("Authorization", "Bearer " + apiKey.toUtf8());
+        }
+
+        QJsonObject json;
+        json["q"] = term;
+        json["source"] = sourceLang;
+        json["target"] = targetLang;
+
+        QJsonDocument doc(json);
+        QByteArray data = doc.toJson();
+
+        QNetworkReply* reply = netManager_->post(request, data);
+
+        connect(reply, &QNetworkReply::finished, this, [this, reply, term]() {
+            statusBar()->clearMessage();
+            if (reply->error() != QNetworkReply::NoError) {
+                chatDock_->appendAssistant(tr("[dicionário] Erro: %1").arg(reply->errorString()));
+                reply->deleteLater();
+                return;
+            }
+
+            const QByteArray responseData = reply->readAll();
+            const QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+            const QJsonObject jsonObj = jsonDoc.object();
+            const QString translatedText = jsonObj.value("translatedText").toString();
+
             if (!translatedText.isEmpty() && translatedText.toLower() != term.toLower()) {
                 chatDock_->appendAssistant(QString("[dicionário] %1: %2").arg(term, translatedText));
             } else {
                 chatDock_->appendAssistant(tr("[dicionário] Nenhuma tradução encontrada para '%1'.").arg(term));
             }
-        }
+            
+            reply->deleteLater();
+            saveChatForCurrentFile();
+        });
 
-        reply->deleteLater();
-        saveChatForCurrentFile();
-    });
+    } else if (service == "omw") {
+        chatDock_->appendAssistant(tr("[dicionário] O serviço Open Multilingual Wordnet (OMW) ainda não está implementado."));
+    } else {
+        chatDock_->appendAssistant(tr("[dicionário] Serviço de dicionário desconhecido ou não configurado."));
+    }
 }
 
 void MainWindow::onRequestRebuildEmbeddings() {
@@ -747,6 +758,10 @@ void MainWindow::createActions() {
     actEmbeddingSettings_ = new QAction(tr("Configurar Embeddings..."), this);
     connect(actEmbeddingSettings_, &QAction::triggered, this, &MainWindow::openEmbeddingSettings);
     menuEmb->addAction(actEmbeddingSettings_);
+
+    actDictionarySettings_ = new QAction(tr("Configurar Dicionários..."), this);
+    connect(actDictionarySettings_, &QAction::triggered, this, &MainWindow::openDictionarySettings);
+    menuConfig->addAction(actDictionarySettings_);
 
     auto* menuEdit = menuBar()->addMenu(tr("Editar"));
     menuEdit->addAction(actSelText_);
@@ -1688,6 +1703,11 @@ void MainWindow::openLlmSettings() {
         if (llm_) llm_->reloadSettings();
         statusBar()->showMessage(tr("Configurações de LLM atualizadas."), 2000);
     }
+}
+
+void MainWindow::openDictionarySettings() {
+    DictionarySettingsDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::openEmbeddingSettings() {

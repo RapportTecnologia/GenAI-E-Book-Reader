@@ -52,7 +52,7 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Chat com IA (OpenAI) para explicar e resumir seleções.
 
 ## 0.1.6 – RAG, MathJax e Markdown
-- RAG (experimental):
+- RAG :
   - Risco conhecido: sobrecarga de recursos em documentos grandes causando encerramento prematuro; mitigado por etapas/pausas
   - UI para ajuste fino de chunking/batching (chunk size, overlap, batch size)
   - Execução por etapas (pages per stage) e pausa entre lotes (throttling)

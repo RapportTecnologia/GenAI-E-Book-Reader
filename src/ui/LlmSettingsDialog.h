@@ -37,9 +37,4 @@ private:
     QPlainTextEdit* promptChat_ {nullptr};
 
     QDialogButtonBox* buttons_ {nullptr};
-
-    // Dictionary settings
-    QLineEdit* dictApiUrlEdit_ {nullptr};
-    QLineEdit* dictSourceLangEdit_ {nullptr};
-    QLineEdit* dictTargetLangEdit_ {nullptr};
 };

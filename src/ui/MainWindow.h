@@ -28,6 +28,7 @@ class PdfViewerWidget;
 class LlmClient;
 class SummaryDialog;
 class ChatDock;
+class DictionarySettingsDialog;
 
 #include "reader/Reader.h"
 
@@ -65,6 +66,7 @@ private slots:
     void setWheelZoomPreference();
     void openLlmSettings();
     void openEmbeddingSettings();
+    void openDictionarySettings();
     void showChatPanel();
     void onChatSendMessage(const QString& text);
     void onChatSaveTranscript(const QString& text);
@@ -162,6 +164,7 @@ private:
     QAction* actRecentConfig_ {nullptr};
     QAction* actLlmSettings_ {nullptr};
     QAction* actEmbeddingSettings_ {nullptr};
+    QAction* actDictionarySettings_ {nullptr};
     QAction* actAbout_ {nullptr};
     // TOC toolbar actions
     QAction* actTocModePages_ {nullptr};
