@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['totalpages_0',['totalPages',['../d4/d22/structgenai_1_1OpenResult.html#a7d263e4f7790204af8e580d91e88bc7b',1,'genai::OpenResult']]]
+  ['score_0',['score',['../d9/d40/structVectorIndex_1_1Hit.html#a34b27cae340a9415c0b7ff0a7b4f475b',1,'VectorIndex::Hit']]],
+  ['site_1',['site',['../d3/d5b/structgenai_1_1DeveloperInfo.html#a2581489aec7b43bcd04530d527f91948',1,'genai::DeveloperInfo']]]
 ];

@@ -2,13 +2,14 @@ var searchData=
 [
   ['rebuildrequested_0',['rebuildRequested',['../d0/d54/classEmbeddingSettingsDialog.html#a99f22d72d3e0b3f53f63d3e62c27f6f3',1,'EmbeddingSettingsDialog']]],
   ['reloadsettings_1',['reloadSettings',['../dd/dd6/classLlmClient.html#a98a5b207968516e32be810ec56fb9173',1,'LlmClient']]],
-  ['requestpause_2',['requestPause',['../de/d9c/classEmbeddingIndexer.html#a47afb951c90b357c8d0b956cdd5d9b32',1,'EmbeddingIndexer']]],
-  ['requestrebuildembeddings_3',['requestRebuildEmbeddings',['../dc/ddc/classPdfViewerWidget.html#a6af93414bcaf055dbec3cf9f8587bec0',1,'PdfViewerWidget']]],
-  ['requestresume_4',['requestResume',['../de/d9c/classEmbeddingIndexer.html#ad96ee1dcb367944a388940aba2c20e69',1,'EmbeddingIndexer']]],
-  ['requestsendimagetochat_5',['requestSendImageToChat',['../dc/ddc/classPdfViewerWidget.html#ac5a87fd3775f78d40828e56e2cf253e1',1,'PdfViewerWidget']]],
-  ['requestsendtochat_6',['requestSendToChat',['../dc/ddc/classPdfViewerWidget.html#abbf4cac986c53df53789228b07ad31c5',1,'PdfViewerWidget']]],
-  ['requestshowsavedchats_7',['requestShowSavedChats',['../d0/daf/classChatDock.html#a3d69db425d00daa1345cdb69fe10dcdf',1,'ChatDock']]],
-  ['requestsummarize_8',['requestSummarize',['../dc/ddc/classPdfViewerWidget.html#a05a240adfab63efc598a6f0631ce3e45',1,'PdfViewerWidget']]],
-  ['requestsynonyms_9',['requestSynonyms',['../dc/ddc/classPdfViewerWidget.html#a353cd07d7a0423a770e5c689f408195c',1,'PdfViewerWidget']]],
-  ['run_10',['run',['../de/d9c/classEmbeddingIndexer.html#a1a4bcabcd8a4adabcb181ceecb2aad12',1,'EmbeddingIndexer']]]
+  ['requestdictionarylookup_2',['requestDictionaryLookup',['../dc/ddc/classPdfViewerWidget.html#a8cfed6e0c7b19ee4a2862a29943096fe',1,'PdfViewerWidget']]],
+  ['requestpause_3',['requestPause',['../de/d9c/classEmbeddingIndexer.html#a47afb951c90b357c8d0b956cdd5d9b32',1,'EmbeddingIndexer']]],
+  ['requestrebuildembeddings_4',['requestRebuildEmbeddings',['../dc/ddc/classPdfViewerWidget.html#a6af93414bcaf055dbec3cf9f8587bec0',1,'PdfViewerWidget']]],
+  ['requestresume_5',['requestResume',['../de/d9c/classEmbeddingIndexer.html#ad96ee1dcb367944a388940aba2c20e69',1,'EmbeddingIndexer']]],
+  ['requestsendimagetochat_6',['requestSendImageToChat',['../dc/ddc/classPdfViewerWidget.html#ac5a87fd3775f78d40828e56e2cf253e1',1,'PdfViewerWidget']]],
+  ['requestsendtochat_7',['requestSendToChat',['../dc/ddc/classPdfViewerWidget.html#abbf4cac986c53df53789228b07ad31c5',1,'PdfViewerWidget']]],
+  ['requestshowsavedchats_8',['requestShowSavedChats',['../d0/daf/classChatDock.html#a3d69db425d00daa1345cdb69fe10dcdf',1,'ChatDock']]],
+  ['requestsummarize_9',['requestSummarize',['../dc/ddc/classPdfViewerWidget.html#a05a240adfab63efc598a6f0631ce3e45',1,'PdfViewerWidget']]],
+  ['requestsynonyms_10',['requestSynonyms',['../dc/ddc/classPdfViewerWidget.html#a353cd07d7a0423a770e5c689f408195c',1,'PdfViewerWidget']]],
+  ['run_11',['run',['../de/d9c/classEmbeddingIndexer.html#a1a4bcabcd8a4adabcb181ceecb2aad12',1,'EmbeddingIndexer']]]
 ];

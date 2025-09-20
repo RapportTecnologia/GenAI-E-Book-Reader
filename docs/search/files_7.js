@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['summarydialog_2ecpp_0',['SummaryDialog.cpp',['../d1/d40/SummaryDialog_8cpp.html',1,'']]],
-  ['summarydialog_2eh_1',['SummaryDialog.h',['../d7/d5e/SummaryDialog_8h.html',1,'']]]
+  ['reader_2eh_0',['Reader.h',['../d5/d49/Reader_8h.html',1,'']]],
+  ['readme_2emd_1',['README.md',['../da/ddd/README_8md.html',1,'']]],
+  ['roadmap_2emd_2',['ROADMAP.md',['../d9/d59/ROADMAP_8md.html',1,'']]]
 ];

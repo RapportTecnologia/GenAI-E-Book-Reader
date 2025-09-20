@@ -1,9 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,55,80,80"/>
-<area shape="rect" id="Node000001" href="$d0/d54/classEmbeddingSettingsDialog.html" title=" " alt="" coords="128,5,319,31"/>
-<area shape="poly" id="edge2_Node000000_Node000001" title=" " alt="" coords="92,50,127,39,170,28,171,33,129,45,94,55"/>
-<area shape="rect" id="Node000002" href="$d0/d17/classLlmSettingsDialog.html" title=" " alt="" coords="153,55,294,80"/>
-<area shape="poly" id="edge3_Node000000_Node000002" title=" " alt="" coords="93,65,153,65,153,70,93,70"/>
-<area shape="rect" id="Node000003" href="$da/d99/classSummaryDialog.html" title=" " alt="" coords="160,104,287,129"/>
-<area shape="poly" id="edge4_Node000000_Node000003" title=" " alt="" coords="94,79,129,89,175,101,173,106,127,94,93,84"/>
+<area shape="rect" id="Node000000" href="$d4/db7/classgenai_1_1Reader.html" title="Interface do leitor de e&#45;books do MVP." alt="" coords="5,5,117,31"/>
+<area shape="rect" id="Node000001" href="$d5/de3/classgenai_1_1DummyReader.html" title="Implementação de placeholder (sem renderização real)." alt="" coords="165,5,329,31"/>
+<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="131,15,165,15,165,21,131,21"/>
 </map>

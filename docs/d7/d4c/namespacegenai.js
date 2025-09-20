@@ -1,6 +1,7 @@
 var namespacegenai =
 [
     [ "AppInfo", "de/d5f/classgenai_1_1AppInfo.html", null ],
+    [ "DeveloperInfo", "d3/d5b/structgenai_1_1DeveloperInfo.html", "d3/d5b/structgenai_1_1DeveloperInfo" ],
     [ "DummyReader", "d5/de3/classgenai_1_1DummyReader.html", "d5/de3/classgenai_1_1DummyReader" ],
     [ "Location", "dd/d88/structgenai_1_1Location.html", "dd/d88/structgenai_1_1Location" ],
     [ "OpenResult", "d4/d22/structgenai_1_1OpenResult.html", "d4/d22/structgenai_1_1OpenResult" ],

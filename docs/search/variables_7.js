@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ok_0',['ok',['../d4/d22/structgenai_1_1OpenResult.html#ae7a759a31a55cadc8d400de1f6219f8f',1,'genai::OpenResult']]]
+  ['name_0',['name',['../d3/d5b/structgenai_1_1DeveloperInfo.html#a98979b9a2f6a35d50609dcdb13cadddf',1,'genai::DeveloperInfo::name'],['../de/d5f/classgenai_1_1AppInfo.html#a1e500fae80dafb28e5e73934cdfbfccc',1,'genai::AppInfo::Name']]]
 ];

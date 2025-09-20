@@ -19,6 +19,7 @@ var classPdfViewerWidget =
     [ "ocrSelectionText", "dc/ddc/classPdfViewerWidget.html#a9fa285223abb0061d73494bf5f9c5dd9", null ],
     [ "openFile", "dc/ddc/classPdfViewerWidget.html#a25c6d5268c0ef409794040f830201e27", null ],
     [ "prevPage", "dc/ddc/classPdfViewerWidget.html#a580dc0ed0d4a36b83bed761dca4df435", null ],
+    [ "requestDictionaryLookup", "dc/ddc/classPdfViewerWidget.html#a8cfed6e0c7b19ee4a2862a29943096fe", null ],
     [ "requestRebuildEmbeddings", "dc/ddc/classPdfViewerWidget.html#a6af93414bcaf055dbec3cf9f8587bec0", null ],
     [ "requestSendImageToChat", "dc/ddc/classPdfViewerWidget.html#ac5a87fd3775f78d40828e56e2cf253e1", null ],
     [ "requestSendToChat", "dc/ddc/classPdfViewerWidget.html#abbf4cac986c53df53789228b07ad31c5", null ],

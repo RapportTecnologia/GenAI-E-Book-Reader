@@ -3,9 +3,9 @@ var indexSectionsWithContent =
   0: "0123456789:abcdefghiklmnopqrstuvwxz~é–—",
   1: "acdehlmoprsv",
   2: "g",
-  3: "acelmprsv",
+  3: "acdelmprsv",
   4: "acdefghilmnoprstvwz~",
-  5: "abcdimnopstv",
+  5: "abcdeimnopstv",
   6: "ms",
   7: "acdlnrt",
   8: "bcdegmpr—"

@@ -1,9 +1,9 @@
 var searchData=
 [
   ['l2_0',['L2',['../d3/db0/classVectorIndex.html#ace2651b1881aa059c7589434ebbc4174a7e6aa2d53f6ee2b1a34b017fa403cb76',1,'VectorIndex']]],
-  ['leitura_20básica_20entregue_20na_20v0_201_200_1',['0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md74',1,'']]],
-  ['leitura_20e_20integração_20entregue_20em_202025_2009_2014_2',['0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md77',1,'']]],
-  ['leitura_20entregue_20em_202025_2008_2018_3',['0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md75',1,'']]],
+  ['leitura_20básica_20entregue_20na_20v0_201_200_1',['0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md78',1,'']]],
+  ['leitura_20e_20integração_20entregue_20em_202025_2009_2014_2',['0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md81',1,'']]],
+  ['leitura_20entregue_20em_202025_2008_2018_3',['0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md79',1,'']]],
   ['licença_4',['Licença',['../index.html#autotoc_md21',1,'']]],
   ['limitações_5',['Estado atual e limitações',['../index.html#autotoc_md11',1,'']]],
   ['linux_6',['linux',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md37',1,'Build da Aplicação (Linux)'],['../index.html#autotoc_md13',1,'Como rodar (Linux)'],['../index.html#autotoc_md16',1,'Linux']]],

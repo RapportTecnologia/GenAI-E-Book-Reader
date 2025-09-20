@@ -6,5 +6,7 @@ var searchData=
   ['opcional_20com_20phplist_20env_3',['Integração opcional com PHPList (.env)',['../index.html#autotoc_md18',1,'']]],
   ['open_4',['open',['../d4/db7/classgenai_1_1Reader.html#a28ff78317ab0f4ea7c935e5de49932a2',1,'genai::Reader::open()'],['../d5/de3/classgenai_1_1DummyReader.html#a150d13af5423d3a59fa0e95286612926',1,'genai::DummyReader::open()']]],
   ['openfile_5',['openFile',['../dc/ddc/classPdfViewerWidget.html#a25c6d5268c0ef409794040f830201e27',1,'PdfViewerWidget']]],
-  ['openresult_6',['OpenResult',['../d4/d22/structgenai_1_1OpenResult.html',1,'genai']]]
+  ['openpath_6',['openPath',['../d6/d1a/classMainWindow.html#aaa542ddf8538840d5823d58191ff0d40',1,'MainWindow']]],
+  ['openresult_7',['OpenResult',['../d4/d22/structgenai_1_1OpenResult.html',1,'genai']]],
+  ['otimização_20e_20estabilidade_8',['0.1.6 - Otimização e Estabilidade',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md82',1,'']]]
 ];

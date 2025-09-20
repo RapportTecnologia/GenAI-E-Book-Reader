@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['version_0',['Version',['../de/d5f/classgenai_1_1AppInfo.html#a6fbbd62c44efd2876818ec1df04a826f',1,'genai::AppInfo']]]
+  ['totalpages_0',['totalPages',['../d4/d22/structgenai_1_1OpenResult.html#a7d263e4f7790204af8e580d91e88bc7b',1,'genai::OpenResult']]]
 ];

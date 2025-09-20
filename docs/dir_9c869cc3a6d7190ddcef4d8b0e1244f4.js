@@ -1,7 +1,11 @@
 var dir_9c869cc3a6d7190ddcef4d8b0e1244f4 =
 [
+    [ "AboutDialog.cpp", "d6/d30/AboutDialog_8cpp.html", null ],
+    [ "AboutDialog.h", "d7/da9/AboutDialog_8h.html", "d7/da9/AboutDialog_8h" ],
     [ "ChatDock.cpp", "d8/d99/ChatDock_8cpp.html", null ],
     [ "ChatDock.h", "d4/d12/ChatDock_8h.html", "d4/d12/ChatDock_8h" ],
+    [ "DictionarySettingsDialog.cpp", "d4/d63/DictionarySettingsDialog_8cpp.html", null ],
+    [ "DictionarySettingsDialog.h", "d4/dff/DictionarySettingsDialog_8h.html", "d4/dff/DictionarySettingsDialog_8h" ],
     [ "EmbeddingSettingsDialog.cpp", "dc/d52/EmbeddingSettingsDialog_8cpp.html", null ],
     [ "EmbeddingSettingsDialog.h", "d4/d53/EmbeddingSettingsDialog_8h.html", "d4/d53/EmbeddingSettingsDialog_8h" ],
     [ "LlmSettingsDialog.cpp", "d5/dff/LlmSettingsDialog_8cpp.html", null ],

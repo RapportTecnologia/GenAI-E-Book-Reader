@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['main_2ecpp_0',['main.cpp',['../df/d0a/main_8cpp.html',1,'']]],
-  ['mainwindow_2ecpp_1',['MainWindow.cpp',['../d3/db7/MainWindow_8cpp.html',1,'']]],
-  ['mainwindow_2eh_2',['MainWindow.h',['../da/d9c/MainWindow_8h.html',1,'']]],
-  ['mainwindow_5fllm_2ecpp_3',['MainWindow_llm.cpp',['../d5/d5a/MainWindow__llm_8cpp.html',1,'']]]
+  ['llmclient_2ecpp_0',['LlmClient.cpp',['../dc/df7/LlmClient_8cpp.html',1,'']]],
+  ['llmclient_2eh_1',['LlmClient.h',['../d3/da6/LlmClient_8h.html',1,'']]],
+  ['llmsettingsdialog_2ecpp_2',['LlmSettingsDialog.cpp',['../d5/dff/LlmSettingsDialog_8cpp.html',1,'']]],
+  ['llmsettingsdialog_2eh_3',['LlmSettingsDialog.h',['../d5/d11/LlmSettingsDialog_8h.html',1,'']]]
 ];
