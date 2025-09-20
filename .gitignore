@@ -1,7 +1,16 @@
 .cache
-build*/
-dist*/
-AppDir*/
+build/
+build-*/
+*.user
+*.AppImage
+AppDir/
+
+# Windows cross-compilation artifacts
+build-windows/
+dist-windows/
+qt-win/
+mingw-toolchain.cmake
+.venv-windows-build/
 .env
 tmp/
 *.tmp
