@@ -106,3 +106,133 @@ add_custom_target(dist
   COMMENT "Creating distribution artifacts in ${DIST_DIR}"
 )
 
+# Make the main target depend on icon creation
+add_dependencies(genai_reader create_icons)
+
+# Install rule for desktop integration
+install(FILES resources/appimage/genai-reader.desktop DESTINATION share/applications)
+install(DIRECTORY "${APPDIR}/usr/share/icons/hicolor/" DESTINATION share/icons)
+
+# ----------------------------------------------------------------------------
+# GitHub Release Target
+# Creates a git tag for the current version and pushes it to origin.
+# Usage:
+#   cmake --build . --target github_release
+# ----------------------------------------------------------------------------
+find_program(GH_BIN gh)
+
+if(NOT GH_BIN)
+  message(WARNING "GitHub CLI 'gh' not found. The 'github_release' target will not be able to create releases on GitHub.")
+endif()
+
+add_custom_target(github_release
+    DEPENDS docs dist
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git add -A
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git commit -m "Release version ${PROJECT_VERSION}"
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}" --force
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push origin "v${PROJECT_VERSION}" --force
+
+    # Extract release notes from CHANGELOG.md
+    COMMAND ${CMAKE_COMMAND} -E echo "Extracting release notes for v${PROJECT_VERSION}..."
+    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ExtractChangelog.cmake"
+
+    # Create GitHub release
+    COMMAND ${GH_BIN} release create "v${PROJECT_VERSION}" --title "Release v${PROJECT_VERSION}" --notes-file "${CMAKE_BINARY_DIR}/release_notes.md"
+    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
+    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${CMAKE_SOURCE_DIR}/APPIMAGE.md"
+
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Creating GitHub release and uploading artifacts for v${PROJECT_VERSION}"
+    VERBATIM
+)
+
+if(WIN32)
+  set(DIST_DIR "${CMAKE_SOURCE_DIR}/dist")
+  set(PACKAGE_DIR "${DIST_DIR}/package")
+  set(DIST_BASENAME "genai_reader-v${PROJECT_VERSION}-windows-x86_64")
+  set(DIST_ARCHIVE "${DIST_DIR}/${DIST_BASENAME}.zip")
+
+  find_program(SEVENZIP_BIN 7z)
+  if(NOT SEVENZIP_BIN)
+    message(WARNING "7-Zip (7z) not found. The 'dist-windows' target might fail. Please install 7-Zip and add it to your PATH.")
+  endif()
+
+  add_custom_target(dist-windows
+    DEPENDS genai_reader
+    COMMAND ${CMAKE_COMMAND} -E rm -rf "${PACKAGE_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${PACKAGE_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:genai_reader>" "${PACKAGE_DIR}/"
+    COMMENT "Preparing Windows distribution package..."
+  )
+
+  if(CMAKE_CROSSCOMPILING)
+    # Cross-compiling from Linux: manually copy dependencies
+    message(STATUS "Cross-compiling for Windows: Manual dependency copy.")
+
+    # Find MinGW runtime libs
+    execute_process(COMMAND "${CMAKE_CXX_COMPILER}" -print-libgcc-file-name OUTPUT_VARIABLE LIBGCC_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+    get_filename_component(MINGW_LIB_DIR "${LIBGCC_PATH}" DIRECTORY)
+
+    set(MINGW_DLLS
+      "${MINGW_LIB_DIR}/libstdc++-6.dll"
+      "${MINGW_LIB_DIR}/libgcc_s_seh-1.dll"
+      "${MINGW_LIB_DIR}/libwinpthread-1.dll"
+    )
+
+    add_custom_command(TARGET dist-windows POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MINGW_DLLS} "${PACKAGE_DIR}"
+      COMMENT "Copying MinGW runtime DLLs..."
+    )
+
+    # Manually copy Qt DLLs and plugins
+    set(QT_BIN_DIR "${CMAKE_PREFIX_PATH}/bin")
+    set(QT_PLUGINS_DIR "${CMAKE_PREFIX_PATH}/plugins")
+    set(QT_TRANSLATIONS_DIR "${CMAKE_PREFIX_PATH}/translations")
+
+    set(QT_DLLS
+      "${QT_BIN_DIR}/Qt6Core.dll"
+      "${QT_BIN_DIR}/Qt6Gui.dll"
+      "${QT_BIN_DIR}/Qt6Widgets.dll"
+      "${QT_BIN_DIR}/Qt6Network.dll"
+      "${QT_BIN_DIR}/Qt6Pdf.dll"
+      "${QT_BIN_DIR}/Qt6WebEngineCore.dll"
+      "${QT_BIN_DIR}/Qt6WebEngineWidgets.dll"
+      "${QT_BIN_DIR}/Qt6Positioning.dll"
+      "${QT_BIN_DIR}/Qt6WebChannel.dll"
+      "${QT_BIN_DIR}/D3DCompiler_47.dll"
+      "${QT_BIN_DIR}/libEGL.dll"
+      "${QT_BIN_DIR}/libGLESv2.dll"
+      "${QT_BIN_DIR}/opengl32sw.dll"
+    )
+
+    add_custom_command(TARGET dist-windows POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QT_DLLS} "${PACKAGE_DIR}"
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${QT_PLUGINS_DIR}/platforms"         "${PACKAGE_DIR}/platforms"
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${QT_PLUGINS_DIR}/imageformats"      "${PACKAGE_DIR}/imageformats"
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${QT_PLUGINS_DIR}/styles"            "${PACKAGE_DIR}/styles"
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${QT_PLUGINS_DIR}/tls"               "${PACKAGE_DIR}/tls"
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${QT_BIN_DIR}/resources"           "${PACKAGE_DIR}/resources"
+      COMMAND ${CMAKE_COMMAND} -E copy_directory "${QT_TRANSLATIONS_DIR}"           "${PACKAGE_DIR}/translations"
+      COMMENT "Copying Qt DLLs and plugins..."
+    )
+
+  else()
+    # Native Windows build: use windeployqt
+    message(STATUS "Native Windows build: Using windeployqt.")
+    find_program(WINDEPLOYQT_BIN windeployqt HINTS "${CMAKE_PREFIX_PATH}/bin" REQUIRED)
+    add_custom_command(TARGET dist-windows POST_BUILD
+      COMMAND "${WINDEPLOYQT_BIN}" --release --compiler-runtime --no-translations --dir "${PACKAGE_DIR}" "${PACKAGE_DIR}/genai_reader.exe"
+      COMMENT "Running windeployqt..."
+    )
+  endif()
+
+  # Final step: create the ZIP archive
+  add_custom_command(TARGET dist-windows POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E chdir "${PACKAGE_DIR}" ${SEVENZIP_BIN} a "../${DIST_BASENAME}.zip" ".\*" -r
+    COMMAND ${CMAKE_COMMAND} -E echo "Created Windows package: ${DIST_ARCHIVE}"
+    COMMENT "Creating ZIP archive..."
+  )
+endif()
+
+
