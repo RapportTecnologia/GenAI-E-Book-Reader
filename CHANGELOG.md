@@ -6,16 +6,18 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [Unreleased]
 
-### Added
-- Compilação para o Windows, ainda em implementação
+## [0.1.7] - 2025-09-20
 
-### Changed
+### Added
+- Compilação para o Windows, ainda em implementação, Ajuda será bem vinda. 
+- Ajustado painel de Informações da Aplicação
+- Carga de e-books pela linha de comando ou menu no explorador (Abrir Com).
+- Associação de extenção com o applicativo.
+- Dicionário iniciado, funcionando apenas com LLM. preciso testar com APIs especializadas.
 
 ## [0.1.6] - 2025-09-18
 
 ### Added
-- Carga de e-books pela linha de comando ou menu no explorador (Abrir Com).
-- Associação de extenção com o applicativo.
 - Indexação de embeddings por documento com controle de chunking/batching e escrita incremental. Issue #3
 - Busca por frases usando embeddings (fallback semântico quando a busca por texto não encontra resultados), com opções rápidas: métrica (cosine/dot/L2), Top‑K e limiares. Issue #3
 - Botão de Título central na barra superior exibindo o nome do documento atual e menu contextual com ações: abrir diretório, adicionar ao Calibre com migração de embeddings e renomear arquivo com migração. Issues #6, #7, #8

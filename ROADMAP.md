@@ -63,11 +63,15 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Busca full-text no documento
 
 ## 0.1.7 – Anotações e Dicionário
-  - Escrita incremental de vetores/ids/metadados
-  - Documentação de uso e limitações
-- Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,
+- Iniciado a implementação do dicionário, funcionando com LLM apenas
+- Ajustado painel de Informações da Aplicação
+
 
 ## 0.1.8 – TTS e Controles
+- Continuar o desenvolvimento: Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,
+
+- Escrita incremental de vetores/ids/metadados
+- Documentação de uso e limitações
 - Reprodução TTS de seleção atual
 - Controles de velocidade/pausa/retomar
 - Output device selection
