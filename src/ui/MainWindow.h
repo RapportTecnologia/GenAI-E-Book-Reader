@@ -37,10 +37,10 @@ class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget* parent = nullptr);
     bool openPath(const QString& filePath);
+    void openFile();
     ~MainWindow() override;
 
 private slots:
-    void openFile();
     void saveAs();
     void closeDocument();
     void nextPage();

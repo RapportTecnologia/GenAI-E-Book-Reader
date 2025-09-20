@@ -1,4 +1,4 @@
-#include "ui/PdfViewerWidget.h"
+#include "PdfViewerWidget.h"
 
 #include <QPdfDocument>
 #include <QPdfView>
@@ -10,6 +10,7 @@
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include <QMouseEvent>
+#include <QRubberBand>
 #include <QGuiApplication>
 #include <QClipboard>
 #include <QFileDialog>
@@ -20,6 +21,11 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QUuid>
+#if __has_include(<QtPdf/QPdfSelection>)
+#  include <QtPdf/QPdfSelection>
+#elif __has_include(<QPdfSelection>)
+#  include <QPdfSelection>
+#endif
 #include <QVariantAnimation>
 #include <QEasingCurve>
 #include <QToolTip>
@@ -62,28 +68,21 @@ PdfViewerWidget::PdfViewerWidget(QWidget* parent)
 QString PdfViewerWidget::selectionText(bool* ok) {
     if (ok) *ok = false;
     QString out;
-    if (selMode_ == SelectionMode::Text) {
+    // Priority 1: Native text selection (for Auto and Text modes)
+    if (selMode_ == SelectionMode::Auto || selMode_ == SelectionMode::Text) {
         if (!selectedText_.trimmed().isEmpty()) {
             out = selectedText_.trimmed();
             if (ok) *ok = true;
             return out;
         }
-        // Try native extraction when available
-        out = extractTextFromSelectionNative().trimmed();
-        if (!out.isEmpty()) { if (ok) *ok = true; return out; }
-        // Fallback OCR if rectangle exists
     }
-    if (selMode_ == SelectionMode::Rect && selRect_.isValid() && !selRect_.isEmpty()) {
-        bool ocrOk = false;
-        out = ocrSelectionText(&ocrOk).trimmed();
-        if (ok) *ok = ocrOk && !out.isEmpty();
-        return out;
-    }
-    // Attempt OCR even if mode mismatch but we have a rectangle
+
+    // Priority 2: OCR from rectangular selection (for all modes if no text was found)
     if (selRect_.isValid() && !selRect_.isEmpty()) {
         bool ocrOk = false;
         out = ocrSelectionText(&ocrOk).trimmed();
         if (ok) *ok = ocrOk && !out.isEmpty();
+        return out;
     }
     return out;
 }
@@ -395,7 +394,7 @@ void PdfViewerWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void PdfViewerWidget::mouseReleaseEvent(QMouseEvent* event) {
-    if (selecting_ && event->button() == Qt::LeftButton) {
+if (selecting_ && event->button() == Qt::LeftButton) {
         selecting_ = false;
         // For text mode, attempt immediate extraction on current page if API is available
 #ifdef HAS_QPDF_SELECTION
@@ -409,7 +408,7 @@ void PdfViewerWidget::mouseReleaseEvent(QMouseEvent* event) {
         event->accept();
         return;
     }
-    QWidget::mouseReleaseEvent(event);
+QWidget::mouseReleaseEvent(event);
 }
 
 void PdfViewerWidget::copySelection() {
@@ -620,6 +619,17 @@ QString PdfViewerWidget::ocrSelectionText(bool* ok) {
     const QString text = QString::fromUtf8(out).trimmed();
     if (ok) *ok = !text.isEmpty();
     return text;
+}
+
+void PdfViewerWidget::startRectSelection(QMouseEvent* event, QObject* watched) {
+    selecting_ = true;
+    const QPoint start = (watched == view_->viewport()) ? event->pos() : view_->viewport()->mapFrom(view_, event->pos());
+    selStart_ = start;
+    selRect_ = QRect(selStart_, QSize());
+    if (rubber_) {
+        rubber_->setGeometry(selRect_);
+        rubber_->show();
+    }
 }
 
 QString PdfViewerWidget::extractTextFromSelectionNative() {

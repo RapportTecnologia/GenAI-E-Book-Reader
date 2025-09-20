@@ -1,10 +1,13 @@
 #pragma once
 
 #include <QWidget>
-#include <QPdfDocument>
-#include <QPdfView>
-#include <QPdfPageNavigator>
-#include <QRubberBand>
+#include <QString>
+
+// Forward declarations for pointer members to reduce header dependencies
+class QPdfDocument;
+class QPdfView;
+class QPdfPageNavigator;
+class QRubberBand;
 class QLabel;
 class QGraphicsOpacityEffect;
 class QMenu;
@@ -67,6 +70,7 @@ private:
     void setZoomAnimated(double target);
     void showToast(const QString& message);
     void showCopyToast();
+    void startRectSelection(QMouseEvent* event, QObject* watched);
     QString extractTextFromSelectionNative();
 
     QPdfDocument* doc_;

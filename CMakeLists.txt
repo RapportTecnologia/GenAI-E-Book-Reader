@@ -12,7 +12,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Sources
 file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS
-    src/*.cpp
+    "src/*.cpp"
+    "src/ai/*.cpp"
+    "src/ui/*.cpp"
 )
 
 # Require Qt6 with Widgets, PdfWidgets and Network; WebEngineWidgets is optional
@@ -26,7 +28,7 @@ endif()
 
 add_executable(genai_reader ${APP_SOURCES})
 
-target_include_directories(genai_reader PRIVATE include ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(genai_reader PRIVATE include ${CMAKE_SOURCE_DIR}/src ${Qt6_INCLUDE_DIRS})
 
 target_link_libraries(genai_reader PRIVATE Qt6::Widgets Qt6::PdfWidgets Qt6::Network)
 target_link_libraries(genai_reader PRIVATE Qt6::WebEngineWidgets)

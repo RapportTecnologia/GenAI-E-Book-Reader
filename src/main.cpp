@@ -6,7 +6,9 @@
 #include <QTimer>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QSettings>
 #include "ui/MainWindow.h"
+#include "ui/WelcomeDialog.h"
 #include "app/App.h"
 
 int main(int argc, char* argv[]) {
@@ -17,12 +19,12 @@ int main(int argc, char* argv[]) {
     // Set global application icon
     app.setWindowIcon(QIcon(":/app/logo.png"));
 
+    QSettings settings;
+    bool firstRun = settings.value("firstRun", true).toBool();
+    bool openFileDialog = false;
+
     // Main window first so we can size splash relative to it
     MainWindow win;
-    win.setWindowTitle(QString("%1 v%2 — Leitor")
-                           .arg(genai::AppInfo::Name)
-                           .arg(genai::AppInfo::Version));
-    win.resize(1024, 768);
 
     // Splash screen scaled to 60% of main window size
     QPixmap pm(":/app/logo.png");
@@ -37,6 +39,22 @@ int main(int argc, char* argv[]) {
                            .arg(genai::AppInfo::Version),
                        Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
     splash.show();
+
+    if (firstRun) {
+        WelcomeDialog welcomeDialog;
+        if (welcomeDialog.exec() == QDialog::Accepted) {
+            settings.setValue("firstRun", false);
+            if (app.arguments().size() <= 1) {
+                openFileDialog = true;
+            }
+        }
+    }
+
+    win.setWindowTitle(QString("%1 v%2 — Leitor")
+                           .arg(genai::AppInfo::Name)
+                           .arg(genai::AppInfo::Version));
+    win.resize(1024, 768);
+
     app.processEvents();
 
     // Ensure the main window is shown once (timer or click)
@@ -49,6 +67,9 @@ int main(int argc, char* argv[]) {
         // If a file was passed on command line, open it now
         if (app.arguments().size() > 1) {
             win.openPath(app.arguments().at(1));
+        } else if (openFileDialog) {
+            // On first run, after welcome, show file dialog
+            win.openFile();
         }
     };
 
