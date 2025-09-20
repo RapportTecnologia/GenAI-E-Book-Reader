@@ -7,3 +7,6 @@ tmp/
 *.tmp
 SENSIBLE.md
 *.AppImage
+*.log
+.venv*
+qt-win
