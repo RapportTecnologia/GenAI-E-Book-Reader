@@ -497,6 +497,64 @@ void MainWindow::onSearchPrev() {
     statusBar()->showMessage(tr("Resultado %1 de %2").arg(searchResultIdx_+1).arg(searchResultsPages_.size()), 1500);
 }
 
+void MainWindow::onDictionaryLookup(const QString& term) {
+    if (!chatDock_) return;
+
+    QSettings s;
+    const QString apiUrl = s.value("dictionary/api_url", "https://libretranslate.de/translate").toString();
+    const QString sourceLang = s.value("dictionary/source_lang", "en").toString();
+    const QString targetLang = s.value("dictionary/target_lang", "pt").toString();
+
+    if (apiUrl.isEmpty()) {
+        if (chatDock_)
+            chatDock_->appendAssistant(tr("[dicionário] A URL da API do dicionário não está configurada."));
+        return;
+    }
+
+    showChatPanel();
+    statusBar()->showMessage(tr("Consultando dicionário..."));
+
+    QUrl url(apiUrl);
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject json;
+    json["q"] = term;
+    json["source"] = sourceLang;
+    json["target"] = targetLang;
+
+    QJsonDocument doc(json);
+    QByteArray data = doc.toJson();
+
+    QNetworkReply* reply = netManager_->post(request, data);
+
+    connect(reply, &QNetworkReply::finished, this, [this, reply, term]() {
+        statusBar()->clearMessage();
+        if (reply->error() != QNetworkReply::NoError) {
+            if (chatDock_)
+                chatDock_->appendAssistant(tr("[dicionário] Erro: %1").arg(reply->errorString()));
+            reply->deleteLater();
+            return;
+        }
+
+        const QByteArray responseData = reply->readAll();
+        const QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+        const QJsonObject jsonObj = jsonDoc.object();
+        const QString translatedText = jsonObj.value("translatedText").toString();
+
+        if (chatDock_) {
+            if (!translatedText.isEmpty() && translatedText.toLower() != term.toLower()) {
+                chatDock_->appendAssistant(QString("[dicionário] %1: %2").arg(term, translatedText));
+            } else {
+                chatDock_->appendAssistant(tr("[dicionário] Nenhuma tradução encontrada para '%1'.").arg(term));
+            }
+        }
+
+        reply->deleteLater();
+        saveChatForCurrentFile();
+    });
+}
+
 void MainWindow::onRequestRebuildEmbeddings() {
     if (currentFilePath_.isEmpty()) {
         QMessageBox::information(this, tr("Recriar Embeddings"), tr("Abra um documento para recriar os embeddings."));
@@ -1767,7 +1825,8 @@ bool MainWindow::openPath(const QString& file) {
         // Connect context-menu AI actions from the PDF viewer to MainWindow slots
         connect(newViewer, &PdfViewerWidget::requestSynonyms, this, &MainWindow::onRequestSynonyms);
         connect(newViewer, &PdfViewerWidget::requestSummarize, this, &MainWindow::onRequestSummarize);
-        connect(newViewer, &PdfViewerWidget::requestSendToChat, this, &MainWindow::onRequestSendToChat);
+        connect(newViewer, &PdfViewerWidget::requestSendImageToChat, this, &MainWindow::onRequestSendImageToChat);
+        connect(newViewer, &PdfViewerWidget::requestDictionaryLookup, this, &MainWindow::onDictionaryLookup);
         connect(newViewer, &PdfViewerWidget::requestRebuildEmbeddings, this, &MainWindow::onRequestRebuildEmbeddings);
         // Keep status updated (and persistence) when user scrolls/zooms in the PDF viewer
         connect(newViewer, &PdfViewerWidget::scrollChanged, this, &MainWindow::updateStatus);

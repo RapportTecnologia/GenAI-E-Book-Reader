@@ -68,6 +68,18 @@ LlmSettingsDialog::LlmSettingsDialog(QWidget* parent)
     tabs_->addTab(promptSummaries_, tr("Resumos"));
     tabs_->addTab(promptExplanations_, tr("Explicações"));
     tabs_->addTab(promptChat_, tr("Chat"));
+
+    // Dictionary settings tab
+    auto* dictWidget = new QWidget(this);
+    auto* dictForm = new QFormLayout(dictWidget);
+    dictApiUrlEdit_ = new QLineEdit(this);
+    dictSourceLangEdit_ = new QLineEdit(this);
+    dictTargetLangEdit_ = new QLineEdit(this);
+    dictForm->addRow(tr("URL da API"), dictApiUrlEdit_);
+    dictForm->addRow(tr("Idioma de origem (ex: en)"), dictSourceLangEdit_);
+    dictForm->addRow(tr("Idioma de destino (ex: pt)"), dictTargetLangEdit_);
+    tabs_->addTab(dictWidget, tr("Dicionário"));
+
     root->addWidget(tabs_, 1);
 
     // Buttons
@@ -135,6 +147,14 @@ void LlmSettingsDialog::loadFromSettings() {
     promptSummaries_->setPlainText(pSum);
     promptExplanations_->setPlainText(pExp);
     promptChat_->setPlainText(pChat);
+
+    // Dictionary
+    const QString dictApiUrl = s.value("dictionary/api_url", "https://libretranslate.de/translate").toString();
+    const QString dictSourceLang = s.value("dictionary/source_lang", "en").toString();
+    const QString dictTargetLang = s.value("dictionary/target_lang", "pt").toString();
+    dictApiUrlEdit_->setText(dictApiUrl);
+    dictSourceLangEdit_->setText(dictSourceLang);
+    dictTargetLangEdit_->setText(dictTargetLang);
 }
 
 void LlmSettingsDialog::saveToSettings() {
@@ -148,6 +168,11 @@ void LlmSettingsDialog::saveToSettings() {
     s.setValue("ai/prompts/summaries", promptSummaries_->toPlainText());
     s.setValue("ai/prompts/explanations", promptExplanations_->toPlainText());
     s.setValue("ai/prompts/chat", promptChat_->toPlainText());
+
+    // Dictionary
+    s.setValue("dictionary/api_url", dictApiUrlEdit_->text().trimmed());
+    s.setValue("dictionary/source_lang", dictSourceLangEdit_->text().trimmed());
+    s.setValue("dictionary/target_lang", dictTargetLangEdit_->text().trimmed());
 }
 
 void LlmSettingsDialog::accept() {

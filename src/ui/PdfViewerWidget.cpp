@@ -220,6 +220,9 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
                     if (wordCount <= 3 && text.size() <= 80) {
                         QAction* actSyn = menu.addAction(tr("Obter sinônimos"));
                         QObject::connect(actSyn, &QAction::triggered, this, [this, text]() { emit requestSynonyms(text.trimmed()); });
+
+                        QAction* actDict = menu.addAction(tr("Consultar dicionário"));
+                        QObject::connect(actDict, &QAction::triggered, this, [this, text]() { emit requestDictionaryLookup(text.trimmed()); });
                     }
                     if (wordCount >= 10 || text.contains('\n')) {
                         QAction* actSum = menu.addAction(tr("Gerar resumo"));

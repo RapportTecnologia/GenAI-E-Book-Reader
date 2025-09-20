@@ -6,19 +6,29 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [Unreleased]
 
+### Added
+- Compilação para o Windows, ainda em implementação
+
+### Changed
+
 ## [0.1.6] - 2025-09-18
+
+### Added
+- Carga de e-books pela linha de comando ou menu no explorador (Abrir Com).
+- Associação de extenção com o applicativo.
+- Indexação de embeddings por documento com controle de chunking/batching e escrita incremental. Issue #3
+- Busca por frases usando embeddings (fallback semântico quando a busca por texto não encontra resultados), com opções rápidas: métrica (cosine/dot/L2), Top‑K e limiares. Issue #3
+- Botão de Título central na barra superior exibindo o nome do documento atual e menu contextual com ações: abrir diretório, adicionar ao Calibre com migração de embeddings e renomear arquivo com migração. Issues #6, #7, #8
+
 
 ### Changed
 - Otimizada a renderização do painel de chat, movendo a conversão de Markdown do front-end (JavaScript, `marked.js`) para o back-end (C++ com a biblioteca `cmark`). Isso simplifica o código do cliente e melhora a manutenibilidade.
 - Barra de busca unificada na toolbar com campo de pesquisa, botões Anterior/Próximo e menu de Opções para a busca semântica.
+- Ajuste na exibição dos Desenvolvedores
+- Ajuste na exibição da licença
 
 ### Fixed
 - Corrigidos travamentos e erros de renderização (`Uncaught TypeError`) do MathJax que ocorriam durante a atualização do conteúdo do chat. (Resolve Issue #1)
-
-### Added
-- Indexação de embeddings por documento com controle de chunking/batching e escrita incremental. Issue #3
-- Busca por frases usando embeddings (fallback semântico quando a busca por texto não encontra resultados), com opções rápidas: métrica (cosine/dot/L2), Top‑K e limiares. Issue #3
-- Botão de Título central na barra superior exibindo o nome do documento atual e menu contextual com ações: abrir diretório, adicionar ao Calibre com migração de embeddings e renomear arquivo com migração. Issues #6, #7, #8
 
 ## [0.1.5] - 2025-09-14
 
