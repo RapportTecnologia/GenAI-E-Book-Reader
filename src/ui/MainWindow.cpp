@@ -506,6 +506,8 @@ void MainWindow::onDictionaryLookup(const QString& term) {
 
     showChatPanel();
 
+    chatDock_->appendUser(term);
+
     if (service == "llm") {
         if (llm_) {
             QList<QPair<QString,QString>> msgs;
