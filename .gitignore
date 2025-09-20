@@ -10,3 +10,4 @@ SENSIBLE.md
 *.log
 .venv*
 qt-win
+.cache/
