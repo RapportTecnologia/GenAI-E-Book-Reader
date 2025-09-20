@@ -502,10 +502,37 @@ void MainWindow::onDictionaryLookup(const QString& term) {
     if (!chatDock_) return;
 
     QSettings s;
-    const QString service = s.value("dictionary/service", "libre").toString();
+    const bool useLlm = s.value("dictionary/use_llm", false).toBool();
 
     showChatPanel();
 
+    if (useLlm) {
+        if (llm_) {
+            QList<QPair<QString,QString>> msgs;
+            QString prompt = s.value("dictionary/llm_prompt", tr("Forneça o significado, a etimologia e os sinônimos da palavra: {palavra}")).toString();
+            prompt.replace("{palavra}", term);
+
+            const QString sys = tr("Você é um assistente de dicionário que responde à solicitação do usuário.");
+            msgs.append({QStringLiteral("system"), sys});
+            msgs.append({QStringLiteral("user"), prompt});
+            statusBar()->showMessage(tr("Consultando IA para definição/tradução..."));
+            llm_->chatWithMessages(msgs, [this, term](QString out, QString err){
+                QMetaObject::invokeMethod(this, [this, term, out, err](){
+                    if (!err.isEmpty()) {
+                        showLongAlert(tr("Erro na IA"), err);
+                        statusBar()->clearMessage();
+                        return;
+                    }
+                    if (chatDock_) chatDock_->appendAssistant(QString("[dicionário] %1: %2").arg(term, out));
+                    statusBar()->clearMessage();
+                    saveChatForCurrentFile();
+                });
+            });
+        }
+        return;
+    }
+
+    const QString service = s.value("dictionary/service", "libre").toString();
     if (service == "libre") {
         const QString apiUrl = s.value("dictionary/libre/api_url", "https://libretranslate.de/translate").toString();
         const QString apiKey = s.value("dictionary/libre/api_key").toString();
