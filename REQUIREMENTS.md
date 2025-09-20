@@ -92,46 +92,49 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 6. Dicionário
    - RF-27: Ao clicar em uma palavra/trecho, exibir definição em um popover/painel.
    - RF-28: Permitir alternar dicionários/idiomas (deve autodetectar o idioma).
+   - RF-29: Gerar explicações em contexto (“por que set aqui é ‘ajustar’ e não ‘conjunto’?”).
+   - RF-30: Desambiguação por frase/sentença.
+   - RF-31: Paráfrases e exemplos naturais.
 
 7. Text-to-Speech (TTS)
-   - RF-29: Integrar com um mecanismo TTS do sistema (ex.: eSpeak/mbrola/festival/SAPI no futuro) para ler trechos marcados ou seção atual.
-   - RF-30: Controles de TTS: reproduzir/pausar/parar, velocidade e voz (quando suportado).
+   - RF-32: Integrar com um mecanismo TTS do sistema (ex.: eSpeak/mbrola/festival/SAPI no futuro) para ler trechos marcados ou seção atual.
+   - RF-33: Controles de TTS: reproduzir/pausar/parar, velocidade e voz (quando suportado).
 
 8. IA (OpenAI) para Explicações e Resumos (RAG)
-   - RF-31: Selecionar um trecho ou parágrafo e solicitar explicação ou resumo via OpenAI API.
-   - RF-32: Contextualizar a solicitação via RAG, incluindo parágrafos anteriores e posteriores quando necessário.
-   - RF-33: Salvar as respostas da IA como anotações vinculadas ao trecho (opcional).
-   - RF-34: Registrar logs (locais) das chamadas (metadados, não conteúdo sensível) para depuração.
+   - RF-34: Selecionar um trecho ou parágrafo e solicitar explicação ou resumo via OpenAI API.
+   - RF-35: Contextualizar a solicitação via RAG, incluindo parágrafos anteriores e posteriores quando necessário.
+   - RF-36: Salvar as respostas da IA como anotações vinculadas ao trecho (opcional).
+   - RF-37: Registrar logs (locais) das chamadas (metadados, não conteúdo sensível) para depuração.
 
 9. Estatísticas e Histórico
-   - RF-35: Registrar tempo de leitura ativo somente quando a janela do livro estiver em primeiro plano.
-   - RF-36: Registrar progresso por livro (página atual, total de páginas quando aplicável, posição no EPUB/MOBI).
-   - RF-37: Calcular estatísticas: páginas lidas, palavras (quando disponível), tempo total, sessões.
-   - RF-38: Apresentar painel/resumo das estatísticas por livro e geral.
+   - RF-38: Registrar tempo de leitura ativo somente quando a janela do livro estiver em primeiro plano.
+   - RF-39: Registrar progresso por livro (página atual, total de páginas quando aplicável, posição no EPUB/MOBI).
+   - RF-40: Calcular estatísticas: páginas lidas, palavras (quando disponível), tempo total, sessões.
+   - RF-41: Apresentar painel/resumo das estatísticas por livro e geral.
 
 10. Sessão e Restauração
-   - RF-39: Lembrar os livros abertos e reabrir automaticamente após reinício/travamento do sistema.
-   - RF-40: Persistir preferências de visualização por livro.
+   - RF-42: Lembrar os livros abertos e reabrir automaticamente após reinício/travamento do sistema.
+   - RF-43: Persistir preferências de visualização por livro.
 
 11. Integração com Calibre
-   - RF-41: Integração nativa com a biblioteca do Calibre: listar livros, abrir diretamente, atualizar metadados.
-   - RF-42: Após conversões, cadastrar/atualizar o registro no Calibre.
+   - RF-44: Integração nativa com a biblioteca do Calibre: listar livros, abrir diretamente, atualizar metadados.
+   - RF-45: Após conversões, cadastrar/atualizar o registro no Calibre.
 
 12. Conversões de Formato
-   - RF-43: Converter e-books entre EPUB, MOBI e PDF (quando tecnicamente viável e permitido).
-   - RF-44: Expor fila de conversões e status.
+   - RF-46: Converter e-books entre EPUB, MOBI e PDF (quando tecnicamente viável e permitido).
+   - RF-47: Expor fila de conversões e status.
 
 13. Configurações
-   - RF-45: Tela de Configurações com: URL da OpenAI API, token, dicionários instalados/ordem, TTS/voz, tema, diretórios (Calibre), privacidade.
-   - RF-46: Teste de conexão para OpenAI API e validação segura do token.
+   - RF-50: Tela de Configurações com: URL da OpenAI API, token, dicionários instalados/ordem, TTS/voz, tema, diretórios (Calibre), privacidade.
+   - RF-51: Teste de conexão para OpenAI API e validação segura do token.
 
 14. Operações de Arquivo (complementares)
-   - RF-47: Salvar como — permitir salvar o livro/estado atual em um novo arquivo (planejado para a versão 0.1.2).
+   - RF-52: Salvar como — permitir salvar o livro/estado atual em um novo arquivo (planejado para a versão 0.1.2).
 
 15. Interface e Branding (entregue em 0.1.3)
-   - RF-48: Ícone do aplicativo baseado em `docs/imgs/logo-do-projeto.png`, exibido na barra de título.
-   - RF-49: Exibir na barra de título o nome do livro em leitura; usar metadados do arquivo quando disponíveis; caso contrário, usar o nome do arquivo.
-   - RF-50: Splash screen exibindo `docs/imgs/logo-do-projeto.png`, a versão do app e os dados do autor: "Carlos Delfino <consultoria@carlosdelfino.eti.br>".
+   - RF-53: Ícone do aplicativo baseado em `docs/imgs/logo-do-projeto.png`, exibido na barra de título.
+   - RF-54: Exibir na barra de título o nome do livro em leitura; usar metadados do arquivo quando disponíveis; caso contrário, usar o nome do arquivo.
+   - RF-55: Splash screen exibindo `docs/imgs/logo-do-projeto.png`, a versão do app e os dados do autor: "Carlos Delfino <consultoria@carlosdelfino.eti.br>".
 
 ## 6. Requisitos Não Funcionais
 - RNF-01: Desempenho — abertura de livros e navegação devem ser rápidas; UI responsiva.

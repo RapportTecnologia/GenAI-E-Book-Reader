@@ -103,5 +103,6 @@ signals:
     void requestSummarize(const QString& text);
     void requestSendToChat(const QString& text);
     void requestSendImageToChat(const QImage& image);
+    void requestDictionaryLookup(const QString& term);
     void requestRebuildEmbeddings();
 };
