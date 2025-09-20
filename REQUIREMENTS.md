@@ -1,5 +1,9 @@
 # GenAI E-Book Reader — Descrição e Requisitos de Software
 
+RF -> Requisito Funcional
+RNF -> Requisito Não Funcional
+CA -> Critério de Aceitação
+
 ## 1. Visão Geral
 Este software visa atender a uma necessidade prática durante a leitura de e-books (PDF, MOBI e EPUB), oferecendo uma experiência simples, fluida e produtiva, com recursos de leitura, marcação, anotações, estatísticas de leitura, dicionário, Text-to-Speech (TTS) e apoio de IA para resumos e explicações via RAG.
 

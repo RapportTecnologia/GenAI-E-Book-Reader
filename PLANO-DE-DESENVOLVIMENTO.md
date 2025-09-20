@@ -2,6 +2,10 @@
 
 Documento de planejamento derivado de `REQUISITOS.md`. Toda decisão e escopo aqui devem manter rastreabilidade aos RF/RNF/CA descritos em `REQUISITOS.md`.
 
+RF -> Requisito Funcional
+RNF -> Requisito Não Funcional
+CA -> Critério de Aceitação
+
 ## 1) Estratégia e Escopo do MVP
 - Objetivo: entregar os Critérios de Aceitação CA-01 a CA-08 (ver `REQUISITOS.md`, seção 12).
 - Plataformas: Linux (principal). Windows: preparar portabilidade (sem entrega no MVP).
