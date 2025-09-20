@@ -35,6 +35,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     explicit MainWindow(QWidget* parent = nullptr);
+    bool openPath(const QString& filePath);
     ~MainWindow() override;
 
 private slots:
@@ -68,6 +69,7 @@ private slots:
     void onChatSendMessage(const QString& text);
     void onChatSaveTranscript(const QString& text);
     void onChatSummarizeTranscript(const QString& text);
+    void showAboutDialog();
 
     // AI actions
     void onRequestSynonyms(const QString& wordOrLocution);
@@ -92,7 +94,6 @@ private:
     void onSearchTopKChanged(int value);
     void applyDarkPalette(bool enable);
     void updatePageCombo();
-    bool openPath(const QString& filePath);
     void showLongAlert(const QString& title, const QString& longText);
     // Recent files helpers
     void addRecentFile(const QString& absPath);
@@ -160,6 +161,7 @@ private:
     QAction* actRecentConfig_ {nullptr};
     QAction* actLlmSettings_ {nullptr};
     QAction* actEmbeddingSettings_ {nullptr};
+    QAction* actAbout_ {nullptr};
     // TOC toolbar actions
     QAction* actTocModePages_ {nullptr};
     QAction* actTocModeChapters_ {nullptr};

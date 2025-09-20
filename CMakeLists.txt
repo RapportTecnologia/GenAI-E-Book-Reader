@@ -94,15 +94,71 @@ endif()
 set(DIST_DIR "${CMAKE_SOURCE_DIR}/dist")
 set(DIST_BASENAME "genai_reader-v${PROJECT_VERSION}-linux-x86_64")
 set(APPDIR "${CMAKE_BINARY_DIR}/AppDir")
-find_program(APPIMAGETOOL appimagetool)
+find_program(LINUXDEPLOY_BIN linuxdeploy)
+find_program(CONVERT_BIN convert)
+find_program(QMAKE6_BIN qmake6)
 
-add_custom_target(dist
-  DEPENDS genai_reader
-  COMMAND ${CMAKE_COMMAND} -E make_directory "${DIST_DIR}"
-  # Copy versioned binary
-  COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:genai_reader>" "${DIST_DIR}/${DIST_BASENAME}"
-  # Create tar.gz with the versioned binary inside
-  COMMAND ${CMAKE_COMMAND} -E chdir "${DIST_DIR}" ${CMAKE_COMMAND} -E tar cfvz "${DIST_BASENAME}.tar.gz" "${DIST_BASENAME}"
-  COMMENT "Creating distribution artifacts in ${DIST_DIR}"
+if(UNIX AND NOT APPLE)
+  set(TOOLS_CACHE_DIR "${CMAKE_SOURCE_DIR}/.cache/tools")
+  file(MAKE_DIRECTORY ${TOOLS_CACHE_DIR})
+
+  set(LINUXDEPLOY_PATH "${TOOLS_CACHE_DIR}/linuxdeploy-x86_64.AppImage")
+  set(LINUXDEPLOY_QT_PLUGIN_PATH "${TOOLS_CACHE_DIR}/linuxdeploy-plugin-qt-x86_64.AppImage")
+
+  if(NOT EXISTS "${LINUXDEPLOY_PATH}")
+    message(STATUS "Downloading linuxdeploy...")
+    file(DOWNLOAD
+      https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+      "${LINUXDEPLOY_PATH}"
+      SHOW_PROGRESS
+    )
+    execute_process(COMMAND chmod +x "${LINUXDEPLOY_PATH}")
+  endif()
+
+  if(NOT EXISTS "${LINUXDEPLOY_QT_PLUGIN_PATH}")
+    message(STATUS "Downloading linuxdeploy-plugin-qt...")
+    file(DOWNLOAD
+      https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+      "${LINUXDEPLOY_QT_PLUGIN_PATH}"
+      SHOW_PROGRESS
+    )
+    execute_process(COMMAND chmod +x "${LINUXDEPLOY_QT_PLUGIN_PATH}")
+  endif()
+
+  set(LINUXDEPLOY_BIN "${LINUXDEPLOY_PATH}")
+
+  add_custom_target(dist
+    DEPENDS genai_reader
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/bin"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/applications"
+    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:genai_reader>" "${APPDIR}/usr/bin/"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/resources/appimage/genai-reader.desktop" "${APPDIR}/usr/share/applications/"
+
+    COMMAND ${CMAKE_COMMAND} -E env QMAKE="${QMAKE6_BIN}" "${LINUXDEPLOY_BIN}" --appdir "${APPDIR}" -e "${APPDIR}/usr/bin/genai_reader" -d "${APPDIR}/usr/share/applications/genai-reader.desktop" -i "${APPDIR}/usr/share/icons/hicolor/256x256/apps/genai-reader.png" --output appimage --plugin qt
+        COMMAND ${CMAKE_COMMAND} -E rename "GenAI_E-Book_Reader-x86_64.AppImage" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
+
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Creating AppImage bundle in ${DIST_DIR}"
+  )
+endif()
+
+# Custom target to create icons. This will be a dependency for the main executable.
+add_custom_target(create_icons
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/icons/hicolor/128x128/apps"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/icons/hicolor/256x256/apps"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/icons/hicolor/512x512/apps"
+    COMMAND ${CONVERT_BIN} "${CMAKE_SOURCE_DIR}/docs/imgs/logo-do-projeto.png" -resize 128x128! "${APPDIR}/usr/share/icons/hicolor/128x128/apps/genai-reader.png"
+    COMMAND ${CONVERT_BIN} "${CMAKE_SOURCE_DIR}/docs/imgs/logo-do-projeto.png" -resize 256x256! "${APPDIR}/usr/share/icons/hicolor/256x256/apps/genai-reader.png"
+    COMMAND ${CONVERT_BIN} "${CMAKE_SOURCE_DIR}/docs/imgs/logo-do-projeto.png" -resize 512x512! "${APPDIR}/usr/share/icons/hicolor/512x512/apps/genai-reader.png"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Creating application icons"
 )
+
+# Make the main target depend on icon creation
+add_dependencies(genai_reader create_icons)
+
+# Install rule for desktop integration
+install(FILES resources/appimage/genai-reader.desktop DESTINATION share/applications)
+install(DIRECTORY "${APPDIR}/usr/share/icons/hicolor/" DESTINATION share/icons)
+
 

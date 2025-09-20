@@ -6,7 +6,7 @@
 #include "ui/LlmSettingsDialog.h"
 #include "ui/EmbeddingSettingsDialog.h"
 #include "ui/ChatDock.h"
-
+#include "ui/AboutDialog.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QAction>
@@ -104,6 +104,11 @@ QVariantList loadRecentEntries(QSettings& settings) {
 
 } // end anonymous namespace
 
+void MainWindow::showAboutDialog() {
+    AboutDialog dlg(this);
+    dlg.exec();
+}
+
 void MainWindow::updateTitleWidget() {
     if (!titleButton_) return;
     QString label = tr("Leitor");
@@ -111,7 +116,6 @@ void MainWindow::updateTitleWidget() {
     if (!currentFilePath_.isEmpty()) {
         // Prefer PDF metadata title if available, else filename
         QString title = QFileInfo(currentFilePath_).completeBaseName();
-#ifdef HAVE_QT_PDF
         if (QFileInfo(currentFilePath_).suffix().compare("pdf", Qt::CaseInsensitive) == 0) {
             QPdfDocument doc;
             if (doc.load(currentFilePath_) == static_cast<QPdfDocument::Error>(0)) {
@@ -119,7 +123,6 @@ void MainWindow::updateTitleWidget() {
                 if (!t.isEmpty()) title = t;
             }
         }
-#endif
         label = title;
         tip = QFileInfo(currentFilePath_).absoluteFilePath();
     }
@@ -592,6 +595,7 @@ void MainWindow::createActions() {
     actZoomReset_ = new QAction(tr("Zoom 100%"), this);
     actToggleTheme_ = new QAction(tr("Tema claro/escuro"), this);
     actChat_ = new QAction(tr("Chat"), this);
+    actAbout_ = new QAction(tr("Informações..."), this);
 
     // Edit actions (seleção)
     actSelText_ = new QAction(tr("Selecionar texto"), this);
@@ -640,6 +644,7 @@ void MainWindow::createActions() {
     connect(actReaderData_, &QAction::triggered, this, &MainWindow::editReaderData);
     connect(actClose_, &QAction::triggered, this, &MainWindow::closeDocument);
     connect(actChat_, &QAction::triggered, this, &MainWindow::showChatPanel);
+    connect(actAbout_, &QAction::triggered, this, &MainWindow::showAboutDialog);
     connect(actTocModePages_, &QAction::triggered, this, &MainWindow::setTocModePages);
     connect(actTocModeChapters_, &QAction::triggered, this, &MainWindow::setTocModeChapters);
     connect(actTocPrev_, &QAction::triggered, this, &MainWindow::onTocPrev);
@@ -692,6 +697,9 @@ void MainWindow::createActions() {
     menuEdit->addAction(actSelCopy_);
     menuEdit->addAction(actSelSaveTxt_);
     menuEdit->addAction(actSelSaveMd_);
+
+    auto* menuHelp = menuBar()->addMenu(tr("Ajuda"));
+    menuHelp->addAction(actAbout_);
 
     // Top toolbar: centered title button
     auto* tbTitle = addToolBar(tr("Título"));

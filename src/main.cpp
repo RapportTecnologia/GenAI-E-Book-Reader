@@ -1,4 +1,3 @@
-#ifdef USE_QT
 #include <QApplication>
 #include <QCoreApplication>
 #include <QSplashScreen>
@@ -8,14 +7,9 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include "ui/MainWindow.h"
-#endif
-#ifndef USE_QT
-#include <iostream>
-#endif
 #include "app/App.h"
 
 int main(int argc, char* argv[]) {
-#ifdef USE_QT
     QCoreApplication::setOrganizationDomain("br.com.rapport.genai-reader");
     QCoreApplication::setOrganizationName("br.com.rapport.genai-reader");
     QCoreApplication::setApplicationName("genai-reader");
@@ -38,7 +32,7 @@ int main(int argc, char* argv[]) {
     QFont splashFont = splash.font();
     splashFont.setBold(true);
     splash.setFont(splashFont);
-    splash.showMessage(QString("%1 v%2\nAutor: Carlos Delfino <consultoria@carlosdelfino.eti.br>")
+    splash.showMessage(QString("%1 v%2<br><br>https://rapport.tec.br")
                            .arg(genai::AppInfo::Name)
                            .arg(genai::AppInfo::Version),
                        Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
@@ -52,6 +46,10 @@ int main(int argc, char* argv[]) {
         shown = true;
         win.show();
         splash.finish(&win);
+        // If a file was passed on command line, open it now
+        if (app.arguments().size() > 1) {
+            win.openPath(app.arguments().at(1));
+        }
     };
 
     // Auto-close after 3 seconds
@@ -79,10 +77,4 @@ int main(int argc, char* argv[]) {
     splash.installEventFilter(&filter);
 
     return app.exec();
-#else
-    (void)argc; (void)argv;
-    std::cout << genai::AppInfo::Name << " v" << genai::AppInfo::Version
-              << " — Console placeholder (Qt não encontrado)." << std::endl;
-    return 0;
-#endif
 }

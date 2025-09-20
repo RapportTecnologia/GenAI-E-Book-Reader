@@ -2,9 +2,10 @@
 Type=Application
 Name=GenAI E-Book Reader
 Comment=Leitor de e-books (PDF) com foco em produtividade e estudo
-Exec=genai_reader
+Exec=genai_reader %f
 Icon=genai-reader
 Categories=Office;Education;Viewer;
 Terminal=false
 StartupNotify=true
 Keywords=ebook;reader;pdf;study;books;
+MimeType=application/pdf;
