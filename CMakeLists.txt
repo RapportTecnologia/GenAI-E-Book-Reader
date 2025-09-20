@@ -131,13 +131,14 @@ if(UNIX AND NOT APPLE)
 
   add_custom_target(dist
     DEPENDS genai_reader
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DIST_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/bin"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/applications"
     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:genai_reader>" "${APPDIR}/usr/bin/"
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/resources/appimage/genai-reader.desktop" "${APPDIR}/usr/share/applications/"
 
-    COMMAND ${CMAKE_COMMAND} -E env QMAKE="${QMAKE6_BIN}" "${LINUXDEPLOY_BIN}" --appdir "${APPDIR}" -e "${APPDIR}/usr/bin/genai_reader" -d "${APPDIR}/usr/share/applications/genai-reader.desktop" -i "${APPDIR}/usr/share/icons/hicolor/256x256/apps/genai-reader.png" --output appimage --plugin qt
-        COMMAND ${CMAKE_COMMAND} -E rename "GenAI_E-Book_Reader-x86_64.AppImage" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
+    COMMAND ${CMAKE_COMMAND} -E env QMAKE="${QMAKE6_BIN}" "${LINUXDEPLOY_BIN}" --appdir "${APPDIR}" -e "${APPDIR}/usr/bin/genai_reader" -d "${APPDIR}/usr/share/applications/genai-reader.desktop" -i "${APPDIR}/usr/share/icons/hicolor/256x256/apps/genai-reader.png" --output appimage --plugin qt 
+    COMMAND ${CMAKE_COMMAND} -E rename "${CMAKE_BINARY_DIR}/GenAI_E-Book_Reader-x86_64.AppImage" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Creating AppImage bundle in ${DIST_DIR}"
@@ -169,15 +170,25 @@ install(DIRECTORY "${APPDIR}/usr/share/icons/hicolor/" DESTINATION share/icons)
 # Usage:
 #   cmake --build . --target github_release
 # ----------------------------------------------------------------------------
+find_program(GH_BIN gh)
+
+if(NOT GH_BIN)
+  message(WARNING "GitHub CLI 'gh' not found. The 'github_release' target will not be able to create releases on GitHub.")
+endif()
+
 add_custom_target(github_release
-    DEPENDS docs
+    DEPENDS docs dist
     COMMAND git add -A
     COMMAND git commit -m "Release version ${PROJECT_VERSION}"
     COMMAND git push
-    COMMAND git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}"
+    COMMAND git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}" --force
     COMMAND git push origin "v${PROJECT_VERSION}"
+    COMMAND ${GH_BIN} release create "v${PROJECT_VERSION}" --title "Release v${PROJECT_VERSION}" --notes "See CHANGELOG.md for details."
+    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
+    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage.zsync"
+    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${CMAKE_SOURCE_DIR}/APPIMAGE.md"
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMENT "Generating docs, committing changes, and creating git tag v${PROJECT_VERSION}"
+    COMMENT "Creating GitHub release and uploading artifacts for v${PROJECT_VERSION}"
     VERBATIM
 )
 
