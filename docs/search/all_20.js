@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['warn_0',['warn',['../de/d9c/classEmbeddingIndexer.html#aba144c363b81006f2536177f4a33f652',1,'EmbeddingIndexer']]],
-  ['windows_1',['Windows',['../index.html#autotoc_md17',1,'']]]
+  ['x_20–_20estabilidade_20e_20releases_0',['1.x – Estabilidade e Releases',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md64',1,'']]]
 ];

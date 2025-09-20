@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(GenAI_EBook_Reader VERSION 0.1.6 LANGUAGES C CXX)
+project(GenAI_EBook_Reader VERSION 0.1.7 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -162,5 +162,24 @@ add_dependencies(genai_reader create_icons)
 # Install rule for desktop integration
 install(FILES resources/appimage/genai-reader.desktop DESTINATION share/applications)
 install(DIRECTORY "${APPDIR}/usr/share/icons/hicolor/" DESTINATION share/icons)
+
+# ----------------------------------------------------------------------------
+# GitHub Release Target
+# Creates a git tag for the current version and pushes it to origin.
+# Usage:
+#   cmake --build . --target github_release
+# ----------------------------------------------------------------------------
+add_custom_target(github_release
+    DEPENDS docs
+    COMMAND git add -A
+    COMMAND git commit -m "Release version ${PROJECT_VERSION}"
+    COMMAND git push
+    COMMAND git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}"
+    COMMAND git push origin "v${PROJECT_VERSION}"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Generating docs, committing changes, and creating git tag v${PROJECT_VERSION}"
+    VERBATIM
+)
+
 
 

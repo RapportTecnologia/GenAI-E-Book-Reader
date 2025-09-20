@@ -12,7 +12,8 @@ var hierarchy =
       [ "DictionarySettingsDialog", "d5/da4/classDictionarySettingsDialog.html", null ],
       [ "EmbeddingSettingsDialog", "d0/d54/classEmbeddingSettingsDialog.html", null ],
       [ "LlmSettingsDialog", "d0/d17/classLlmSettingsDialog.html", null ],
-      [ "SummaryDialog", "da/d99/classSummaryDialog.html", null ]
+      [ "SummaryDialog", "da/d99/classSummaryDialog.html", null ],
+      [ "WelcomeDialog", "dd/dd8/classWelcomeDialog.html", null ]
     ] ],
     [ "QDockWidget", null, [
       [ "ChatDock", "d0/daf/classChatDock.html", null ]

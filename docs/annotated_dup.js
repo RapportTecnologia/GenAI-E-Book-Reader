@@ -19,5 +19,6 @@ var annotated_dup =
     [ "MainWindow", "d6/d1a/classMainWindow.html", "d6/d1a/classMainWindow" ],
     [ "PdfViewerWidget", "dc/ddc/classPdfViewerWidget.html", "dc/ddc/classPdfViewerWidget" ],
     [ "SummaryDialog", "da/d99/classSummaryDialog.html", "da/d99/classSummaryDialog" ],
-    [ "VectorIndex", "d3/db0/classVectorIndex.html", "d3/db0/classVectorIndex" ]
+    [ "VectorIndex", "d3/db0/classVectorIndex.html", "d3/db0/classVectorIndex" ],
+    [ "WelcomeDialog", "dd/dd8/classWelcomeDialog.html", "dd/dd8/classWelcomeDialog" ]
 ];

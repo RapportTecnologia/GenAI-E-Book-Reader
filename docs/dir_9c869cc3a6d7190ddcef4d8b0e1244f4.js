@@ -18,5 +18,7 @@ var dir_9c869cc3a6d7190ddcef4d8b0e1244f4 =
     [ "SummaryDialog.cpp", "d1/d40/SummaryDialog_8cpp.html", null ],
     [ "SummaryDialog.h", "d7/d5e/SummaryDialog_8h.html", "d7/d5e/SummaryDialog_8h" ],
     [ "ViewerWidget.cpp", "d0/dd0/ViewerWidget_8cpp.html", null ],
-    [ "ViewerWidget.h", "db/dc8/ViewerWidget_8h.html", null ]
+    [ "ViewerWidget.h", "db/dc8/ViewerWidget_8h.html", null ],
+    [ "WelcomeDialog.cpp", "d8/d02/WelcomeDialog_8cpp.html", null ],
+    [ "WelcomeDialog.h", "df/ddf/WelcomeDialog_8h.html", "df/ddf/WelcomeDialog_8h" ]
 ];

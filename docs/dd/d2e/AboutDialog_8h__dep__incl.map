@@ -1,7 +1,9 @@
 <map id="GenAi&#45;E&#45;Book&#45;Reader/src/ui/AboutDialog.h" name="GenAi&#45;E&#45;Book&#45;Reader/src/ui/AboutDialog.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="109,5,271,45"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="207,5,370,45"/>
 <area shape="rect" id="Node000002" href="$d6/d30/AboutDialog_8cpp.html" title=" " alt="" coords="5,93,177,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,56,115,95,111,91,156,52"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="234,53,136,96,133,91,232,48"/>
 <area shape="rect" id="Node000003" href="$d3/db7/MainWindow_8cpp.html" title=" " alt="" coords="201,93,376,133"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="224,52,269,91,265,95,220,56"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="291,59,291,93,286,93,286,59"/>
+<area shape="rect" id="Node000004" href="$d8/d02/WelcomeDialog_8cpp.html" title=" " alt="" coords="401,93,595,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="348,48,453,91,451,96,346,53"/>
 </map>

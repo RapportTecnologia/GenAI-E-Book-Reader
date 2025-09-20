@@ -105,7 +105,9 @@ $(document).ready(function(){initNavTree('df/d0a/main_8cpp.html','../../'); init
 <code>#include &lt;QTimer&gt;</code><br />
 <code>#include &lt;QEvent&gt;</code><br />
 <code>#include &lt;QMouseEvent&gt;</code><br />
+<code>#include &lt;QSettings&gt;</code><br />
 <code>#include &quot;<a class="el" href="../../da/d9c/MainWindow_8h_source.html">ui/MainWindow.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../df/ddf/WelcomeDialog_8h_source.html">ui/WelcomeDialog.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../de/d8b/App_8h_source.html">app/App.h</a>&quot;</code><br />
 </div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Include dependency graph for main.cpp:</div>
@@ -114,46 +116,51 @@ $(document).ready(function(){initNavTree('df/d0a/main_8cpp.html','../../'); init
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="../../da/dce/main_8cpp__incl.png" border="0" usemap="#aGenAi-E-Book-Reader_2src_2main_8cpp" alt=""/></div>
 <map name="aGenAi-E-Book-Reader_2src_2main_8cpp" id="aGenAi-E-Book-Reader_2src_2main_8cpp">
-<area shape="rect" title=" " alt="" coords="479,5,642,45"/>
+<area shape="rect" title=" " alt="" coords="583,5,746,45"/>
 <area shape="rect" title=" " alt="" coords="5,93,111,119"/>
-<area shape="poly" title=" " alt="" coords="480,41,125,96,124,90,479,36"/>
+<area shape="poly" title=" " alt="" coords="583,38,379,62,124,96,124,90,378,56,583,33"/>
 <area shape="rect" title=" " alt="" coords="135,93,269,119"/>
-<area shape="poly" title=" " alt="" coords="480,47,268,93,267,88,479,42"/>
+<area shape="poly" title=" " alt="" coords="583,43,283,94,283,88,583,38"/>
 <area shape="rect" title=" " alt="" coords="293,93,412,119"/>
-<area shape="poly" title=" " alt="" coords="512,48,397,91,395,86,510,43"/>
-<area shape="rect" title=" " alt="" coords="441,167,523,192"/>
-<area shape="poly" title=" " alt="" coords="525,48,498,68,478,95,473,109,472,124,476,153,471,154,467,124,468,108,473,92,494,64,522,43"/>
-<area shape="rect" title=" " alt="" coords="487,93,546,119"/>
-<area shape="poly" title=" " alt="" coords="552,47,532,83,528,80,548,44"/>
-<area shape="rect" title=" " alt="" coords="570,93,639,119"/>
-<area shape="poly" title=" " alt="" coords="574,44,594,80,589,83,569,47"/>
-<area shape="rect" title=" " alt="" coords="663,93,733,119"/>
-<area shape="poly" title=" " alt="" coords="595,43,667,84,664,89,592,48"/>
-<area shape="rect" title=" " alt="" coords="757,93,869,119"/>
-<area shape="poly" title=" " alt="" coords="622,43,763,87,762,92,620,48"/>
-<area shape="rect" href="../../da/d9c/MainWindow_8h.html" title=" " alt="" coords="893,93,1026,119"/>
-<area shape="poly" title=" " alt="" coords="643,40,888,88,887,93,642,45"/>
-<area shape="rect" href="../../de/d8b/App_8h.html" title="Declaração da classe principal da aplicação." alt="" coords="1051,93,1137,119"/>
-<area shape="poly" title=" " alt="" coords="643,34,820,57,1038,91,1037,96,819,63,642,39"/>
-<area shape="poly" title=" " alt="" coords="893,120,537,173,536,167,892,115"/>
-<area shape="rect" title=" " alt="" coords="577,167,693,192"/>
-<area shape="poly" title=" " alt="" coords="908,121,702,166,701,161,907,116"/>
-<area shape="rect" title=" " alt="" coords="718,167,803,192"/>
-<area shape="poly" title=" " alt="" coords="928,121,807,164,805,159,927,116"/>
-<area shape="rect" title=" " alt="" coords="828,167,899,192"/>
-<area shape="poly" title=" " alt="" coords="945,121,892,160,889,156,942,117"/>
-<area shape="rect" title=" " alt="" coords="923,167,996,192"/>
-<area shape="poly" title=" " alt="" coords="962,119,962,153,957,153,957,119"/>
-<area shape="rect" title=" " alt="" coords="1020,167,1115,192"/>
-<area shape="poly" title=" " alt="" coords="978,116,1040,157,1037,161,975,121"/>
-<area shape="rect" title=" " alt="" coords="1139,167,1241,192"/>
-<area shape="poly" title=" " alt="" coords="997,116,1141,160,1139,165,996,121"/>
-<area shape="rect" href="../../d5/d49/Reader_8h.html" title="Interface mínima para o leitor de e&#45;books (MVP)." alt="" coords="1265,167,1392,192"/>
-<area shape="poly" title=" " alt="" coords="1019,116,1256,161,1255,167,1018,121"/>
-<area shape="rect" title=" " alt="" coords="1255,240,1314,265"/>
-<area shape="poly" title=" " alt="" coords="1324,194,1301,230,1297,227,1319,191"/>
-<area shape="rect" title=" " alt="" coords="1338,240,1405,265"/>
-<area shape="poly" title=" " alt="" coords="1338,191,1360,227,1355,230,1333,194"/>
+<area shape="poly" title=" " alt="" coords="591,48,412,93,411,87,589,43"/>
+<area shape="rect" title=" " alt="" coords="219,167,300,192"/>
+<area shape="poly" title=" " alt="" coords="605,48,474,96,424,121,309,165,307,160,422,116,472,91,603,43"/>
+<area shape="rect" title=" " alt="" coords="695,93,754,119"/>
+<area shape="poly" title=" " alt="" coords="681,44,710,81,705,84,677,47"/>
+<area shape="rect" title=" " alt="" coords="778,93,847,119"/>
+<area shape="poly" title=" " alt="" coords="701,43,780,84,777,89,699,48"/>
+<area shape="rect" title=" " alt="" coords="871,93,941,119"/>
+<area shape="poly" title=" " alt="" coords="723,43,859,87,857,92,722,48"/>
+<area shape="rect" title=" " alt="" coords="965,93,1077,119"/>
+<area shape="poly" title=" " alt="" coords="747,42,956,88,955,93,746,47"/>
+<area shape="rect" title=" " alt="" coords="325,167,410,192"/>
+<area shape="poly" title=" " alt="" coords="626,48,527,96,402,162,399,158,525,91,623,43"/>
+<area shape="rect" href="../../da/d9c/MainWindow_8h.html" title=" " alt="" coords="538,93,671,119"/>
+<area shape="poly" title=" " alt="" coords="652,47,624,84,620,81,648,44"/>
+<area shape="rect" href="../../df/ddf/WelcomeDialog_8h.html" title=" " alt="" coords="1100,93,1253,119"/>
+<area shape="poly" title=" " alt="" coords="747,36,1089,89,1088,94,746,42"/>
+<area shape="rect" href="../../de/d8b/App_8h.html" title="Declaração da classe principal da aplicação." alt="" coords="1277,93,1364,119"/>
+<area shape="poly" title=" " alt="" coords="746,31,976,53,1264,91,1264,96,975,58,746,36"/>
+<area shape="poly" title=" " alt="" coords="549,121,314,169,313,164,548,116"/>
+<area shape="poly" title=" " alt="" coords="567,121,420,165,418,160,566,116"/>
+<area shape="rect" title=" " alt="" coords="831,167,947,192"/>
+<area shape="poly" title=" " alt="" coords="651,116,830,161,829,166,650,121"/>
+<area shape="rect" title=" " alt="" coords="971,167,1041,192"/>
+<area shape="poly" title=" " alt="" coords="672,114,800,135,957,164,956,169,799,140,671,120"/>
+<area shape="rect" title=" " alt="" coords="1065,167,1139,192"/>
+<area shape="poly" title=" " alt="" coords="672,114,684,116,867,137,948,147,1052,164,1051,169,947,152,866,142,683,121,671,120"/>
+<area shape="rect" title=" " alt="" coords="435,167,529,192"/>
+<area shape="poly" title=" " alt="" coords="586,121,515,162,512,157,584,116"/>
+<area shape="rect" title=" " alt="" coords="554,167,655,192"/>
+<area shape="poly" title=" " alt="" coords="607,119,607,153,602,153,602,119"/>
+<area shape="rect" href="../../d5/d49/Reader_8h.html" title="Interface mínima para o leitor de e&#45;books (MVP)." alt="" coords="680,167,807,192"/>
+<area shape="poly" title=" " alt="" coords="628,116,710,158,707,163,626,121"/>
+<area shape="rect" title=" " alt="" coords="671,240,730,265"/>
+<area shape="poly" title=" " alt="" coords="739,194,717,230,712,227,734,191"/>
+<area shape="rect" title=" " alt="" coords="754,240,821,265"/>
+<area shape="poly" title=" " alt="" coords="753,191,775,227,771,230,748,194"/>
+<area shape="rect" title=" " alt="" coords="1163,167,1238,192"/>
+<area shape="poly" title=" " alt="" coords="1183,118,1195,153,1190,154,1178,120"/>
 </map>
 </div>
 </div><table class="memberdecls">

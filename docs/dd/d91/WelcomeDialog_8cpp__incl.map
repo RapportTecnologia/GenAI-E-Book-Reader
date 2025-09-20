@@ -1,0 +1,18 @@
+<map id="GenAi&#45;E&#45;Book&#45;Reader/src/ui/WelcomeDialog.cpp" name="GenAi&#45;E&#45;Book&#45;Reader/src/ui/WelcomeDialog.cpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="337,5,531,45"/>
+<area shape="rect" id="Node000002" href="$df/ddf/WelcomeDialog_8h.html" title=" " alt="" coords="5,93,143,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="348,48,140,93,139,88,347,43"/>
+<area shape="rect" id="Node000004" href="$d7/da9/AboutDialog_8h.html" title=" " alt="" coords="167,93,298,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="387,48,276,91,274,86,385,43"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="323,93,433,119"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="423,47,396,84,392,80,418,44"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="458,93,525,119"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="450,44,477,80,473,84,446,47"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="549,93,655,119"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="475,43,566,85,564,90,473,48"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="680,93,823,119"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="511,43,692,87,691,93,509,48"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="115,167,190,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="88,117,132,156,128,159,85,121"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="222,121,178,160,174,156,218,117"/>
+</map>

@@ -1,13 +1,15 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" title=" " alt="" coords="5,104,80,129"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,129,80,155"/>
 <area shape="rect" id="Node000001" href="$db/d23/classAboutDialog.html" title=" " alt="" coords="172,5,275,31"/>
-<area shape="poly" id="edge2_Node000000_Node000001" title=" " alt="" coords="63,91,91,64,127,40,171,24,172,29,129,44,95,68,66,95"/>
+<area shape="poly" id="edge2_Node000000_Node000001" title=" " alt="" coords="56,116,85,77,105,57,127,40,148,29,171,22,173,27,150,34,129,44,108,61,89,80,60,119"/>
 <area shape="rect" id="Node000002" href="$d5/da4/classDictionarySettingsDialog.html" title=" " alt="" coords="131,55,315,80"/>
-<area shape="poly" id="edge3_Node000000_Node000002" title=" " alt="" coords="92,99,127,89,170,77,171,83,129,94,94,104"/>
+<area shape="poly" id="edge3_Node000000_Node000002" title=" " alt="" coords="72,119,127,89,160,78,162,83,129,94,75,124"/>
 <area shape="rect" id="Node000003" href="$d0/d54/classEmbeddingSettingsDialog.html" title=" " alt="" coords="128,104,319,129"/>
-<area shape="poly" id="edge4_Node000000_Node000003" title=" " alt="" coords="94,114,128,114,128,119,94,119"/>
+<area shape="poly" id="edge4_Node000000_Node000003" title=" " alt="" coords="93,132,132,127,133,132,94,138"/>
 <area shape="rect" id="Node000004" href="$d0/d17/classLlmSettingsDialog.html" title=" " alt="" coords="153,153,294,179"/>
-<area shape="poly" id="edge5_Node000000_Node000004" title=" " alt="" coords="94,128,129,138,175,151,173,156,127,143,93,133"/>
+<area shape="poly" id="edge5_Node000000_Node000004" title=" " alt="" coords="94,146,153,154,152,159,93,151"/>
 <area shape="rect" id="Node000005" href="$da/d99/classSummaryDialog.html" title=" " alt="" coords="160,203,287,228"/>
-<area shape="poly" id="edge6_Node000000_Node000005" title=" " alt="" coords="66,137,95,164,129,188,161,200,159,205,127,192,91,168,63,141"/>
+<area shape="poly" id="edge6_Node000000_Node000005" title=" " alt="" coords="76,160,129,188,166,200,165,205,127,192,73,164"/>
+<area shape="rect" id="Node000006" href="$dd/dd8/classWelcomeDialog.html" title=" " alt="" coords="161,252,286,277"/>
+<area shape="poly" id="edge7_Node000000_Node000006" title=" " alt="" coords="61,165,90,203,109,221,129,237,162,251,160,256,127,242,105,225,86,206,57,168"/>
 </map>
