@@ -4,6 +4,8 @@ build-*/
 *.user
 *.AppImage
 AppDir/
+dist/
+
 
 # Windows cross-compilation artifacts
 build-windows/
