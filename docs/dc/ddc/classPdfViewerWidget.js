@@ -18,6 +18,7 @@ var classPdfViewerWidget =
     [ "nextPage", "dc/ddc/classPdfViewerWidget.html#aa945f266107808255316222f89f18f1e", null ],
     [ "ocrSelectionText", "dc/ddc/classPdfViewerWidget.html#a9fa285223abb0061d73494bf5f9c5dd9", null ],
     [ "openFile", "dc/ddc/classPdfViewerWidget.html#a25c6d5268c0ef409794040f830201e27", null ],
+    [ "pageChanged", "dc/ddc/classPdfViewerWidget.html#af03614f8bac0c6d718d55950d6348800", null ],
     [ "prevPage", "dc/ddc/classPdfViewerWidget.html#a580dc0ed0d4a36b83bed761dca4df435", null ],
     [ "requestDictionaryLookup", "dc/ddc/classPdfViewerWidget.html#a8cfed6e0c7b19ee4a2862a29943096fe", null ],
     [ "requestRebuildEmbeddings", "dc/ddc/classPdfViewerWidget.html#a6af93414bcaf055dbec3cf9f8587bec0", null ],

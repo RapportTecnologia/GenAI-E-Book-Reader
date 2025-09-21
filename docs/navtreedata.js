@@ -97,15 +97,34 @@ var NAVTREE =
       [ "0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md58", null ],
       [ "0.1.3 - Refinamento da interface de usuário (Entregue em 2025-08-18)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md59", null ],
       [ "0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md60", null ],
-      [ "0.1.6 - Otimização e Estabilidade", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md61", null ],
-      [ "0.1.5 - Itengração IA", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md62", null ],
-      [ "0.1.6 – RAG, MathJax e Markdown", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md63", null ],
-      [ "0.1.7 – Anotações e Dicionário", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md64", null ],
-      [ "0.1.8 – TTS e Controles", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65", null ],
-      [ "0.5.0 – Estatísticas e Sessões", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md66", null ],
-      [ "0.6.0 – Integração Calibre e Melhorias UX", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md67", null ],
-      [ "1.x – Estabilidade e Releases", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md68", null ],
-      [ "Backlog Técnico", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md69", null ]
+      [ "0.1.5 - Itengração IA", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md61", null ],
+      [ "0.1.6 – RAG, MathJax e Markdown", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md62", null ],
+      [ "0.1.7 – Anotações e Dicionário", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md63", null ],
+      [ "0.1.8 – TTS e Controles", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md64", null ],
+      [ "0.2.0 – TTS", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65", null ],
+      [ "0.2.1 – Reestruturação do código", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md66", null ],
+      [ "0.5.0 – Estatísticas e Sessões", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md67", null ],
+      [ "0.6.0 – Integração Calibre e Melhorias UX", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md68", null ],
+      [ "1.x – Estabilidade e Releases", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md69", null ],
+      [ "Backlog Técnico", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md70", null ]
+    ] ],
+    [ "GenAI E-Book Reader — Tutorial", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html", [
+      [ "1. Primeiros Passos: Abrindo e Navegando", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md72", null ],
+      [ "2. Leitura Interativa: Seleção, Dicionário e Busca", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md73", [
+        [ "Selecionar Texto e Imagens", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md74", null ],
+        [ "Consultar o Dicionário", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md75", null ],
+        [ "Buscar no Documento", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md76", null ]
+      ] ],
+      [ "3. Busca Semântica com RAG (Retrieval-Augmented Generation)", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md77", [
+        [ "Passo 1: Configurar os Embeddings", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md78", null ],
+        [ "Passo 2: Indexar o Documento", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md79", null ],
+        [ "Passo 3: Fazer uma Busca Semântica", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md80", null ]
+      ] ],
+      [ "4. Integração com IA (LLM)", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md81", [
+        [ "Configurar o Acesso ao LLM", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md82", null ],
+        [ "Usar os Recursos de IA", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md83", null ]
+      ] ],
+      [ "5. Dicas e Recursos Adicionais", "dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md84", null ]
     ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ]
@@ -134,7 +153,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"dd/dd6/classLlmClient.html#a5617e814c94af483aa292e2314dd2f3f"
+"dc/ddc/classPdfViewerWidget.html#af7f12aec22c971654a87cf31104465c3"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

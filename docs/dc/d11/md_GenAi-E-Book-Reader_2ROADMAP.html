@@ -148,12 +148,6 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
 </li>
 </ul>
 <h1><a class="anchor" id="autotoc_md61"></a>
-0.1.6 - Otimização e Estabilidade</h1>
-<ul>
-<li>Otimizada a renderização do chat movendo a conversão de Markdown para o back-end (C++ com <code>cmark</code>).</li>
-<li>Corrigidos bugs de renderização e travamentos relacionados ao MathJax no painel de chat.</li>
-</ul>
-<h1><a class="anchor" id="autotoc_md62"></a>
 0.1.5 - Itengração IA</h1>
 <ul>
 <li>Integração com APIs de IA (pré cadastradas: OpenAI, GenerAtiva, Claude, Anthropic, Google, DeepSeek)</li>
@@ -161,7 +155,7 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
 <li>Histórico de prompts e respostas</li>
 <li>Chat com IA (OpenAI) para explicar e resumir seleções.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md63"></a>
+<h1><a class="anchor" id="autotoc_md62"></a>
 0.1.6 – RAG, MathJax e Markdown</h1>
 <ul>
 <li>RAG :<ul>
@@ -172,50 +166,67 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
 <li>Métricas e logs de estágios no diálogo de indexação</li>
 </ul>
 </li>
-<li>MathJax no painel de chat</li>
-<li>Markdown no painel de chat</li>
+<li>Otimizada a renderização do chat movendo a conversão de Markdown para o back-end (C++ com <code>cmark</code>).</li>
+<li>Corrigidos bugs de renderização e travamentos relacionados ao MathJax no painel de chat.</li>
 <li>Busca full-text no documento</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md64"></a>
+<h1><a class="anchor" id="autotoc_md63"></a>
 0.1.7 – Anotações e Dicionário</h1>
 <ul>
+<li>Empacotamento (AppImage)</li>
 <li>Ajustado painel de Informações da Aplicação</li>
 <li>Carga de e-books pela linha de comando ou menu no explorador (Abrir Com).</li>
 <li>Associação de extenção com o applicativo.</li>
 <li>Dicionário iniciado, funcionando apenas com LLM. preciso testar com APIs especializadas.</li>
 <li>Adicionado Target ao cmakefile.txt para gerar Release no GitHub</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md65"></a>
+<h1><a class="anchor" id="autotoc_md64"></a>
 0.1.8 – TTS e Controles</h1>
 <ul>
+<li>Compilação para o Windows, ainda em implementação, Ajuda será bem vinda.</li>
+<li>Ajuste na documentação, em especial tutorial e arquivo readme.</li>
+<li>Adicionado ao menu help o conteúdo do arquivo <a class="el" href="../../dd/d3d/TUTORIAL_8md.html">TUTORIAL.md</a></li>
+<li>Melhorias na seleção de página e sincronismo do e-book com o TOC e seletor de página na barra de ferramentas.</li>
+<li>Sincronizado o TOC e a página selecionada na barra de ferramentas com a página exibida do e-book.</li>
+<li>Revisão do menu "Arquivos Recentes" e da janela de listagem.</li>
+<li>Iniciado o estudo para implementar a funcionalidade do menu/conteudo/indice/sumário do e-book.</li>
+<li>Melhorado gestão de chat por arquivos.</li>
 <li>Continuar o desenvolvimento: Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,</li>
 <li>Escrita incremental de vetores/ids/metadados</li>
 <li>Documentação de uso e limitações</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md65"></a>
+0.2.0 – TTS</h1>
+<ul>
+<li>Reestruturar o MainWindows para reduzir seu tamanho, aplicando fachadas para agrupar funções por contextos gráficos.</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md66"></a>
+0.2.1 – Reestruturação do código</h1>
+<ul>
 <li>Reprodução TTS de seleção atual</li>
 <li>Controles de velocidade/pausa/retomar</li>
 <li>Output device selection</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md66"></a>
+<h1><a class="anchor" id="autotoc_md67"></a>
 0.5.0 – Estatísticas e Sessões</h1>
 <ul>
 <li>Tempo ativo de leitura, progresso, sessões</li>
 <li>Restauração de sessão (últimos livros abertos)</li>
 <li>Export de métricas</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md67"></a>
+<h1><a class="anchor" id="autotoc_md68"></a>
 0.6.0 – Integração Calibre e Melhorias UX</h1>
 <ul>
 <li>Abrir itens da biblioteca do Calibre</li>
 <li>Melhorias de performance e usabilidade</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md68"></a>
+<h1><a class="anchor" id="autotoc_md69"></a>
 1.x – Estabilidade e Releases</h1>
 <ul>
 <li>Testes automatizados</li>
-<li>Empacotamento (AppImage/Flatpak)</li>
 <li>Internacionalização (i18n)</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md69"></a>
+<h1><a class="anchor" id="autotoc_md70"></a>
 Backlog Técnico</h1>
 <ul>
 <li>CI (build + testes)</li>

@@ -18,7 +18,9 @@ var annotated_dup =
     [ "LlmSettingsDialog", "d0/d17/classLlmSettingsDialog.html", "d0/d17/classLlmSettingsDialog" ],
     [ "MainWindow", "d6/d1a/classMainWindow.html", "d6/d1a/classMainWindow" ],
     [ "PdfViewerWidget", "dc/ddc/classPdfViewerWidget.html", "dc/ddc/classPdfViewerWidget" ],
+    [ "RecentFilesDialog", "d5/d44/classRecentFilesDialog.html", "d5/d44/classRecentFilesDialog" ],
     [ "SummaryDialog", "da/d99/classSummaryDialog.html", "da/d99/classSummaryDialog" ],
+    [ "TutorialDialog", "d8/df9/classTutorialDialog.html", "d8/df9/classTutorialDialog" ],
     [ "VectorIndex", "d3/db0/classVectorIndex.html", "d3/db0/classVectorIndex" ],
     [ "WelcomeDialog", "dd/dd8/classWelcomeDialog.html", "dd/dd8/classWelcomeDialog" ]
 ];

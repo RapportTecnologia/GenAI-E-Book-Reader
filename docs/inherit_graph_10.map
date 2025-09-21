@@ -1,9 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
 <area shape="rect" id="Node000000" title=" " alt="" coords="5,55,80,80"/>
 <area shape="rect" id="Node000001" href="$de/d9c/classEmbeddingIndexer.html" title=" " alt="" coords="131,5,275,31"/>
-<area shape="poly" id="edge10_Node000000_Node000001" title=" " alt="" coords="92,49,160,28,161,33,94,55"/>
+<area shape="poly" id="edge12_Node000000_Node000001" title=" " alt="" coords="92,49,160,28,161,33,94,55"/>
 <area shape="rect" id="Node000002" href="$db/def/classEmbeddingProvider.html" title=" " alt="" coords="128,55,277,80"/>
-<area shape="poly" id="edge11_Node000000_Node000002" title=" " alt="" coords="94,65,128,65,128,70,94,70"/>
+<area shape="poly" id="edge13_Node000000_Node000002" title=" " alt="" coords="94,65,128,65,128,70,94,70"/>
 <area shape="rect" id="Node000003" href="$dd/dd6/classLlmClient.html" title=" " alt="" coords="161,104,245,129"/>
-<area shape="poly" id="edge12_Node000000_Node000003" title=" " alt="" coords="94,80,161,101,160,106,92,85"/>
+<area shape="poly" id="edge14_Node000000_Node000003" title=" " alt="" coords="94,80,161,101,160,106,92,85"/>
 </map>

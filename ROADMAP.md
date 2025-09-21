@@ -41,10 +41,6 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
  - "Recentes": diálogo rolável com busca e filtro por nome/título/autor/resumo/palavras‑chave e submenu com últimos itens.
    - Persistência de metadados (caminho, título, autor, resumo, palavras‑chave) em `QSettings`.
 
-## 0.1.6 - Otimização e Estabilidade
-- Otimizada a renderização do chat movendo a conversão de Markdown para o back-end (C++ com `cmark`).
-- Corrigidos bugs de renderização e travamentos relacionados ao MathJax no painel de chat.
-
 ## 0.1.5 - Itengração IA
 - Integração com APIs de IA (pré cadastradas: OpenAI, GenerAtiva, Claude, Anthropic, Google, DeepSeek)
 - Resumo e explicação de trechos selecionados
@@ -58,11 +54,12 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
   - Execução por etapas (pages per stage) e pausa entre lotes (throttling)
   - Detecção de dependências de extração (`pdftotext`, `pdftoppm`, `tesseract`) e fallbacks
   - Métricas e logs de estágios no diálogo de indexação
-- MathJax no painel de chat
-- Markdown no painel de chat
+- Otimizada a renderização do chat movendo a conversão de Markdown para o back-end (C++ com `cmark`).
+- Corrigidos bugs de renderização e travamentos relacionados ao MathJax no painel de chat.
 - Busca full-text no documento
 
 ## 0.1.7 – Anotações e Dicionário
+- Empacotamento (AppImage)
 - Ajustado painel de Informações da Aplicação
 - Carga de e-books pela linha de comando ou menu no explorador (Abrir Com).
 - Associação de extenção com o applicativo.
@@ -71,10 +68,26 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 
 
 ## 0.1.8 – TTS e Controles
+- Compilação para o Windows, ainda em implementação, Ajuda será bem vinda.
+- Ajuste na documentação, em especial tutorial e arquivo readme.
+- Adicionado ao menu help o conteúdo do arquivo TUTORIAL.md
+- Melhorias na seleção de página e sincronismo do e-book com o TOC e seletor de página na barra de ferramentas. 
+- Sincronizado o TOC e a página selecionada na barra de ferramentas com a página exibida do e-book.
+- Revisão do menu "Arquivos Recentes" e da janela de listagem.
+- Iniciado o estudo para implementar a funcionalidade do menu/conteudo/indice/sumário do e-book.
+- Melhorado gestão de chat por arquivos.
+
+
+
 - Continuar o desenvolvimento: Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,
 
 - Escrita incremental de vetores/ids/metadados
 - Documentação de uso e limitações
+
+## 0.2.0 – TTS
+- Reestruturar o MainWindows para reduzir seu tamanho, aplicando fachadas para agrupar funções por contextos gráficos.
+
+## 0.2.1 – Reestruturação do código
 - Reprodução TTS de seleção atual
 - Controles de velocidade/pausa/retomar
 - Output device selection
@@ -90,7 +103,6 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 
 ## 1.x – Estabilidade e Releases
 - Testes automatizados
-- Empacotamento (AppImage/Flatpak)
 - Internacionalização (i18n)
 
 ## Backlog Técnico

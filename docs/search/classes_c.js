@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['welcomedialog_0',['WelcomeDialog',['../dd/dd8/classWelcomeDialog.html',1,'']]]
+  ['vectorindex_0',['VectorIndex',['../d3/db0/classVectorIndex.html',1,'']]]
 ];
