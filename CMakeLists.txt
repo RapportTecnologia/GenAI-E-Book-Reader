@@ -130,6 +130,11 @@ if(UNIX AND NOT APPLE)
   set(LINUXDEPLOY_BIN "${LINUXDEPLOY_PATH}")
 
   add_custom_target(dist
+    DEPENDS dist_linux #dist_windows
+    COMMENT "Creating distribution artifacts"
+    VERBATIM)
+
+  add_custom_target(dist_linux
     DEPENDS genai_reader
     COMMAND ${CMAKE_COMMAND} -E make_directory "${DIST_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/bin"
