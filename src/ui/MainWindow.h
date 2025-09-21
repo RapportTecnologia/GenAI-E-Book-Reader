@@ -23,7 +23,6 @@ class QComboBox;
 class QLineEdit;
 class QPushButton;
 class QShortcut;
-class QLabel;
 class ViewerWidget;
 class QNetworkAccessManager;
 class PdfViewerWidget;
@@ -32,6 +31,7 @@ class SummaryDialog;
 class ChatDock;
 class DictionarySettingsDialog;
 class RecentFilesDialog;
+class QPdfBookmarkModel;
 
 #include "reader/Reader.h"
 
@@ -142,6 +142,7 @@ private:
 
     QWidget* viewer_ {nullptr}; // can be ViewerWidget or PdfViewerWidget
     QTreeWidget* toc_ {nullptr};
+    QPdfBookmarkModel* tocModel_ {nullptr};
     QWidget* tocPanel_ {nullptr};
     QToolBar* tocToolBar_ {nullptr};
     QSplitter* splitter_ {nullptr};

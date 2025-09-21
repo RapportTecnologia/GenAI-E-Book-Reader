@@ -77,6 +77,7 @@
 #include <QDesktopServices>
 #include <QClipboard>
 #include <QGuiApplication>
+#include <QDebug>
 
 #include "app/App.h"
 #include "ai/EmbeddingIndexer.h"
@@ -986,8 +987,8 @@ void MainWindow::createActions() {
         tocToolBar_->addAction(actTocNext_);
     }
 
+
     connect(toc_, &QTreeWidget::itemActivated, this, &MainWindow::onTocItemActivated);
-    connect(toc_, &QTreeWidget::itemClicked, this, &MainWindow::onTocItemActivated);
 
     // Initial state
     actClose_->setEnabled(false);
@@ -1352,34 +1353,54 @@ void MainWindow::setTocModeChapters() {
     // Try to build TOC from real PDF bookmarks (titles) when available
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
         if (QPdfDocument* doc = pv->document()) {
-            QPdfBookmarkModel bm(doc);
-            if (bm.rowCount() > 0) {
-                std::function<QTreeWidgetItem*(const QModelIndex&)> buildNode = [&](const QModelIndex& idx) -> QTreeWidgetItem* {
-                    // Title
-                    const QString title = bm.data(idx, Qt::DisplayRole).toString();
-                    auto* item = new QTreeWidgetItem(QStringList{ title.isEmpty() ? tr("(sem título)") : title });
-                    const int rows = bm.rowCount(idx);
-                    for (int r = 0; r < rows; ++r) {
-                        const QModelIndex childIdx = bm.index(r, 0, idx);
-                        if (childIdx.isValid()) {
-                            if (auto* child = buildNode(childIdx)) item->addChild(child);
+            delete tocModel_;
+            tocModel_ = new QPdfBookmarkModel(doc);
+
+            if (tocModel_->rowCount() > 0) {
+                qDebug() << "[TOC] Building bookmark tree from PDF model (Manual, Safe).";
+                std::function<void(QTreeWidgetItem*, const QModelIndex&)> addChildren;
+                addChildren = [&](QTreeWidgetItem* parentItem, const QModelIndex& parentIndex) {
+                    for (int i = 0; i < tocModel_->rowCount(parentIndex); ++i) {
+                        QModelIndex childIndex = tocModel_->index(i, 0, parentIndex);
+                        if (!childIndex.isValid()) continue;
+
+                        const QString title = tocModel_->data(childIndex, Qt::DisplayRole).toString();
+                        const int page = tocModel_->data(childIndex, Qt::UserRole).toInt();
+
+                        auto* childItem = new QTreeWidgetItem();
+                        childItem->setText(0, title);
+                        if (page > 0) {
+                            childItem->setData(0, Qt::UserRole, page);
+                            childItem->setToolTip(0, tr("Ir para a página %1").arg(page));
+                        }
+                        parentItem->addChild(childItem);
+
+                        if (tocModel_->hasChildren(childIndex)) {
+                            addChildren(childItem, childIndex);
                         }
                     }
-                    return item;
                 };
 
-                // Build top-level items
-                for (int r = 0; r < bm.rowCount(); ++r) {
-                    const QModelIndex topIdx = bm.index(r, 0);
-                    if (!topIdx.isValid()) continue;
-                    if (auto* node = buildNode(topIdx)) toc_->addTopLevelItem(node);
+                for (int i = 0; i < tocModel_->rowCount(); ++i) {
+                    QModelIndex topIndex = tocModel_->index(i, 0);
+                    if (!topIndex.isValid()) continue;
+
+                    const QString title = tocModel_->data(topIndex, Qt::DisplayRole).toString();
+                    const int page = tocModel_->data(topIndex, Qt::UserRole).toInt();
+
+                    auto* topItem = new QTreeWidgetItem();
+                    topItem->setText(0, title);
+                    if (page > 0) {
+                        topItem->setData(0, Qt::UserRole, page);
+                        topItem->setToolTip(0, tr("Ir para a página %1").arg(page));
+                    }
+                    toc_->addTopLevelItem(topItem);
+
+                    if (tocModel_->hasChildren(topIndex)) {
+                        addChildren(topItem, topIndex);
+                    }
                 }
-
-                // Provide better UX: expand first levels so subcapítulos are visible
                 toc_->expandToDepth(1);
-
-                // Note: older Qt may not expose destinations via roles; we keep non-clickable TOC here.
-                // Navigation will fallback below when no bookmarks provide page targets.
             }
         }
     }
@@ -2159,20 +2180,25 @@ void MainWindow::zoomReset() {
     updateStatus();
 }
 
+void MainWindow::onTocItemActivated(QTreeWidgetItem* item, int) {
+    if (!item) return;
+    bool ok = false;
+    const unsigned int page = item->data(0, Qt::UserRole).toUInt(&ok);
+    if (ok && page > 0) {
+        if (auto* pdfViewer = qobject_cast<PdfViewerWidget*>(viewer_)) {
+            pdfViewer->setCurrentPage(page);
+        }
+    } else {
+        const QString query = item->text(0);
+        if (!query.isEmpty() && searchEdit_) {
+            searchEdit_->setText(query);
+            onSearchTriggered();
+        }
+    }
+}
+
 void MainWindow::toggleTheme() {
     darkTheme_ = !darkTheme_;
     applyDarkPalette(darkTheme_);
 }
 
-void MainWindow::onTocItemActivated(QTreeWidgetItem* item, int) {
-    bool ok = false;
-    const unsigned int page = item->data(0, Qt::UserRole).toUInt(&ok);
-    if (ok) {
-        if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
-            vw->setCurrentPage(page);
-        }
-        if (auto* pdfViewer = qobject_cast<PdfViewerWidget*>(viewer_)) {
-            pdfViewer->setCurrentPage(page);
-        }
-    }
-}

@@ -3,10 +3,18 @@
 #include <QWidget>
 #include <QString>
 
+// Check if QPdfLinkModel is available (Qt 6.4+)
+#if __has_include(<QtPdf/QPdfLinkModel>)
+#  define HAS_QPDF_LINK_MODEL 1
+#elif __has_include(<QPdfLinkModel>)
+#  define HAS_QPDF_LINK_MODEL 1
+#endif
+
 // Forward declarations for pointer members to reduce header dependencies
 class QPdfDocument;
 class QPdfView;
 class QPdfPageNavigator;
+class QPdfLinkModel;
 class QRubberBand;
 class QLabel;
 class QGraphicsOpacityEffect;
@@ -76,6 +84,9 @@ private:
     QPdfDocument* doc_;
     QPdfView* view_;
     QPdfPageNavigator* navigation_;
+#ifdef HAS_QPDF_LINK_MODEL
+    QPdfLinkModel* linkModel_;
+#endif
 
     // Selection state
     SelectionMode selMode_ { SelectionMode::Auto };

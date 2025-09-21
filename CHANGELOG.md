@@ -14,6 +14,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - Melhorias na seleção de página e sincronismo do e-book com o TOC e seletor de página na barra de ferramentas. 
 - Sincronizado o TOC e a página selecionada na barra de ferramentas com a página exibida do e-book.
 - Revisão do menu "Arquivos Recentes" e da janela de listagem.
+- Iniciado o estudo para implementar a funcionalidade do menu/conteudo/indice/sumário do e-book.
 
 ## [0.1.7] - 2025-09-20
 

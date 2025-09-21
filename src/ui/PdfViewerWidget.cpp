@@ -5,6 +5,16 @@
 #include <QPdfView>
 #include <QVBoxLayout>
 #include <QPdfPageNavigator>
+// Try to include QPdfLinkModel if available (Qt 6.4+)
+#if __has_include(<QtPdf/QPdfLinkModel>)
+#  include <QtPdf/QPdfLinkModel>
+#  include <QtPdf/QPdfLink>
+#  define HAS_QPDF_LINK_MODEL 1
+#elif __has_include(<QPdfLinkModel>)
+#  include <QPdfLinkModel>
+#  include <QPdfLink>
+#  define HAS_QPDF_LINK_MODEL 1
+#endif
 #include <QPointF>
 #include <QVBoxLayout>
 #include <QFileInfo>
@@ -37,6 +47,7 @@
 #include <QTimer>
 #include <QMenu>
 #include <QRegularExpression>
+#include <QDebug>
 #if __has_include(<QtPdf/QPdfSelection>)
 #  include <QtPdf/QPdfSelection>
 #  define HAS_QPDF_SELECTION 1
@@ -46,7 +57,11 @@
 #endif
 
 PdfViewerWidget::PdfViewerWidget(QWidget* parent)
-    : QWidget(parent), doc_(new QPdfDocument(this)), view_(new QPdfView(this)) {
+    : QWidget(parent), doc_(new QPdfDocument(this)), view_(new QPdfView(this))
+#ifdef HAS_QPDF_LINK_MODEL
+    , linkModel_(new QPdfLinkModel(this))
+#endif
+{
     auto* lay = new QVBoxLayout(this);
     lay->setContentsMargins(0,0,0,0);
     lay->addWidget(view_);
@@ -107,6 +122,14 @@ bool PdfViewerWidget::openFile(const QString& path, QString* errorOut) {
     // Keep multi-page mode active after load
     view_->setPageMode(QPdfView::PageMode::MultiPage);
     if (navigation_) navigation_->jump(0, QPointF(), 0);
+    
+    // Configure link model for hyperlink detection
+#ifdef HAS_QPDF_LINK_MODEL
+    if (linkModel_) {
+        linkModel_->setDocument(doc_);
+    }
+#endif
+    
     return true;
 }
 
@@ -284,7 +307,43 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
                 return true;
             }
             if (me->button() == Qt::LeftButton) {
-                // Start a new selection only on left-click
+                // First check for hyperlinks at click position
+#ifdef HAS_QPDF_LINK_MODEL
+                qDebug() << "[LINK DEBUG] Left click detected, checking for links...";
+                if (linkModel_ && doc_ && navigation_) {
+                    const QPoint viewportPos = (watched == view_->viewport()) ? me->pos() : view_->viewport()->mapFrom(view_, me->pos());
+                    
+                    // Set the current page for link detection
+                    const int currentPageIndex = navigation_->currentPage();
+                    linkModel_->setPage(currentPageIndex);
+                    qDebug() << "[LINK DEBUG] Current page:" << currentPageIndex << "Click pos:" << viewportPos;
+                    
+                    // Convert viewport position to document coordinates (simplified)
+                    const QPointF documentPos = QPointF(viewportPos);
+                    
+                    // Check if there's a link at this position
+                    const QPdfLink link = linkModel_->linkAt(documentPos);
+                    qDebug() << "[LINK DEBUG] Link valid:" << link.isValid() << "Target page:" << link.page();
+                    if (link.isValid()) {
+                        // Handle the link navigation
+                        if (link.page() >= 0) {
+                            qDebug() << "[LINK DEBUG] Navigating to page:" << link.page();
+                            // Internal link to another page
+                            navigation_->jump(link.page(), link.location(), link.zoom());
+                            event->accept();
+                            return true;
+                        }
+                        // Could also handle external URLs here if needed
+                    }
+                } else {
+                    qDebug() << "[LINK DEBUG] LinkModel not available:" << (linkModel_ ? "OK" : "NULL") 
+                             << "Doc:" << (doc_ ? "OK" : "NULL") << "Nav:" << (navigation_ ? "OK" : "NULL");
+                }
+#else
+                qDebug() << "[LINK DEBUG] QPdfLinkModel not compiled in this Qt version";
+#endif
+                
+                // If no link was clicked, start a new selection only on left-click
                 if (selMode_ == SelectionMode::None) selMode_ = SelectionMode::Rect;
                 if (selMode_ != SelectionMode::None) {
                     selecting_ = true;
@@ -376,16 +435,50 @@ static QRect normalizedRect(const QPoint& a, const QPoint& b) {
 }
 
 void PdfViewerWidget::mousePressEvent(QMouseEvent* event) {
-    if (event->button() == Qt::LeftButton && selMode_ != SelectionMode::None) {
-        selecting_ = true;
-        selStart_ = view_->viewport()->mapFrom(this, event->pos());
-        selRect_ = QRect(selStart_, QSize());
-        if (rubber_) {
-            rubber_->setGeometry(selRect_);
-            rubber_->show();
+    if (event->button() == Qt::LeftButton) {
+        // First check for hyperlinks at click position
+#ifdef HAS_QPDF_LINK_MODEL
+        if (linkModel_ && doc_ && navigation_) {
+            const QPoint viewportPos = view_->viewport()->mapFrom(this, event->pos());
+            // Note: QPdfView doesn't have mapToScene, we need to calculate position differently
+            // For now, we'll use a simpler approach with page coordinates
+            
+            // Set the current page for link detection
+            const int currentPageIndex = navigation_->currentPage();
+            linkModel_->setPage(currentPageIndex);
+            
+            // Convert viewport position to document coordinates (simplified)
+            // This is a basic implementation - may need refinement for accuracy
+            const QPointF documentPos = QPointF(viewportPos);
+            
+            // Check if there's a link at this position
+            const QPdfLink link = linkModel_->linkAt(documentPos);
+            if (link.isValid()) {
+                // Handle the link navigation
+                if (link.page() >= 0) {
+                    // Internal link to another page
+                    navigation_->jump(link.page(), link.location(), link.zoom());
+                    event->accept();
+                    return;
+                }
+                // Could also handle external URLs here if needed
+                // For now, just handle internal page links
+            }
         }
-        event->accept();
-        return;
+#endif
+        
+        // If no link was clicked, proceed with selection logic
+        if (selMode_ != SelectionMode::None) {
+            selecting_ = true;
+            selStart_ = view_->viewport()->mapFrom(this, event->pos());
+            selRect_ = QRect(selStart_, QSize());
+            if (rubber_) {
+                rubber_->setGeometry(selRect_);
+                rubber_->show();
+            }
+            event->accept();
+            return;
+        }
     }
     QWidget::mousePressEvent(event);
 }
