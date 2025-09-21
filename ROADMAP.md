@@ -80,6 +80,13 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Documentação de uso e limitações
 - Escrita incremental de vetores/ids/metadados
 
+## 0.1.9 – Ajustes
+- Ajuste no CI para refletir os ajustes em CMakeList.txt
+- Automatizado o ajuste de versão com base no primeiro nota de versão
+- Corrigir as configurações para acesso a GenAI.
+- Adicionar Opção de uso do Ollama localmente em http://localhost:11434
+- Adicionar OPção de uso do OpenRouter em https://openrouter.ai
+
 ## 0.2.0 – TTS e Dicionario
 - Reestruturar o MainWindows para reduzir seu tamanho, aplicando fachadas para agrupar funções por contextos gráficos.
 - Continuar o desenvolvimento: Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,

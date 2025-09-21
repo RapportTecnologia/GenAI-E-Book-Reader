@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-## [Unreleased]
+## [0.1.9]
+
+- Ajuste no CI para refletir os ajustes em CMakeList.txt
+- Automatizado o ajuste de versão com base no primeiro nota de versão
 
 ## [0.1.8] - 2025-09-21
 
