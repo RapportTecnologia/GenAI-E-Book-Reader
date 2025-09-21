@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="com.ubuntu.software.appmarket.appdata" xmlns="http://appstream.ubuntu.com/v1.0">
+  <id>genai-reader</id>
+  <type>desktop</type>
+  <name xml:lang="pt_BR">GenAi E-Book Reader</name>
+  <summary xml:lang="pt_BR">Leitor de E-Books com IA</summary>
+  <description xml:lang="pt_BR">Leia e busque em seus e-books com IA. Converse com a IA para obter informações ou simplesmente divertir-se.</description>
+  <project_url type="homepage">https://github.com/RapportTecnologia/GenAi-E-Book-Reader</project_url>
+  <project_url type="bugtracker">https://github.com/RapportTecnologia/GenAi-E-Book-Reader/issues</project_url>
+  <icon type="stock">genai-reader</icon>
+  <categories>
+    <category>Office</category>
+    <category>Education</category>
+    <category>Accessibility</category>
+  </categories>
+  <provides>
+    <desktop-application>
+      <id>genai-reader</id>
+      <name xml:lang="pt_BR">GenAi E-Book Reader</name>
+      <icon type="stock">genai-reader</icon>
+      <exec>genai-reader</exec>
+      <try_exec>genai-reader</try_exec>
+      <mime-type type="application/epub+zip">
+        <comment xml:lang="pt_BR">E-Book em EPUB</comment>
+      </mime-type>
+      <mime-type type="application/pdf">
+        <comment xml:lang="pt_BR">PDF</comment>
+      </mime-type>
+      <mime-type type="application/x-mobipocket-ebook">
+        <comment xml:lang="pt_BR">E-Book em MOBI</comment>
+      </mime-type>
+    </desktop-application>
+  </provides>
+  <screenshots>
+    <screenshot>
+      <id>screenshot-1</id>
+      <file href="../doc/genai-reader/screenshots/home.png"></file>
+      <caption xml:lang="pt_BR">Painel de Busca e Chat</caption>
+    </screenshot>
+    <screenshot>
+      <id>screenshot-2</id>
+      <file href="../doc/genai-reader/screenshots/chat.png"></file>
+      <caption xml:lang="pt_BR">Painel de Chat</caption>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release>
+      <version>0.1.8</version>
+      <date>2025-09-21</date>
+      <stability>unstable</stability>
+      <description xml:lang="pt_BR">Compilação para o Windows, ainda em implementação, Ajuda será bem vinda.</description>
+    </release>
+    <release>
+      <version>0.1.7</version>
+      <date>2025-09-20</date>
+      <stability>unstable</stability>
+      <description xml:lang="pt_BR">Ajuste na documentação, em especial tutorial e arquivo readme.</description>
+    </release>
+    <release>
+      <version>0.1.6</version>
+      <date>2025-09-18</date>
+      <stability>unstable</stability>
+      <description xml:lang="pt_BR">Iniciado o estudo para implementar a funcionalidade do menu/conteudo/indice/sumário do e-book.</description>
+    </release>
+    <release>
+      <version>0.1.5</version>
+      <date>2025-09-14</date>
+      <stability>unstable</stability>
+      <description xml:lang="pt_BR">Integração com LLM (OpenAI/GenerAtiva) com diálogo de Configurações de LLM.</description>
+    </release>
+  </releases>
+</component>

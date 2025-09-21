@@ -169,6 +169,17 @@ add_custom_target(create_icons
 # Make the main target depend on icon creation
 add_dependencies(genai_reader create_icons)
 
+# Custom target to ensure AppStream metadata exists inside AppDir
+add_custom_target(create_appdata
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/metainfo"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/metainfo/genai-reader.appdata.xml" "${APPDIR}/usr/share/metainfo/genai-reader.appdata.xml"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Ensuring AppStream metadata is available in AppDir"
+)
+
+# Ensure the main target depends on appdata creation as well
+add_dependencies(genai_reader create_appdata)
+
 # Install rule for desktop integration
 install(FILES resources/appimage/genai-reader.desktop DESTINATION share/applications)
 install(DIRECTORY "${APPDIR}/usr/share/icons/hicolor/" DESTINATION share/icons)
