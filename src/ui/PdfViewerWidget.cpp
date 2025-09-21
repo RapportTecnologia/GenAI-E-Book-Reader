@@ -230,7 +230,11 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
                         QObject::connect(actSum, &QAction::triggered, this, [this, text]() { emit requestSummarize(text); });
                     }
                     QAction* actChat = menu.addAction(tr("Enviar ao chat (IA)"));
-                    QObject::connect(actChat, &QAction::triggered, this, [this, text]() { emit requestSendToChat(text); });
+                    QObject::connect(actChat, &QAction::triggered, this, [this, text]() {
+                        emit requestSendToChat(text);
+                        // Clear selection after sending so the rectangle/marking disappears
+                        clearSelection();
+                    });
                     // If there is an image selection rectangle too, offer image sending as well
                     if (hasImageSelection) {
                         menu.addSeparator();
@@ -241,6 +245,8 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
                             QAction* actChatImg = menu.addAction(tr("Enviar imagem ao chat (IA)"));
                             QObject::connect(actChatImg, &QAction::triggered, this, [this, pm]() {
                                 emit requestSendImageToChat(pm.toImage());
+                                // Clear selection after sending image
+                                clearSelection();
                             });
                         }
                     }
@@ -256,6 +262,8 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
                         QAction* actChatImg = menu.addAction(tr("Enviar imagem ao chat (IA)"));
                         QObject::connect(actChatImg, &QAction::triggered, this, [this, pm]() {
                             emit requestSendImageToChat(pm.toImage());
+                            // Clear selection after sending image
+                            clearSelection();
                         });
                         menu.addSeparator();
                         QAction* actCopy = menu.addAction(tr("Copiar (Ctrl+C)"));
