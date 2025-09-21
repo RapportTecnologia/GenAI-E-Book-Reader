@@ -172,7 +172,10 @@ add_dependencies(genai_reader create_icons)
 # Custom target to ensure AppStream metadata exists inside AppDir
 add_custom_target(create_appdata
     COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/metainfo"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/metainfo/genai-reader.appdata.xml" "${APPDIR}/usr/share/metainfo/genai-reader.appdata.xml"
+    # Remove previous file with mismatching name if present
+    COMMAND ${CMAKE_COMMAND} -E rm -f "${APPDIR}/usr/share/metainfo/genai-reader.appdata.xml"
+    # Copy metainfo with filename matching the component ID (avoids metainfo-filename-cid-mismatch)
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_SOURCE_DIR}/metainfo/genai-reader.appdata.xml" "${APPDIR}/usr/share/metainfo/br.tec.rapport.genai-e-book-reader.appdata.xml"
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Ensuring AppStream metadata is available in AppDir"
 )
@@ -183,6 +186,7 @@ add_dependencies(genai_reader create_appdata)
 # Install rule for desktop integration
 install(FILES resources/appimage/genai-reader.desktop DESTINATION share/applications)
 install(DIRECTORY "${APPDIR}/usr/share/icons/hicolor/" DESTINATION share/icons)
+install(FILES "${CMAKE_SOURCE_DIR}/metainfo/genai-reader.appdata.xml" DESTINATION share/metainfo RENAME br.tec.rapport.genai-e-book-reader.appdata.xml)
 
 # ----------------------------------------------------------------------------
 # GitHub Release Target
@@ -194,6 +198,27 @@ find_program(GH_BIN gh)
 
 if(NOT GH_BIN)
   message(WARNING "GitHub CLI 'gh' not found. The 'github_release' target will not be able to create releases on GitHub.")
+endif()
+
+# ----------------------------------------------------------------------------
+# AppStream validation (appstreamcli)
+find_program(APPSTREAMCLI_BIN appstreamcli)
+if(APPSTREAMCLI_BIN)
+  add_custom_target(validate_appstream
+    COMMAND ${APPSTREAMCLI_BIN} validate --pedantic "${CMAKE_SOURCE_DIR}/metainfo/genai-reader.appdata.xml"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Validating AppStream metainfo with appstreamcli"
+    VERBATIM
+  )
+  # If distribution targets exist, make them depend on validation
+  if(TARGET dist)
+    add_dependencies(dist validate_appstream)
+  endif()
+  if(TARGET dist_linux)
+    add_dependencies(dist_linux validate_appstream)
+  endif()
+else()
+  message(WARNING "'appstreamcli' not found. Skipping AppStream validation. Install 'appstream' package to enable.")
 endif()
 
 add_custom_target(github_release

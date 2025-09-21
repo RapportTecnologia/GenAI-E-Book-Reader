@@ -1,72 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component type="com.ubuntu.software.appmarket.appdata" xmlns="http://appstream.ubuntu.com/v1.0">
-  <id>genai-reader</id>
-  <type>desktop</type>
+<component type="desktop-application" xmlns="http://www.freedesktop.org/standards/metainfo/1.0">
+  <id>br.tec.rapport.genai-e-book-reader</id>
+  <name>GenAi E-Book Reader</name>
+  <summary>E-book reader with AI assistance</summary>
   <name xml:lang="pt_BR">GenAi E-Book Reader</name>
   <summary xml:lang="pt_BR">Leitor de E-Books com IA</summary>
-  <description xml:lang="pt_BR">Leia e busque em seus e-books com IA. Converse com a IA para obter informações ou simplesmente divertir-se.</description>
-  <project_url type="homepage">https://github.com/RapportTecnologia/GenAi-E-Book-Reader</project_url>
-  <project_url type="bugtracker">https://github.com/RapportTecnologia/GenAi-E-Book-Reader/issues</project_url>
+  <description>
+    <p>E-book reader with AI assistance. Read and search your e-books, and chat with an AI assistant.</p>
+    <p xml:lang="pt_BR">Leia e busque em seus e-books com IA. Converse com a IA para obter informações ou simplesmente divertir-se.</p>
+  </description>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>CC-BY-4.0</project_license>
+  <developer id="br.eti.carlosdelfino">
+    <name>Carlos Delfino Carvalho Pinheiro</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+  <url type="homepage">https://github.com/RapportTecnologia/GenAi-E-Book-Reader</url>
+  <url type="bugtracker">https://github.com/RapportTecnologia/GenAi-E-Book-Reader/issues</url>
+  <launchable type="desktop-id">genai-reader.desktop</launchable>
   <icon type="stock">genai-reader</icon>
   <categories>
     <category>Office</category>
     <category>Education</category>
     <category>Accessibility</category>
+    <category>Qt</category>
   </categories>
-  <provides>
-    <desktop-application>
-      <id>genai-reader</id>
-      <name xml:lang="pt_BR">GenAi E-Book Reader</name>
-      <icon type="stock">genai-reader</icon>
-      <exec>genai-reader</exec>
-      <try_exec>genai-reader</try_exec>
-      <mime-type type="application/epub+zip">
-        <comment xml:lang="pt_BR">E-Book em EPUB</comment>
-      </mime-type>
-      <mime-type type="application/pdf">
-        <comment xml:lang="pt_BR">PDF</comment>
-      </mime-type>
-      <mime-type type="application/x-mobipocket-ebook">
-        <comment xml:lang="pt_BR">E-Book em MOBI</comment>
-      </mime-type>
-    </desktop-application>
-  </provides>
+  <!-- MIME types are typically declared in the .desktop/desktop-file or MIME package; omitting here. -->
   <screenshots>
-    <screenshot>
-      <id>screenshot-1</id>
-      <file href="../doc/genai-reader/screenshots/home.png"></file>
-      <caption xml:lang="pt_BR">Painel de Busca e Chat</caption>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/RapportTecnologia/GenAi-E-Book-Reader/versao_0.1.8/docs/imgs/screenshots/janela_completa.png</image>
+      <caption xml:lang="pt_BR">Janela principal</caption>
     </screenshot>
     <screenshot>
-      <id>screenshot-2</id>
-      <file href="../doc/genai-reader/screenshots/chat.png"></file>
+      <image>https://raw.githubusercontent.com/RapportTecnologia/GenAi-E-Book-Reader/versao_0.1.8/docs/imgs/screenshots/frame_chat.png</image>
       <caption xml:lang="pt_BR">Painel de Chat</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/RapportTecnologia/GenAi-E-Book-Reader/versao_0.1.8/docs/imgs/screenshots/frame_pdf_view.png</image>
+      <caption xml:lang="pt_BR">Visualização de PDF</caption>
     </screenshot>
   </screenshots>
   <releases>
-    <release>
-      <version>0.1.8</version>
-      <date>2025-09-21</date>
-      <stability>unstable</stability>
-      <description xml:lang="pt_BR">Compilação para o Windows, ainda em implementação, Ajuda será bem vinda.</description>
+    <release version="0.1.8" date="2025-09-21">
+      <description>
+        <p xml:lang="pt_BR">Compilação para o Windows, ainda em implementação. Ajuda será bem-vinda.</p>
+      </description>
     </release>
-    <release>
-      <version>0.1.7</version>
-      <date>2025-09-20</date>
-      <stability>unstable</stability>
-      <description xml:lang="pt_BR">Ajuste na documentação, em especial tutorial e arquivo readme.</description>
+    <release version="0.1.7" date="2025-09-20">
+      <description>
+        <p xml:lang="pt_BR">Ajustes na documentação, em especial Tutorial e README.</p>
+      </description>
     </release>
-    <release>
-      <version>0.1.6</version>
-      <date>2025-09-18</date>
-      <stability>unstable</stability>
-      <description xml:lang="pt_BR">Iniciado o estudo para implementar a funcionalidade do menu/conteudo/indice/sumário do e-book.</description>
+    <release version="0.1.6" date="2025-09-18">
+      <description>
+        <p xml:lang="pt_BR">Iniciado estudo para implementar navegação por menu/índice/sumário do e-book.</p>
+      </description>
     </release>
-    <release>
-      <version>0.1.5</version>
-      <date>2025-09-14</date>
-      <stability>unstable</stability>
-      <description xml:lang="pt_BR">Integração com LLM (OpenAI/GenerAtiva) com diálogo de Configurações de LLM.</description>
+    <release version="0.1.5" date="2025-09-14">
+      <description>
+        <p xml:lang="pt_BR">Integração com LLM (OpenAI/GenerAtiva) com diálogo de Configurações de LLM.</p>
+      </description>
     </release>
   </releases>
 </component>
