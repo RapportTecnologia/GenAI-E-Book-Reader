@@ -19,10 +19,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential cmake ninja-build patchelf file wget
-          # Qt6
+          # Qt6 toolchain and modules used by CMakeLists.txt
           sudo apt-get install -y qt6-base-dev qt6-base-dev-tools qt6-tools-dev qt6-tools-dev-tools qt6-pdf-dev qt6-webengine-dev
-          # ImageMagick
-          sudo apt-get install -y imagemagick
+          # ImageMagick for icon generation and appstream for validation
+          sudo apt-get install -y imagemagick appstream
 
       - name: Configure (Release)
         run: |
@@ -32,62 +32,35 @@ jobs:
         run: |
           cmake --build build -j
 
-      - name: Prepare AppDir
+      - name: Build dist (AppImage via CMake target)
         run: |
-          mkdir -p AppDir/usr/bin
-          mkdir -p AppDir/usr/share/applications
-          mkdir -p AppDir/usr/share/icons/hicolor/128x128/apps
-          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
-          mkdir -p AppDir/usr/share/icons/hicolor/512x512/apps
-          cp build/bin/genai_reader AppDir/usr/bin/
-          # Desktop file and icon
-          cp resources/appimage/genai-reader.desktop AppDir/usr/share/applications/
-          convert docs/imgs/logo-do-projeto.png -resize 128x128! AppDir/usr/share/icons/hicolor/128x128/apps/genai-reader.png
-          convert docs/imgs/logo-do-projeto.png -resize 256x256! AppDir/usr/share/icons/hicolor/256x256/apps/genai-reader.png
-          convert docs/imgs/logo-do-projeto.png -resize 512x512! AppDir/usr/share/icons/hicolor/512x512/apps/genai-reader.png
+          cmake --build build --target dist -j
 
-      - name: Download linuxdeploy and plugin-qt
+      - name: Locate artifact
+        id: find_appimage
         run: |
-          wget -O linuxdeploy-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          wget -O linuxdeploy-plugin-qt-x86_64.AppImage https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-          chmod +x linuxdeploy-*.AppImage
-
-      - name: Build AppImage
-        env:
-          QML_SOURCES_PATHS: src
-        run: |
-          ./linuxdeploy-x86_64.AppImage --appdir AppDir \
-            -e AppDir/usr/bin/genai_reader \
-            -d AppDir/usr/share/applications/genai-reader.desktop \
-            -i AppDir/usr/share/icons/hicolor/256x256/apps/genai-reader.png \
-            --output appimage \
-            --plugin qt \
-            --updateinformation "gh-releases-zsync|Rapport-Tecnologia|GenAi-E-Book-Reader|latest|GenAI_EBook_Reader-*-x86_64.AppImage.zsync"
-          set -euo pipefail
-          # List only the AppImage of the app (exclude linuxdeploy tools)
-          APPIMAGE="$(ls -1 *.AppImage | grep -v '^linuxdeploy' | head -n1 || true)"
-          if [ -z "${APPIMAGE:-}" ]; then
-            echo "Erro: nenhum AppImage do aplicativo foi encontrado."
-            ls -lh
+          echo "Listing dist directory:"
+          ls -lah dist || true
+          APPIMAGE_PATH=$(ls dist/*.AppImage | head -n1 || true)
+          if [ -z "${APPIMAGE_PATH}" ]; then
+            echo "::error::No AppImage found under dist/."
             exit 1
           fi
-          echo "AppImage gerado: ${APPIMAGE}"
-          mv "${APPIMAGE}" "genai_reader-${{ github.ref_name }}-x86_64.AppImage"
-          ls -lh genai_reader-*.AppImage
+          echo "Found AppImage: ${APPIMAGE_PATH}"
+          echo "appimage=${APPIMAGE_PATH}" >> $GITHUB_OUTPUT
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: genai_reader-${{ github.ref_name }}-AppImage
-          path: genai_reader-${{ github.ref_name }}-x86_64.AppImage
+          path: ${{ steps.find_appimage.outputs.appimage }}
 
       - name: Upload to GitHub Release (if tag)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            genai_reader-${{ github.ref_name }}-x86_64.AppImage
-            genai_reader-${{ github.ref_name }}-x86_64.AppImage.zsync
+            ${{ steps.find_appimage.outputs.appimage }}
             APPIMAGE.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
