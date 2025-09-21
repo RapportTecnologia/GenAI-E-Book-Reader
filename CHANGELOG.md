@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+
+## [0.1.8] - 2025-09-21
+
 - Compilação para o Windows, ainda em implementação, Ajuda será bem vinda. 
 
 ## [0.1.7] - 2025-09-20
@@ -62,6 +65,8 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - Problemas de exibição de tabelas Markdown no chat.
 - Ordem de renderização para garantir MathJax consistente após parsing e highlighting.
 
+[Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.8
 [0.1.7]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.7
 [0.1.6]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.6
 [0.1.5]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.5

@@ -4,7 +4,7 @@
 ![Qt](https://img.shields.io/badge/Qt6-Widgets-brightgreen)
 ![CMake](https://img.shields.io/badge/CMake-%3E%3D3.16-informational)
 [![Docs](https://img.shields.io/badge/docs-Doxygen-blueviolet)](docs/index.html)
-![Version](https://img.shields.io/badge/version-0.1.6-blue)
+[![Latest Release](https://img.shields.io/github/v/release/RapportTecnologia/GenAi-E-Book-Reader?label=version)](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contribuindo)
 
 
@@ -12,11 +12,33 @@
 
 Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt6, com recursos planejados de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.
 
-- Requisitos e escopo completos: consulte [REQUIREMENTS.md](REQUIREMENTS.md).
-- Plano do projeto (fases, sprints e critérios): consulte [PLANO-DE-DESENVOLVIMENTO.md](PLANO-DE-DESENVOLVIMENTO.md).
 - Histórico de mudanças: consulte [CHANGELOG.md](CHANGELOG.md).
 - Planejamento de releases: consulte [ROADMAP.md](ROADMAP.md).
 - Tutorial passo a passo: consulte [TUTORIAL.md](TUTORIAL.md).
+
+## Como Obter o Aplicativo
+
+Você pode baixar a versão estável mais recente ou compilar a versão de desenvolvimento para ter acesso aos recursos mais novos.
+
+### Versão Estável (Recomendado)
+
+A versão estável mais recente é a **v0.1.7**. Para a maioria dos usuários, recomendamos o download do executável pronto para uso.
+
+1.  Acesse a [**página de Releases**](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest).
+2.  Baixe o arquivo `GenAI_EBook_Reader-v0.1.7-x86_64.AppImage`.
+3.  Dê permissão de execução ao arquivo:
+    ```bash
+    chmod +x GenAI_EBook_Reader-v0.1.7-x86_64.AppImage
+    ```
+4.  Execute o aplicativo:
+    ```bash
+    ./GenAI_EBook_Reader-v0.1.7-x86_64.AppImage
+    ```
+
+### Versão de Desenvolvimento
+
+Se você deseja testar os recursos mais recentes que estarão na **v0.1.8**, pode compilar o projeto a partir do código-fonte. Esta versão inclui novas funcionalidades e correções de bugs, mas pode ser instável.
+
 
 ## Principais Recursos (MVP)
 - Leitura de PDF com navegação básica e tema claro/escuro. (Suporte a EPUB/MOBI está no roadmap.)
@@ -35,6 +57,8 @@ Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/
 - Barra de busca com pesquisa por texto e fallback para busca semântica por frases usando embeddings; inclui opções rápidas (métrica, Top‑K e limiares).
 
 [Apresentação do Projeto](https://www.youtube.com/watch?v=4wveYzO_Lko)
+
+Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.
 
 Nota (0.1.6): otimização da renderização do chat, com a conversão de Markdown movida para o back-end (C++), corrigindo bugs de instabilidade com MathJax.
 
@@ -165,7 +189,7 @@ Sugestões de valores seguros:
 ## Próximas versões
 - Planejamento contínuo em `ROADMAP.md`.
 
-## Como rodar (Linux)
+#### Compilando a partir do código-fonte (Linux)
 Pré-requisitos: CMake (>=3.16), compilador C++17, Qt6 (Widgets, PdfWidgets, Network), Doxygen (opcional).
 
 ```bash
@@ -189,30 +213,30 @@ Pré-requisitos:
 Passos sugeridos:
 
 ```bash
-# 1) Garanta que CHANGELOG.md e README.md estão atualizados (ex.: 0.1.5)
+# 1) Garanta que CHANGELOG.md e README.md estão atualizados (ex.: 0.1.8)
 git add CHANGELOG.md README.md
-git commit -m "docs: atualiza changelog e readme para v0.1.5"
+git commit -m "docs: atualiza changelog e readme para v0.1.8"
 
 # 2) Versione no código se aplicável (CMakeLists.txt, headers) e commite
 # Exemplo (se houve mudança de versão de build)
 # git add CMakeLists.txt include/app/App.h
-# git commit -m "chore(release): bump version to v0.1.5"
+# git commit -m "chore(release): bump version to v0.1.8"
 
 # 3) Crie uma tag anotada e envie
-git tag -a v0.1.5 -m "v0.1.5"
-git push origin v0.1.5
+git tag -a v0.1.8 -m "v0.1.8"
+git push origin v0.1.8
 
 # 4A) Criar release via GitHub CLI (anexando notas do CHANGELOG)
-gh release create v0.1.5 \
-  --title "v0.1.5" \
+gh release create v0.1.8 \
+  --title "v0.1.8" \
   --notes "Consulte CHANGELOG.md para detalhes desta versão."
 
 # 4B) Alternativa: criar release pela UI do GitHub
-# - Vá em Releases > Draft a new release > Escolha a tag v0.1.5 > Preencha título/notas > Publish
+# - Vá em Releases > Draft a new release > Escolha a tag v0.1.8 > Preencha título/notas > Publish
 
 # 5) (Opcional) Anexar binários
 # Se você tiver artefatos em dist/, anexe com:
-# gh release upload v0.1.5 dist/genai_reader-v0.1.5-linux-x86_64 dist/genai_reader-v0.1.5-linux-x86_64.tar.gz
+# gh release upload v0.1.8 dist/genai_reader-v0.1.8-linux-x86_64 dist/genai_reader-v0.1.8-linux-x86_64.tar.gz
 ```
 
 Observação: o projeto exige Qt6 (Widgets, PdfWidgets, Network). Sem Qt6 a aplicação não compila.

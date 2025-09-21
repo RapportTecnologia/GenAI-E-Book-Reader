@@ -95,18 +95,31 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
   <div class="headertitle"><div class="title">GenAI E-Book Reader </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_GenAi-E-Book-Reader_2README"></a> <img src="https://visitor-badge.laobi.icu/badge?page_id=rapporttecnologia.genai-e-book-reader" alt="Visitantes do Projeto" class="inline"/> [<img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" alt="License: CC BY 4.0" style="pointer-events: none;" class="inline"/>](LICENSE) <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="C++" class="inline"/> <img src="https://img.shields.io/badge/Qt6-Widgets-brightgreen" alt="Qt" class="inline"/> <img src="https://img.shields.io/badge/CMake-%3E%3D3.16-informational" alt="CMake" class="inline"/> <a href="docs/index.html"><img src="https://img.shields.io/badge/docs-Doxygen-blueviolet" alt="Docs" class="inline"/></a> <img src="https://img.shields.io/badge/version-0.1.6-blue" alt="Version" class="inline"/> ![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)</p>
+<div class="textblock"><p><a class="anchor" id="md_GenAi-E-Book-Reader_2README"></a> <img src="https://visitor-badge.laobi.icu/badge?page_id=rapporttecnologia.genai-e-book-reader" alt="Visitantes do Projeto" class="inline"/> [<img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" alt="License: CC BY 4.0" style="pointer-events: none;" class="inline"/>](LICENSE) <img src="https://img.shields.io/badge/C%2B%2B-17-blue" alt="C++" class="inline"/> <img src="https://img.shields.io/badge/Qt6-Widgets-brightgreen" alt="Qt" class="inline"/> <img src="https://img.shields.io/badge/CMake-%3E%3D3.16-informational" alt="CMake" class="inline"/> <a href="docs/index.html"><img src="https://img.shields.io/badge/docs-Doxygen-blueviolet" alt="Docs" class="inline"/></a> <a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest"><img src="https://img.shields.io/github/v/release/RapportTecnologia/GenAi-E-Book-Reader?label=version" alt="Latest Release" class="inline"/></a> ![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)</p>
 <h1><a class="anchor" id="autotoc_md0"></a>
 GenAI E-Book Reader</h1>
 <p>Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt6, com recursos planejados de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.</p>
 <ul>
-<li>Requisitos e escopo completos: consulte REQUIREMENTS.md.</li>
-<li>Plano do projeto (fases, sprints e critérios): consulte <a class="el" href="dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html">PLANO-DE-DESENVOLVIMENTO.md</a>.</li>
 <li>Histórico de mudanças: consulte <a class="el" href="dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html">CHANGELOG.md</a>.</li>
 <li>Planejamento de releases: consulte <a class="el" href="dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html">ROADMAP.md</a>.</li>
 <li>Tutorial passo a passo: consulte TUTORIAL.md.</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md1"></a>
+Como Obter o Aplicativo</h2>
+<p>Você pode baixar a versão estável mais recente ou compilar a versão de desenvolvimento para ter acesso aos recursos mais novos.</p>
+<h3><a class="anchor" id="autotoc_md2"></a>
+Versão Estável (Recomendado)</h3>
+<p>A versão estável mais recente é a <b>v0.1.7</b>. Para a maioria dos usuários, recomendamos o download do executável pronto para uso.</p>
+<ol type="1">
+<li>Acesse a <a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest"><b>página de Releases</b></a>.</li>
+<li>Baixe o arquivo <code>GenAI_EBook_Reader-v0.1.7-x86_64.AppImage</code>.</li>
+<li>Dê permissão de execução ao arquivo: <code>bash chmod +x GenAI_EBook_Reader-v0.1.7-x86_64.AppImage </code></li>
+<li>Execute o aplicativo: <code>bash ./GenAI_EBook_Reader-v0.1.7-x86_64.AppImage </code></li>
+</ol>
+<h3><a class="anchor" id="autotoc_md3"></a>
+Versão de Desenvolvimento</h3>
+<p>Se você deseja testar os recursos mais recentes que estarão na <b>v0.1.8</b>, pode compilar o projeto a partir do código-fonte. Esta versão inclui novas funcionalidades e correções de bugs, mas pode ser instável.</p>
+<h2><a class="anchor" id="autotoc_md4"></a>
 Principais Recursos (MVP)</h2>
 <ul>
 <li>Leitura de PDF com navegação básica e tema claro/escuro. (Suporte a EPUB/MOBI está no roadmap.)</li>
@@ -126,12 +139,14 @@ Principais Recursos (MVP)</h2>
 <li>Barra superior com botão de título central que mostra o nome do documento em leitura e oferece menu contextual (abrir diretório, adicionar ao Calibre com migração de embeddings, renomear com migração).</li>
 <li>Barra de busca com pesquisa por texto e fallback para busca semântica por frases usando embeddings; inclui opções rápidas (métrica, Top‑K e limiares).</li>
 </ul>
+<p><a href="https://www.youtube.com/watch?v=4wveYzO_Lko">Apresentação do Projeto</a></p>
+<p>Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.</p>
 <p>Nota (0.1.6): otimização da renderização do chat, com a conversão de Markdown movida para o back-end (C++), corrigindo bugs de instabilidade com MathJax.</p>
 <p>Nota (0.1.3): refinamento de UI — ícone do app a partir de <code>docs/imgs/logo-do-projeto.png</code>, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível. Painel de TOC remodelado com barra de ferramentas (alternar entre "Páginas"/"Conteúdo" e botões de navegação) e tamanho padrão inicial do splitter ~10% (TOC) / ~90% (visualizador).</p>
 <p>Nota (0.1.2): implementado "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.</p>
 <p>Nota (0.1.1): adicionados seleção de página via combobox e restauração do último arquivo/diretório aberto.</p>
 <p>Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento. O painel de TOC inclui uma barra de ferramentas para alternar entre "Páginas" e "Conteúdo" e botões de navegação; por padrão o painel ocupa ~10% da largura da janela na primeira execução. Atualmente, o binário suporta apenas arquivos PDF.</p>
-<h2><a class="anchor" id="autotoc_md2"></a>
+<h2><a class="anchor" id="autotoc_md5"></a>
 Sumário (TOC) e Navegação</h2>
 <ul>
 <li>Alternar modo do TOC:<ul>
@@ -141,7 +156,7 @@ Sumário (TOC) e Navegação</h2>
 </li>
 <li>Atalhos do painel: arraste o divisor para redimensionar; o tamanho fica salvo para as próximas sessões.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md3"></a>
+<h2><a class="anchor" id="autotoc_md6"></a>
 Busca no documento (texto e semântica)</h2>
 <ul>
 <li>A barra de busca fica na parte superior e contém:<ul>
@@ -160,7 +175,7 @@ Busca no documento (texto e semântica)</h2>
 </ul>
 </li>
 </ul>
-<h3><a class="anchor" id="autotoc_md4"></a>
+<h3><a class="anchor" id="autotoc_md7"></a>
 Botão de Título (barra superior)</h3>
 <ul>
 <li>Exibe o título do documento (para PDFs, usa metadados Title quando disponíveis; senão, nome do arquivo).</li>
@@ -172,7 +187,7 @@ Botão de Título (barra superior)</h3>
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md5"></a>
+<h2><a class="anchor" id="autotoc_md8"></a>
 IA (LLM): Configuração e Uso</h2>
 <p>A aplicação possui integração com provedores compatíveis com a API da OpenAI para chat, resumos e sinônimos. Atualmente são suportados:</p><ul>
 <li>OpenAI (<code><a href="https://api.openai.com">https://api.openai.com</a></code>)</li>
@@ -217,10 +232,10 @@ IA (LLM): Configuração e Uso</h2>
 <li>Tokens são armazenados nas preferências do usuário (<code>QSettings</code>).</li>
 </ul>
 <p>Para um guia passo a passo com imagens e dicas, consulte o TUTORIAL.md.</p>
-<h2><a class="anchor" id="autotoc_md6"></a>
+<h2><a class="anchor" id="autotoc_md9"></a>
 RAG (Experimental)</h2>
 <p>ATENÇÃO: Este recurso está em testes e pode causar sobrecarga de recursos em algumas máquinas, levando a travamentos ou encerramento prematuro da aplicação/terminal. Estamos estabilizando o pipeline com processamento em etapas e limites de consumo.</p>
-<h3><a class="anchor" id="autotoc_md7"></a>
+<h3><a class="anchor" id="autotoc_md10"></a>
 O que é</h3>
 <ul>
 <li>Indexação de PDFs em vetores para permitir buscas semânticas e respostas com contexto.</li>
@@ -230,14 +245,14 @@ O que é</h3>
 </li>
 <li>Armazenamento vetorial local em disco (formato binário simples + JSONs de ids/metadados) em <code>~/.cache/br.tec.rapport.genai-reader/</code>.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md8"></a>
+<h3><a class="anchor" id="autotoc_md11"></a>
 Como usar</h3>
 <ol type="1">
 <li>Abra um PDF no leitor.</li>
 <li>Clique com o botão direito dentro do PDF e escolha <code>Recriar embeddings do documento...</code>.</li>
 <li>Acompanhe o diálogo de progresso (estágios, percentuais, métricas). Se configurado por etapas, execute novamente para continuar do ponto onde parou.</li>
 </ol>
-<h3><a class="anchor" id="autotoc_md9"></a>
+<h3><a class="anchor" id="autotoc_md12"></a>
 Configuração (Configurações &gt; Embeddings)</h3>
 <ul>
 <li>Provedor: <code>OpenAI</code>, <code>GenerAtiva</code> (Base URL e API Key) ou <code>Ollama</code> local.</li>
@@ -259,14 +274,14 @@ Configuração (Configurações &gt; Embeddings)</h3>
 <li>Chunk size: 800–1200</li>
 <li>Overlap: 100–250</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md10"></a>
+<h3><a class="anchor" id="autotoc_md13"></a>
 Dependências para extração de texto (recomendadas)</h3>
 <ul>
 <li>Preferencial: <code>poppler-utils</code> (fornece <code>pdftotext</code> e <code>pdftoppm</code>) — mais rápido e com menor uso de memória.</li>
 <li>Fallback: <code>tesseract-ocr</code> (OCR por página; mais pesado e lento, usar apenas quando necessário).</li>
 <li>A aplicação detecta automaticamente e alerta se estiverem ausentes, sugerindo instalação.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md11"></a>
+<h3><a class="anchor" id="autotoc_md14"></a>
 Estado atual e limitações</h3>
 <ul>
 <li>Experimental: pode ocorrer sobrecarga de CPU/RAM e encerramento da aplicação/terminal em documentos grandes.</li>
@@ -283,13 +298,13 @@ Estado atual e limitações</h3>
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md15"></a>
 Próximas versões</h2>
 <ul>
 <li>Planejamento contínuo em <code><a class="el" href="d9/d59/ROADMAP_8md.html">ROADMAP.md</a></code>.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md13"></a>
-Como rodar (Linux)</h2>
+<h4><a class="anchor" id="autotoc_md16"></a>
+Compilando a partir do código-fonte (Linux)</h4>
 <p>Pré-requisitos: CMake (&gt;=3.16), compilador C++17, Qt6 (Widgets, PdfWidgets, Network), Doxygen (opcional).</p>
 <div class="fragment"><div class="line">cmake -S . -B build</div>
 <div class="line">cmake --build build -j</div>
@@ -300,41 +315,41 @@ Como rodar (Linux)</h2>
 <div class="line"># ou</div>
 <div class="line">doxygen docs/Doxyfile</div>
 <div class="line"># Abrir: docs/index.html</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md14"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md17"></a>
 Como gerar um release no GitHub</h2>
 <p>Pré-requisitos:</p><ul>
 <li>Ter o repositório remoto configurado (origin) e acesso de push.</li>
 <li>Opcional: GitHub CLI (<code>gh</code>) autenticado: <code>gh auth login</code>.</li>
 </ul>
 <p>Passos sugeridos:</p>
-<div class="fragment"><div class="line"># 1) Garanta que CHANGELOG.md e README.md estão atualizados (ex.: 0.1.5)</div>
+<div class="fragment"><div class="line"># 1) Garanta que CHANGELOG.md e README.md estão atualizados (ex.: 0.1.8)</div>
 <div class="line">git add CHANGELOG.md README.md</div>
-<div class="line">git commit -m &quot;docs: atualiza changelog e readme para v0.1.5&quot;</div>
+<div class="line">git commit -m &quot;docs: atualiza changelog e readme para v0.1.8&quot;</div>
 <div class="line"> </div>
 <div class="line"># 2) Versione no código se aplicável (CMakeLists.txt, headers) e commite</div>
 <div class="line"># Exemplo (se houve mudança de versão de build)</div>
 <div class="line"># git add CMakeLists.txt include/app/App.h</div>
-<div class="line"># git commit -m &quot;chore(release): bump version to v0.1.5&quot;</div>
+<div class="line"># git commit -m &quot;chore(release): bump version to v0.1.8&quot;</div>
 <div class="line"> </div>
 <div class="line"># 3) Crie uma tag anotada e envie</div>
-<div class="line">git tag -a v0.1.5 -m &quot;v0.1.5&quot;</div>
-<div class="line">git push origin v0.1.5</div>
+<div class="line">git tag -a v0.1.8 -m &quot;v0.1.8&quot;</div>
+<div class="line">git push origin v0.1.8</div>
 <div class="line"> </div>
 <div class="line"># 4A) Criar release via GitHub CLI (anexando notas do CHANGELOG)</div>
-<div class="line">gh release create v0.1.5 \</div>
-<div class="line">  --title &quot;v0.1.5&quot; \</div>
+<div class="line">gh release create v0.1.8 \</div>
+<div class="line">  --title &quot;v0.1.8&quot; \</div>
 <div class="line">  --notes &quot;Consulte CHANGELOG.md para detalhes desta versão.&quot;</div>
 <div class="line"> </div>
 <div class="line"># 4B) Alternativa: criar release pela UI do GitHub</div>
-<div class="line"># - Vá em Releases &gt; Draft a new release &gt; Escolha a tag v0.1.5 &gt; Preencha título/notas &gt; Publish</div>
+<div class="line"># - Vá em Releases &gt; Draft a new release &gt; Escolha a tag v0.1.8 &gt; Preencha título/notas &gt; Publish</div>
 <div class="line"> </div>
 <div class="line"># 5) (Opcional) Anexar binários</div>
 <div class="line"># Se você tiver artefatos em dist/, anexe com:</div>
-<div class="line"># gh release upload v0.1.5 dist/genai_reader-v0.1.5-linux-x86_64 dist/genai_reader-v0.1.5-linux-x86_64.tar.gz</div>
+<div class="line"># gh release upload v0.1.8 dist/genai_reader-v0.1.8-linux-x86_64 dist/genai_reader-v0.1.8-linux-x86_64.tar.gz</div>
 </div><!-- fragment --><p>Observação: o projeto exige Qt6 (Widgets, PdfWidgets, Network). Sem Qt6 a aplicação não compila.</p>
-<h2><a class="anchor" id="autotoc_md15"></a>
+<h2><a class="anchor" id="autotoc_md18"></a>
 Dependências de Build por Plataforma</h2>
-<h3><a class="anchor" id="autotoc_md16"></a>
+<h3><a class="anchor" id="autotoc_md19"></a>
 Linux</h3>
 <ul>
 <li>Geral:<ul>
@@ -364,7 +379,7 @@ Linux</h3>
 <li>Se sua distro não tiver pacote de Qt PDF, use Poppler-Qt6 correspondente.</li>
 <li>Caso o include de <code>QPdfBookmarkModel</code> não esteja disponível, o TOC de PDFs cairá automaticamente para a listagem de páginas.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md17"></a>
+<h3><a class="anchor" id="autotoc_md20"></a>
 Windows</h3>
 <ul>
 <li>Opção A: Visual Studio + Qt (recomendado) 1) Instale Visual Studio (Community) ou "Build Tools for Visual Studio" com MSVC C++. 2) Instale Qt via Qt Online Installer (mesmo compilador/versão do MSVC). Inclua Qt Widgets e Qt PDF. 3) Instale CMake e Ninja (opcional, melhora builds):<ul>
@@ -381,7 +396,7 @@ Windows</h3>
 <div class="line">    mingw-w64-ucrt-x86_64-qt6-pdf doxygen graphviz</div>
 </div><!-- fragment --> 3) Abra o shell UCRT64/MinGW correspondente e compile com CMake.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md18"></a>
+<h2><a class="anchor" id="autotoc_md21"></a>
 Integração opcional com PHPList (.env)</h2>
 <ul>
 <li>O aplicativo possui um diálogo "Dados do leitor" (<code>Arquivo &gt; Leitor &gt; Dados do leitor...</code>) para registrar nome, e-mail e WhatsApp.</li>
@@ -394,7 +409,7 @@ Integração opcional com PHPList (.env)</h2>
 <li>As credenciais não são exibidas pela UI; o envio é sempre confirmado com o usuário.</li>
 <li>O <code>.env</code> é criado com valores vazios automaticamente no primeiro configure do CMake (veja <code>CMakeLists.txt</code>).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md19"></a>
+<h2><a class="anchor" id="autotoc_md22"></a>
 Contribuindo</h2>
 <p>Contribuições são muito bem-vindas! Você pode ajudar de várias formas:</p><ul>
 <li>Reportando bugs e abrindo issues com sugestões de melhorias.</li>
@@ -407,10 +422,10 @@ Contribuindo</h2>
 <li>Commits pequenos e objetivos com mensagens claras.</li>
 <li>Abra um Pull Request descrevendo o problema/solução e referenciando RF/RNF/CA afetados.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md20"></a>
+<h2><a class="anchor" id="autotoc_md23"></a>
 Código de Conduta</h2>
 <p>Seja respeitoso e colaborativo. Não serão tolerados comportamentos abusivos. Utilize linguagem cordial e empática nas interações.</p>
-<h2><a class="anchor" id="autotoc_md21"></a>
+<h2><a class="anchor" id="autotoc_md24"></a>
 Licença</h2>
 <p>Este projeto é licenciado sob a licença Creative Commons Attribution 4.0 International (CC BY 4.0). Consulte o arquivo [<code>LICENSE</code>](LICENSE).</p>
 <p>Você é livre para:</p><ul>
@@ -420,7 +435,7 @@ Licença</h2>
 <p>Desde que atribua o crédito apropriado e indique se mudanças foram feitas. Veja os termos completos em:</p><ul>
 <li><a href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a></li>
 </ul>
-<h2><a class="anchor" id="autotoc_md22"></a>
+<h2><a class="anchor" id="autotoc_md25"></a>
 Agradecimentos</h2>
 <ul>
 <li>Comunidade Qt e bibliotecas de leitura de documentos (Poppler/Qt PDF, etc.).</li>
