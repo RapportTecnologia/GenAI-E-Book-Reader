@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(GenAI_EBook_Reader VERSION 0.1.8 LANGUAGES C CXX)
+# Extract version from CHANGELOG.md (first heading like: ## [X.Y.Z])
+file(READ "${CMAKE_CURRENT_LIST_DIR}/CHANGELOG.md" _CHANGELOG_TXT)
+string(REGEX MATCH "## \\[([0-9]+\\.[0-9]+\\.[0-9]+)\\]" _CHANGELOG_MATCH "${_CHANGELOG_TXT}")
+if(_CHANGELOG_MATCH)
+  string(REGEX REPLACE ".*\\[([0-9]+\\.[0-9]+\\.[0-9]+)\\].*" "\\1" GENAI_VERSION "${_CHANGELOG_MATCH}")
+else()
+  set(GENAI_VERSION "0.0.0")
+  message(WARNING "Could not parse version from CHANGELOG.md; defaulting to ${GENAI_VERSION}")
+endif()
+
+project(GenAI_EBook_Reader VERSION ${GENAI_VERSION} LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,6 +47,10 @@ target_compile_definitions(genai_reader PRIVATE HAVE_QT_WEBENGINE)
 
 # Define to enable Qt-specific code paths unconditionally
 target_compile_definitions(genai_reader PRIVATE USE_QT HAVE_QT_PDF HAVE_QT_NETWORK)
+
+# Inject application version into code (used by include/app/App.h)
+# This keeps AppInfo::Version synchronized with CMake's PROJECT_VERSION
+target_compile_definitions(genai_reader PRIVATE GENAI_APP_VERSION=\"${PROJECT_VERSION}\")
 
 # Enable AUTOMOC/AUTORCC/AUTOUIC for convenience
 set_target_properties(genai_reader PROPERTIES
