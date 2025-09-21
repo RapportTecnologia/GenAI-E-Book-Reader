@@ -152,9 +152,13 @@ endif()
 
 # Custom target to create icons. This will be a dependency for the main executable.
 add_custom_target(create_icons
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/icons/hicolor/32x32/apps"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/icons/hicolor/64x64/apps"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/icons/hicolor/128x128/apps"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/icons/hicolor/256x256/apps"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/icons/hicolor/512x512/apps"
+    COMMAND ${CONVERT_BIN} "${CMAKE_SOURCE_DIR}/docs/imgs/logo-do-projeto.png" -resize 32x32! "${APPDIR}/usr/share/icons/hicolor/32x32/apps/genai-reader.png"
+    COMMAND ${CONVERT_BIN} "${CMAKE_SOURCE_DIR}/docs/imgs/logo-do-projeto.png" -resize 64x64! "${APPDIR}/usr/share/icons/hicolor/64x64/apps/genai-reader.png"
     COMMAND ${CONVERT_BIN} "${CMAKE_SOURCE_DIR}/docs/imgs/logo-do-projeto.png" -resize 128x128! "${APPDIR}/usr/share/icons/hicolor/128x128/apps/genai-reader.png"
     COMMAND ${CONVERT_BIN} "${CMAKE_SOURCE_DIR}/docs/imgs/logo-do-projeto.png" -resize 256x256! "${APPDIR}/usr/share/icons/hicolor/256x256/apps/genai-reader.png"
     COMMAND ${CONVERT_BIN} "${CMAKE_SOURCE_DIR}/docs/imgs/logo-do-projeto.png" -resize 512x512! "${APPDIR}/usr/share/icons/hicolor/512x512/apps/genai-reader.png"
