@@ -8,6 +8,7 @@
 #include "ui/DictionarySettingsDialog.h"
 #include "ui/ChatDock.h"
 #include "ui/AboutDialog.h"
+#include "ui/TutorialDialog.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QAction>
@@ -107,6 +108,11 @@ QVariantList loadRecentEntries(QSettings& settings) {
 
 void MainWindow::showAboutDialog() {
     AboutDialog dlg(this);
+    dlg.exec();
+}
+
+void MainWindow::showTutorialDialog() {
+    TutorialDialog dlg(this);
     dlg.exec();
 }
 
@@ -690,6 +696,7 @@ void MainWindow::createActions() {
     actToggleTheme_ = new QAction(tr("Tema claro/escuro"), this);
     actChat_ = new QAction(tr("Chat"), this);
     actAbout_ = new QAction(tr("Informações..."), this);
+    actTutorial_ = new QAction(tr("Tutorial"), this);
 
     // Edit actions (seleção)
     actSelText_ = new QAction(tr("Selecionar texto"), this);
@@ -734,6 +741,7 @@ void MainWindow::createActions() {
     connect(actZoomOut_, &QAction::triggered, this, &MainWindow::zoomOut);
     connect(actZoomReset_, &QAction::triggered, this, &MainWindow::zoomReset);
     connect(actToggleTheme_, &QAction::triggered, this, &MainWindow::toggleTheme);
+    connect(actTutorial_, &QAction::triggered, this, &MainWindow::showTutorialDialog);
     connect(actQuit_, &QAction::triggered, qApp, &QApplication::quit);
     connect(actReaderData_, &QAction::triggered, this, &MainWindow::editReaderData);
     connect(actClose_, &QAction::triggered, this, &MainWindow::closeDocument);
@@ -797,6 +805,8 @@ void MainWindow::createActions() {
     menuEdit->addAction(actSelSaveMd_);
 
     auto* menuHelp = menuBar()->addMenu(tr("Ajuda"));
+    menuHelp->addAction(actTutorial_);
+    menuHelp->addSeparator();
     menuHelp->addAction(actAbout_);
 
     // Top toolbar: centered title button

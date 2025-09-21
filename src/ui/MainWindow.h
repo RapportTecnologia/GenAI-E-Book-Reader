@@ -72,6 +72,7 @@ private slots:
     void onChatSaveTranscript(const QString& text);
     void onChatSummarizeTranscript(const QString& text);
     void showAboutDialog();
+    void showTutorialDialog();
 
     // AI actions
     void onRequestSynonyms(const QString& wordOrLocution);
@@ -166,6 +167,7 @@ private:
     QAction* actEmbeddingSettings_ {nullptr};
     QAction* actDictionarySettings_ {nullptr};
     QAction* actAbout_ {nullptr};
+    QAction* actTutorial_ {nullptr};
     // TOC toolbar actions
     QAction* actTocModePages_ {nullptr};
     QAction* actTocModeChapters_ {nullptr};

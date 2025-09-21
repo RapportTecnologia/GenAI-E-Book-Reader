@@ -3,4 +3,7 @@
     <file alias="logo.png">../docs/imgs/logo-do-projeto.png</file>
     <file>../LICENSE</file>
   </qresource>
+  <qresource prefix="/docs">
+    <file>../TUTORIAL.md</file>
+  </qresource>
 </RCC>
