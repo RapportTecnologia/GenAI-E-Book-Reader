@@ -10,6 +10,6 @@ var searchData=
   ['–_20rag_20mathjax_20e_20markdown_7',['0.1.6 – RAG, MathJax e Markdown',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md62',1,'']]],
   ['–_20reestruturação_20do_20código_8',['0.2.1 – Reestruturação do código',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md66',1,'']]],
   ['–_20refinos_20de_20leitura_20entregue_20em_202025_2008_2018_9',['0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md58',1,'']]],
-  ['–_20tts_10',['0.2.0 – TTS',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65',1,'']]],
-  ['–_20tts_20e_20controles_11',['0.1.8 – TTS e Controles',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md64',1,'']]]
+  ['–_20tts_20e_20controles_10',['0.1.8 – TTS e Controles',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md64',1,'']]],
+  ['–_20tts_20e_20dicionario_11',['0.2.0 – TTS e Dicionario',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65',1,'']]]
 ];

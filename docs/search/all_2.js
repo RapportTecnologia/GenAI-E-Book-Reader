@@ -1,7 +1,7 @@
 var searchData=
 [
   ['2_20–_20refinos_20de_20leitura_20entregue_20em_202025_2008_2018_0',['0.1.2 – Refinos de Leitura (Entregue em 2025-08-18)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md58',1,'']]],
-  ['2_200_20–_20tts_1',['0.2.0 – TTS',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65',1,'']]],
+  ['2_200_20–_20tts_20e_20dicionario_1',['0.2.0 – TTS e Dicionario',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65',1,'']]],
   ['2_201_20–_20reestruturação_20do_20código_2',['0.2.1 – Reestruturação do código',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md66',1,'']]],
   ['2_20leitura_20interativa_3a_20seleção_20dicionário_20e_20busca_3',['2. Leitura Interativa: Seleção, Dicionário e Busca',['../dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md73',1,'']]],
   ['2_20roadmap_20por_20fases_4',['2) Roadmap por Fases',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md28',1,'']]],

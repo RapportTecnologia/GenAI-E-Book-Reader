@@ -13,7 +13,7 @@ var searchData=
   ['0_201_207_20a_202025_2009_2020_10',['&lt;a href=&quot;https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.7&quot; &gt;0.1.7&lt;/a&gt; - 2025-09-20',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md45',1,'']]],
   ['0_201_208_20–_20tts_20e_20controles_11',['0.1.8 – TTS e Controles',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md64',1,'']]],
   ['0_201_208_20a_202025_2009_2021_12',['&lt;a href=&quot;https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.8&quot; &gt;0.1.8&lt;/a&gt; - 2025-09-21',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md44',1,'']]],
-  ['0_202_200_20–_20tts_13',['0.2.0 – TTS',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65',1,'']]],
+  ['0_202_200_20–_20tts_20e_20dicionario_13',['0.2.0 – TTS e Dicionario',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65',1,'']]],
   ['0_202_201_20–_20reestruturação_20do_20código_14',['0.2.1 – Reestruturação do código',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md66',1,'']]],
   ['0_205_200_20–_20estatísticas_20e_20sessões_15',['0.5.0 – Estatísticas e Sessões',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md67',1,'']]],
   ['0_206_200_20–_20integração_20calibre_20e_20melhorias_20ux_16',['0.6.0 – Integração Calibre e Melhorias UX',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md68',1,'']]],

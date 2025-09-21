@@ -101,7 +101,7 @@ var NAVTREE =
       [ "0.1.6 – RAG, MathJax e Markdown", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md62", null ],
       [ "0.1.7 – Anotações e Dicionário", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md63", null ],
       [ "0.1.8 – TTS e Controles", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md64", null ],
-      [ "0.2.0 – TTS", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65", null ],
+      [ "0.2.0 – TTS e Dicionario", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md65", null ],
       [ "0.2.1 – Reestruturação do código", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md66", null ],
       [ "0.5.0 – Estatísticas e Sessões", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md67", null ],
       [ "0.6.0 – Integração Calibre e Melhorias UX", "dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md68", null ],
