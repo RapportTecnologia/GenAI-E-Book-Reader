@@ -37,7 +37,6 @@ void TutorialDialog::loadTutorialContent()
     }
 
     QTextStream in(&tutorialFile);
-    in.setCodec("UTF-8");
     const QString markdownContent = in.readAll();
     tutorialFile.close();
 

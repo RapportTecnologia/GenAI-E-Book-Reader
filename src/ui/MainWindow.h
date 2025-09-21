@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QPixmap>
+#include <QLabel>
 
 // Forward declarations for UI types used as pointers in this header
 class QToolButton;
@@ -22,6 +23,7 @@ class QComboBox;
 class QLineEdit;
 class QPushButton;
 class QShortcut;
+class QLabel;
 class ViewerWidget;
 class QNetworkAccessManager;
 class PdfViewerWidget;
@@ -72,6 +74,7 @@ private slots:
     void onChatSaveTranscript(const QString& text);
     void onChatSummarizeTranscript(const QString& text);
     void showAboutDialog();
+    void onCurrentPageChanged(int page);
     void showTutorialDialog();
 
     // AI actions
@@ -175,6 +178,7 @@ private:
     QAction* actTocNext_ {nullptr};
     bool tocPagesMode_ {true};
     QComboBox* pageCombo_ {nullptr};
+    QLabel* totalPagesLabel_ {nullptr};
 
     // Search UI
     QToolBar* searchToolBar_ {nullptr};

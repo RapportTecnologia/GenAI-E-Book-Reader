@@ -101,6 +101,7 @@ private:
 signals:
     void zoomFactorChanged(double factor);
     void scrollChanged(int value);
+    void pageChanged(int page);
 
     // Emitted when user requests actions from context menu
     void requestSynonyms(const QString& wordOrLocution);

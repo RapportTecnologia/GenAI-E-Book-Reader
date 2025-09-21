@@ -852,6 +852,8 @@ void MainWindow::createActions() {
     pageCombo_->setEditable(false);
     pageCombo_->setMinimumContentsLength(6);
     tb->addWidget(pageCombo_);
+    totalPagesLabel_ = new QLabel(tb);
+    tb->addWidget(totalPagesLabel_);
     connect(pageCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx){
         const unsigned int p = static_cast<unsigned int>(idx + 1);
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) vw->setCurrentPage(p);
@@ -1747,26 +1749,7 @@ void MainWindow::openDictionarySettings() {
 
 void MainWindow::openEmbeddingSettings() {
     EmbeddingSettingsDialog dlg(this);
-    // Conecta ação de recriação de embeddings do documento atual
-    connect(&dlg, &EmbeddingSettingsDialog::rebuildRequested, this, [this]() {
-        QSettings s;
-        const QString dbPath = s.value("emb/db_path").toString();
-        QDir dir(dbPath);
-        if (!dir.exists()) {
-            dir.mkpath(".");
-        }
-        if (currentFilePath_.isEmpty()) {
-            QMessageBox::information(this, tr("Recriar Embeddings"), tr("Abra um documento para recriar os embeddings."));
-            return;
-        }
-        QMessageBox::information(
-            this,
-            tr("Recriar Embeddings"),
-            tr("Recriação de embeddings agendada para:\n%1\nBanco: %2")
-                .arg(QFileInfo(currentFilePath_).fileName(), dbPath)
-        );
-        // TODO: implementar pipeline de indexação RAG (chunking -> embeddings -> ChromaDB)
-    });
+    connect(&dlg, &EmbeddingSettingsDialog::rebuildRequested, this, &MainWindow::onRequestRebuildEmbeddings);
     dlg.exec();
 }
 
@@ -1778,12 +1761,21 @@ void MainWindow::saveSettings() {
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
         z = vw->zoomFactor();
     }
-#ifdef HAVE_QT_PDF
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
         z = pv->zoomFactor();
     }
-#endif
     settings_.setValue("view/zoom", z);
+    if (!currentFilePath_.isEmpty()) {
+        unsigned int p = 0;
+        if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) p = vw->currentPage();
+        if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) p = pv->currentPage();
+        if (p > 0) settings_.setValue(QString("files/%1/page").arg(currentFilePath_), p);
+
+        double fileZoom = 1.0;
+        if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) fileZoom = vw->zoomFactor();
+        if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) fileZoom = pv->zoomFactor();
+        if (fileZoom > 0) settings_.setValue(QString("files/%1/zoom").arg(currentFilePath_), fileZoom);
+    }
 }
 
 void MainWindow::showLongAlert(const QString& title, const QString& longText) {
@@ -1796,54 +1788,51 @@ void MainWindow::showLongAlert(const QString& title, const QString& longText) {
     txt->setPlainText(longText);
     lay->addWidget(txt, 1);
     auto* btns = new QDialogButtonBox(QDialogButtonBox::Ok, &dlg);
-    lay->addWidget(btns);
     connect(btns, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    lay->addWidget(btns);
     dlg.exec();
 }
 
-void MainWindow::updateStatus() {
-    unsigned int cur = 1, tot = 0; double z = 1.0;
-    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
-        cur = vw->currentPage() == 0 ? 1u : vw->currentPage();
-        tot = vw->totalPages();
-        z = vw->zoomFactor();
+void MainWindow::addRecentFile(const QString& absPath) {
+    if (absPath.isEmpty()) return;
+    QVariantList entries = loadRecentEntries(settings_);
+    // Remove duplicates
+    for (int i = entries.size() - 1; i >= 0; --i) {
+        if (entries.at(i).toMap().value("path").toString() == absPath) {
+            entries.removeAt(i);
+        }
     }
-#ifdef HAVE_QT_PDF
-    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
-        cur = pv->currentPage() == 0 ? 1u : pv->currentPage();
-        tot = pv->totalPages();
-        z = pv->zoomFactor();
-    }
-#endif
-    // Persist per-file reading position and zoom whenever we refresh status
-    if (!currentFilePath_.isEmpty()) {
-        settings_.setValue(QString("files/%1/page").arg(currentFilePath_), static_cast<uint>(cur));
-        settings_.setValue(QString("files/%1/zoom").arg(currentFilePath_), z);
-    }
-    statusBar()->showMessage(tr("Página %1 de %2 | Zoom %3%")
-        .arg(cur)
-        .arg(tot == 0 ? 100 : tot)
-        .arg(int(z*100)));
-    updatePageCombo();
+    // Add to front
+    QVariantMap newEntry;
+    newEntry["path"] = absPath;
+    newEntry["title"] = QFileInfo(absPath).completeBaseName();
+    entries.prepend(newEntry);
+    // Trim
+    const int maxRecent = settings_.value("recent/max", 10).toInt();
+    while (entries.size() > maxRecent) entries.removeLast();
+    settings_.setValue("recent/entries", entries);
+    rebuildRecentMenu();
 }
 
-void MainWindow::applyDarkPalette(bool enable) {
-    QPalette pal;
-    if (enable) {
-        pal.setColor(QPalette::Window, QColor(37,37,38));
-        pal.setColor(QPalette::WindowText, Qt::white);
-        pal.setColor(QPalette::Base, QColor(30,30,30));
-        pal.setColor(QPalette::AlternateBase, QColor(45,45,48));
-        pal.setColor(QPalette::ToolTipBase, Qt::white);
-        pal.setColor(QPalette::ToolTipText, Qt::white);
-        pal.setColor(QPalette::Text, Qt::white);
-        pal.setColor(QPalette::Button, QColor(45,45,48));
-        pal.setColor(QPalette::ButtonText, Qt::white);
-        pal.setColor(QPalette::BrightText, Qt::red);
-        pal.setColor(QPalette::Highlight, QColor(38,79,120));
-        pal.setColor(QPalette::HighlightedText, Qt::white);
+void MainWindow::rebuildRecentMenu() {
+    if (!menuRecent_) return;
+    menuRecent_->clear();
+    QVariantList entries = loadRecentEntries(settings_);
+    const int num = qMin(int(MaxRecentMenuItems), entries.size());
+    for (int i = 0; i < num; ++i) {
+        const QVariantMap entry = entries.at(i).toMap();
+        const QString path = entry.value("path").toString();
+        const QString title = entry.value("title").toString();
+        recentActs_[i]->setText(QString::fromLatin1("&%1 %2").arg(i + 1).arg(title));
+        recentActs_[i]->setData(path);
+        recentActs_[i]->setVisible(true);
+        menuRecent_->addAction(recentActs_[i]);
     }
-    QApplication::setPalette(pal);
+    for (int i = num; i < MaxRecentMenuItems; ++i) {
+        recentActs_[i]->setVisible(false);
+    }
+    menuRecent_->addSeparator();
+    menuRecent_->addAction(actRecentDialog_);
 }
 
 void MainWindow::openFile() {
@@ -1853,10 +1842,178 @@ void MainWindow::openFile() {
     openPath(file);
 }
 
+void MainWindow::openRecentFile() {
+    auto* act = qobject_cast<QAction*>(sender());
+    if (!act) return;
+    const QString path = act->data().toString();
+    if (path.isEmpty()) return;
+    if (!QFileInfo::exists(path)) {
+        QMessageBox::warning(this, tr("Arquivo ausente"), tr("O arquivo não existe mais: %1").arg(path));
+        return;
+    }
+    openPath(path);
+}
+
+void MainWindow::showRecentDialog() {
+    // TODO: Implementar um diálogo de arquivos recentes, pois a classe RecentFilesDialog não foi encontrada.
+    QMessageBox::information(this, tr("Arquivos Recentes"), tr("Esta funcionalidade ainda não foi implementada."));
+}
+
+void MainWindow::configureRecentDialogCount() {
+    bool ok = false;
+    const int max = settings_.value("recent/max", 10).toInt();
+    const int n = QInputDialog::getInt(this, tr("Configurar recentes"), tr("Número de arquivos recentes a manter:"), max, 5, 50, 1, &ok);
+    if (ok) {
+        settings_.setValue("recent/max", n);
+        rebuildRecentMenu();
+    }
+}
+
+void MainWindow::closeDocument() {
+    // Clear TOC
+    toc_->clear();
+    // Save chat for current file before clearing
+    saveChatForCurrentFile();
+    // Replace current viewer with a fresh ViewerWidget
+    QWidget* newViewer = new ViewerWidget(this);
+    int idx = splitter_->indexOf(viewer_);
+    splitter_->replaceWidget(idx, newViewer);
+    viewer_->deleteLater();
+    viewer_ = newViewer;
+    // Reset state
+    currentFilePath_.clear();
+    settings_.remove("session/lastFile");
+    // Update UI state
+    updateStatus();
+    actClose_->setEnabled(false);
+    setWindowTitle(QString("%1 v%2 — Leitor")
+                       .arg(genai::AppInfo::Name)
+                       .arg(genai::AppInfo::Version));
+}
+
+void MainWindow::updateStatus() {
+    QString pageStr("-");
+    QString zoomStr("-");
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
+        if (vw->totalPages() > 0) {
+            pageStr = QString("%1 / %2").arg(vw->currentPage()).arg(vw->totalPages());
+        }
+        zoomStr = QString::asprintf("%.1f%%", vw->zoomFactor() * 100.0);
+    }
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        if (pv->totalPages() > 0) {
+            pageStr = QString("%1 / %2").arg(pv->currentPage()).arg(pv->totalPages());
+        }
+        zoomStr = QString::asprintf("%.1f%%", pv->zoomFactor() * 100.0);
+    }
+    statusBar()->showMessage(tr("Página: %1 | Zoom: %2").arg(pageStr, zoomStr));
+    updatePageCombo();
+}
+
+void MainWindow::onCurrentPageChanged(int page) {
+    if (pageCombo_ && page > 0 && page <= pageCombo_->count()) {
+        pageCombo_->blockSignals(true);
+        pageCombo_->setCurrentIndex(page - 1);
+        pageCombo_->blockSignals(false);
+    }
+    updateStatus();
+
+    if (toc_ && toc_->topLevelItemCount() > 0) {
+        if (tocPagesMode_) {
+            if (page > 0 && page - 1 < toc_->topLevelItemCount()) {
+                QTreeWidgetItem* item = toc_->topLevelItem(page - 1);
+                if (item) {
+                    toc_->setCurrentItem(item);
+                }
+            }
+        } else {
+            for (int i = toc_->topLevelItemCount() - 1; i >= 0; --i) {
+                QTreeWidgetItem* item = toc_->topLevelItem(i);
+                bool ok = false;
+                int itemPage = item->data(0, Qt::UserRole).toInt(&ok);
+                if (ok && itemPage <= page) {
+                    toc_->setCurrentItem(item);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::applyDarkPalette(bool enable) {
+    if (enable) {
+        qApp->setStyle("Fusion");
+        QPalette darkPalette;
+        darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
+        darkPalette.setColor(QPalette::WindowText, Qt::white);
+        darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
+        darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+        darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+        darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+        darkPalette.setColor(QPalette::Text, Qt::white);
+        darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+        darkPalette.setColor(QPalette::ButtonText, Qt::white);
+        darkPalette.setColor(QPalette::BrightText, Qt::red);
+        darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+        darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+        darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+        qApp->setPalette(darkPalette);
+    } else {
+        qApp->setPalette(qApp->style()->standardPalette());
+        qApp->setStyle("default");
+    }
+}
+
+void MainWindow::nextPage() {
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
+        if (vw->currentPage() < vw->totalPages()) vw->setCurrentPage(vw->currentPage() + 1);
+    }
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        if (pv->currentPage() < pv->totalPages()) pv->setCurrentPage(pv->currentPage() + 1);
+    }
+    updateStatus();
+}
+
+void MainWindow::prevPage() {
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
+        if (vw->currentPage() > 1) vw->setCurrentPage(vw->currentPage() - 1);
+    }
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        if (pv->currentPage() > 1) pv->setCurrentPage(pv->currentPage() - 1);
+    }
+    updateStatus();
+}
+
+void MainWindow::updatePageCombo() {
+    if (!pageCombo_) return;
+    unsigned int cur = 1, tot = 0;
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { cur = vw->currentPage(); tot = vw->totalPages(); }
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { cur = pv->currentPage(); tot = pv->totalPages(); }
+    const unsigned int total = tot;
+
+    if (totalPagesLabel_) {
+        totalPagesLabel_->setText(tr(" de %1").arg(total));
+    }
+
+    if (pageCombo_->count() != int(total)) {
+        pageCombo_->blockSignals(true);
+        pageCombo_->clear();
+        for (unsigned int i = 1; i <= total; ++i) {
+            pageCombo_->addItem(QString::number(i));
+        }
+        pageCombo_->blockSignals(false);
+    }
+
+    if (cur > 0 && cur <= total) {
+        pageCombo_->blockSignals(true);
+        pageCombo_->setCurrentIndex(cur - 1);
+        pageCombo_->blockSignals(false);
+    }
+}
+
 bool MainWindow::openPath(const QString& file) {
     const QFileInfo fi(file);
 
-#ifdef HAVE_QT_PDF
     if (fi.suffix().compare("pdf", Qt::CaseInsensitive) == 0) {
         // Replace current viewer with a PdfViewerWidget
         auto* newViewer = new PdfViewerWidget(this);
@@ -1886,6 +2043,7 @@ bool MainWindow::openPath(const QString& file) {
         // Keep status updated (and persistence) when user scrolls/zooms in the PDF viewer
         connect(newViewer, &PdfViewerWidget::scrollChanged, this, &MainWindow::updateStatus);
         connect(newViewer, &PdfViewerWidget::zoomFactorChanged, this, &MainWindow::updateStatus);
+        connect(newViewer, &PdfViewerWidget::pageChanged, this, &MainWindow::onCurrentPageChanged);
 
         // Build TOC according to current mode
         if (tocPagesMode_) setTocModePages(); else setTocModeChapters();
@@ -1924,18 +2082,12 @@ bool MainWindow::openPath(const QString& file) {
 
         // Update window title with metadata Title when available (Qt6+), else filename
         QString titleText = fi.completeBaseName();
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         if (auto* doc = newViewer->document()) {
             // Some Qt6 versions provide MetaDataField::Title
             QString metaTitle;
-#ifdef Q_OS_WIN
             metaTitle = doc->metaData(QPdfDocument::MetaDataField::Title).toString();
-#else
-            metaTitle = doc->metaData(QPdfDocument::MetaDataField::Title).toString();
-#endif
             if (!metaTitle.trimmed().isEmpty()) titleText = metaTitle.trimmed();
         }
-#endif
         setWindowTitle(QString("%1 v%2 — %3")
                            .arg(genai::AppInfo::Name)
                            .arg(genai::AppInfo::Version)
@@ -1945,203 +2097,19 @@ bool MainWindow::openPath(const QString& file) {
         actClose_->setEnabled(true);
         return true;
     }
-#endif
 
     // Sem suporte a outros formatos nesta compilação obrigatória de Qt PDF
     QMessageBox::warning(this, tr("Formato não suportado"), tr("Apenas arquivos PDF são suportados nesta versão."));
     return false;
 }
 
-void MainWindow::openRecentFile() {
-    QString path;
-    if (auto act = qobject_cast<QAction*>(sender())) {
-        path = act->data().toString();
-    }
-    if (path.isEmpty()) {
-        showRecentDialog();
-        return;
-    }
-    if (!QFileInfo::exists(path)) {
-        QMessageBox::warning(this, tr("Arquivo ausente"), tr("O arquivo não existe mais: %1").arg(path));
-        return;
-    }
-    openPath(path);
-}
-
-void MainWindow::showRecentDialog() {
-    QVariantList entries = loadRecentEntries(settings_);
-    if (entries.isEmpty()) {
-        QMessageBox::information(this, tr("Recentes"), tr("Nenhum arquivo recente."));
-        return;
-    }
-
-    QDialog dlg(this);
-    dlg.setWindowTitle(tr("Abrir recente"));
-    auto* lay = new QVBoxLayout(&dlg);
-
-    auto* searchEdit = new QLineEdit(&dlg);
-    searchEdit->setPlaceholderText(tr("Pesquisar por nome, título, autor, editora, ISBN, palavras-chave..."));
-    lay->addWidget(searchEdit);
-
-    auto* tree = new QTreeWidget(&dlg);
-    tree->setColumnCount(2);
-    QStringList headers; headers << tr("Título") << tr("Arquivo");
-    tree->setHeaderLabels(headers);
-    tree->setRootIsDecorated(false);
-    tree->setAlternatingRowColors(true);
-    lay->addWidget(tree, 1);
-
-    auto populate = [&](const QString& filter){
-        tree->clear();
-        for (const QVariant& v : entries) {
-            const QVariantMap e = v.toMap();
-            if (!entryMatches(e, filter)) continue;
-            auto* it = new QTreeWidgetItem(tree);
-            const QString title = e.value("title").toString();
-            const QString path = e.value("path").toString();
-            it->setText(0, title.isEmpty() ? QFileInfo(path).completeBaseName() : title);
-            it->setText(1, QFileInfo(path).fileName());
-            it->setToolTip(0, path);
-            it->setToolTip(1, path);
-            it->setData(0, Qt::UserRole, path);
-        }
-        for (int c = 0; c < tree->columnCount(); ++c) tree->resizeColumnToContents(c);
-    };
-    populate(QString());
-
-    QObject::connect(searchEdit, &QLineEdit::textChanged, &dlg, [populate](const QString& t){ populate(t); });
-    QObject::connect(tree, &QTreeWidget::itemDoubleClicked, &dlg, [&dlg](QTreeWidgetItem* it, int){
-        dlg.setProperty("selectedPath", it->data(0, Qt::UserRole));
-        dlg.accept();
-    });
-
-    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Open | QDialogButtonBox::Cancel, &dlg);
-    lay->addWidget(buttons);
-    QObject::connect(buttons, &QDialogButtonBox::accepted, &dlg, [&](){
-        auto* it = tree->currentItem();
-        if (!it) { dlg.reject(); return; }
-        dlg.setProperty("selectedPath", it->data(0, Qt::UserRole));
-        dlg.accept();
-    });
-    QObject::connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
-
-    if (dlg.exec() == QDialog::Accepted) {
-        const QString choice = dlg.property("selectedPath").toString();
-        if (!choice.isEmpty()) openPath(choice);
-    }
-}
-
-void MainWindow::configureRecentDialogCount() {
-    const int current = settings_.value("recent/maxCount", MaxRecentMenuItems).toInt();
-    bool ok = false;
-    const int val = QInputDialog::getInt(
-        this,
-        tr("Configurar recentes"),
-        tr("Quantidade máxima de itens:"),
-        current,
-        1,
-        20,
-        1,
-        &ok
-    );
-    if (!ok) return;
-    settings_.setValue("recent/maxCount", val);
-    rebuildRecentMenu();
-}
-
-void MainWindow::addRecentFile(const QString& absPath) {
-    if (absPath.isEmpty()) return;
-    QVariantList entries = loadRecentEntries(settings_);
-    // Remove existing entry for this path
-    for (int i = entries.size() - 1; i >= 0; --i) {
-        if (entries[i].toMap().value("path").toString() == absPath) entries.removeAt(i);
-    }
-    // Prepend fresh metadata
-    QVariantMap entry = extractPdfMeta(absPath);
-    entries.prepend(entry);
-    const int maxCount = settings_.value("recent/maxCount", MaxRecentMenuItems).toInt();
-    while (entries.size() > maxCount) entries.removeLast();
-    saveRecentEntries(settings_, entries);
-    rebuildRecentMenu();
-}
-
-void MainWindow::rebuildRecentMenu() {
-    if (!menuRecent_) return;
-    const QVariantList entries = loadRecentEntries(settings_);
-    int i = 0;
-    for (; i < MaxRecentMenuItems; ++i) {
-        if (!recentActs_[i]) continue;
-        if (i < entries.size()) {
-            const QVariantMap e = entries.at(i).toMap();
-            const QString path = e.value("path").toString();
-            const QString title = e.value("title").toString();
-            const QString label = title.isEmpty() ? QFileInfo(path).fileName() : QString("%1 — %2").arg(title, QFileInfo(path).fileName());
-            recentActs_[i]->setText(label);
-            recentActs_[i]->setData(path);
-            recentActs_[i]->setToolTip(path);
-            recentActs_[i]->setVisible(true);
-        } else {
-            recentActs_[i]->setVisible(false);
-            recentActs_[i]->setData(QVariant());
-        }
-    }
-}
-
-void MainWindow::closeDocument() {
-    // Clear TOC
-    toc_->clear();
-    // Save chat for current file before clearing
-    saveChatForCurrentFile();
-    // Replace current viewer with a fresh ViewerWidget
-    QWidget* newViewer = new ViewerWidget(this);
-    int idx = splitter_->indexOf(viewer_);
-    splitter_->replaceWidget(idx, newViewer);
-    viewer_->deleteLater();
-    viewer_ = newViewer;
-    // Reset state
-    currentFilePath_.clear();
-    settings_.remove("session/lastFile");
-    // Update UI state
-    updateStatus();
-    actClose_->setEnabled(false);
-    setWindowTitle(QString("%1 v%2 — Leitor")
-                       .arg(genai::AppInfo::Name)
-                       .arg(genai::AppInfo::Version));
-    updateTitleWidget();
-}
-
-void MainWindow::nextPage() {
-    unsigned int cur = 1, tot = 0;
-    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
-        cur = vw->currentPage(); tot = vw->totalPages();
-        if (cur < tot) vw->setCurrentPage(cur + 1);
-    }
-    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
-        cur = pv->currentPage(); tot = pv->totalPages();
-        if (cur < tot) pv->setCurrentPage(cur + 1);
-    }
-    updateStatus();
-}
-
-void MainWindow::prevPage() {
-    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
-        if (vw->currentPage() > 1) vw->setCurrentPage(vw->currentPage() - 1);
-    }
-    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
-        if (pv->currentPage() > 1) pv->setCurrentPage(pv->currentPage() - 1);
-    }
-    updateStatus();
-}
-
 void MainWindow::zoomIn() {
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
         vw->setZoomFactor(vw->zoomFactor() * 1.1);
     }
-#ifdef HAVE_QT_PDF
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
         pv->setZoomFactor(pv->zoomFactor() * 1.1);
     }
-#endif
     updateStatus();
 }
 
@@ -2149,11 +2117,9 @@ void MainWindow::zoomOut() {
     if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
         vw->setZoomFactor(vw->zoomFactor() / 1.1);
     }
-#ifdef HAVE_QT_PDF
     if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
         pv->setZoomFactor(pv->zoomFactor() / 1.1);
     }
-#endif
     updateStatus();
 }
 
@@ -2179,26 +2145,8 @@ void MainWindow::onTocItemActivated(QTreeWidgetItem* item, int) {
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) {
             vw->setCurrentPage(page);
         }
-        if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
-            pv->setCurrentPage(page);
+        if (auto* pdfViewer = qobject_cast<PdfViewerWidget*>(viewer_)) {
+            pdfViewer->setCurrentPage(page);
         }
-        updateStatus();
-    }
-}
-
-void MainWindow::updatePageCombo() {
-    if (!pageCombo_) return;
-    unsigned int cur = 1, tot = 0;
-    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { cur = vw->currentPage(); tot = vw->totalPages(); }
-    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { cur = pv->currentPage(); tot = pv->totalPages(); }
-    const unsigned int total = tot == 0 ? 100u : tot;
-    // Update items only if count mismatches to avoid flicker
-    if (pageCombo_->count() != int(total)) {
-        pageCombo_->blockSignals(true);
-        pageCombo_->clear();
-        for (unsigned int i=1; i<=total; ++i) {
-            pageCombo_->addItem(QString::number(i));
-        }
-        pageCombo_->blockSignals(false);
     }
 }

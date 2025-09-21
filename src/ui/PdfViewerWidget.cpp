@@ -1,7 +1,9 @@
 #include "PdfViewerWidget.h"
 
+#include <QWidget>
 #include <QPdfDocument>
 #include <QPdfView>
+#include <QVBoxLayout>
 #include <QPdfPageNavigator>
 #include <QPointF>
 #include <QVBoxLayout>
@@ -61,6 +63,12 @@ PdfViewerWidget::PdfViewerWidget(QWidget* parent)
     if (view_->viewport()) view_->viewport()->installEventFilter(this);
     if (auto* vbar = view_->verticalScrollBar()) {
         connect(vbar, &QScrollBar::valueChanged, this, [this](int v){ emit scrollChanged(v); });
+    }
+    if (navigation_) {
+        connect(navigation_, &QPdfPageNavigator::currentPageChanged, this, [this](int page) {
+            // O navegador é 0-based, a UI é 1-based
+            emit pageChanged(page + 1);
+        });
     }
     rubber_ = new QRubberBand(QRubberBand::Rectangle, view_->viewport());
 }
