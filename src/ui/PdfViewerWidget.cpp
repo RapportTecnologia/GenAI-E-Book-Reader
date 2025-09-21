@@ -6,38 +6,21 @@
 #include <QVBoxLayout>
 #include <QPdfPageNavigator>
 // Try to include QPdfLinkModel if available (Qt 6.4+)
-#if __has_include(<QtPdf/QPdfLinkModel>)
-#  include <QtPdf/QPdfLinkModel>
-#  include <QtPdf/QPdfLink>
-#  define HAS_QPDF_LINK_MODEL 1
-#elif __has_include(<QPdfLinkModel>)
-#  include <QPdfLinkModel>
-#  include <QPdfLink>
-#  define HAS_QPDF_LINK_MODEL 1
-#endif
-#include <QPointF>
-#include <QVBoxLayout>
-#include <QFileInfo>
-#include <QScrollBar>
-#include <QKeyEvent>
-#include <QWheelEvent>
-#include <QMouseEvent>
-#include <QRubberBand>
+// For Qt 5.15, we don't have QPdfLinkModel, so we'll implement a different approach
 #include <QGuiApplication>
 #include <QClipboard>
+#include <QScrollBar>
 #include <QFileDialog>
 #include <QFile>
-#include <QImageWriter>
+#include <QFileInfo>
 #include <QTextStream>
+#include <QImageWriter>
 #include <QProcess>
 #include <QStandardPaths>
 #include <QDir>
 #include <QUuid>
-#if __has_include(<QtPdf/QPdfSelection>)
-#  include <QtPdf/QPdfSelection>
-#elif __has_include(<QPdfSelection>)
-#  include <QPdfSelection>
-#endif
+#include <QPixmap>
+#include <QStringList>
 #include <QVariantAnimation>
 #include <QEasingCurve>
 #include <QToolTip>
@@ -47,7 +30,6 @@
 #include <QTimer>
 #include <QMenu>
 #include <QRegularExpression>
-#include <QDebug>
 #if __has_include(<QtPdf/QPdfSelection>)
 #  include <QtPdf/QPdfSelection>
 #  define HAS_QPDF_SELECTION 1
@@ -57,11 +39,7 @@
 #endif
 
 PdfViewerWidget::PdfViewerWidget(QWidget* parent)
-    : QWidget(parent), doc_(new QPdfDocument(this)), view_(new QPdfView(this))
-#ifdef HAS_QPDF_LINK_MODEL
-    , linkModel_(new QPdfLinkModel(this))
-#endif
-{
+    : QWidget(parent), doc_(new QPdfDocument(this)), view_(new QPdfView(this)) {
     auto* lay = new QVBoxLayout(this);
     lay->setContentsMargins(0,0,0,0);
     lay->addWidget(view_);
@@ -122,14 +100,7 @@ bool PdfViewerWidget::openFile(const QString& path, QString* errorOut) {
     // Keep multi-page mode active after load
     view_->setPageMode(QPdfView::PageMode::MultiPage);
     if (navigation_) navigation_->jump(0, QPointF(), 0);
-    
-    // Configure link model for hyperlink detection
-#ifdef HAS_QPDF_LINK_MODEL
-    if (linkModel_) {
-        linkModel_->setDocument(doc_);
-    }
-#endif
-    
+
     return true;
 }
 
@@ -307,57 +278,19 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
                 return true;
             }
             if (me->button() == Qt::LeftButton) {
-                // First check for hyperlinks at click position
-#ifdef HAS_QPDF_LINK_MODEL
-                qDebug() << "[LINK DEBUG] Left click detected, checking for links...";
-                if (linkModel_ && doc_ && navigation_) {
-                    const QPoint viewportPos = (watched == view_->viewport()) ? me->pos() : view_->viewport()->mapFrom(view_, me->pos());
-                    
-                    // Set the current page for link detection
-                    const int currentPageIndex = navigation_->currentPage();
-                    linkModel_->setPage(currentPageIndex);
-                    qDebug() << "[LINK DEBUG] Current page:" << currentPageIndex << "Click pos:" << viewportPos;
-                    
-                    // Convert viewport position to document coordinates (simplified)
-                    const QPointF documentPos = QPointF(viewportPos);
-                    
-                    // Check if there's a link at this position
-                    const QPdfLink link = linkModel_->linkAt(documentPos);
-                    qDebug() << "[LINK DEBUG] Link valid:" << link.isValid() << "Target page:" << link.page();
-                    if (link.isValid()) {
-                        // Handle the link navigation
-                        if (link.page() >= 0) {
-                            qDebug() << "[LINK DEBUG] Navigating to page:" << link.page();
-                            // Internal link to another page
-                            navigation_->jump(link.page(), link.location(), link.zoom());
-                            event->accept();
-                            return true;
-                        }
-                        // Could also handle external URLs here if needed
-                    }
-                } else {
-                    qDebug() << "[LINK DEBUG] LinkModel not available:" << (linkModel_ ? "OK" : "NULL") 
-                             << "Doc:" << (doc_ ? "OK" : "NULL") << "Nav:" << (navigation_ ? "OK" : "NULL");
+                // Start a new selection only on left-click
+                selecting_ = true;
+                const QPoint start = (watched == view_->viewport()) ? me->pos() : view_->viewport()->mapFrom(view_, me->pos());
+                selStart_ = start;
+                selRect_ = QRect(selStart_, QSize());
+                if (rubber_) {
+                    rubber_->setGeometry(selRect_);
+                    rubber_->show();
                 }
-#else
-                qDebug() << "[LINK DEBUG] QPdfLinkModel not compiled in this Qt version";
-#endif
-                
-                // If no link was clicked, start a new selection only on left-click
-                if (selMode_ == SelectionMode::None) selMode_ = SelectionMode::Rect;
-                if (selMode_ != SelectionMode::None) {
-                    selecting_ = true;
-                    const QPoint start = (watched == view_->viewport()) ? me->pos() : view_->viewport()->mapFrom(view_, me->pos());
-                    selStart_ = start;
-                    selRect_ = QRect(selStart_, QSize());
-                    if (rubber_) {
-                        rubber_->setGeometry(selRect_);
-                        rubber_->show();
-                    }
-                    event->accept();
-                    return true;
-                }
+                event->accept();
+                return true;
             }
+            
         } else if (event->type() == QEvent::MouseMove) {
             auto* me = static_cast<QMouseEvent*>(event);
             if (selecting_ && (me->buttons() & Qt::LeftButton) && selMode_ != SelectionMode::None) {

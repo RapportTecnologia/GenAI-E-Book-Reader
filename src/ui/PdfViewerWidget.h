@@ -1,22 +1,25 @@
-#pragma once
-
 #include <QWidget>
 #include <QString>
+#include <QImage>
+#include <QPoint>
+#include <QRect>
+#include <QSize>
+#include <QTimer>
+#include <QVariantAnimation>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QEvent>
+#include <QObject>
+#include <QPdfDocument>
+#include <QPdfView>
+#include <QPdfPageNavigator>
+#include <QRubberBand>
+#include <QLabel>
+#include <QGraphicsOpacityEffect>
+#include <QMenu>
 
 // Check if QPdfLinkModel is available (Qt 6.4+)
-#if __has_include(<QtPdf/QPdfLinkModel>)
-#  define HAS_QPDF_LINK_MODEL 1
-#elif __has_include(<QPdfLinkModel>)
-#  define HAS_QPDF_LINK_MODEL 1
-#endif
-
-// Forward declarations for pointer members to reduce header dependencies
-class QPdfDocument;
-class QPdfView;
-class QPdfPageNavigator;
-class QPdfLinkModel;
-class QRubberBand;
-class QLabel;
+// For Qt 5.15, we don't have QPdfLinkModel, so we'll implement a different approach
 class QGraphicsOpacityEffect;
 class QMenu;
 
@@ -84,9 +87,6 @@ private:
     QPdfDocument* doc_;
     QPdfView* view_;
     QPdfPageNavigator* navigation_;
-#ifdef HAS_QPDF_LINK_MODEL
-    QPdfLinkModel* linkModel_;
-#endif
 
     // Selection state
     SelectionMode selMode_ { SelectionMode::Auto };

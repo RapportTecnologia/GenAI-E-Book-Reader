@@ -65,6 +65,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
+#include <QIntValidator>
 #include <algorithm>
 #include <functional>
 #include <QModelIndex>
@@ -866,8 +867,25 @@ void MainWindow::createActions() {
     tb->addAction(actPrev_);
     tb->addAction(actNext_);
     pageCombo_ = new QComboBox(tb);
-    pageCombo_->setEditable(false);
+    pageCombo_->setEditable(true);
+    pageCombo_->setInsertPolicy(QComboBox::NoInsert);
     pageCombo_->setMinimumContentsLength(6);
+    // Ensure only integers are accepted; range will be updated in updatePageCombo()
+    if (pageCombo_->lineEdit()) {
+        pageCombo_->lineEdit()->setValidator(new QIntValidator(1, 999999, pageCombo_));
+        pageCombo_->lineEdit()->setPlaceholderText(tr("Ir para..."));
+        QObject::connect(pageCombo_->lineEdit(), &QLineEdit::returnPressed, this, [this]() {
+            if (!pageCombo_) return;
+            bool ok = false;
+            const int p = pageCombo_->lineEdit()->text().toInt(&ok);
+            if (!ok) return;
+            const int total = pageCombo_->count();
+            if (p < 1 || p > total) return;
+            const unsigned int up = static_cast<unsigned int>(p);
+            if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) vw->setCurrentPage(up);
+            if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) pv->setCurrentPage(up);
+        });
+    }
     tb->addWidget(pageCombo_);
     totalPagesLabel_ = new QLabel(tb);
     tb->addWidget(totalPagesLabel_);
@@ -875,12 +893,13 @@ void MainWindow::createActions() {
         const unsigned int p = static_cast<unsigned int>(idx + 1);
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) vw->setCurrentPage(p);
         if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) pv->setCurrentPage(p);
-        updateStatus();
     });
+    updateStatus();
     tb->addSeparator();
     tb->addAction(actZoomOut_);
     tb->addAction(actZoomIn_);
     tb->addAction(actZoomReset_);
+
     QWidget* rightSpacer = new QWidget(tb);
     rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     tb->addWidget(rightSpacer);
@@ -2049,6 +2068,11 @@ void MainWindow::updatePageCombo() {
             pageCombo_->addItem(QString::number(i));
         }
         pageCombo_->blockSignals(false);
+    }
+
+    // Keep validator range in sync with total pages (assign a fresh validator)
+    if (pageCombo_->lineEdit()) {
+        pageCombo_->lineEdit()->setValidator(new QIntValidator(1, qMax(1, int(total)), pageCombo_));
     }
 
     if (cur > 0 && cur <= total) {
