@@ -12,3 +12,4 @@ SENSIBLE.md
 .venv*
 qt-win
 .cache/
+release_notes.md
