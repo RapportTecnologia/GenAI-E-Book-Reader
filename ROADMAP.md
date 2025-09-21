@@ -76,16 +76,14 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Revisão do menu "Arquivos Recentes" e da janela de listagem.
 - Iniciado o estudo para implementar a funcionalidade do menu/conteudo/indice/sumário do e-book.
 - Melhorado gestão de chat por arquivos.
+- Adoção do Metadados para AppImage. Melhorias relativas no CMakeFile.txt
+- Documentação de uso e limitações
+- Escrita incremental de vetores/ids/metadados
 
-
-
+## 0.2.0 – TTS e Dicionario
+- Reestruturar o MainWindows para reduzir seu tamanho, aplicando fachadas para agrupar funções por contextos gráficos.
 - Continuar o desenvolvimento: Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,
 
-- Escrita incremental de vetores/ids/metadados
-- Documentação de uso e limitações
-
-## 0.2.0 – TTS
-- Reestruturar o MainWindows para reduzir seu tamanho, aplicando fachadas para agrupar funções por contextos gráficos.
 
 ## 0.2.1 – Reestruturação do código
 - Reprodução TTS de seleção atual

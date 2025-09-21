@@ -16,6 +16,7 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - Revisão do menu "Arquivos Recentes" e da janela de listagem.
 - Iniciado o estudo para implementar a funcionalidade do menu/conteudo/indice/sumário do e-book.
 - Melhorado gestão de chat por arquivos.
+- Adoção do Metadados para AppImage. Melhorias relativas no CMakeFile.txt
 
 ## [0.1.7] - 2025-09-20
 
