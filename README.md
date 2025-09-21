@@ -58,14 +58,11 @@ Se você deseja testar os recursos mais recentes que estarão na **v0.1.8**, pod
 
 [Apresentação do Projeto](https://www.youtube.com/watch?v=4wveYzO_Lko)
 
+Nota (0.1.8): Suporte a links internos clicáveis em PDFs (índice/sumário dentro do documento) usando QPdfLinkModel (Qt6), melhorias na navegação pelo TOC (sincronização com cliques e com os botões Voltar/Avançar), correções na seleção de texto e pequenos ajustes de UI. Documentação atualizada.
 Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.
-
 Nota (0.1.6): otimização da renderização do chat, com a conversão de Markdown movida para o back-end (C++), corrigindo bugs de instabilidade com MathJax.
-
 Nota (0.1.3): refinamento de UI — ícone do app a partir de `docs/imgs/logo-do-projeto.png`, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível. Painel de TOC remodelado com barra de ferramentas (alternar entre "Páginas"/"Conteúdo" e botões de navegação) e tamanho padrão inicial do splitter ~10% (TOC) / ~90% (visualizador).
-
 Nota (0.1.2): implementado "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.
-
 Nota (0.1.1): adicionados seleção de página via combobox e restauração do último arquivo/diretório aberto.
 
 Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento. O painel de TOC inclui uma barra de ferramentas para alternar entre "Páginas" e "Conteúdo" e botões de navegação; por padrão o painel ocupa ~10% da largura da janela na primeira execução. Atualmente, o binário suporta apenas arquivos PDF.
