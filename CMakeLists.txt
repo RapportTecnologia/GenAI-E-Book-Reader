@@ -231,7 +231,7 @@ add_custom_target(github_release
 
     # Extract release notes from CHANGELOG.md
     COMMAND ${CMAKE_COMMAND} -E echo "Extracting release notes for v${PROJECT_VERSION}..."
-    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ExtractChangelog.cmake"
+    COMMAND ${CMAKE_COMMAND} -DRELEASE_VERSION=${PROJECT_VERSION} -DCMAKE_BINARY_DIR=${CMAKE_BINARY_DIR} -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ExtractChangelog.cmake"
 
     # Create GitHub release
     COMMAND ${GH_BIN} release create "v${PROJECT_VERSION}" --title "Release v${PROJECT_VERSION}" --notes-file "${CMAKE_BINARY_DIR}/release_notes.md"
@@ -242,6 +242,3 @@ add_custom_target(github_release
     COMMENT "Creating GitHub release and uploading artifacts for v${PROJECT_VERSION}"
     VERBATIM
 )
-
-
-
