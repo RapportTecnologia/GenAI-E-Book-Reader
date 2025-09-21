@@ -1579,20 +1579,30 @@ void MainWindow::loadChatForFile(const QString& filePath) {
     if (!chatDock_) return;
     const QString key = QString("files/%1/chatHtml").arg(filePath);
     const QString html = settings_.value(key).toString();
-    if (!html.isEmpty()) chatDock_->setTranscriptHtml(html);
     // Load structured conversation for LLM context
     const QString keyMsgs = QString("files/%1/chatMsgs").arg(filePath);
     const QString raw = settings_.value(keyMsgs).toString();
+
+    bool hasMsgs = false;
+    QList<QPair<QString, QString>> msgs;
     if (!raw.trimmed().isEmpty()) {
         const QJsonDocument doc = QJsonDocument::fromJson(raw.toUtf8());
         if (doc.isArray()) {
-            QList<QPair<QString, QString>> msgs;
             for (const auto& v : doc.array()) {
                 const auto o = v.toObject();
                 msgs.append(QPair<QString,QString>(o.value("role").toString(), o.value("content").toString()));
             }
-            chatDock_->setConversationForLlm(msgs);
+            hasMsgs = !msgs.isEmpty();
         }
+    }
+
+    if (!html.isEmpty() || hasMsgs) {
+        if (!html.isEmpty()) chatDock_->setTranscriptHtml(html);
+        chatDock_->setConversationForLlm(msgs);
+    } else {
+        // New book (no prior chat): clear UI and LLM conversation state
+        chatDock_->setTranscriptHtml(QString());
+        chatDock_->setConversationForLlm({});
     }
 }
 
@@ -2084,6 +2094,10 @@ void MainWindow::updatePageCombo() {
 
 bool MainWindow::openPath(const QString& file) {
     const QFileInfo fi(file);
+    // Persist the current book's chat before switching to a new file
+    if (!currentFilePath_.isEmpty()) {
+        saveChatForCurrentFile();
+    }
 
     if (fi.suffix().compare("pdf", Qt::CaseInsensitive) == 0) {
         // Replace current viewer with a PdfViewerWidget
