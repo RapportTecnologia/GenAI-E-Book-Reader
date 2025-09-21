@@ -9,6 +9,8 @@
 #include "ui/ChatDock.h"
 #include "ui/AboutDialog.h"
 #include "ui/TutorialDialog.h"
+#include "ui/RecentFilesDialog.h"
+#include "ui/RecentFilesDialog.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QAction>
@@ -217,6 +219,26 @@ void MainWindow::onTitleAddToCalibre() {
     }
     // Open the new path in the reader
     openPath(newPath);
+}
+
+void MainWindow::showRecentFilesDialog() {
+    QVariantList entries = loadRecentEntries(settings_);
+    RecentFilesDialog dlg(entries, this);
+
+    connect(&dlg, &RecentFilesDialog::openFileRequested, this, &MainWindow::openPath);
+    connect(&dlg, &RecentFilesDialog::removeFileRequested, this, [this](const QString& filePath) {
+        QVariantList currentEntries = loadRecentEntries(settings_);
+        QVariantList newEntries;
+        for (const QVariant& entry : currentEntries) {
+            if (entry.toMap().value("path").toString() != filePath) {
+                newEntries.append(entry);
+            }
+        }
+        settings_.setValue("recent/entries", newEntries);
+        rebuildRecentMenu(); // Atualiza o menu também
+    });
+
+    dlg.exec();
 }
 
 void MainWindow::onTitleRenameFile() {
@@ -761,15 +783,9 @@ void MainWindow::createActions() {
     menuDocumento->addAction(actClose_);
 
     menuRecent_ = menuDocumento->addMenu(tr("Recentes"));
-    for (int i = 0; i < MaxRecentMenuItems; ++i) {
-        recentActs_[i] = new QAction(this);
-        recentActs_[i]->setVisible(false);
-        connect(recentActs_[i], &QAction::triggered, this, &MainWindow::openRecentFile);
-        menuRecent_->addAction(recentActs_[i]);
-    }
     menuRecent_->addSeparator();
     actRecentDialog_ = new QAction(tr("Mostrar todos..."), this);
-    connect(actRecentDialog_, &QAction::triggered, this, &MainWindow::showRecentDialog);
+    connect(actRecentDialog_, &QAction::triggered, this, &MainWindow::showRecentFilesDialog);
     menuRecent_->addAction(actRecentDialog_);
 
     auto* menuLeitor = menuArquivo->addMenu(tr("Leitor"));
@@ -1818,20 +1834,25 @@ void MainWindow::rebuildRecentMenu() {
     if (!menuRecent_) return;
     menuRecent_->clear();
     QVariantList entries = loadRecentEntries(settings_);
-    const int num = qMin(int(MaxRecentMenuItems), entries.size());
-    for (int i = 0; i < num; ++i) {
+
+    int numFilesToShow = qMin(10, entries.size());
+
+    for (int i = 0; i < numFilesToShow; ++i) {
         const QVariantMap entry = entries.at(i).toMap();
         const QString path = entry.value("path").toString();
-        const QString title = entry.value("title").toString();
-        recentActs_[i]->setText(QString::fromLatin1("&%1 %2").arg(i + 1).arg(title));
-        recentActs_[i]->setData(path);
-        recentActs_[i]->setVisible(true);
-        menuRecent_->addAction(recentActs_[i]);
+        if (path.isEmpty()) continue;
+
+        const QString title = entry.value("title", QFileInfo(path).completeBaseName()).toString();
+        QAction* action = new QAction(QString::fromLatin1("&%1 %2").arg(i + 1).arg(title), this);
+        action->setData(path);
+        connect(action, &QAction::triggered, this, &MainWindow::openRecentFile);
+        menuRecent_->addAction(action);
     }
-    for (int i = num; i < MaxRecentMenuItems; ++i) {
-        recentActs_[i]->setVisible(false);
+
+    if (numFilesToShow > 0) {
+        menuRecent_->addSeparator();
     }
-    menuRecent_->addSeparator();
+
     menuRecent_->addAction(actRecentDialog_);
 }
 
@@ -1843,20 +1864,25 @@ void MainWindow::openFile() {
 }
 
 void MainWindow::openRecentFile() {
-    auto* act = qobject_cast<QAction*>(sender());
-    if (!act) return;
-    const QString path = act->data().toString();
+    auto* action = qobject_cast<QAction*>(sender());
+    if (!action) return;
+
+    const QString path = action->data().toString();
     if (path.isEmpty()) return;
+
     if (!QFileInfo::exists(path)) {
-        QMessageBox::warning(this, tr("Arquivo ausente"), tr("O arquivo não existe mais: %1").arg(path));
+        QMessageBox::warning(this, tr("Arquivo ausente"), tr("O arquivo '%1' não foi encontrado. Ele será removido da lista de recentes.").arg(QFileInfo(path).fileName()));
+        
+        QVariantList entries = loadRecentEntries(settings_);
+        entries.removeIf([&](const QVariant& entry) {
+            return entry.toMap().value("path").toString() == path;
+        });
+        settings_.setValue("recent/entries", entries);
+        rebuildRecentMenu();
         return;
     }
-    openPath(path);
-}
 
-void MainWindow::showRecentDialog() {
-    // TODO: Implementar um diálogo de arquivos recentes, pois a classe RecentFilesDialog não foi encontrada.
-    QMessageBox::information(this, tr("Arquivos Recentes"), tr("Esta funcionalidade ainda não foi implementada."));
+    openPath(path);
 }
 
 void MainWindow::configureRecentDialogCount() {

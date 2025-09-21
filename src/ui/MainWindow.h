@@ -31,6 +31,7 @@ class LlmClient;
 class SummaryDialog;
 class ChatDock;
 class DictionarySettingsDialog;
+class RecentFilesDialog;
 
 #include "reader/Reader.h"
 
@@ -75,6 +76,7 @@ private slots:
     void onChatSummarizeTranscript(const QString& text);
     void showAboutDialog();
     void onCurrentPageChanged(int page);
+    void showRecentFilesDialog();
     void showTutorialDialog();
 
     // AI actions
@@ -202,13 +204,10 @@ private:
     // Recent files menu
     QMenu* menuRecent_ {nullptr};
     QAction* actRecentDialog_ {nullptr};
-    enum { MaxRecentMenuItems = 6 };
-    QAction* recentActs_[MaxRecentMenuItems] {};
 
 private slots:
     // Recent files slots
     void openRecentFile();
-    void showRecentDialog();
     void configureRecentDialogCount();
 
 private:
