@@ -16,14 +16,9 @@ SummaryDialog::SummaryDialog(QWidget* parent)
     lay->addWidget(edit_, 1);
 
     auto* box = new QDialogButtonBox(QDialogButtonBox::Close, this);
-    btnSend_ = new QPushButton(tr("Enviar ao chat"), this);
-    box->addButton(btnSend_, QDialogButtonBox::ActionRole);
     lay->addWidget(box);
 
     connect(box, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(btnSend_, &QPushButton::clicked, this, [this]() {
-        emit sendToChatRequested(edit_->toPlainText());
-    });
 }
 
 void SummaryDialog::setText(const QString& text) {

@@ -3,6 +3,8 @@
 #include "ui/PdfViewerWidget.h"
 #include "ai/LlmClient.h"
 #include "ui/SummaryDialog.h"
+#include "ui/OpfDialog.h"
+#include "ui/OpfStore.h"
 #include "ui/LlmSettingsDialog.h"
 #include "ui/EmbeddingSettingsDialog.h"
 #include "ui/DictionarySettingsDialog.h"
@@ -104,11 +106,152 @@ QVariantList loadRecentEntries(QSettings& settings) {
         m["summary"] = QString(); m["keywords"] = QString();
         entries.append(m);
     }
+
     settings.setValue("recent/entries", entries);
     return entries;
 }
 
 } // end anonymous namespace
+
+void MainWindow::openOpfMetadataDialog() {
+    if (currentFilePath_.isEmpty()) return;
+    if (!opfDialog_) opfDialog_ = new OpfDialog(this);
+    const QString opfPath = OpfStore::defaultOpfPathFor(currentFilePath_);
+    OpfData data;
+    if (QFileInfo::exists(opfPath)) {
+        QString err; if (!OpfStore::read(opfPath, &data, &err)) {
+            showLongAlert(tr("Erro ao ler OPF"), err);
+        }
+    } else {
+        data = buildOpfFromPdfMeta(currentFilePath_);
+    }
+    opfDialog_->setData(data);
+    if (opfDialog_->exec() == QDialog::Accepted) {
+        const OpfData out = opfDialog_->data();
+        QString err; if (!OpfStore::write(opfPath, out, &err)) {
+            showLongAlert(tr("Erro ao salvar OPF"), err);
+        } else {
+            statusBar()->showMessage(tr("Metadados OPF salvos em %1").arg(opfPath), 3000);
+        }
+    }
+}
+
+void MainWindow::maybeAskGenerateOpf() {
+    if (currentFilePath_.isEmpty()) return;
+    const QString absPath = QFileInfo(currentFilePath_).absoluteFilePath();
+    const QString opfPath = OpfStore::defaultOpfPathFor(absPath);
+    const bool exists = QFileInfo::exists(opfPath);
+    const bool asked = settings_.value(QString("files/%1/asked_opf").arg(absPath), false).toBool();
+    if (exists || asked) return;
+    settings_.setValue(QString("files/%1/asked_opf").arg(absPath), true);
+
+    const auto ret = QMessageBox::question(
+        this,
+        tr("Gerar resumo/descrição?"),
+        tr("Deseja gerar um resumo e descrição via IA e salvar como metadados OPF?"),
+        QMessageBox::Yes | QMessageBox::No,
+        QMessageBox::Yes
+    );
+    if (ret == QMessageBox::Yes) {
+        generateOpfWithLlmAsync(absPath);
+    }
+}
+
+OpfData MainWindow::buildOpfFromPdfMeta(const QString& absPdfPath) const {
+    OpfData d;
+    QPdfDocument doc;
+    if (doc.load(absPdfPath) == static_cast<QPdfDocument::Error>(0)) {
+        d.title = doc.metaData(QPdfDocument::MetaDataField::Title).toString().trimmed();
+        d.author = doc.metaData(QPdfDocument::MetaDataField::Author).toString().trimmed();
+        d.description = doc.metaData(QPdfDocument::MetaDataField::Subject).toString().trimmed();
+        d.keywords = doc.metaData(QPdfDocument::MetaDataField::Keywords).toString().trimmed();
+        // Language is often missing; we can try to detect later
+    }
+    if (d.title.isEmpty()) d.title = QFileInfo(absPdfPath).completeBaseName();
+    // Use SHA1 of absolute path as stable identifier
+    d.identifier = sha1(absPdfPath);
+    return d;
+}
+
+void MainWindow::generateOpfWithLlmAsync(const QString& absPdfPath) {
+    if (!llm_) return;
+    // Build initial data from PDF
+    OpfData data = buildOpfFromPdfMeta(absPdfPath);
+
+    // Build context from sampled pages (reuse logic similar to onRequestSummarizeDocument)
+    QString context;
+    if (auto* pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        if (pv->document()) {
+            ensurePagesTextLoaded();
+            const int pageCount = pv->document()->pageCount();
+            if (pageCount > 0 && !pagesText_.isEmpty()) {
+                const int targetSamples = 12;
+                const int step = qMax(1, pageCount / targetSamples);
+                int taken = 0;
+                for (int p = 1; p <= pageCount && taken < targetSamples; p += step) {
+                    const int idx = p - 1;
+                    QString snippet;
+                    if (idx >= 0 && idx < pagesText_.size()) {
+                        snippet = pagesText_.at(idx);
+                        snippet.replace(QRegularExpression("\\s+"), " ");
+                        if (snippet.size() > 800) snippet = snippet.left(800);
+                    }
+                    if (!snippet.trimmed().isEmpty()) {
+                        context += tr("[Página %1]\n%2\n\n").arg(p).arg(snippet.trimmed());
+                        ++taken;
+                    }
+                }
+            }
+        }
+    }
+    if (context.trimmed().isEmpty()) {
+        context = tr("Conteúdo não extraído.");
+    }
+
+    // Compose LLM prompt to produce description and summary
+    QList<QPair<QString,QString>> msgs;
+    const QString sys = tr("Você gera metadados de livros (OPF) em pt-BR a partir de trechos.\n"
+                           "Devolva duas seções separadas: \n"
+                           "[DESCRICAO]\n<texto>\n[RESUMO]\n<texto>\n"
+                           "Em 'DESCRICAO' faça um parágrafo corrido de apresentação.\n"
+                           "Em 'RESUMO' faça um resumo executivo com tópicos.");
+    msgs.append({QStringLiteral("system"), sys});
+    QString user = tr("Título: %1\nAutor: %2\nPalavras-chave: %3\n\nTrechos:\n%4")
+                       .arg(data.title.isEmpty()? tr("(desconhecido)") : data.title)
+                       .arg(data.author.isEmpty()? tr("(desconhecido)") : data.author)
+                       .arg(data.keywords)
+                       .arg(context);
+    msgs.append({QStringLiteral("user"), user});
+
+    statusBar()->showMessage(tr("Gerando metadados OPF via IA..."));
+    llm_->chatWithMessages(msgs, [this, absPdfPath, data](QString out, QString err){
+        QMetaObject::invokeMethod(this, [this, absPdfPath, data, out, err]() mutable {
+            if (!err.isEmpty()) { showLongAlert(tr("Erro na IA"), err); statusBar()->clearMessage(); return; }
+            // Parse simple tagged response
+            QString desc, sum;
+            QRegularExpression reDesc("\\[DESCRICAO\\](.*)\\[RESUMO\\]", QRegularExpression::DotMatchesEverythingOption);
+            auto m = reDesc.match(out);
+            if (m.hasMatch()) {
+                desc = m.captured(1).trimmed();
+                sum = out.mid(m.capturedEnd(0)).trimmed();
+            } else {
+                // Fallback: use entire text as description
+                desc = out.trimmed();
+            }
+            if (!desc.isEmpty()) data.description = desc;
+            if (!sum.isEmpty()) data.summary = sum;
+
+            const QString opfPath = OpfStore::defaultOpfPathFor(absPdfPath);
+            QString werr; if (!OpfStore::write(opfPath, data, &werr)) {
+                showLongAlert(tr("Erro ao salvar OPF"), werr);
+            } else {
+                statusBar()->showMessage(tr("OPF criado em %1").arg(opfPath), 4000);
+            }
+            statusBar()->clearMessage();
+        });
+    });
+}
+
 
 void MainWindow::showAboutDialog() {
     AboutDialog dlg(this);
@@ -821,6 +964,10 @@ void MainWindow::createActions() {
     menuEdit->addAction(actSelCopy_);
     menuEdit->addAction(actSelSaveTxt_);
     menuEdit->addAction(actSelSaveMd_);
+    menuEdit->addSeparator();
+    actOpfDialog_ = new QAction(tr("Metadados (OPF)..."), this);
+    connect(actOpfDialog_, &QAction::triggered, this, &MainWindow::openOpfMetadataDialog);
+    menuEdit->addAction(actOpfDialog_);
 
     auto* menuHelp = menuBar()->addMenu(tr("Ajuda"));
     menuHelp->addAction(actTutorial_);
@@ -1065,7 +1212,6 @@ MainWindow::MainWindow(QWidget* parent)
     // Initialize LLM and summary dialog
     llm_ = new LlmClient(this);
     summaryDlg_ = new SummaryDialog(this);
-    connect(summaryDlg_, &SummaryDialog::sendToChatRequested, this, &MainWindow::onRequestSendToChat);
     // Ensure chat history is loaded for current file when panel opens
     if (!currentFilePath_.isEmpty()) {
         loadChatForFile(currentFilePath_);
@@ -2104,6 +2250,32 @@ bool MainWindow::openPath(const QString& file) {
         updateTitleWidget();
         updateStatus();
         actClose_->setEnabled(true);
+
+        // First-time embeddings prompt: show only once per file when there is no index yet.
+        {
+            IndexPaths idxPaths;
+            const bool hasIndex = getIndexPaths(&idxPaths);
+            const QString absPathForPrompt = fi.absoluteFilePath();
+            const bool skipPrompt = settings_.value(QString("files/%1/skip_index_prompt").arg(absPathForPrompt), false).toBool();
+            if (!hasIndex && !skipPrompt) {
+                const QMessageBox::StandardButton ret = QMessageBox::question(
+                    this,
+                    tr("Criar embeddings?"),
+                    tr("Deseja criar o índice vetorial (embeddings) para este e-book agora?\n\n"
+                       "Observação: isso pode ser relativamente demorado conforme o tamanho do arquivo."),
+                    QMessageBox::Yes | QMessageBox::No,
+                    QMessageBox::No
+                );
+                if (ret == QMessageBox::Yes) {
+                    onRequestRebuildEmbeddings();
+                } else {
+                    // Remember user's choice to avoid asking again for this file
+                    settings_.setValue(QString("files/%1/skip_index_prompt").arg(absPathForPrompt), true);
+                }
+            }
+        }
+        // Ask about generating OPF metadata (summary/description) on first open
+        maybeAskGenerateOpf();
         return true;
     }
 

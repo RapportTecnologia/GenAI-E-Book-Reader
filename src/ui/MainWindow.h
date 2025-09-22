@@ -32,6 +32,9 @@ class ChatDock;
 class DictionarySettingsDialog;
 class RecentFilesDialog;
 class QPdfBookmarkModel;
+class OpfDialog;
+
+#include "ui/OpfStore.h"
 
 #include "reader/Reader.h"
 
@@ -87,6 +90,7 @@ private slots:
     void onDictionaryLookup(const QString& term);
     void onRequestRebuildEmbeddings();
     void onRequestSummarizeDocument();
+    void openOpfMetadataDialog();
 
 private:
     void buildUi();
@@ -138,6 +142,9 @@ private:
     QString detectDocumentLanguageSample() const;
     void detectDocumentLanguageAsync(std::function<void(QString)> onLang);
     void translateQueryIfNeededAsync(const QString& query, const QString& docLang, std::function<void(QString)> onReady);
+    void maybeAskGenerateOpf();
+    void generateOpfWithLlmAsync(const QString& absPdfPath);
+    OpfData buildOpfFromPdfMeta(const QString& absPdfPath) const;
 
     QWidget* viewer_ {nullptr}; // can be ViewerWidget or PdfViewerWidget
     QTreeWidget* toc_ {nullptr};
@@ -173,6 +180,7 @@ private:
     QAction* actDictionarySettings_ {nullptr};
     QAction* actAbout_ {nullptr};
     QAction* actTutorial_ {nullptr};
+    QAction* actOpfDialog_ {nullptr};
     // TOC toolbar actions
     QAction* actTocModePages_ {nullptr};
     QAction* actTocModeChapters_ {nullptr};
@@ -233,6 +241,7 @@ private:
     // AI integration
     LlmClient* llm_ {nullptr};
     SummaryDialog* summaryDlg_ {nullptr};
+    OpfDialog* opfDialog_ {nullptr};
     ChatDock* chatDock_ {nullptr};
 
     // Cache for plain text pages of current PDF

@@ -104,9 +104,6 @@ void MainWindow::onRequestSummarizeDocument() {
                 summaryDlg_->raise();
                 summaryDlg_->activateWindow();
             }
-            // Também registrar no chat como referência
-            showChatPanel();
-            if (chatDock_) chatDock_->appendAssistant(QString("[resumo do e-book]\n%1").arg(out));
             statusBar()->clearMessage();
             saveChatForCurrentFile();
         });
