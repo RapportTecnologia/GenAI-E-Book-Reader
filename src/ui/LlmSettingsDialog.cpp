@@ -24,6 +24,7 @@
 #include <QTime>
 #include <QTextCursor>
 #include <QSignalBlocker>
+#include <QCheckBox>
 #include "ai/LlmClient.h"
 #if __has_include("Config.h")
 #  include "Config.h"
@@ -149,6 +150,10 @@ LlmSettingsDialog::LlmSettingsDialog(QWidget* parent)
     baseUrlEdit_ = new QLineEdit(this);
     apiKeyEdit_ = new QLineEdit(this);
     apiKeyEdit_->setEchoMode(QLineEdit::Password);
+    functionCallingCheck_ = new QCheckBox(this);
+    functionCallingCheck_->setText(tr("Suporte a Function Calling"));
+    functionCallingCheck_->setTristate(true);
+    functionCallingCheck_->setEnabled(false); // read-only as requested
 
     populateProviders();
     // Reordered for a continuous flow: Provider -> Base URL -> API Key -> Model
@@ -156,6 +161,7 @@ LlmSettingsDialog::LlmSettingsDialog(QWidget* parent)
     form->addRow(tr("Base URL (opcional)"), baseUrlEdit_);
     form->addRow(tr("API Key"), apiKeyEdit_);
     form->addRow(tr("Modelo"), modelCombo_);
+    form->addRow(tr("Function Calling"), functionCallingCheck_);
     // Initially disable model selection until we have a list (or for static lists)
     modelCombo_->setEnabled(false);
     root->addLayout(form);
@@ -199,6 +205,7 @@ LlmSettingsDialog::LlmSettingsDialog(QWidget* parent)
         appendDebug(tr("[INIT] modelCombo_->lineEdit() ausente; filtro de modelos não será conectado"));
     }
     connect(testButton_, &QPushButton::clicked, this, &LlmSettingsDialog::onTestModel);
+    connect(modelCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LlmSettingsDialog::onModelChanged);
 
     // Network manager for OpenRouter
     nam_ = new QNetworkAccessManager(this);
@@ -208,6 +215,7 @@ LlmSettingsDialog::LlmSettingsDialog(QWidget* parent)
                     .arg(providerCombo_->currentData().toString(),
                          modelCombo_->currentData().toString(),
                          baseUrlEdit_->text().trimmed()));
+    updateFunctionCallingSupport();
 }
 
 void LlmSettingsDialog::populateProviders() {
@@ -282,6 +290,7 @@ void LlmSettingsDialog::populateModelsFor(const QString& provider) {
         appendDebug(tr("[MODELS] Lista estatica (OpenAI) populada"));
     }
     updatingModelList_ = false;
+    updateFunctionCallingSupport();
 }
 
 void LlmSettingsDialog::onProviderChanged(int) {
@@ -322,6 +331,7 @@ void LlmSettingsDialog::onProviderChanged(int) {
     populateModelsFor(provider);
     // Pick recommended default (first item) if available
     if (modelCombo_->count() > 0) modelCombo_->setCurrentIndex(0);
+    updateFunctionCallingSupport();
 }
 
 void LlmSettingsDialog::loadFromSettings() {
@@ -355,6 +365,7 @@ void LlmSettingsDialog::loadFromSettings() {
     promptSummaries_->setPlainText(pSum);
     promptExplanations_->setPlainText(pExp);
     promptChat_->setPlainText(pChat);
+    updateFunctionCallingSupport();
 }
 
 void LlmSettingsDialog::saveToSettings() {
@@ -449,6 +460,7 @@ void LlmSettingsDialog::applyModelFilter(const QString& filterText) {
     }
     modelCombo_->setEnabled(true);
     updatingModelList_ = false;
+    updateFunctionCallingSupport();
 }
 
 void LlmSettingsDialog::fetchOpenRouterModels() {
@@ -546,6 +558,7 @@ void LlmSettingsDialog::fetchOpenRouterModels() {
         }
         retryOpenRouter_ = 0; // success resets counter
         modelCombo_->setEnabled(true);
+        updateFunctionCallingSupport();
     });
 }
 
@@ -616,6 +629,7 @@ void LlmSettingsDialog::fetchOpenWebUiModels() {
         modelCombo_->setCurrentIndex(0);
         retryOpenWebUI_ = 0; // success resets counter
         modelCombo_->setEnabled(true);
+        updateFunctionCallingSupport();
     });
 }
 
@@ -646,6 +660,7 @@ void LlmSettingsDialog::verifyOrAssistOllama() {
         modelCombo_->addItem(tr("Ollama indisponível"), "");
         retryOllama_ = 0;
     }
+    updateFunctionCallingSupport();
 }
 
 void LlmSettingsDialog::fetchGenerativaModels() {
@@ -711,6 +726,7 @@ void LlmSettingsDialog::fetchGenerativaModels() {
         }
         retryGenerativa_ = 0; // success resets counter
         modelCombo_->setEnabled(true);
+        updateFunctionCallingSupport();
     });
 }
 
@@ -721,6 +737,59 @@ void LlmSettingsDialog::fetchOpenAiModels() {
     modelCombo_->addItem("gpt-4o", "gpt-4o");
     modelCombo_->addItem("gpt-3.5-turbo", "gpt-3.5-turbo");
     modelCombo_->setCurrentIndex(0);
+    updateFunctionCallingSupport();
+}
+
+void LlmSettingsDialog::onModelChanged(int) {
+    updateFunctionCallingSupport();
+}
+
+void LlmSettingsDialog::updateFunctionCallingSupport() {
+    if (!functionCallingCheck_) return;
+    const QString provider = providerCombo_ ? providerCombo_->currentData().toString() : QString();
+    const QString modelId = modelCombo_ ? modelCombo_->currentData().toString() : QString();
+    const bool known = !provider.isEmpty() && !modelId.isEmpty();
+    if (!known) {
+        functionCallingCheck_->setCheckState(Qt::PartiallyChecked);
+        functionCallingCheck_->setToolTip(tr("Desconhecido: selecione um provedor e modelo"));
+        return;
+    }
+    const bool supports = inferFunctionCallingSupport(provider, modelId);
+    functionCallingCheck_->setTristate(true);
+    functionCallingCheck_->setCheckState(supports ? Qt::Checked : Qt::Unchecked);
+    if (supports) {
+        functionCallingCheck_->setToolTip(tr("Este modelo declara ou é conhecido por suportar Function Calling/Tools"));
+    } else {
+        functionCallingCheck_->setToolTip(tr("Este modelo provavelmente não suporta Function Calling, ou é desconhecido"));
+    }
+}
+
+bool LlmSettingsDialog::inferFunctionCallingSupport(const QString& provider, const QString& modelId) const {
+    const QString p = provider.toLower();
+    const QString m = modelId.toLower();
+    // Heuristics based on common model IDs
+    auto looksOpenAIWithTools = [&]() {
+        return m.contains("gpt-4o") || m.contains("gpt-4.1") || m.contains("gpt-4.0") || m.contains("gpt-3.5-turbo");
+    };
+    if (p == QLatin1String("openai")) {
+        return looksOpenAIWithTools();
+    }
+    if (p == QLatin1String("openrouter")) {
+        // Many routed OpenAI models and others support tools; best-effort on name
+        return looksOpenAIWithTools() || m.contains("o3") || m.contains("o4");
+    }
+    if (p == QLatin1String("generativa")) {
+        // Depends on backend; mark unknown by returning false and leaving tooltip explanatory
+        return false;
+    }
+    if (p == QLatin1String("openwebui")) {
+        return false;
+    }
+    if (p == QLatin1String("ollama")) {
+        // Some Ollama backends implement tools, but we can't know by name reliably
+        return false;
+    }
+    return false;
 }
 
 // ---- Per-provider API key helpers ----

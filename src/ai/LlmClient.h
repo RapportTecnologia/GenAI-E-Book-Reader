@@ -5,6 +5,7 @@
 #include <QUrl>
 #include <QNetworkAccessManager>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <functional>
 
 // Simple OpenAI-compatible client. Supports custom base URL for GenerAtiva
@@ -29,6 +30,13 @@ public:
     void chatWithMessages(const QList<QPair<QString, QString>>& messages,
                           std::function<void(QString, QString)> onFinished);
 
+    // Chat with optional OpenAI-style tools (Function Calling). If the model returns tool calls,
+    // they will be provided in toolCalls (as an array of {id,type,function:{name,arguments}}).
+    // Providers that do not support tools will simply return content and an empty toolCalls array.
+    void chatWithMessagesTools(const QList<QPair<QString, QString>>& messages,
+                               const QJsonArray& tools,
+                               std::function<void(QString /*content*/, QJsonArray /*toolCalls*/, QString /*error*/)> onFinished);
+
     // Helper prompts
     void summarize(const QString& text, std::function<void(QString, QString)> onFinished);
     void synonyms(const QString& wordOrLocution, const QString& locale, std::function<void(QString, QString)> onFinished);
@@ -43,4 +51,6 @@ private:
     QNetworkAccessManager* nam_ {nullptr};
 
     void postJson(const QUrl& url, const QJsonObject& body, std::function<void(QString, QString)> onFinished);
+    void postJsonForTools(const QUrl& url, const QJsonObject& body,
+                          std::function<void(QString, QJsonArray, QString)> onFinished);
 };

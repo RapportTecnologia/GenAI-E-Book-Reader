@@ -123,6 +123,13 @@ private:
     QJsonArray readChatSessions(const QString& filePath);
     void writeChatSessions(const QString& filePath, const QJsonArray& sessions);
     void showSavedChatsPicker();
+    // LLM function calling dispatcher
+    void handleLlmToolCalls(const QJsonArray& toolCalls);
+    // Tool implementations
+    void toolProposeSearch(const QString& query);
+    void toolNextResult();
+    void toolPrevResult();
+    void toolGotoPage(int page);
 
 private:
     // Search helpers
