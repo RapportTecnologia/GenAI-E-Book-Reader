@@ -45,6 +45,13 @@ void LlmClient::chatWithMessages(const QList<QPair<QString, QString>>& messagesI
             QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = sys;
             messages.prepend(sysMsg);
         }
+        // Optional: personalize with user's nickname
+        const QString nick = s.value("reader/nickname").toString().trimmed();
+        if (!nick.isEmpty()) {
+            QJsonObject sysNick; sysNick["role"] = "system";
+            sysNick["content"] = QStringLiteral("Quando apropriado, trate o usuário pelo apelido '%1'.").arg(nick);
+            messages.prepend(sysNick);
+        }
     }
     if (provider_ == QLatin1String("ollama")) {
         // Ollama chat format: {model, messages:[{role, content}], stream:false}
@@ -77,9 +84,9 @@ void LlmClient::chatWithImage(const QString& userPrompt, const QString& imageDat
 
         QSettings s;
         const QString sys = s.value("ai/prompts/chat").toString();
-        if (!sys.trimmed().isEmpty()) {
-            QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = sys; messages.append(sysMsg);
-        }
+        if (!sys.trimmed().isEmpty()) { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = sys; messages.append(sysMsg); }
+        const QString nick = s.value("reader/nickname").toString().trimmed();
+        if (!nick.isEmpty()) { QJsonObject sysNick; sysNick["role"] = "system"; sysNick["content"] = QStringLiteral("Quando apropriado, trate o usuário pelo apelido '%1'.").arg(nick); messages.append(sysNick); }
     }
     // User content: text + image_url
     {
@@ -274,6 +281,8 @@ void LlmClient::summarize(const QString& text, std::function<void(QString, QStri
         QSettings s;
         const QString sys = s.value("ai/prompts/summaries").toString();
         if (!sys.trimmed().isEmpty()) { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = sys; messages.append(sysMsg); }
+        const QString nick = s.value("reader/nickname").toString().trimmed();
+        if (!nick.isEmpty()) { QJsonObject sysNick; sysNick["role"] = "system"; sysNick["content"] = QStringLiteral("Quando apropriado, trate o usuário pelo apelido '%1'.").arg(nick); messages.append(sysNick); }
     }
     // user content
     {
@@ -303,6 +312,8 @@ void LlmClient::synonyms(const QString& wordOrLocution, const QString& locale, s
         QSettings s;
         const QString sys = s.value("ai/prompts/synonyms").toString();
         if (!sys.trimmed().isEmpty()) { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = sys; messages.append(sysMsg); }
+        const QString nick = s.value("reader/nickname").toString().trimmed();
+        if (!nick.isEmpty()) { QJsonObject sysNick; sysNick["role"] = "system"; sysNick["content"] = QStringLiteral("Quando apropriado, trate o usuário pelo apelido '%1'.").arg(nick); messages.append(sysNick); }
     }
     {
         const QString loc = locale.isEmpty() ? QStringLiteral("pt-BR") : locale;

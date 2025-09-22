@@ -1473,91 +1473,21 @@ void MainWindow::onTocNext() {
 }
 
 bool MainWindow::validateReaderInputs(const QString& name, const QString& email, QString* errorMsg) const {
+    Q_UNUSED(name);
+    // None of the fields are mandatory. Only validate email format if provided.
     QStringList errors;
-    if (name.trimmed().isEmpty()) errors << tr("Nome completo é obrigatório.");
-    QRegularExpression re(R"(^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$)", QRegularExpression::CaseInsensitiveOption);
-    if (!re.match(email.trimmed()).hasMatch()) errors << tr("E-mail inválido.");
-    if (!errors.isEmpty()) {
-        if (errorMsg) *errorMsg = errors.join('\n');
-        return false;
+    const QString e = email.trimmed();
+    if (!e.isEmpty()) {
+        QRegularExpression re(R"(^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$)", QRegularExpression::CaseInsensitiveOption);
+        if (!re.match(e).hasMatch()) errors << tr("E-mail inválido.");
     }
+    if (!errors.isEmpty()) { if (errorMsg) *errorMsg = errors.join('\n'); return false; }
     return true;
 }
 
-QMap<QString, QString> MainWindow::loadEnvConfig() const {
-    QMap<QString, QString> cfg;
-    // Determine preferred .env path: application dir first, then CWD
-    QString appDir = QCoreApplication::applicationDirPath();
-    QString envPath = QDir(appDir).filePath(".env");
-    if (!QFileInfo::exists(envPath)) {
-        QString cwdEnv = QDir::current().filePath(".env");
-        envPath = QFileInfo::exists(cwdEnv) ? cwdEnv : envPath;
-    }
-    QFile f(envPath);
-    if (f.exists() && f.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        while (!f.atEnd()) {
-            const QByteArray line = f.readLine();
-            const QByteArray trimmed = line.trimmed();
-            if (trimmed.isEmpty() || trimmed.startsWith('#')) continue;
-            const int eq = trimmed.indexOf('=');
-            if (eq <= 0) continue;
-            const QString key = QString::fromUtf8(trimmed.left(eq));
-            const QString val = QString::fromUtf8(trimmed.mid(eq+1));
-            cfg.insert(key, val);
-        }
-        f.close();
-    }
-    return cfg;
-}
+// Removed: loadEnvConfig() (no longer needed after dropping PHPList integration)
 
-void MainWindow::submitReaderDataToPhpList(const QString& name, const QString& email, const QString& whatsapp) {
-    const auto cfg = loadEnvConfig();
-    const QString baseUrl = cfg.value("PHPLIST_URL");
-    const QString user = cfg.value("PHPLIST_USER");
-    const QString pass = cfg.value("PHPLIST_PASS");
-    if (baseUrl.isEmpty() || user.isEmpty() || pass.isEmpty()) {
-        QMessageBox::warning(this, tr("Configuração ausente"), tr("Parâmetros do PHPList ausentes no .env."));
-        return;
-    }
-
-    QUrl url(baseUrl);
-    if (!url.isValid()) {
-        QMessageBox::warning(this, tr("URL inválida"), tr("A URL do PHPList no .env é inválida."));
-        return;
-    }
-
-    // Monta payload genérico (JSON). A API específica pode exigir outro formato; manteremos configurável.
-    QJsonObject payload;
-    payload.insert("email", email);
-    if (!name.trimmed().isEmpty()) payload.insert("name", name.trimmed());
-    if (!whatsapp.trimmed().isEmpty()) {
-        QJsonObject attrs; attrs.insert("whatsapp", whatsapp.trimmed());
-        payload.insert("attributes", attrs);
-    }
-
-    const QByteArray data = QJsonDocument(payload).toJson(QJsonDocument::Compact);
-
-    QNetworkRequest req(url);
-    req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    // Basic Auth
-    const QByteArray credentials = (user + ":" + pass).toUtf8().toBase64();
-    req.setRawHeader("Authorization", "Basic " + credentials);
-
-    auto* reply = netManager_->post(req, data);
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        reply->deleteLater();
-        if (reply->error() != QNetworkReply::NoError) {
-            // Não exibir credenciais, apenas mensagem amigável
-            const QString err = reply->errorString();
-            QMessageBox::warning(this, tr("Falha no envio"), tr("Não foi possível enviar os dados para o PHPList. Detalhes: %1").arg(err));
-            return;
-        }
-        const QByteArray body = reply->readAll();
-        // Supondo JSON de resposta; não fazemos parsing rígido para evitar acoplamento
-        Q_UNUSED(body);
-        QMessageBox::information(this, tr("Sucesso"), tr("Dados enviados com sucesso para a lista."));
-    });
-}
+// Removed: submitReaderDataToPhpList() (PHPList dependency dropped)
 
 void MainWindow::saveChatForCurrentFile() {
     if (currentFilePath_.isEmpty()) return;
@@ -1614,20 +1544,23 @@ void MainWindow::editReaderData() {
     auto* nameEdit = new QLineEdit(&dlg);
     auto* emailEdit = new QLineEdit(&dlg);
     auto* whatsappEdit = new QLineEdit(&dlg);
+    auto* nicknameEdit = new QLineEdit(&dlg);
 
     // Load existing values from settings
     nameEdit->setText(settings_.value("reader/name").toString());
     emailEdit->setText(settings_.value("reader/email").toString());
     whatsappEdit->setText(settings_.value("reader/whatsapp").toString());
+    nicknameEdit->setText(settings_.value("reader/nickname").toString());
 
     auto* info = new QLabel(&dlg);
     info->setWordWrap(true);
-    info->setText(tr("Os dados do leitor (Nome completo, E-mail e WhatsApp) serão usados nas anotações e para personalizar a interação com o ChatGPT.\n\nA integração com o PHPList utiliza configurações no arquivo .env localizado ao lado do executável ou no diretório de onde o aplicativo foi chamado. As credenciais não são exibidas aqui."));
+    info->setText(tr("Os dados do leitor (Nome, E-mail, WhatsApp e Apelido) são opcionais e servem para personalizar a experiência, como se referir a você pelo seu apelido nas interações com LLMs."));
 
     form->addRow(info);
-    form->addRow(tr("Nome completo"), nameEdit);
+    form->addRow(tr("Nome"), nameEdit);
     form->addRow(tr("E-mail"), emailEdit);
     form->addRow(tr("WhatsApp"), whatsappEdit);
+    form->addRow(tr("Apelido (para IA)"), nicknameEdit);
 
     auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dlg);
     form->addRow(buttons);
@@ -1635,26 +1568,16 @@ void MainWindow::editReaderData() {
     QObject::connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
 
     if (dlg.exec() == QDialog::Accepted) {
-        // Save settings
+        // Save settings (all optional)
         settings_.setValue("reader/name", nameEdit->text());
         settings_.setValue("reader/email", emailEdit->text());
         settings_.setValue("reader/whatsapp", whatsappEdit->text());
+        settings_.setValue("reader/nickname", nicknameEdit->text());
 
-        // Validate and optionally submit to PHPList
+        // Only warn if email format is bad when provided
         QString err;
         if (!validateReaderInputs(nameEdit->text().trimmed(), emailEdit->text().trimmed(), &err)) {
             QMessageBox::warning(this, tr("Dados inválidos"), err);
-            return;
-        }
-        const auto choice = QMessageBox::question(
-            this,
-            tr("Confirmar envio"),
-            tr("Enviar meus dados para a lista ÁrvoreDosSaberes?"),
-            QMessageBox::Yes | QMessageBox::No,
-            QMessageBox::No
-        );
-        if (choice == QMessageBox::Yes) {
-            submitReaderDataToPhpList(nameEdit->text().trimmed(), emailEdit->text().trimmed(), whatsappEdit->text().trimmed());
         }
     }
 }

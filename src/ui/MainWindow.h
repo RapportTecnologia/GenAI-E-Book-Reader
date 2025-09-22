@@ -110,8 +110,6 @@ private:
 
     // Validation and integration helpers
     bool validateReaderInputs(const QString& name, const QString& email, QString* errorMsg) const;
-    QMap<QString, QString> loadEnvConfig() const; // reads .env near executable or CWD
-    void submitReaderDataToPhpList(const QString& name, const QString& email, const QString& whatsapp);
     void applyDefaultSplitterSizesIfNeeded();
     // Chat persistence helpers
     void saveChatForCurrentFile();
