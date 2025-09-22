@@ -7,6 +7,8 @@
 [![Latest Release](https://img.shields.io/github/v/release/RapportTecnologia/GenAi-E-Book-Reader?label=version)](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contribuindo)
 
+<!-- Traduções -->
+**Traduções:** 🇧🇷 Português (original) | 🇸🇦 [العربية](README.ar.md) | 🇬🇧 [English (UK)](README.en-GB.md) | 🇫🇷 [Français](README.fr-FR.md)
 
 # GenAI E-Book Reader
 
@@ -15,6 +17,12 @@ Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/
 - Histórico de mudanças: consulte [CHANGELOG.md](CHANGELOG.md).
 - Planejamento de releases: consulte [ROADMAP.md](ROADMAP.md).
 - Tutorial passo a passo: consulte [TUTORIAL.md](TUTORIAL.md).
+
+## Tutoriais
+- 🇧🇷 [Tutorial em Português](TUTORIAL.md)
+- 🇸🇦 [الدليل بالعربية](TUTORIAL.ar.md)
+- 🇬🇧 [Tutorial (English, UK)](TUTORIAL.en-GB.md)
+- 🇫🇷 [Tutoriel (Français)](TUTORIAL.fr-FR.md)
 
 ## Como Obter o Aplicativo
 
@@ -59,7 +67,9 @@ Se você deseja testar os recursos mais recentes que estarão na próxima versã
 
 [Apresentação do Projeto](https://www.youtube.com/watch?v=4wveYzO_Lko)
 [Apresentação OpenRouter.ia na Versão 0.1.9](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
+[Como associar arquivos de E-Book ao GER](https://www.youtube.com/watch?v=2a1KO5Vig0k)
 
+Nota (0.1.10 - desenvolvimento): Foco em melhoria das buscas (texto e semântica) e na interação do chat com suporte a Function Calling quando o modelo/provedor disponibilizar. A janela de Configurações de LLM passa a exibir um indicador somente leitura informando se o modelo selecionado declara suporte a Function Calling.
 Nota (0.1.9): Novos provedores de LLM suportados (Ollama local, GenerAtiva e OpenRouter), melhorias na interface de Configurações de LLM (listagem de modelos e teste de modelo), ajustes no CI e no CMake (target de release local), depuração ampliada na seleção de provedores/modelos, remoção da dependência do PHPList e interação com usuário/LLM personalizada. Chave de cortesia para uso inicial do OpenRouter incluída (recomenda-se configurar sua própria chave).
 Nota (0.1.8): Suporte a links internos clicáveis em PDFs (índice/sumário dentro do documento) usando QPdfLinkModel (Qt6), melhorias na navegação pelo TOC (sincronização com cliques e com os botões Voltar/Avançar), correções na seleção de texto e pequenos ajustes de UI. Documentação atualizada.
 Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.
@@ -112,6 +122,11 @@ Como configurar:
 - Informe a API Key do provedor escolhido (para OpenAI/GenerAtiva/OpenRouter). Para Ollama local, a chave não é necessária, apenas garanta que o serviço esteja rodando em `http://localhost:11434`.
 - Opcional: preencha "Base URL" para apontar a um endpoint compatível com OpenAI quando aplicável.
 - Ajuste os prompts padrão para Sinônimos, Resumos, Explicações e Chat conforme sua preferência.
+
+### Indicador de Function Calling (0.1.10)
+- A janela de Configurações de LLM passa a exibir uma caixa de texto somente leitura indicando se o provedor/modelo selecionado suporta Function Calling.
+- Quando a API do provedor expõe essa capacidade via listagem de modelos ou metadados, a detecção é automática e o indicador mostra “Suporta Function Calling”. Caso contrário, o indicador exibe uma mensagem informativa (ex.: “Capacidade não informada pelo provedor”).
+- Observação: o suporte efetivo a Function Calling depende do provedor/modelo escolhido e pode variar ao longo do tempo conforme as APIs evoluem.
 
 Uso no leitor:
 - Sinônimos: selecione uma palavra/locução e acione a ação de IA para sinônimos; será solicitado consentimento antes do envio.
