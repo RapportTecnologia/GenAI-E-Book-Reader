@@ -2036,6 +2036,7 @@ bool MainWindow::openPath(const QString& file) {
         // Wire signals for AI actions from the PDF viewer
         connect(newViewer, &PdfViewerWidget::requestSendToChat, this, &MainWindow::onRequestSendToChat);
         connect(newViewer, &PdfViewerWidget::requestSendImageToChat, this, &MainWindow::onRequestSendImageToChat);
+        connect(newViewer, &PdfViewerWidget::requestSummarizeDocument, this, &MainWindow::onRequestSummarizeDocument);
         // Replace current viewer in the splitter
         const int idx = splitter_->indexOf(viewer_);
         splitter_->replaceWidget(idx, newViewer);

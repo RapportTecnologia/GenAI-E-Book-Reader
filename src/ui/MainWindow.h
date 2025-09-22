@@ -86,6 +86,7 @@ private slots:
     void onRequestSendImageToChat(const QImage& image);
     void onDictionaryLookup(const QString& term);
     void onRequestRebuildEmbeddings();
+    void onRequestSummarizeDocument();
 
 private:
     void buildUi();

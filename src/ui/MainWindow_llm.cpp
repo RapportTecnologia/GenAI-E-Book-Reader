@@ -2,6 +2,7 @@
 #include "ai/LlmClient.h"
 #include "ui/SummaryDialog.h"
 #include "ui/ChatDock.h"
+#include "ui/PdfViewerWidget.h"
 
 #include <QMessageBox>
 #include <QStatusBar>
@@ -13,6 +14,104 @@
 #include <QByteArray>
 #include <QImage>
 #include <QIODevice>
+#include <QPdfDocument>
+#include <QFileInfo>
+#include <QSettings>
+#include <QRegularExpression>
+
+void MainWindow::onRequestSummarizeDocument() {
+    if (!llm_) return;
+    if (currentFilePath_.isEmpty()) return;
+    const auto choice = QMessageBox::question(
+        this,
+        tr("Resumo do e-book"),
+        tr("Deseja enviar o e-book para a IA gerar um resumo geral?\n\nDica: os embeddings locais deste documento serão utilizados como Base de Conhecimento para buscas e conversas futuras (RAG)."),
+        QMessageBox::Yes | QMessageBox::No,
+        QMessageBox::Yes
+    );
+    if (choice != QMessageBox::Yes) return;
+
+    // 1) Garantir que há índice de embeddings disponível para este arquivo (KB local)
+    IndexPaths paths;
+    const bool haveIndex = getIndexPaths(&paths);
+    if (!haveIndex) {
+        const auto build = QMessageBox::question(
+            this,
+            tr("Base de Conhecimento"),
+            tr("Este e-book ainda não possui embeddings gerados.\nDeseja gerar agora para habilitar a Base de Conhecimento?"),
+            QMessageBox::Yes | QMessageBox::No,
+            QMessageBox::Yes
+        );
+        if (build == QMessageBox::Yes) {
+            onRequestRebuildEmbeddings();
+        }
+    }
+
+    statusBar()->showMessage(tr("Gerando resumo do e-book via IA..."));
+
+    // 2) Construir um contexto enxuto, amostrando páginas de todo o documento
+    QString context;
+    auto* pv = qobject_cast<PdfViewerWidget*>(viewer_);
+    if (pv && pv->document()) {
+        // Carregar cache de texto de páginas (usa pdftotext/OCR quando disponível)
+        ensurePagesTextLoaded();
+        const int pageCount = pv->document()->pageCount();
+        if (pageCount > 0 && !pagesText_.isEmpty()) {
+            const int targetSamples = 12; // amostrar ~12 trechos distribuídos
+            const int step = qMax(1, pageCount / targetSamples);
+            int taken = 0;
+            for (int p = 1; p <= pageCount && taken < targetSamples; p += step) {
+                const int idx = p - 1;
+                QString snippet;
+                if (idx >= 0 && idx < pagesText_.size()) {
+                    snippet = pagesText_.at(idx);
+                    // Normalização: colapsar espaços e limitar tamanho por trecho
+                    snippet.replace(QRegularExpression("\\s+"), " ");
+                    if (snippet.size() > 800) snippet = snippet.left(800);
+                }
+                if (!snippet.trimmed().isEmpty()) {
+                    context += tr("[Página %1]\n%2\n\n").arg(p).arg(snippet.trimmed());
+                    ++taken;
+                }
+            }
+        }
+    }
+    if (context.trimmed().isEmpty()) {
+        // Fallback simples
+        context = tr("Conteúdo não extraído. Forneça um resumo geral do e-book considerando que o texto completo não está disponível.");
+    }
+
+    // 3) Enviar para a IA montar um resumo executivo do e-book
+    QList<QPair<QString,QString>> msgs;
+    const QString sys = tr("Você é um assistente que cria um resumo executivo e estruturado de um e-book em português do Brasil.\n"
+                           "Quando possível, cite páginas indicativas (entre colchetes) a partir dos trechos fornecidos.\n"
+                           "Não invente fatos não suportados.");
+    msgs.append({QStringLiteral("system"), sys});
+    const QString user = tr("Gere um resumo do e-book atual com tópicos principais, objetivos, público, conceitos-chave e conclusões.\n\nTrechos amostrados do documento:\n%1").arg(context);
+    msgs.append({QStringLiteral("user"), user});
+
+    llm_->chatWithMessages(msgs, [this](QString out, QString err){
+        QMetaObject::invokeMethod(this, [this, out, err](){
+            if (!err.isEmpty()) {
+                showLongAlert(tr("Erro na IA"), err);
+                statusBar()->clearMessage();
+                return;
+            }
+            if (summaryDlg_) {
+                summaryDlg_->setWindowTitle(tr("Resumo do e-book"));
+                summaryDlg_->setText(out);
+                summaryDlg_->show();
+                summaryDlg_->raise();
+                summaryDlg_->activateWindow();
+            }
+            // Também registrar no chat como referência
+            showChatPanel();
+            if (chatDock_) chatDock_->appendAssistant(QString("[resumo do e-book]\n%1").arg(out));
+            statusBar()->clearMessage();
+            saveChatForCurrentFile();
+        });
+    });
+}
 
 void MainWindow::onRequestSynonyms(const QString& wordOrLocution) {
     if (!llm_) return;

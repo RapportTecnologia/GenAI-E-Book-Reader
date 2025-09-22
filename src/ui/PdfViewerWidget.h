@@ -121,4 +121,5 @@ signals:
     void requestSendImageToChat(const QImage& image);
     void requestDictionaryLookup(const QString& term);
     void requestRebuildEmbeddings();
+    void requestSummarizeDocument();
 };

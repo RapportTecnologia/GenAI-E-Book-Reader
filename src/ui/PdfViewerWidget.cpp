@@ -277,6 +277,10 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
                     QAction* actCancel = menu.addAction(tr("Sem seleção válida"));
                     actCancel->setEnabled(false);
                 }
+                // Offer sending whole document to LLM for summary and KB usage
+                menu.addSeparator();
+                QAction* actSummDoc = menu.addAction(tr("Enviar e-book para IA (Resumo + Base de Conhecimento)"));
+                QObject::connect(actSummDoc, &QAction::triggered, this, [this]() { emit requestSummarizeDocument(); });
                 // Always offer to rebuild embeddings
                 menu.addSeparator();
                 QAction* actRebuild = menu.addAction(tr("Recriar embeddings do documento..."));
