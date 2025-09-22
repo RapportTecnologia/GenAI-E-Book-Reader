@@ -79,10 +79,11 @@ set(PHPLIST_URL_DEFAULT "http://arvoredossaberes.com.br/newsletter/lists/api/v2"
 set(PHPLIST_USER_DEFAULT "" CACHE STRING "Default PHPList user to write to .env if it doesn't exist")
 set(PHPLIST_PASS_DEFAULT "" CACHE STRING "Default PHPList password to write to .env if it doesn't exist")
 set(OPENROUTER_API_KEY_DEFAULT "" CACHE STRING "Default OpenRouter API key to write to .env if it doesn't exist")
+set(GENERATIVA_API_KEY_DEFAULT "" CACHE STRING "Default GenerAtiva API key to write to .env if it doesn't exist")
 
 set(ENV_FILE_PATH "${CMAKE_SOURCE_DIR}/.env")
 if(NOT EXISTS "${ENV_FILE_PATH}")
-  file(WRITE "${ENV_FILE_PATH}" "PHPLIST_URL=${PHPLIST_URL_DEFAULT}\nPHPLIST_USER=${PHPLIST_USER_DEFAULT}\nPHPLIST_PASS=${PHPLIST_PASS_DEFAULT}\nOPENROUTER_API_KEY=${OPENROUTER_API_KEY_DEFAULT}\n")
+  file(WRITE "${ENV_FILE_PATH}" "PHPLIST_URL=${PHPLIST_URL_DEFAULT}\nPHPLIST_USER=${PHPLIST_USER_DEFAULT}\nPHPLIST_PASS=${PHPLIST_PASS_DEFAULT}\nOPENROUTER_API_KEY=${OPENROUTER_API_KEY_DEFAULT}\nGENERATIVA_API_KEY=${GENERATIVA_API_KEY_DEFAULT}\n")
   message(STATUS "Created default .env at ${ENV_FILE_PATH}")
 else()
   # Ensure OPENROUTER_API_KEY key exists in .env; if missing, append it with default empty value
@@ -91,6 +92,12 @@ else()
   if(_HAS_OR_KEY EQUAL -1)
     file(APPEND "${ENV_FILE_PATH}" "OPENROUTER_API_KEY=${OPENROUTER_API_KEY_DEFAULT}\n")
     message(STATUS "Appended OPENROUTER_API_KEY to existing .env")
+  endif()
+  # Ensure GENERATIVA_API_KEY key exists in .env; if missing, append it with default empty value
+  string(FIND "${_ENV_EXISTING}" "GENERATIVA_API_KEY=" _HAS_GEN_KEY)
+  if(_HAS_GEN_KEY EQUAL -1)
+    file(APPEND "${ENV_FILE_PATH}" "GENERATIVA_API_KEY=${GENERATIVA_API_KEY_DEFAULT}\n")
+    message(STATUS "Appended GENERATIVA_API_KEY to existing .env")
   endif()
   message(STATUS ".env already exists at ${ENV_FILE_PATH}")
 endif()
@@ -106,6 +113,15 @@ endif()
 # Sanitize potential quotes or CRLF
 string(REGEX REPLACE "^\"(.*)\"$" "\\1" OPENROUTER_API_KEY_VALUE "${OPENROUTER_API_KEY_VALUE}")
 string(REPLACE "\r" "" OPENROUTER_API_KEY_VALUE "${OPENROUTER_API_KEY_VALUE}")
+
+# Read GENERATIVA_API_KEY value from .env to inject into code
+set(GENERATIVA_API_KEY_VALUE "")
+string(REGEX MATCH "GENERATIVA_API_KEY[ \t]*=([^\n\r]*)" _GEN_MATCH "${_ENV_TXT}")
+if(_GEN_MATCH)
+  set(GENERATIVA_API_KEY_VALUE "${CMAKE_MATCH_1}")
+endif()
+string(REGEX REPLACE "^\"(.*)\"$" "\\1" GENERATIVA_API_KEY_VALUE "${GENERATIVA_API_KEY_VALUE}")
+string(REPLACE "\r" "" GENERATIVA_API_KEY_VALUE "${GENERATIVA_API_KEY_VALUE}")
 
 # Generate a header with build-time constants
 set(GENERATED_INCLUDE_DIR "${CMAKE_BINARY_DIR}/generated")

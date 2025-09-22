@@ -4,3 +4,4 @@
 // This file is processed by CMake (configure_file) to generate Config.h
 
 #define GENAI_OPENROUTER_API_KEY "@OPENROUTER_API_KEY_VALUE@"
+#define GENAI_GENERATIVA_API_KEY "@GENERATIVA_API_KEY_VALUE@"

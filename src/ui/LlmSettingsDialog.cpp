@@ -305,6 +305,20 @@ void LlmSettingsDialog::onProviderChanged(int) {
         }
         showOpenRouterCourtesyDialog();
     }
+    // If GenerAtiva selected: apply courtesy key from build-time config if available
+    if (provider == QLatin1String("generativa")) {
+        if (apiKeyEdit_->text().trimmed().isEmpty()) {
+            const QString courtesyKeyGen = QString::fromUtf8(GENAI_GENERATIVA_API_KEY);
+            if (!courtesyKeyGen.trimmed().isEmpty()) {
+                apiKeyEdit_->setText(courtesyKeyGen);
+                appendDebug(tr("[GENERATIVA] Usando API key definida em build (Config.h)"));
+                // Persist immediately so that LlmClient and future sessions pick it up
+                saveApiKeyForProvider(provider, courtesyKeyGen);
+            } else {
+                appendDebug(tr("[GENERATIVA] Nenhuma API key definida em build; aguardando usuário informar"));
+            }
+        }
+    }
     populateModelsFor(provider);
     // Pick recommended default (first item) if available
     if (modelCombo_->count() > 0) modelCombo_->setCurrentIndex(0);
