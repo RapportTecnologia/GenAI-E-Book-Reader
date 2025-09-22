@@ -20,6 +20,9 @@
 #include <QGuiApplication>
 #include <QTimer>
 #include <cmark.h>
+// Custom WebEngine helpers
+#include "ui/WebPage.h"
+#include "ui/WebProfile.h"
 
 ChatDock::ChatDock(QWidget* parent)
     : QDockWidget(parent) {
@@ -32,6 +35,11 @@ ChatDock::ChatDock(QWidget* parent)
 
     // History view via WebEngine: supports Markdown + MathJax + Highlight.js
     historyView_ = new QWebEngineView(container_);
+    // Use shared ephemeral profile and a page that logs JS console messages
+    if (historyView_) {
+        auto* page = new WebPage(sharedEphemeralWebProfile(), historyView_);
+        historyView_->setPage(page);
+    }
     v->addWidget(historyView_, 1);
     // Scroll to bottom after each page load (connect once)
     connect(historyView_, &QWebEngineView::loadStarted, this, [this](){ pageLoading_ = true; });

@@ -5,6 +5,9 @@
 #include <QTextStream>
 #include <QDialogButtonBox>
 #include "cmark.h"
+// Custom WebEngine helpers
+#include "ui/WebPage.h"
+#include "ui/WebProfile.h"
 
 TutorialDialog::TutorialDialog(QWidget *parent)
     : QDialog(parent)
@@ -14,6 +17,11 @@ TutorialDialog::TutorialDialog(QWidget *parent)
     setMinimumSize(800, 600);
 
     auto* layout = new QVBoxLayout(this);
+    // Attach custom page with shared ephemeral profile
+    if (view_) {
+        auto* page = new WebPage(sharedEphemeralWebProfile(), view_);
+        view_->setPage(page);
+    }
     layout->addWidget(view_);
 
     auto* buttonBox = new QDialogButtonBox(QDialogButtonBox::Close);

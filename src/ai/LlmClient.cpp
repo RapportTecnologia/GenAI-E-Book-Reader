@@ -7,6 +7,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QCoreApplication>
+#include <QDebug>
 
 LlmClient::LlmClient(QObject* parent) : QObject(parent) {
     nam_ = new QNetworkAccessManager(this);
@@ -15,7 +16,10 @@ LlmClient::LlmClient(QObject* parent) : QObject(parent) {
 
 void LlmClient::chatWithMessages(const QList<QPair<QString, QString>>& messagesIn,
                                  std::function<void(QString, QString)> onFinished) {
-    const QUrl url(baseUrl_ + "/v1/chat/completions");
+    // Choose endpoint per provider
+    const QUrl url(provider_ == QLatin1String("ollama")
+                       ? QUrl(baseUrl_ + "/chat")
+                       : QUrl(baseUrl_ + "/v1/chat/completions"));
     QJsonObject body; body["model"] = model_;
     QJsonArray messages;
     // Always prepend a MathJax/LaTeX directive to avoid ambiguity in rendering formulas
@@ -42,11 +46,22 @@ void LlmClient::chatWithMessages(const QList<QPair<QString, QString>>& messagesI
             messages.prepend(sysMsg);
         }
     }
+    if (provider_ == QLatin1String("ollama")) {
+        // Ollama chat format: {model, messages:[{role, content}], stream:false}
+        body["messages"] = messages;
+        body["stream"] = false;
+        postJson(url, body, onFinished);
+        return;
+    }
     body["messages"] = messages;
     postJson(url, body, onFinished);
 }
 
 void LlmClient::chatWithImage(const QString& userPrompt, const QString& imageDataUrl, std::function<void(QString, QString)> onFinished) {
+    if (provider_ == QLatin1String("ollama")) {
+        onFinished(QString(), QStringLiteral("O provedor Ollama (local) não suporta chat com imagem neste aplicativo."));
+        return;
+    }
     const QUrl url(baseUrl_ + "/v1/chat/completions");
     QJsonObject body; body["model"] = model_;
     QJsonArray messages;
@@ -85,17 +100,64 @@ void LlmClient::chatWithImage(const QString& userPrompt, const QString& imageDat
 void LlmClient::reloadSettings() {
     QSettings s;
     provider_ = s.value("ai/provider", "openai").toString();
-    apiKey_ = s.value("ai/api_key", QString::fromUtf8(qgetenv("OPENAI_API_KEY"))).toString();
-    model_ = s.value("ai/model", provider_ == "generativa" ? "gpt-4o-mini" : "gpt-4o-mini").toString();
+    // Migration: move legacy ai/api_key to provider-specific ai/api_keys/<provider>
+    const QString perProviderKey = QStringLiteral("ai/api_keys/%1").arg(provider_);
+    if (s.contains("ai/api_key") && !s.contains(perProviderKey)) {
+        const QString legacy = s.value("ai/api_key").toString();
+        if (!legacy.isEmpty()) {
+            s.setValue(perProviderKey, legacy);
+            // Optional: keep legacy for backward-compat; comment next line to retain
+            s.remove("ai/api_key");
+        }
+    }
+    // Load API key (provider-specific first, then env fallback per provider)
+    if (s.contains(perProviderKey)) {
+        apiKey_ = s.value(perProviderKey).toString();
+    } else if (provider_ == QLatin1String("openrouter")) {
+        apiKey_ = QString::fromUtf8(qgetenv("OPENROUTER_API_KEY"));
+    } else if (provider_ == QLatin1String("generativa")) {
+        apiKey_ = QString::fromUtf8(qgetenv("GENERATIVA_API_KEY"));
+        if (apiKey_.isEmpty()) apiKey_ = QString::fromUtf8(qgetenv("OPENAI_API_KEY"));
+    } else {
+        apiKey_ = QString::fromUtf8(qgetenv("OPENAI_API_KEY"));
+    }
+    // Default model per provider
+    if (s.contains("ai/model")) {
+        model_ = s.value("ai/model").toString();
+    } else {
+        if (provider_ == QLatin1String("generativa")) {
+            model_ = "granite3.2:8b";
+        } else if (provider_ == QLatin1String("openrouter")) {
+            // OpenRouter auto-routing model
+            model_ = "openrouter/auto";
+        } else if (provider_ == QLatin1String("ollama")) {
+            model_ = "granite3.2:8b";
+        } else if (provider_ == QLatin1String("openwebui")) {
+            model_ = "granite3.2:8b";
+        } else {
+            model_ = "gpt-4o-mini";
+        }
+    }
 
     const QString overrideBase = s.value("ai/base_url").toString();
     if (!overrideBase.trimmed().isEmpty()) {
         baseUrl_ = overrideBase.trimmed();
     } else if (provider_ == "generativa") {
-        baseUrl_ = "https://generativa.rapport.tec.br";
+        baseUrl_ = "https://generativa.rapport.tec.br/api";
+    } else if (provider_ == "openrouter") {
+        baseUrl_ = "https://openrouter.ai/api";
+    } else if (provider_ == "ollama") {
+        baseUrl_ = "http://localhost:11434/api";
+    } else if (provider_ == "openwebui") {
+        baseUrl_ = "http://localhost:3000/api";
     } else {
         baseUrl_ = "https://api.openai.com";
     }
+
+    qInfo().noquote() << "[LlmClient][reloadSettings] provider=" << provider_
+                      << " model=" << model_
+                      << " baseUrl=" << baseUrl_
+                      << " apiKeySet=" << (!apiKey_.isEmpty());
 }
 
 void LlmClient::postJson(const QUrl& url, const QJsonObject& body, std::function<void(QString, QString)> onFinished) {
@@ -104,9 +166,20 @@ void LlmClient::postJson(const QUrl& url, const QJsonObject& body, std::function
     if (!apiKey_.isEmpty()) {
         req.setRawHeader("Authorization", QByteArray("Bearer ") + apiKey_.toUtf8());
     }
+    // OpenRouter recommends/requests these headers for attribution and to reduce abuse
+    if (provider_ == QLatin1String("openrouter")) {
+        // If you have an app/site URL, set it here. Fallback to application name.
+        const QByteArray referer = QByteArray("https://rapport.tec.br/genai-e-book-reader");
+        req.setRawHeader("HTTP-Referer", referer);
+        const QByteArray title = QCoreApplication::applicationName().isEmpty()
+                                    ? QByteArray("GenAI E-Book Reader")
+                                    : QCoreApplication::applicationName().toUtf8();
+        req.setRawHeader("X-Title", title);
+    }
     const QByteArray data = QJsonDocument(body).toJson(QJsonDocument::Compact);
+    qInfo().noquote() << "[LlmClient][HTTP][POST]" << url.toString() << "provider=" << provider_ << " payload_size=" << data.size();
     auto* reply = nam_->post(req, data);
-    QObject::connect(reply, &QNetworkReply::finished, this, [reply, onFinished]() {
+    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply, onFinished]() {
         const auto guard = std::unique_ptr<QNetworkReply, void(*)(QNetworkReply*)>(reply, [](QNetworkReply* r){ r->deleteLater(); });
         if (reply->error() != QNetworkReply::NoError) {
             const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -114,21 +187,36 @@ void LlmClient::postJson(const QUrl& url, const QJsonObject& body, std::function
             QString body = QString::fromUtf8(raw).trimmed();
             if (body.size() > 1200) body = body.left(1200) + "...";
             QString err = QString("HTTP %1 — %2\n%3").arg(status).arg(reply->errorString(), body);
+            qWarning().noquote() << "[LlmClient][HTTP][ERROR] status=" << status << " err=" << reply->errorString();
             onFinished(QString(), err);
             return;
         }
         const QByteArray raw = reply->readAll();
+        qInfo().noquote() << "[LlmClient][HTTP][OK] bytes=" << raw.size();
         const QJsonDocument doc = QJsonDocument::fromJson(raw);
         if (!doc.isObject()) { onFinished(QString::fromUtf8(raw), QString()); return; }
         const QJsonObject obj = doc.object();
-        // OpenAI-style extraction
+        // Parse per provider
         QString content;
-        if (obj.contains("choices")) {
-            const auto arr = obj.value("choices").toArray();
-            if (!arr.isEmpty()) {
-                const auto choice = arr.first().toObject();
-                const auto msg = choice.value("message").toObject();
-                content = msg.value("content").toString();
+        if (provider_ == QLatin1String("ollama")) {
+            // /api/chat: { message: { role, content }, done: true }
+            if (obj.contains("message")) {
+                const auto m = obj.value("message").toObject();
+                content = m.value("content").toString();
+            }
+            if (content.isEmpty()) {
+                // /api/generate compatibility: { response: "..." }
+                content = obj.value("response").toString();
+            }
+        } else {
+            // OpenAI-style extraction
+            if (obj.contains("choices")) {
+                const auto arr = obj.value("choices").toArray();
+                if (!arr.isEmpty()) {
+                    const auto choice = arr.first().toObject();
+                    const auto msg = choice.value("message").toObject();
+                    content = msg.value("content").toString();
+                }
             }
         }
         if (content.isEmpty()) content = QString::fromUtf8(raw);
@@ -137,7 +225,9 @@ void LlmClient::postJson(const QUrl& url, const QJsonObject& body, std::function
 }
 
 void LlmClient::chat(const QString& userMessage, std::function<void(QString, QString)> onFinished) {
-    const QUrl url(baseUrl_ + "/v1/chat/completions");
+    const QUrl url(provider_ == QLatin1String("ollama")
+                       ? QUrl(baseUrl_ + "/chat")
+                       : QUrl(baseUrl_ + "/v1/chat/completions"));
     QJsonObject body;
     body["model"] = model_;
     QJsonArray messages;
@@ -166,7 +256,9 @@ void LlmClient::chat(const QString& userMessage, std::function<void(QString, QSt
 }
 
 void LlmClient::summarize(const QString& text, std::function<void(QString, QString)> onFinished) {
-    const QUrl url(baseUrl_ + "/v1/chat/completions");
+    const QUrl url(provider_ == QLatin1String("ollama")
+                       ? QUrl(baseUrl_ + "/chat")
+                       : QUrl(baseUrl_ + "/v1/chat/completions"));
     QJsonObject body; body["model"] = model_;
     QJsonArray messages;
     // system from settings
@@ -194,7 +286,9 @@ void LlmClient::summarize(const QString& text, std::function<void(QString, QStri
 }
 
 void LlmClient::synonyms(const QString& wordOrLocution, const QString& locale, std::function<void(QString, QString)> onFinished) {
-    const QUrl url(baseUrl_ + "/v1/chat/completions");
+    const QUrl url(provider_ == QLatin1String("ollama")
+                       ? QUrl(baseUrl_ + "/chat")
+                       : QUrl(baseUrl_ + "/v1/chat/completions"));
     QJsonObject body; body["model"] = model_;
     QJsonArray messages;
     {
