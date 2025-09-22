@@ -58,16 +58,17 @@ Você pode conectar o aplicativo a um serviço de LLM para usar o chat, pedir re
 ### Configurar o Acesso ao LLM
 
 1.  Vá em `Configurações > Configurações de LLM`.
-2.  **Provedor**: Escolha um provedor. Você pode usar a `OpenAI`, a `GenerAtiva` ou um serviço local como o `Ollama` (selecione `OpenAI` como provedor e informe a `Base URL` do seu Ollama, ex: `http://localhost:11434`).
-3.  **API Key**: Insira sua chave de API (para serviços na nuvem).
-4.  **Modelo**: Escolha o modelo que deseja usar (ex: `gpt-4o-mini`, `llama3`).
-5.  **Prompts**: Personalize os prompts que a IA usará para gerar resumos, sinônimos, etc.
+2.  **Provedor**: Escolha um provedor — `OpenAI`, `GenerAtiva`, `Ollama` (local) ou `OpenRouter`.
+3.  **Listar/Testar Modelo**: Use a ação de "Listar modelos" (quando disponível para o provedor) e o botão "Testar modelo" para validar credenciais e conectividade.
+4.  **API Key**: Insira sua chave de API (para serviços na nuvem). Para `Ollama`, não é necessário token; certifique-se de que o serviço está ativo em `http://localhost:11434`.
+5.  **Modelo**: Selecione o modelo que deseja usar (ex: `gpt-4o-mini`, `llama3`).
+6.  **Prompts**: Personalize os prompts que a IA usará para gerar resumos, sinônimos, etc.
 
 As configurações ficam em `QSettings` com as chaves:
-- `ai/provider`: `openai` | `generativa`
+- `ai/provider`: `openai` | `generativa` | `ollama` | `openrouter`
 - `ai/base_url`: URL base para override (opcional)
-- `ai/api_key`: token secreto
-- `ai/model`: nome do modelo (ex.: `gpt-4o-mini`)
+- `ai/api_key`: token secreto (não aplicável para `ollama`)
+- `ai/model`: nome do modelo (ex.: `gpt-4o-mini`, `llama3`)
 - `ai/prompts/synonyms`, `ai/prompts/summaries`, `ai/prompts/explanations`, `ai/prompts/chat`
 
 Privacidade:
@@ -83,6 +84,7 @@ Privacidade:
 Observações:
 - As mensagens usam o modelo selecionado nas Configurações de LLM.
 - Os prompts do diálogo podem ser personalizados nas Configurações de LLM.
+ - Em 0.1.9 foi adicionada compatibilidade com `OpenRouter`. Uma chave de cortesia pode estar disponível para testes iniciais; recomenda-se configurar sua própria chave para uso contínuo.
 
 ## 5. Dicas e Recursos Adicionais
 

@@ -31,13 +31,12 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Tamanho padrão do splitter configurado para ~10% (TOC) e ~90% (visualizador) na primeira execução.
 - Preferência de granularidade de zoom via Ctrl+roda (configurável em Configurações).
 - Modos de seleção (texto/retângulo), cópia com toast e exportação de seleção para TXT/Markdown.
-- Diálogo "Dados do leitor" com envio opcional para PHPList via `.env`.
+ - Diálogo "Dados do leitor" com armazenamento local via `QSettings`. (Envio externo removido a partir da 0.1.9.)
 
 ## 0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)
 - Preferência de granularidade de zoom (Ctrl+roda) configurável em Configurações.
 - Modos de seleção (texto/retângulo) com cópia e toast de confirmação.
 - Exportação de seleção para TXT/Markdown.
-- Documentação revisada para Qt6 obrigatório e estado atual (PDF).
  - "Recentes": diálogo rolável com busca e filtro por nome/título/autor/resumo/palavras‑chave e submenu com últimos itens.
    - Persistência de metadados (caminho, título, autor, resumo, palavras‑chave) em `QSettings`.
 
@@ -81,11 +80,17 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Escrita incremental de vetores/ids/metadados
 
 ## 0.1.9 – Ajustes
-- Ajuste no CI para refletir os ajustes em CMakeList.txt
-- Automatizado o ajuste de versão com base no primeiro nota de versão
-- Corrigir as configurações para acesso a GenAI.
-- Adicionar Opção de uso do Ollama localmente em http://localhost:11434
-- Adicionar OPção de uso do OpenRouter em https://openrouter.ai
+- Ajuste no CI para refletir ajustes no `CMakeLists.txt`.
+- Automatizado o ajuste de versão com base na primeira nota de versão.
+- Melhorias na interface de Configurações de LLM: listagem de modelos (quando o provedor suporta) e botão de "Testar modelo".
+- Depuração ampliada no processo de seleção de provedores de IA e LLMs.
+- Chave de cortesia para uso inicial do OpenRouter (recomenda-se configurar sua própria chave).
+- Removida a dependência do PHPList; interação com LLM e usuário personalizada.
+- Corrigidas configurações para acesso ao serviço GenerAtiva.
+- Adicionada opção de uso do Ollama localmente em http://localhost:11434.
+- Adicionada opção de uso do OpenRouter em https://openrouter.ai.
+- Adicionado suporte a arquivos OPF (metadados de e‑books).
+- Adicionado target no CMake para fazer release local para testes.
 
 ## 0.2.0 – TTS e Dicionario
 - Reestruturar o MainWindows para reduzir seu tamanho, aplicando fachadas para agrupar funções por contextos gráficos.

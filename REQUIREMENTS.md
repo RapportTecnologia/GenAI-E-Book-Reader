@@ -13,6 +13,7 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 
 ### Estado Atual (implementação)
 - Suporte de leitura: PDF com Qt6 PdfWidgets.
+ - Suporte adicional: leitura de arquivos OPF para exibição de metadados básicos.
 - UI e usabilidade:
   - Painel de Sumário (TOC) com alternância entre "Páginas" e "Conteúdo" (bookmarks quando disponíveis), com botões de navegação.
   - Barra superior com botão de título central exibindo o nome do documento e oferecendo menu contextual (abrir diretório, adicionar ao Calibre com migração de embeddings, renomear com migração).
@@ -22,6 +23,7 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
   - "Salvar como" (RF-28).
   - Branding/UI (RF-48, RF-49, RF-50): ícone do app, título com nome do livro, splash screen com versão/autor.
 - Perfil do leitor: diálogo "Dados do leitor" com campos opcionais (nome, e‑mail, WhatsApp e apelido) para personalização local; apelido pode ser usado pelas LLMs para tratamento personalizado.
+ - Integração LLM (0.1.9): provedores compatíveis com API OpenAI — `openai`, `generativa`, `ollama` (local) e `openrouter`; melhorias na UI de LLM com listagem de modelos (quando suportado) e botão de "Testar modelo"; ajustes de prompts; chaves e preferências persistidas em `QSettings`.
 
 ## 2. Objetivos
 - Proporcionar leitura confortável e acessível de e-books, com navegação fluida e UI intuitiva.
@@ -59,18 +61,19 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
    - RF-09: A rolagem deve ser continua entre páginas. Seja com o botão scroll do mouse ou com a tecla page up/page down.
 
 2. Integração com IA
-   - RF-10: Integração com a OpenAI para Sinonimos, Resumo, Explicação e etc.
-   - RF-11: Integração com a Anthropic para Sinonimos, Resumo, Explicação e etc.
-   - RF-12: Integração com a Claude para Sinonimos, Resumo, Explicação e etc.
-   - RF-13: Integração com a Cohere para Sinonimos, Resumo, Explicação e etc.
-   - RF-14: Integração com a Gemini para Sinonimos, Resumo, Explicação e etc.
-   - RF-15: Integração com a GenerAtiva (https://generativa.rapport.tec.br) para Sinonimos, Resumo, Explicação e etc.
-   - RF-16: Integração com a Ollama (http://localhost:11434) para Sinonimos, Resumo, Explicação e etc.
+   - RF-10: Integração com a OpenAI para Sinônimos, Resumo, Explicação etc. (implementado)
+   - RF-11: Integração com a Anthropic para Sinônimos, Resumo, Explicação etc. (planejado)
+   - RF-12: Integração com a Claude para Sinônimos, Resumo, Explicação etc. (planejado)
+   - RF-13: Integração com a Cohere para Sinônimos, Resumo, Explicação etc. (planejado)
+   - RF-14: Integração com a Gemini para Sinônimos, Resumo, Explicação etc. (planejado)
+   - RF-15: Integração com a GenerAtiva (https://generativa.rapport.tec.br) para Sinônimos, Resumo, Explicação etc. (implementado)
+   - RF-16: Integração com a Ollama (http://localhost:11434) para Sinônimos, Resumo, Explicação etc. (implementado)
+   - RF-17: Integração com a OpenRouter (https://openrouter.ai) para Sinônimos, Resumo, Explicação etc. (implementado)
    
 2. Integração com APIs externas
-   - RF-10: Integração com a OpenLibrary.org para obter informações do livro. Metadados, capa, ISBN, Editora e etc. (https://openlibrary.org/dev/docs/restful_api)
-   - RF-11: Integração com o Google para obter dados de livros.
-   - RF-12: Integração com a Amazon para obter dados de livros.
+   - RF-18: Integração com a OpenLibrary.org para obter informações do livro. Metadados, capa, ISBN, Editora etc. (https://openlibrary.org/dev/docs/restful_api)
+   - RF-19: Integração com o Google para obter dados de livros.
+   - RF-20: Integração com a Amazon para obter dados de livros.
 
 3. Menu e painel lateral esquerdo
    - RF-13: Menu com opções de leitura, marcações, anotações, estatísticas, configurações, ajuda e sobre.
@@ -167,6 +170,7 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 - Configurações de ajuste fino (persistidas em `QSettings`):
   - `emb/chunk_size` (padrão 1000), `emb/chunk_overlap` (padrão 200), `emb/batch_size` (padrão 16).
   - `emb/pages_per_stage` (opcional; processar N páginas por execução) e `emb/pause_ms_between_batches` (opcional; pausa entre lotes).
+  - Chaves de LLM em `QSettings` (0.1.9): `ai/provider` (`openai`|`generativa`|`ollama`|`openrouter`), `ai/base_url`, `ai/api_key` (não aplicável a `ollama`), `ai/model`, e prompts (`ai/prompts/*`).
 - Restrições atuais (estado experimental):
   - Pode ocorrer sobrecarga de CPU/RAM e encerramento prematuro em documentos grandes.
   - Mitigações implementadas: processamento em etapas, escrita incremental de vetores/ids/metadados, throttling entre batches, cancelamento.

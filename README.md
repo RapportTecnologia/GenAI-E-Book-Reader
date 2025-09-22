@@ -22,22 +22,22 @@ Você pode baixar a versão estável mais recente ou compilar a versão de desen
 
 ### Versão Estável (Recomendado)
 
-A versão estável mais recente é a **v0.1.7**. Para a maioria dos usuários, recomendamos o download do executável pronto para uso.
+A versão estável mais recente é a **v0.1.9**. Para a maioria dos usuários, recomendamos o download do executável pronto para uso.
 
 1.  Acesse a [**página de Releases**](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest).
-2.  Baixe o arquivo `GenAI_EBook_Reader-v0.1.7-x86_64.AppImage`.
+2.  Baixe o arquivo `GenAI_EBook_Reader-v0.1.9-x86_64.AppImage`.
 3.  Dê permissão de execução ao arquivo:
     ```bash
-    chmod +x GenAI_EBook_Reader-v0.1.7-x86_64.AppImage
+    chmod +x GenAI_EBook_Reader-v0.1.9-x86_64.AppImage
     ```
 4.  Execute o aplicativo:
     ```bash
-    ./GenAI_EBook_Reader-v0.1.7-x86_64.AppImage
+    ./GenAI_EBook_Reader-v0.1.9-x86_64.AppImage
     ```
 
 ### Versão de Desenvolvimento
 
-Se você deseja testar os recursos mais recentes que estarão na **v0.1.8**, pode compilar o projeto a partir do código-fonte. Esta versão inclui novas funcionalidades e correções de bugs, mas pode ser instável.
+Se você deseja testar os recursos mais recentes que estarão na próxima versão, pode compilar o projeto a partir do código-fonte. Esta versão inclui novas funcionalidades e correções de bugs, mas pode ser instável.
 
 
 ## Principais Recursos (MVP)
@@ -55,10 +55,12 @@ Se você deseja testar os recursos mais recentes que estarão na **v0.1.8**, pod
   - Largura padrão do painel ~10% e área do leitor ~90% na primeira execução (pode ser ajustado via splitter).
 - Barra superior com botão de título central que mostra o nome do documento em leitura e oferece menu contextual (abrir diretório, adicionar ao Calibre com migração de embeddings, renomear com migração).
 - Barra de busca com pesquisa por texto e fallback para busca semântica por frases usando embeddings; inclui opções rápidas (métrica, Top‑K e limiares).
+ - Suporte a arquivos OPF (metadados de e‑books), com leitura e exibição básica de informações.
 
 [Apresentação do Projeto](https://www.youtube.com/watch?v=4wveYzO_Lko)
 [Apresentação OpenRouter.ia na Versão 0.1.9](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
 
+Nota (0.1.9): Novos provedores de LLM suportados (Ollama local, GenerAtiva e OpenRouter), melhorias na interface de Configurações de LLM (listagem de modelos e teste de modelo), ajustes no CI e no CMake (target de release local), depuração ampliada na seleção de provedores/modelos, remoção da dependência do PHPList e interação com usuário/LLM personalizada. Chave de cortesia para uso inicial do OpenRouter incluída (recomenda-se configurar sua própria chave).
 Nota (0.1.8): Suporte a links internos clicáveis em PDFs (índice/sumário dentro do documento) usando QPdfLinkModel (Qt6), melhorias na navegação pelo TOC (sincronização com cliques e com os botões Voltar/Avançar), correções na seleção de texto e pequenos ajustes de UI. Documentação atualizada.
 Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.
 Nota (0.1.6): otimização da renderização do chat, com a conversão de Markdown movida para o back-end (C++), corrigindo bugs de instabilidade com MathJax.
@@ -66,7 +68,7 @@ Nota (0.1.3): refinamento de UI — ícone do app a partir de `docs/imgs/logo-do
 Nota (0.1.2): implementado "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.
 Nota (0.1.1): adicionados seleção de página via combobox e restauração do último arquivo/diretório aberto.
 
-Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento. O painel de TOC inclui uma barra de ferramentas para alternar entre "Páginas" e "Conteúdo" e botões de navegação; por padrão o painel ocupa ~10% da largura da janela na primeira execução. Atualmente, o binário suporta apenas arquivos PDF.
+Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento. O painel de TOC inclui uma barra de ferramentas para alternar entre "Páginas" e "Conteúdo" e botões de navegação; por padrão o painel ocupa ~10% da largura da janela na primeira execução. Atualmente, o binário suporta leitura de PDFs; arquivos OPF são aceitos para leitura de metadados.
 
 ## Sumário (TOC) e Navegação
 - Alternar modo do TOC:
@@ -100,12 +102,15 @@ A aplicação possui integração com provedores compatíveis com a API da OpenA
 Atualmente são suportados:
 - OpenAI (`https://api.openai.com`)
 - GenerAtiva (`https://generativa.rapport.tec.br`)
+- Ollama (local, `http://localhost:11434`)
+- OpenRouter (`https://openrouter.ai`)
 
 Como configurar:
 - Abra o diálogo "Configurações de LLM" (menu de Configurações).
-- Selecione o provedor (OpenAI ou GenerAtiva) e o modelo (ex.: `gpt-4o-mini`).
-- Informe a API Key do provedor escolhido.
-- Opcional: preencha "Base URL" para apontar a um endpoint compatível com OpenAI.
+- Selecione o provedor (OpenAI, GenerAtiva, Ollama ou OpenRouter) e o modelo.
+- Liste e selecione um modelo disponível (quando o provedor oferecer listagem de modelos) e utilize o botão de "Testar modelo" para validar as credenciais e a conectividade.
+- Informe a API Key do provedor escolhido (para OpenAI/GenerAtiva/OpenRouter). Para Ollama local, a chave não é necessária, apenas garanta que o serviço esteja rodando em `http://localhost:11434`.
+- Opcional: preencha "Base URL" para apontar a um endpoint compatível com OpenAI quando aplicável.
 - Ajuste os prompts padrão para Sinônimos, Resumos, Explicações e Chat conforme sua preferência.
 
 Uso no leitor:
@@ -123,10 +128,10 @@ Uso no leitor:
   - Contexto contínuo: novos envios incluem o histórico completo de mensagens (system/user/assistant) para melhor continuidade.
 
 Persistência/Configurações (QSettings):
-- `ai/provider`: `openai` | `generativa` (padrão: `openai`)
+- `ai/provider`: `openai` | `generativa` | `ollama` | `openrouter` (padrão: `openai`)
 - `ai/base_url`: URL base para override (opcional)
-- `ai/api_key`: token secreto do provedor
-- `ai/model`: nome do modelo (ex.: `gpt-4o-mini`)
+- `ai/api_key`: token secreto do provedor (não aplicável para Ollama local)
+- `ai/model`: nome do modelo (ex.: `gpt-4o-mini`, `llama3`, `gpt-4o-mini-transcribe` etc.)
 - `ai/prompts/synonyms`, `ai/prompts/summaries`, `ai/prompts/explanations`, `ai/prompts/chat`
 
 Observações de privacidade:
@@ -211,30 +216,30 @@ Pré-requisitos:
 Passos sugeridos:
 
 ```bash
-# 1) Garanta que CHANGELOG.md e README.md estão atualizados (ex.: 0.1.8)
+# 1) Garanta que CHANGELOG.md e README.md estão atualizados (ex.: 0.1.9)
 git add CHANGELOG.md README.md
-git commit -m "docs: atualiza changelog e readme para v0.1.8"
+git commit -m "docs: atualiza changelog e readme para v0.1.9"
 
 # 2) Versione no código se aplicável (CMakeLists.txt, headers) e commite
 # Exemplo (se houve mudança de versão de build)
 # git add CMakeLists.txt include/app/App.h
-# git commit -m "chore(release): bump version to v0.1.8"
+# git commit -m "chore(release): bump version to v0.1.9"
 
 # 3) Crie uma tag anotada e envie
-git tag -a v0.1.8 -m "v0.1.8"
-git push origin v0.1.8
+git tag -a v0.1.9 -m "v0.1.9"
+git push origin v0.1.9
 
 # 4A) Criar release via GitHub CLI (anexando notas do CHANGELOG)
-gh release create v0.1.8 \
-  --title "v0.1.8" \
+gh release create v0.1.9 \
+  --title "v0.1.9" \
   --notes "Consulte CHANGELOG.md para detalhes desta versão."
 
 # 4B) Alternativa: criar release pela UI do GitHub
-# - Vá em Releases > Draft a new release > Escolha a tag v0.1.8 > Preencha título/notas > Publish
+# - Vá em Releases > Draft a new release > Escolha a tag v0.1.9 > Preencha título/notas > Publish
 
 # 5) (Opcional) Anexar binários
 # Se você tiver artefatos em dist/, anexe com:
-# gh release upload v0.1.8 dist/genai_reader-v0.1.8-linux-x86_64 dist/genai_reader-v0.1.8-linux-x86_64.tar.gz
+# gh release upload v0.1.9 dist/genai_reader-v0.1.9-linux-x86_64 dist/genai_reader-v0.1.9-linux-x86_64.tar.gz
 ```
 
 Observação: o projeto exige Qt6 (Widgets, PdfWidgets, Network). Sem Qt6 a aplicação não compila.
@@ -283,8 +288,8 @@ Notas:
   3) Instale CMake e Ninja (opcional, melhora builds):
      - CMake: https://cmake.org/download/
      - Ninja: https://github.com/ninja-build/ninja/releases
-  4) Configure `CMAKE_PREFIX_PATH` apontando para o `.../Qt/<versão>/<kit>/lib/cmake` (Qt5 ou Qt6):
-     - Ex.: `set CMAKE_PREFIX_PATH=C:\Qt\6.7.0\msvc2022_64\lib\cmake`
+  4) Configure `CMAKE_PREFIX_PATH` apontando para o `.../Qt/<versão>/<kit>/lib/cmake` (Qt6):
+     - Ex.: `set CMAKE_PREFIX_PATH=C:\\Qt\\6.7.0\\msvc2022_64\\lib\\cmake`
   5) Gere e compile:
   ```bat
   cmake -S . -B build -G "Ninja"
