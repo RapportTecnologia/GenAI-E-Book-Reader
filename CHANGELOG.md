@@ -12,6 +12,9 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - Melhorias na interface de configuração de LLM. listagem de modelos e teste de modelo.
 - Adicionado ao CMakeList.txt um target para fazer release local para testes.
 - Aumentado a depuração no processo de seleção de Provedores de IA e LLMs
+- Chave de cortesia para uso do OpenRouter.ia adicionada
+- Removido a dependência do PHPList e personalizado a interação com a LLM
+- Personalizado a interação com o usuário.
 
 ## [0.1.8] - 2025-09-21
 

@@ -21,7 +21,7 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
   - Modos de seleção: texto e retângulo (imagem), com cópia para área de transferência e exportação da seleção para TXT/Markdown. OCR opcional via Tesseract quando disponível no PATH.
   - "Salvar como" (RF-28).
   - Branding/UI (RF-48, RF-49, RF-50): ícone do app, título com nome do livro, splash screen com versão/autor.
-- Integração opcional: diálogo "Dados do leitor" e envio para PHPList configurável via `.env`.
+- Perfil do leitor: diálogo "Dados do leitor" com campos opcionais (nome, e‑mail, WhatsApp e apelido) para personalização local; apelido pode ser usado pelas LLMs para tratamento personalizado.
 
 ## 2. Objetivos
 - Proporcionar leitura confortável e acessível de e-books, com navegação fluida e UI intuitiva.
@@ -180,17 +180,9 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
 - Persistência: arquivos locais (JSON/SQLite) para histórico, anotações e configurações.
 - Integrações: Calibre via CLI/DB/API local; OpenAI API via HTTPS.
 
-### Integração opcional com PHPList (.env)
-- O aplicativo possui diálogo para coleta de "Dados do leitor" (nome, e-mail, WhatsApp) e, opcionalmente, envio para uma lista PHPList.
-- Configuração via `.env` ao lado do executável ou na raiz do projeto:
-
-```env
-PHPLIST_URL=http://seu-servidor/phplist/api/v2
-PHPLIST_USER=usuario
-PHPLIST_PASS=senha
-```
-
-Observações: credenciais não são exibidas pela UI; o envio é sempre confirmado pelo usuário. O arquivo `.env` é gerado com valores padrão vazios no primeiro configure do CMake.
+### Perfil do Leitor (opcional)
+- O aplicativo possui diálogo para coleta de "Dados do leitor": nome, e‑mail, WhatsApp e apelido. Todos os campos são opcionais e armazenados localmente via `QSettings`.
+- O apelido, quando informado, pode ser inserido nas instruções de sistema enviadas às LLMs para que o assistente se refira ao usuário de forma personalizada.
 
 ## 8. Modelo de Dados (alto nível)
 - Livro: id, título, autor(es), caminho/URI, formato, metadados.

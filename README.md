@@ -57,6 +57,7 @@ Se você deseja testar os recursos mais recentes que estarão na **v0.1.8**, pod
 - Barra de busca com pesquisa por texto e fallback para busca semântica por frases usando embeddings; inclui opções rápidas (métrica, Top‑K e limiares).
 
 [Apresentação do Projeto](https://www.youtube.com/watch?v=4wveYzO_Lko)
+[Apresentação OpenRouter.ia na Versão 0.1.9](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
 
 Nota (0.1.8): Suporte a links internos clicáveis em PDFs (índice/sumário dentro do documento) usando QPdfLinkModel (Qt6), melhorias na navegação pelo TOC (sincronização com cliques e com os botões Voltar/Avançar), correções na seleção de texto e pequenos ajustes de UI. Documentação atualizada.
 Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.
@@ -301,19 +302,17 @@ Notas:
   ```
   3) Abra o shell UCRT64/MinGW correspondente e compile com CMake.
 
-## Integração opcional com PHPList (.env)
-- O aplicativo possui um diálogo "Dados do leitor" (`Arquivo > Leitor > Dados do leitor...`) para registrar nome, e-mail e WhatsApp.
-- Opcionalmente, é possível enviar esses dados para uma lista do PHPList. Para isso, crie um arquivo `.env` na raiz do projeto ou ao lado do executável com as variáveis:
-
-```env
-PHPLIST_URL=http://seu-servidor/phplist/api/v2
-PHPLIST_USER=usuario
-PHPLIST_PASS=senha
-```
+## Perfil do Leitor (opcional)
+- O aplicativo possui um diálogo "Dados do leitor" (`Arquivo > Leitor > Dados do leitor...`) para registrar preferências do usuário.
+- Todos os campos são opcionais e podem ser usados para personalização das interações:
+  - Nome
+  - E‑mail
+  - WhatsApp
+  - Apelido (usado pelas LLMs para se referirem a você, quando apropriado)
 
 Observações:
-- As credenciais não são exibidas pela UI; o envio é sempre confirmado com o usuário.
-- O `.env` é criado com valores vazios automaticamente no primeiro configure do CMake (veja `CMakeLists.txt`).
+- Nenhum dado é enviado externamente pelo aplicativo. Os dados ficam armazenados localmente via `QSettings`.
+- Se um `Apelido` for informado, ele será considerado nas instruções de sistema enviadas às LLMs para personalizar o tratamento.
 
 ## Contribuindo
 Contribuições são muito bem-vindas! Você pode ajudar de várias formas:
