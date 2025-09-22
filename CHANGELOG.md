@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
+## [0.1.10] - Unreleased
+
+### Focus
+- Melhoria nas buscas (full‑text e semântica) e na interação do chat com suporte a Function Calling, quando disponível no modelo/provedor.
+
+### Added/Planned
+- Indicador de capacidade de Function Calling na janela de Configurações de LLM: uma caixa de texto somente leitura exibirá se o provedor/modelo selecionado suporta Function Calling (detecção automática quando a API expuser essa informação; caso contrário, texto informativo com instruções).
+- Documentação atualizada descrevendo o comportamento esperado de Function Calling por provedor/modelo e as limitações conhecidas.
+
+### Notes
+- Esta versão é focada em preparar a infraestrutura e UX para Function Calling e em aprimorar a qualidade das pesquisas (texto e semântica). Implementações adicionais podem ser entregues de forma incremental ao longo do ciclo 0.1.10.
+
 ## [0.1.9] - 2025-09-22
 
 - Ajuste no CI para refletir os ajustes em CMakeList.txt
@@ -85,7 +97,8 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - Problemas de exibição de tabelas Markdown no chat.
 - Ordem de renderização para garantir MathJax consistente após parsing e highlighting.
 
-[Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.9
 [0.1.8]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.8
 [0.1.7]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.7

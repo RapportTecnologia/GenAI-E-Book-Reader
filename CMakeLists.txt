@@ -48,6 +48,11 @@ target_compile_definitions(genai_reader PRIVATE HAVE_QT_WEBENGINE)
 # Define to enable Qt-specific code paths unconditionally
 target_compile_definitions(genai_reader PRIVATE USE_QT HAVE_QT_PDF HAVE_QT_NETWORK)
 
+# 0.1.10: Documentation/UI marker for Function Calling capability indicator
+# This macro does not change behavior; it allows conditional display text in the
+# LLM settings dialog to reflect availability of the read-only indicator.
+target_compile_definitions(genai_reader PRIVATE GENAI_HAS_FUNCTION_CALLING_INDICATOR=1)
+
 # Inject application version into code (used by include/app/App.h)
 # This keeps AppInfo::Version synchronized with CMake's PROJECT_VERSION
 target_compile_definitions(genai_reader PRIVATE GENAI_APP_VERSION=\"${PROJECT_VERSION}\")
@@ -274,13 +279,14 @@ else()
   message(WARNING "'appstreamcli' not found. Skipping AppStream validation. Install 'appstream' package to enable.")
 endif()
 
+# Convenience target: build dist and copy AppImage to user's Downloads
 add_custom_target(github_release
-    DEPENDS docs dist
-    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git add -A
-    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git commit -m "Release version ${PROJECT_VERSION}"
-    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push
-    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}" --force
-    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push origin "v${PROJECT_VERSION}" --force
+#    DEPENDS docs dist
+#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git add -A
+#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git commit -m "Release version ${PROJECT_VERSION}"
+#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push
+#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}" --force
+#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push origin "v${PROJECT_VERSION}" --force
 
     # Extract release notes from CHANGELOG.md
     COMMAND ${CMAKE_COMMAND} -E echo "Extracting release notes for v${PROJECT_VERSION}..."
@@ -296,7 +302,16 @@ add_custom_target(github_release
     VERBATIM
 )
 
-  # Convenience target: build dist and copy AppImage to user's Downloads
+add_custom_target(github_release_update
+    DEPENDS local_release
+    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage" --clobber 
+    COMMAND ${GH_BIN} release upload "v${PROJECT_VERSION}" "${CMAKE_SOURCE_DIR}/APPIMAGE.md" --clobber
+
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Updating GitHub release and uploading artifacts for v${PROJECT_VERSION}"
+    VERBATIM
+)
+
 add_custom_target(local_release
   DEPENDS dist
   COMMAND ${CMAKE_COMMAND} -E make_directory "$ENV{HOME}/Downloads"

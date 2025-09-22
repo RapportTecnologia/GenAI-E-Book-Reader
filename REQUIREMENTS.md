@@ -23,7 +23,8 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
   - "Salvar como" (RF-28).
   - Branding/UI (RF-48, RF-49, RF-50): ícone do app, título com nome do livro, splash screen com versão/autor.
 - Perfil do leitor: diálogo "Dados do leitor" com campos opcionais (nome, e‑mail, WhatsApp e apelido) para personalização local; apelido pode ser usado pelas LLMs para tratamento personalizado.
- - Integração LLM (0.1.9): provedores compatíveis com API OpenAI — `openai`, `generativa`, `ollama` (local) e `openrouter`; melhorias na UI de LLM com listagem de modelos (quando suportado) e botão de "Testar modelo"; ajustes de prompts; chaves e preferências persistidas em `QSettings`.
+- Integração LLM (0.1.9): provedores compatíveis com API OpenAI — `openai`, `generativa`, `ollama` (local) e `openrouter`; melhorias na UI de LLM com listagem de modelos (quando suportado) e botão de "Testar modelo"; ajustes de prompts; chaves e preferências persistidas em `QSettings`.
+ - Indicador de Function Calling (0.1.10): a janela de Configurações de LLM exibirá uma caixa de texto somente leitura informando se o provedor/modelo selecionado declara suporte a Function Calling. A detecção é automática quando a API expõe metadados; quando não houver essa informação, o indicador exibirá uma mensagem informativa.
 
 ## 2. Objetivos
 - Proporcionar leitura confortável e acessível de e-books, com navegação fluida e UI intuitiva.
@@ -69,6 +70,7 @@ Este software visa atender a uma necessidade prática durante a leitura de e-boo
    - RF-15: Integração com a GenerAtiva (https://generativa.rapport.tec.br) para Sinônimos, Resumo, Explicação etc. (implementado)
    - RF-16: Integração com a Ollama (http://localhost:11434) para Sinônimos, Resumo, Explicação etc. (implementado)
    - RF-17: Integração com a OpenRouter (https://openrouter.ai) para Sinônimos, Resumo, Explicação etc. (implementado)
+   - RF-17.1: Exibir indicador somente leitura de suporte a Function Calling conforme capacidade declarada pelo provedor/modelo selecionado.
    
 2. Integração com APIs externas
    - RF-18: Integração com a OpenLibrary.org para obter informações do livro. Metadados, capa, ISBN, Editora etc. (https://openlibrary.org/dev/docs/restful_api)
