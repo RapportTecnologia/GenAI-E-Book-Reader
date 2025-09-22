@@ -17,10 +17,14 @@ var annotated_dup =
     [ "LlmClient", "dd/dd6/classLlmClient.html", "dd/dd6/classLlmClient" ],
     [ "LlmSettingsDialog", "d0/d17/classLlmSettingsDialog.html", "d0/d17/classLlmSettingsDialog" ],
     [ "MainWindow", "d6/d1a/classMainWindow.html", "d6/d1a/classMainWindow" ],
+    [ "OpfData", "d6/d65/structOpfData.html", "d6/d65/structOpfData" ],
+    [ "OpfDialog", "d8/d98/classOpfDialog.html", "d8/d98/classOpfDialog" ],
+    [ "OpfStore", "d9/db4/classOpfStore.html", null ],
     [ "PdfViewerWidget", "dc/ddc/classPdfViewerWidget.html", "dc/ddc/classPdfViewerWidget" ],
     [ "RecentFilesDialog", "d5/d44/classRecentFilesDialog.html", "d5/d44/classRecentFilesDialog" ],
     [ "SummaryDialog", "da/d99/classSummaryDialog.html", "da/d99/classSummaryDialog" ],
     [ "TutorialDialog", "d8/df9/classTutorialDialog.html", "d8/df9/classTutorialDialog" ],
     [ "VectorIndex", "d3/db0/classVectorIndex.html", "d3/db0/classVectorIndex" ],
+    [ "WebPage", "de/d32/classWebPage.html", "de/d32/classWebPage" ],
     [ "WelcomeDialog", "dd/dd8/classWelcomeDialog.html", "dd/dd8/classWelcomeDialog" ]
 ];

@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['pdfviewerwidget_2ecpp_0',['PdfViewerWidget.cpp',['../d7/d8a/PdfViewerWidget_8cpp.html',1,'']]],
-  ['pdfviewerwidget_2eh_1',['PdfViewerWidget.h',['../d4/d6d/PdfViewerWidget_8h.html',1,'']]],
-  ['plano_2dde_2ddesenvolvimento_2emd_2',['PLANO-DE-DESENVOLVIMENTO.md',['../d9/dc6/PLANO-DE-DESENVOLVIMENTO_8md.html',1,'']]]
+  ['opfdialog_2ecpp_0',['OpfDialog.cpp',['../db/d55/OpfDialog_8cpp.html',1,'']]],
+  ['opfdialog_2eh_1',['OpfDialog.h',['../d5/d41/OpfDialog_8h.html',1,'']]],
+  ['opfstore_2ecpp_2',['OpfStore.cpp',['../d1/d4a/OpfStore_8cpp.html',1,'']]],
+  ['opfstore_2eh_3',['OpfStore.h',['../d1/d18/OpfStore_8h.html',1,'']]]
 ];

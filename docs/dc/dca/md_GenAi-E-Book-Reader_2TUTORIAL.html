@@ -95,8 +95,8 @@ $(document).ready(function(){initNavTree('dc/dca/md_GenAi-E-Book-Reader_2TUTORIA
   <div class="headertitle"><div class="title">GenAI E-Book Reader — Tutorial</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md71"></a> Este guia mostra como usar os principais recursos do aplicativo, desde a leitura básica até as funcionalidades avançadas de IA, como a busca semântica (RAG) e o chat com LLM.</p>
-<h1><a class="anchor" id="autotoc_md72"></a>
+<div class="textblock"><p><a class="anchor" id="autotoc_md72"></a> Este guia mostra como usar os principais recursos do aplicativo, desde a leitura básica até as funcionalidades avançadas de IA, como a busca semântica (RAG) e o chat com LLM.</p>
+<h1><a class="anchor" id="autotoc_md73"></a>
 1. Primeiros Passos: Abrindo e Navegando</h1>
 <ol type="1">
 <li><b>Abrir um Livro</b>: Vá em <code>Arquivo &gt; Abrir...</code> para selecionar um arquivo PDF.</li>
@@ -107,32 +107,32 @@ $(document).ready(function(){initNavTree('dc/dca/md_GenAi-E-Book-Reader_2TUTORIA
 </li>
 <li><b>Sumário (TOC)</b>: O painel à esquerda permite navegar pelo conteúdo. Use os botões no topo do painel para alternar entre a visualização de <b>Páginas</b> e de <b>Conteúdo</b> (capítulos).</li>
 </ol>
-<h1><a class="anchor" id="autotoc_md73"></a>
+<h1><a class="anchor" id="autotoc_md74"></a>
 2. Leitura Interativa: Seleção, Dicionário e Busca</h1>
-<h2><a class="anchor" id="autotoc_md74"></a>
+<h2><a class="anchor" id="autotoc_md75"></a>
 Selecionar Texto e Imagens</h2>
 <ul>
 <li><b>Selecionar Texto</b>: No menu <code>Editar</code>, escolha <code>Selecionar texto</code> e marque o trecho desejado.</li>
 <li><b>Selecionar Imagem</b>: Escolha <code>Selecionar retângulo (imagem)</code> para capturar uma área do documento como imagem.</li>
 <li><b>Ações</b>: Com o texto ou imagem selecionada, você pode copiar, salvar em um arquivo ou enviar para o chat com IA.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md75"></a>
+<h2><a class="anchor" id="autotoc_md76"></a>
 Consultar o Dicionário</h2>
 <ol type="1">
 <li><b>Configurar</b>: Vá em <code>Configurações &gt; Dicionário</code>. Por padrão, o dicionário usa o LLM configurado para fornecer definições.</li>
 <li><b>Usar</b>: Selecione uma palavra no texto e clique com o botão direito. No menu de contexto, escolha a opção para consultar o dicionário. A definição aparecerá no painel de chat.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md76"></a>
+<h2><a class="anchor" id="autotoc_md77"></a>
 Buscar no Documento</h2>
 <p>A barra de busca no topo permite dois tipos de pesquisa:</p>
 <ul>
 <li><b>Busca por Texto</b>: Digite uma palavra ou frase e clique em "Pesquisar". O aplicativo localizará as ocorrências exatas no texto.</li>
 <li><b>Busca Semântica (RAG)</b>: Se a busca por texto não encontrar resultados, o aplicativo automaticamente fará uma busca semântica, que entende o significado da sua pergunta. Para que isso funcione, o documento precisa ser indexado primeiro (veja a seção sobre RAG abaixo).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md77"></a>
+<h1><a class="anchor" id="autotoc_md78"></a>
 3. Busca Semântica com RAG (Retrieval-Augmented Generation)</h1>
 <p>O RAG permite que você faça perguntas em linguagem natural sobre o conteúdo do livro. Para usá-lo, você precisa primeiro criar um "índice de embeddings" para o seu documento.</p>
-<h2><a class="anchor" id="autotoc_md78"></a>
+<h2><a class="anchor" id="autotoc_md79"></a>
 Passo 1: Configurar os Embeddings</h2>
 <ol type="1">
 <li>Vá em <code>Configurações &gt; Embeddings</code>.</li>
@@ -140,41 +140,42 @@ Passo 1: Configurar os Embeddings</h2>
 <li><b>Modelo</b>: Selecione um modelo de embedding (ex: <code>nomic-embed-text</code>).</li>
 <li><b>Parâmetros de Chunking</b>: Ajuste o <code>Tamanho do chunk</code> e a <code>Sobreposição</code> para controlar como o texto é dividido antes de ser processado. Valores padrão costumam funcionar bem.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md79"></a>
+<h2><a class="anchor" id="autotoc_md80"></a>
 Passo 2: Indexar o Documento</h2>
 <ol type="1">
 <li>Com o livro aberto, clique com o botão direito no visualizador e escolha <code>Recriar embeddings do documento...</code>.</li>
 <li>Aguarde o processo terminar. Uma janela mostrará o progresso.</li>
 </ol>
-<h2><a class="anchor" id="autotoc_md80"></a>
+<h2><a class="anchor" id="autotoc_md81"></a>
 Passo 3: Fazer uma Busca Semântica</h2>
 <ul>
 <li>Agora, use a barra de busca para fazer perguntas como "Qual é a ideia principal do capítulo 2?" ou "Explique o conceito de X". O aplicativo usará o índice RAG para encontrar as partes mais relevantes do livro e responder à sua pergunta.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md81"></a>
+<h1><a class="anchor" id="autotoc_md82"></a>
 4. Integração com IA (LLM)</h1>
 <p>Você pode conectar o aplicativo a um serviço de LLM para usar o chat, pedir resumos, sinônimos e muito mais.</p>
-<h2><a class="anchor" id="autotoc_md82"></a>
+<h2><a class="anchor" id="autotoc_md83"></a>
 Configurar o Acesso ao LLM</h2>
 <ol type="1">
 <li>Vá em <code>Configurações &gt; Configurações de LLM</code>.</li>
-<li><b>Provedor</b>: Escolha um provedor. Você pode usar a <code>OpenAI</code>, a <code>GenerAtiva</code> ou um serviço local como o <code>Ollama</code> (selecione <code>OpenAI</code> como provedor e informe a <code>Base URL</code> do seu Ollama, ex: <code><a href="http://localhost:11434">http://localhost:11434</a></code>).</li>
-<li><b>API Key</b>: Insira sua chave de API (para serviços na nuvem).</li>
-<li><b>Modelo</b>: Escolha o modelo que deseja usar (ex: <code>gpt-4o-mini</code>, <code>llama3</code>).</li>
+<li><b>Provedor</b>: Escolha um provedor — <code>OpenAI</code>, <code>GenerAtiva</code>, <code>Ollama</code> (local) ou <code>OpenRouter</code>.</li>
+<li><b>Listar/Testar Modelo</b>: Use a ação de "Listar modelos" (quando disponível para o provedor) e o botão "Testar modelo" para validar credenciais e conectividade.</li>
+<li><b>API Key</b>: Insira sua chave de API (para serviços na nuvem). Para <code>Ollama</code>, não é necessário token; certifique-se de que o serviço está ativo em <code><a href="http://localhost:11434">http://localhost:11434</a></code>.</li>
+<li><b>Modelo</b>: Selecione o modelo que deseja usar (ex: <code>gpt-4o-mini</code>, <code>llama3</code>).</li>
 <li><b>Prompts</b>: Personalize os prompts que a IA usará para gerar resumos, sinônimos, etc.</li>
 </ol>
 <p>As configurações ficam em <code>QSettings</code> com as chaves:</p><ul>
-<li><code>ai/provider</code>: <code>openai</code> | <code>generativa</code></li>
+<li><code>ai/provider</code>: <code>openai</code> | <code>generativa</code> | <code>ollama</code> | <code>openrouter</code></li>
 <li><code>ai/base_url</code>: URL base para override (opcional)</li>
-<li><code>ai/api_key</code>: token secreto</li>
-<li><code>ai/model</code>: nome do modelo (ex.: <code>gpt-4o-mini</code>)</li>
+<li><code>ai/api_key</code>: token secreto (não aplicável para <code>ollama</code>)</li>
+<li><code>ai/model</code>: nome do modelo (ex.: <code>gpt-4o-mini</code>, <code>llama3</code>)</li>
 <li><code>ai/prompts/synonyms</code>, <code>ai/prompts/summaries</code>, <code>ai/prompts/explanations</code>, <code>ai/prompts/chat</code></li>
 </ul>
 <p>Privacidade:</p><ul>
 <li>A aplicação sempre pede confirmação antes de enviar qualquer trecho do livro à IA.</li>
 <li>Tokens ficam armazenados nas preferências do usuário.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md83"></a>
+<h2><a class="anchor" id="autotoc_md84"></a>
 Usar os Recursos de IA</h2>
 <ul>
 <li><b>Chat</b>: Abra o painel de chat para conversar com a IA. Você pode fazer perguntas, pedir explicações ou enviar trechos e imagens do livro para análise.</li>
@@ -183,9 +184,12 @@ Usar os Recursos de IA</h2>
 </ul>
 <p>Observações:</p><ul>
 <li>As mensagens usam o modelo selecionado nas Configurações de LLM.</li>
-<li>Os prompts do diálogo podem ser personalizados nas Configurações de LLM.</li>
+<li>Os prompts do diálogo podem ser personalizados nas Configurações de LLM.<ul>
+<li>Em 0.1.9 foi adicionada compatibilidade com <code>OpenRouter</code>. Uma chave de cortesia pode estar disponível para testes iniciais; recomenda-se configurar sua própria chave para uso contínuo.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md84"></a>
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md85"></a>
 5. Dicas e Recursos Adicionais</h1>
 <ul>
 <li><b>Botão de Título</b>: O botão no centro da barra superior mostra o nome do seu livro. Clique com o botão direito nele para acessar ações rápidas, como renomear o arquivo ou abri-lo no gerenciador de arquivos.</li>

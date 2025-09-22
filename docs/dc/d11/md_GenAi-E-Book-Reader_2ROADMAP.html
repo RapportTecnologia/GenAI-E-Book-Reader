@@ -130,16 +130,17 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
 <li>Botões "Voltar" e "Avançar" que respeitam o modo selecionado (página anterior/próxima ou item/capítulo anterior/próximo).</li>
 <li>Tamanho padrão do splitter configurado para ~10% (TOC) e ~90% (visualizador) na primeira execução.</li>
 <li>Preferência de granularidade de zoom via Ctrl+roda (configurável em Configurações).</li>
-<li>Modos de seleção (texto/retângulo), cópia com toast e exportação de seleção para TXT/Markdown.</li>
-<li>Diálogo "Dados do leitor" com envio opcional para PHPList via <code>.env</code>.</li>
+<li>Modos de seleção (texto/retângulo), cópia com toast e exportação de seleção para TXT/Markdown.<ul>
+<li>Diálogo "Dados do leitor" com armazenamento local via <code>QSettings</code>. (Envio externo removido a partir da 0.1.9.)</li>
+</ul>
+</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md60"></a>
 0.1.4 – Aperfeiçoamentos de leitura e integração (Entregue em 2025-09-14)</h1>
 <ul>
 <li>Preferência de granularidade de zoom (Ctrl+roda) configurável em Configurações.</li>
 <li>Modos de seleção (texto/retângulo) com cópia e toast de confirmação.</li>
-<li>Exportação de seleção para TXT/Markdown.</li>
-<li>Documentação revisada para Qt6 obrigatório e estado atual (PDF).<ul>
+<li>Exportação de seleção para TXT/Markdown.<ul>
 <li>"Recentes": diálogo rolável com busca e filtro por nome/título/autor/resumo/palavras‑chave e submenu com últimos itens.<ul>
 <li>Persistência de metadados (caminho, título, autor, resumo, palavras‑chave) em <code>QSettings</code>.</li>
 </ul>
@@ -196,38 +197,53 @@ $(document).ready(function(){initNavTree('dc/d11/md_GenAi-E-Book-Reader_2ROADMAP
 <li>Escrita incremental de vetores/ids/metadados</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md65"></a>
+0.1.9 – Ajustes</h1>
+<ul>
+<li>Ajuste no CI para refletir ajustes no <code>CMakeLists.txt</code>.</li>
+<li>Automatizado o ajuste de versão com base na primeira nota de versão.</li>
+<li>Melhorias na interface de Configurações de LLM: listagem de modelos (quando o provedor suporta) e botão de "Testar modelo".</li>
+<li>Depuração ampliada no processo de seleção de provedores de IA e LLMs.</li>
+<li>Chave de cortesia para uso inicial do OpenRouter (recomenda-se configurar sua própria chave).</li>
+<li>Removida a dependência do PHPList; interação com LLM e usuário personalizada.</li>
+<li>Corrigidas configurações para acesso ao serviço GenerAtiva.</li>
+<li>Adicionada opção de uso do Ollama localmente em <a href="http://localhost:11434">http://localhost:11434</a>.</li>
+<li>Adicionada opção de uso do OpenRouter em <a href="https://openrouter.ai">https://openrouter.ai</a>.</li>
+<li>Adicionado suporte a arquivos OPF (metadados de e‑books).</li>
+<li>Adicionado target no CMake para fazer release local para testes.</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md66"></a>
 0.2.0 – TTS e Dicionario</h1>
 <ul>
 <li>Reestruturar o MainWindows para reduzir seu tamanho, aplicando fachadas para agrupar funções por contextos gráficos.</li>
 <li>Continuar o desenvolvimento: Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md66"></a>
+<h1><a class="anchor" id="autotoc_md67"></a>
 0.2.1 – Reestruturação do código</h1>
 <ul>
 <li>Reprodução TTS de seleção atual</li>
 <li>Controles de velocidade/pausa/retomar</li>
 <li>Output device selection</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md67"></a>
+<h1><a class="anchor" id="autotoc_md68"></a>
 0.5.0 – Estatísticas e Sessões</h1>
 <ul>
 <li>Tempo ativo de leitura, progresso, sessões</li>
 <li>Restauração de sessão (últimos livros abertos)</li>
 <li>Export de métricas</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md68"></a>
+<h1><a class="anchor" id="autotoc_md69"></a>
 0.6.0 – Integração Calibre e Melhorias UX</h1>
 <ul>
 <li>Abrir itens da biblioteca do Calibre</li>
 <li>Melhorias de performance e usabilidade</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md69"></a>
+<h1><a class="anchor" id="autotoc_md70"></a>
 1.x – Estabilidade e Releases</h1>
 <ul>
 <li>Testes automatizados</li>
 <li>Internacionalização (i18n)</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md70"></a>
+<h1><a class="anchor" id="autotoc_md71"></a>
 Backlog Técnico</h1>
 <ul>
 <li>CI (build + testes)</li>

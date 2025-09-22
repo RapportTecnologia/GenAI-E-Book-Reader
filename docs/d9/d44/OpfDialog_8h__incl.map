@@ -1,0 +1,13 @@
+<map id="GenAi&#45;E&#45;Book&#45;Reader/src/ui/OpfDialog.h" name="GenAi&#45;E&#45;Book&#45;Reader/src/ui/OpfDialog.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="19,5,181,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,80,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="88,47,61,84,57,80,84,44"/>
+<area shape="rect" id="Node000003" href="$d1/d18/OpfStore_8h.html" title=" " alt="" coords="104,93,211,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="116,44,143,80,139,84,112,47"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="15,167,86,192"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="142,121,81,161,78,157,139,116"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="111,167,204,192"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="160,119,160,153,155,153,155,119"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="229,167,289,192"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="175,116,232,156,229,161,172,121"/>
+</map>

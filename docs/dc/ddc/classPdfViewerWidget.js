@@ -25,6 +25,7 @@ var classPdfViewerWidget =
     [ "requestSendImageToChat", "dc/ddc/classPdfViewerWidget.html#ac5a87fd3775f78d40828e56e2cf253e1", null ],
     [ "requestSendToChat", "dc/ddc/classPdfViewerWidget.html#abbf4cac986c53df53789228b07ad31c5", null ],
     [ "requestSummarize", "dc/ddc/classPdfViewerWidget.html#a05a240adfab63efc598a6f0631ce3e45", null ],
+    [ "requestSummarizeDocument", "dc/ddc/classPdfViewerWidget.html#a483f0bd45376af68ca4efddd92300f5a", null ],
     [ "requestSynonyms", "dc/ddc/classPdfViewerWidget.html#a353cd07d7a0423a770e5c689f408195c", null ],
     [ "saveSelectionAsMarkdown", "dc/ddc/classPdfViewerWidget.html#a5623bb122b381b2b68aca4b9e569c653", null ],
     [ "saveSelectionAsTxt", "dc/ddc/classPdfViewerWidget.html#aa3ca1d2e554f63cdd67fe0da10aa345f", null ],

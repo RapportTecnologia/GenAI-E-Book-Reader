@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['name_0',['name',['../d3/d5b/structgenai_1_1DeveloperInfo.html#a98979b9a2f6a35d50609dcdb13cadddf',1,'genai::DeveloperInfo::name'],['../de/d5f/classgenai_1_1AppInfo.html#a1e500fae80dafb28e5e73934cdfbfccc',1,'genai::AppInfo::Name']]]
+  ['language_0',['language',['../d6/d65/structOpfData.html#a87ef63a8c470768f94162f27ded780ec',1,'OpfData']]]
 ];
