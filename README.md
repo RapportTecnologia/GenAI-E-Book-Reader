@@ -59,9 +59,10 @@ Se você deseja testar os recursos mais recentes que estarão na próxima versã
 
 [Apresentação do Projeto](https://www.youtube.com/watch?v=4wveYzO_Lko)
 [Apresentação OpenRouter.ia na Versão 0.1.9](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
+[Como associar arquivos de E-Book ao GER](https://www.youtube.com/watch?v=2a1KO5Vig0k)
 
-Nota (0.1.9): Novos provedores de LLM suportados (Ollama local, GenerAtiva e OpenRouter), melhorias na interface de Configurações de LLM (listagem de modelos e teste de modelo), ajustes no CI e no CMake (target de release local), depuração ampliada na seleção de provedores/modelos, remoção da dependência do PHPList e interação com usuário/LLM personalizada. Chave de cortesia para uso inicial do OpenRouter incluída (recomenda-se configurar sua própria chave).
 Nota (0.1.10 - desenvolvimento): Foco em melhoria das buscas (texto e semântica) e na interação do chat com suporte a Function Calling quando o modelo/provedor disponibilizar. A janela de Configurações de LLM passa a exibir um indicador somente leitura informando se o modelo selecionado declara suporte a Function Calling.
+Nota (0.1.9): Novos provedores de LLM suportados (Ollama local, GenerAtiva e OpenRouter), melhorias na interface de Configurações de LLM (listagem de modelos e teste de modelo), ajustes no CI e no CMake (target de release local), depuração ampliada na seleção de provedores/modelos, remoção da dependência do PHPList e interação com usuário/LLM personalizada. Chave de cortesia para uso inicial do OpenRouter incluída (recomenda-se configurar sua própria chave).
 Nota (0.1.8): Suporte a links internos clicáveis em PDFs (índice/sumário dentro do documento) usando QPdfLinkModel (Qt6), melhorias na navegação pelo TOC (sincronização com cliques e com os botões Voltar/Avançar), correções na seleção de texto e pequenos ajustes de UI. Documentação atualizada.
 Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.
 Nota (0.1.6): otimização da renderização do chat, com a conversão de Markdown movida para o back-end (C++), corrigindo bugs de instabilidade com MathJax.
