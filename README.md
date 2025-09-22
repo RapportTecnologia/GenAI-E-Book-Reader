@@ -7,6 +7,8 @@
 [![Latest Release](https://img.shields.io/github/v/release/RapportTecnologia/GenAi-E-Book-Reader?label=version)](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contribuindo)
 
+<!-- Traduções -->
+**Traduções:** 🇧🇷 Português (original) | 🇸🇦 [العربية](README.ar.md) | 🇬🇧 [English (UK)](README.en-GB.md) | 🇫🇷 [Français](README.fr-FR.md)
 
 # GenAI E-Book Reader
 
@@ -15,6 +17,12 @@ Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/
 - Histórico de mudanças: consulte [CHANGELOG.md](CHANGELOG.md).
 - Planejamento de releases: consulte [ROADMAP.md](ROADMAP.md).
 - Tutorial passo a passo: consulte [TUTORIAL.md](TUTORIAL.md).
+
+## Tutoriais
+- 🇧🇷 [Tutorial em Português](TUTORIAL.md)
+- 🇸🇦 [الدليل بالعربية](TUTORIAL.ar.md)
+- 🇬🇧 [Tutorial (English, UK)](TUTORIAL.en-GB.md)
+- 🇫🇷 [Tutoriel (Français)](TUTORIAL.fr-FR.md)
 
 ## Como Obter o Aplicativo
 
