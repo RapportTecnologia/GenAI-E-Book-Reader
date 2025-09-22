@@ -8,6 +8,10 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 - Ajuste no CI para refletir os ajustes em CMakeList.txt
 - Automatizado o ajuste de versão com base no primeiro nota de versão
+- Adicionado novos provedores de LLM: Ollama, GenerAtive AI e OpenRouter.
+- Melhorias na interface de configuração de LLM. listagem de modelos e teste de modelo.
+- Adicionado ao CMakeList.txt um target para fazer release local para testes.
+- Aumentado a depuração no processo de seleção de Provedores de IA e LLMs
 
 ## [0.1.8] - 2025-09-21
 
