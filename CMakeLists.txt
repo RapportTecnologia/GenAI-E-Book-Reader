@@ -281,12 +281,12 @@ endif()
 
 # Convenience target: build dist and copy AppImage to user's Downloads
 add_custom_target(github_release
-#    DEPENDS docs dist
-#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git add -A
-#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git commit -m "Release version ${PROJECT_VERSION}"
-#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push
-#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}" --force
-#    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push origin "v${PROJECT_VERSION}" --force
+    DEPENDS dist
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git add -A
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git commit -m "Release version ${PROJECT_VERSION}"
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}" --force
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push origin "v${PROJECT_VERSION}" --force
 
     # Extract release notes from CHANGELOG.md
     COMMAND ${CMAKE_COMMAND} -E echo "Extracting release notes for v${PROJECT_VERSION}..."
