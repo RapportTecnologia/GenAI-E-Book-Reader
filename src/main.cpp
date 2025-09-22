@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 
     QSettings settings;
     bool firstRun = settings.value("firstRun", true).toBool();
-    bool openFileDialog = false;
+    // Defer any user interaction until after the splash screen and main window are shown
 
     // Main window first so we can size splash relative to it
     MainWindow win;
@@ -40,15 +40,6 @@ int main(int argc, char* argv[]) {
                        Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
     splash.show();
 
-    if (firstRun) {
-        WelcomeDialog welcomeDialog;
-        if (welcomeDialog.exec() == QDialog::Accepted) {
-            settings.setValue("firstRun", false);
-            if (app.arguments().size() <= 1) {
-                openFileDialog = true;
-            }
-        }
-    }
 
     win.setWindowTitle(QString("%1 v%2 — Leitor")
                            .arg(genai::AppInfo::Name)
@@ -67,9 +58,17 @@ int main(int argc, char* argv[]) {
         // If a file was passed on command line, open it now
         if (app.arguments().size() > 1) {
             win.openPath(app.arguments().at(1));
-        } else if (openFileDialog) {
-            // On first run, after welcome, show file dialog
-            win.openFile();
+        }
+        // After the main window is visible, handle first-run welcome dialog
+        if (firstRun) {
+            WelcomeDialog welcomeDialog;
+            if (welcomeDialog.exec() == QDialog::Accepted) {
+                settings.setValue("firstRun", false);
+                // If no file was specified via CLI, prompt to open one now
+                if (app.arguments().size() <= 1) {
+                    win.openFile();
+                }
+            }
         }
     };
 
