@@ -162,6 +162,7 @@ if(UNIX AND NOT APPLE)
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Creating AppImage bundle in ${DIST_DIR}"
   )
+  
 endif()
 
 # Custom target to create icons. This will be a dependency for the main executable.
@@ -255,4 +256,14 @@ add_custom_target(github_release
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Creating GitHub release and uploading artifacts for v${PROJECT_VERSION}"
     VERBATIM
+)
+
+  # Convenience target: build dist and copy AppImage to user's Downloads
+add_custom_target(local_release
+  DEPENDS dist
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$ENV{HOME}/Downloads"
+  COMMAND ${CMAKE_COMMAND} -E remove "$ENV{HOME}/Downloads/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage" "$ENV{HOME}/Downloads/"
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMENT "Copying AppImage to ~/Downloads after building dist"
 )
