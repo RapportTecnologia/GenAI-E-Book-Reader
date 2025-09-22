@@ -25,6 +25,14 @@
 #include <QTextCursor>
 #include <QSignalBlocker>
 #include "ai/LlmClient.h"
+#if __has_include("Config.h")
+#  include "Config.h"
+#else
+#  define GENAI_OPENROUTER_API_KEY ""
+#endif
+#ifdef HAVE_QT_WEBENGINE
+#include <QWebEngineView>
+#endif
 
 namespace {
 // Defaults aimed at: Resumos, Sinônimos, Explicações e Chat sem delírios
@@ -48,6 +56,42 @@ const char* kDefaultPromptChat =
     "Você é um assistente que responde em pt-BR com exatidão e concisão.\n"
     "Jamais invente fatos.\n"
     "Se não tiver certeza, peça mais contexto ou informe a limitação.";
+}
+
+void LlmSettingsDialog::showOpenRouterCourtesyDialog() {
+    // Build a simple dialog explaining the courtesy key and showing the video
+    QDialog dlg(this);
+    dlg.setWindowTitle(tr("OpenRouter: chave de cortesia"));
+    dlg.resize(640, 420);
+    auto* layout = new QVBoxLayout(&dlg);
+
+    auto* msg = new QLabel(
+        tr("Para sua conveniência, ao selecionar o provedor OpenRouter.ai, configuramos uma chave de API de cortesia como padrão.\n\n"
+           "Essa chave é destinada a testes leves e uso casual. Para uso mais intenso e profissional, substitua pela sua própria chave em ‘API Key’."),
+        &dlg);
+    msg->setWordWrap(true);
+    layout->addWidget(msg);
+
+#ifdef HAVE_QT_WEBENGINE
+    // Embed YouTube video when WebEngine is available
+    auto* web = new QWebEngineView(&dlg);
+    web->setUrl(QUrl("https://www.youtube.com/embed/dHggyhodAH4"));
+    web->setMinimumHeight(300);
+    layout->addWidget(web, 1);
+#else
+    // Fallback: clickable link to the video
+    auto* link = new QLabel(&dlg);
+    link->setText("<a href=\"https://www.youtube.com/watch?v=dHggyhodAH4\">Assista ao vídeo no YouTube</a>");
+    link->setTextFormat(Qt::RichText);
+    link->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    link->setOpenExternalLinks(true);
+    layout->addWidget(link);
+#endif
+
+    auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok, &dlg);
+    layout->addWidget(buttons);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    dlg.exec();
 }
 
 void LlmSettingsDialog::onTestModel() {
@@ -246,6 +290,21 @@ void LlmSettingsDialog::onProviderChanged(int) {
     // Load per-provider API key first, then decide on listing
     migrateLegacyKeyIfNeeded(provider);
     apiKeyEdit_->setText(loadApiKeyForProvider(provider));
+    // If OpenRouter selected: ensure courtesy behavior
+    if (provider == QLatin1String("openrouter")) {
+        if (apiKeyEdit_->text().trimmed().isEmpty()) {
+            const QString courtesyKey = QString::fromUtf8(GENAI_OPENROUTER_API_KEY);
+            if (!courtesyKey.trimmed().isEmpty()) {
+                apiKeyEdit_->setText(courtesyKey);
+                appendDebug(tr("[OPENROUTER] Usando API key definida em build (Config.h)"));
+                // Persist immediately so that LlmClient and future sessions pick it up
+                saveApiKeyForProvider(provider, courtesyKey);
+            } else {
+                appendDebug(tr("[OPENROUTER] Nenhuma API key definida em build; aguardando usuário informar"));
+            }
+        }
+        showOpenRouterCourtesyDialog();
+    }
     populateModelsFor(provider);
     // Pick recommended default (first item) if available
     if (modelCombo_->count() > 0) modelCombo_->setCurrentIndex(0);

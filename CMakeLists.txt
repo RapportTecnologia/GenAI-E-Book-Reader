@@ -78,14 +78,40 @@ target_sources(genai_reader PRIVATE ${CMAKE_SOURCE_DIR}/resources/app.qrc)
 set(PHPLIST_URL_DEFAULT "http://arvoredossaberes.com.br/newsletter/lists/api/v2" CACHE STRING "Default PHPList API URL to write to .env if it doesn't exist")
 set(PHPLIST_USER_DEFAULT "" CACHE STRING "Default PHPList user to write to .env if it doesn't exist")
 set(PHPLIST_PASS_DEFAULT "" CACHE STRING "Default PHPList password to write to .env if it doesn't exist")
+set(OPENROUTER_API_KEY_DEFAULT "" CACHE STRING "Default OpenRouter API key to write to .env if it doesn't exist")
 
 set(ENV_FILE_PATH "${CMAKE_SOURCE_DIR}/.env")
 if(NOT EXISTS "${ENV_FILE_PATH}")
-  file(WRITE "${ENV_FILE_PATH}" "PHPLIST_URL=${PHPLIST_URL_DEFAULT}\nPHPLIST_USER=${PHPLIST_USER_DEFAULT}\nPHPLIST_PASS=${PHPLIST_PASS_DEFAULT}\n")
+  file(WRITE "${ENV_FILE_PATH}" "PHPLIST_URL=${PHPLIST_URL_DEFAULT}\nPHPLIST_USER=${PHPLIST_USER_DEFAULT}\nPHPLIST_PASS=${PHPLIST_PASS_DEFAULT}\nOPENROUTER_API_KEY=${OPENROUTER_API_KEY_DEFAULT}\n")
   message(STATUS "Created default .env at ${ENV_FILE_PATH}")
 else()
-  message(STATUS ".env already exists at ${ENV_FILE_PATH}; leaving unchanged")
+  # Ensure OPENROUTER_API_KEY key exists in .env; if missing, append it with default empty value
+  file(READ "${ENV_FILE_PATH}" _ENV_EXISTING)
+  string(FIND "${_ENV_EXISTING}" "OPENROUTER_API_KEY=" _HAS_OR_KEY)
+  if(_HAS_OR_KEY EQUAL -1)
+    file(APPEND "${ENV_FILE_PATH}" "OPENROUTER_API_KEY=${OPENROUTER_API_KEY_DEFAULT}\n")
+    message(STATUS "Appended OPENROUTER_API_KEY to existing .env")
+  endif()
+  message(STATUS ".env already exists at ${ENV_FILE_PATH}")
 endif()
+
+# Read OPENROUTER_API_KEY value from .env to inject into code
+file(READ "${ENV_FILE_PATH}" _ENV_TXT)
+set(OPENROUTER_API_KEY_VALUE "")
+string(REGEX MATCH "OPENROUTER_API_KEY[ \t]*=([^\n\r]*)" _OR_MATCH "${_ENV_TXT}")
+if(_OR_MATCH)
+  # CMAKE_MATCH_1 holds the captured value
+  set(OPENROUTER_API_KEY_VALUE "${CMAKE_MATCH_1}")
+endif()
+# Sanitize potential quotes or CRLF
+string(REGEX REPLACE "^\"(.*)\"$" "\\1" OPENROUTER_API_KEY_VALUE "${OPENROUTER_API_KEY_VALUE}")
+string(REPLACE "\r" "" OPENROUTER_API_KEY_VALUE "${OPENROUTER_API_KEY_VALUE}")
+
+# Generate a header with build-time constants
+set(GENERATED_INCLUDE_DIR "${CMAKE_BINARY_DIR}/generated")
+file(MAKE_DIRECTORY "${GENERATED_INCLUDE_DIR}")
+configure_file("${CMAKE_SOURCE_DIR}/include/Config.h.in" "${GENERATED_INCLUDE_DIR}/Config.h" @ONLY)
+target_include_directories(genai_reader PRIVATE "${GENERATED_INCLUDE_DIR}")
 
 # Doxygen target
 find_package(Doxygen QUIET)

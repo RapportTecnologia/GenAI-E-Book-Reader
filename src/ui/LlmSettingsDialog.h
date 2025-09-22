@@ -41,6 +41,8 @@ private:
     QString loadApiKeyForProvider(const QString& provider) const;
     void saveApiKeyForProvider(const QString& provider, const QString& key);
     void migrateLegacyKeyIfNeeded(const QString& provider) const;
+    // Courtesy notice for OpenRouter provider (shows embedded video when possible)
+    void showOpenRouterCourtesyDialog();
     // Ollama support
     void verifyOrAssistOllama();
     void fetchOpenWebUiModels();

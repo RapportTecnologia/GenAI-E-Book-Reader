@@ -1,0 +1,6 @@
+#pragma once
+
+// Build-time injected configuration values
+// This file is processed by CMake (configure_file) to generate Config.h
+
+#define GENAI_OPENROUTER_API_KEY "@OPENROUTER_API_KEY_VALUE@"
