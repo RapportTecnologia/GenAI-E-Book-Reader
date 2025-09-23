@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['haspendingimage_0',['hasPendingImage',['../d0/daf/classChatDock.html#a0f2b693611148d452bec91935481f42b',1,'ChatDock']]],
-  ['hasselection_1',['hasSelection',['../dc/ddc/classPdfViewerWidget.html#a02ad5b3e5418b770c144faf3044b64f1',1,'PdfViewerWidget']]]
+  ['goto_0',['goto',['../d4/db7/classgenai_1_1Reader.html#a0d699841a9426ec1546538f709482d81',1,'genai::Reader::goTo()'],['../d5/de3/classgenai_1_1DummyReader.html#a37a177489c33b32029393bbb2d2154d6',1,'genai::DummyReader::goTo()']]]
 ];

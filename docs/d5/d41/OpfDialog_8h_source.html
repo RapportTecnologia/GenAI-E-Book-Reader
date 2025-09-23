@@ -118,27 +118,32 @@ $(document).ready(function(){initNavTree('d5/d41/OpfDialog_8h_source.html','../.
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d8/d98/classOpfDialog.html#a9f67c0a352c31123c1617a7d6a1bcffe">setData</a>(<span class="keyword">const</span> <a class="code hl_struct" href="../../d6/d65/structOpfData.html">OpfData</a>&amp; <a class="code hl_function" href="../../d8/d98/classOpfDialog.html#a1d093ebb1e94f6d9fa4fe64384d099ad">data</a>);</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <a class="code hl_struct" href="../../d6/d65/structOpfData.html">OpfData</a> <a class="code hl_function" href="../../d8/d98/classOpfDialog.html#a1d093ebb1e94f6d9fa4fe64384d099ad">data</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">private</span> slots:</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordtype">void</span> toggleEdit();</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>signals:</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="../../d8/d98/classOpfDialog.html#ab3e63920fa0491271eb73334ac82a94c">   19</a></span>    <span class="keywordtype">void</span> <a class="code hl_signal" href="../../d8/d98/classOpfDialog.html#ab3e63920fa0491271eb73334ac82a94c">requestCompleteWithAi</a>();</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordtype">void</span> setEditable(<span class="keywordtype">bool</span> on);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">private</span> slots:</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordtype">void</span> toggleEdit();</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    QLineEdit* titleEdit_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    QLineEdit* authorEdit_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    QLineEdit* publisherEdit_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    QLineEdit* languageEdit_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    QLineEdit* idEdit_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    QPlainTextEdit* descriptionEdit_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    QPlainTextEdit* summaryEdit_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    QLineEdit* keywordsEdit_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    QPushButton* editBtn_ {<span class="keyword">nullptr</span>};</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>};</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordtype">void</span> setEditable(<span class="keywordtype">bool</span> on);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    QLineEdit* titleEdit_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    QLineEdit* authorEdit_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    QLineEdit* publisherEdit_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    QLineEdit* languageEdit_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    QLineEdit* idEdit_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    QPlainTextEdit* descriptionEdit_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    QPlainTextEdit* summaryEdit_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    QLineEdit* keywordsEdit_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    QPushButton* editBtn_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    QPushButton* aiBtn_ {<span class="keyword">nullptr</span>};</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>};</div>
 </div>
 <div class="ttc" id="aOpfStore_8h_html"><div class="ttname"><a href="../../d1/d18/OpfStore_8h.html">OpfStore.h</a></div></div>
 <div class="ttc" id="aclassOpfDialog_html"><div class="ttname"><a href="../../d8/d98/classOpfDialog.html">OpfDialog</a></div><div class="ttdef"><b>Definition</b> OpfDialog.h:10</div></div>
-<div class="ttc" id="aclassOpfDialog_html_a1d093ebb1e94f6d9fa4fe64384d099ad"><div class="ttname"><a href="../../d8/d98/classOpfDialog.html#a1d093ebb1e94f6d9fa4fe64384d099ad">OpfDialog::data</a></div><div class="ttdeci">OpfData data() const</div><div class="ttdef"><b>Definition</b> OpfDialog.cpp:82</div></div>
-<div class="ttc" id="aclassOpfDialog_html_a9f67c0a352c31123c1617a7d6a1bcffe"><div class="ttname"><a href="../../d8/d98/classOpfDialog.html#a9f67c0a352c31123c1617a7d6a1bcffe">OpfDialog::setData</a></div><div class="ttdeci">void setData(const OpfData &amp;data)</div><div class="ttdef"><b>Definition</b> OpfDialog.cpp:71</div></div>
+<div class="ttc" id="aclassOpfDialog_html_a1d093ebb1e94f6d9fa4fe64384d099ad"><div class="ttname"><a href="../../d8/d98/classOpfDialog.html#a1d093ebb1e94f6d9fa4fe64384d099ad">OpfDialog::data</a></div><div class="ttdeci">OpfData data() const</div><div class="ttdef"><b>Definition</b> OpfDialog.cpp:85</div></div>
+<div class="ttc" id="aclassOpfDialog_html_a9f67c0a352c31123c1617a7d6a1bcffe"><div class="ttname"><a href="../../d8/d98/classOpfDialog.html#a9f67c0a352c31123c1617a7d6a1bcffe">OpfDialog::setData</a></div><div class="ttdeci">void setData(const OpfData &amp;data)</div><div class="ttdef"><b>Definition</b> OpfDialog.cpp:74</div></div>
+<div class="ttc" id="aclassOpfDialog_html_ab3e63920fa0491271eb73334ac82a94c"><div class="ttname"><a href="../../d8/d98/classOpfDialog.html#ab3e63920fa0491271eb73334ac82a94c">OpfDialog::requestCompleteWithAi</a></div><div class="ttdeci">void requestCompleteWithAi()</div></div>
 <div class="ttc" id="astructOpfData_html"><div class="ttname"><a href="../../d6/d65/structOpfData.html">OpfData</a></div><div class="ttdef"><b>Definition</b> OpfStore.h:7</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

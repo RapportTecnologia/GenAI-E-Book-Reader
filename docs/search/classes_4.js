@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['hit_0',['Hit',['../d9/d40/structVectorIndex_1_1Hit.html',1,'VectorIndex']]]
+  ['embeddingindexer_0',['EmbeddingIndexer',['../de/d9c/classEmbeddingIndexer.html',1,'']]],
+  ['embeddingprovider_1',['EmbeddingProvider',['../db/def/classEmbeddingProvider.html',1,'']]],
+  ['embeddingsettingsdialog_2',['EmbeddingSettingsDialog',['../d0/d54/classEmbeddingSettingsDialog.html',1,'']]]
 ];

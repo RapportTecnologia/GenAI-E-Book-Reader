@@ -104,6 +104,7 @@ $(document).ready(function(){initNavTree('d3/db7/MainWindow_8cpp.html','../../')
 <code>#include &quot;<a class="el" href="../../d7/d5e/SummaryDialog_8h_source.html">ui/SummaryDialog.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d5/d41/OpfDialog_8h_source.html">ui/OpfDialog.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d1/d18/OpfStore_8h_source.html">ui/OpfStore.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../df/d59/OpfGenAiDialog_8h_source.html">ui/OpfGenAiDialog.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d5/d11/LlmSettingsDialog_8h_source.html">ui/LlmSettingsDialog.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d4/d53/EmbeddingSettingsDialog_8h_source.html">ui/EmbeddingSettingsDialog.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d4/dff/DictionarySettingsDialog_8h_source.html">ui/DictionarySettingsDialog.h</a>&quot;</code><br />
@@ -180,16 +181,17 @@ $(document).ready(function(){initNavTree('d3/db7/MainWindow_8cpp.html','../../')
 <code>#include &quot;<a class="el" href="../../d8/df9/EmbeddingIndexer_8h_source.html">ai/EmbeddingIndexer.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d7/d44/EmbeddingProvider_8h_source.html">ai/EmbeddingProvider.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../dd/dcd/VectorIndex_8h_source.html">ai/VectorIndex.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../db/dbc/BookProviders_8h_source.html">ui/BookProviders.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d4/d2b/OpfMergeDialog_8h_source.html">ui/OpfMergeDialog.h</a>&quot;</code><br />
 <code>#include &lt;QPdfDocument&gt;</code><br />
 <code>#include &lt;QPdfBookmarkModel&gt;</code><br />
 <code>#include &lt;QCryptographicHash&gt;</code><br />
+<code>#include &lt;QSet&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:af4f1932deaa3e660e8bc032c08af9829" id="r_af4f1932deaa3e660e8bc032c08af9829"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db7/MainWindow_8cpp.html#af4f1932deaa3e660e8bc032c08af9829">saveRecentEntries</a> (QSettings &amp;settings, const QVariantList &amp;entries)</td></tr>
 <tr class="separator:af4f1932deaa3e660e8bc032c08af9829"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aadbe7c9c750816cd1a670ecff73e5c7d" id="r_aadbe7c9c750816cd1a670ecff73e5c7d"><td class="memItemLeft" align="right" valign="top">QVariantMap&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db7/MainWindow_8cpp.html#aadbe7c9c750816cd1a670ecff73e5c7d">extractPdfMeta</a> (const QString &amp;path)</td></tr>
-<tr class="separator:aadbe7c9c750816cd1a670ecff73e5c7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fddc7689a83225c326a09bf5211bc29" id="r_a0fddc7689a83225c326a09bf5211bc29"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/db7/MainWindow_8cpp.html#a0fddc7689a83225c326a09bf5211bc29">entryMatches</a> (const QVariantMap &amp;e, const QString &amp;needle)</td></tr>
 <tr class="separator:a0fddc7689a83225c326a09bf5211bc29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -216,24 +218,6 @@ Functions</h2></td></tr>
           <td></td>
           <td>)</td>
           <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aadbe7c9c750816cd1a670ecff73e5c7d" name="aadbe7c9c750816cd1a670ecff73e5c7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aadbe7c9c750816cd1a670ecff73e5c7d">&#9670;&#160;</a></span>extractPdfMeta()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">QVariantMap extractPdfMeta </td>
-          <td>(</td>
-          <td class="paramtype">const QString &amp;&#160;</td>
-          <td class="paramname"><em>path</em></td><td>)</td>
-          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">

@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['version_0',['Version',['../de/d5f/classgenai_1_1AppInfo.html#a6fbbd62c44efd2876818ec1df04a826f',1,'genai::AppInfo']]]
+  ['score_0',['score',['../d9/d40/structVectorIndex_1_1Hit.html#a34b27cae340a9415c0b7ff0a7b4f475b',1,'VectorIndex::Hit']]],
+  ['site_1',['site',['../d3/d5b/structgenai_1_1DeveloperInfo.html#a2581489aec7b43bcd04530d527f91948',1,'genai::DeveloperInfo']]],
+  ['source_2',['source',['../d6/d65/structOpfData.html#a97123b3022f469110c43f7ccd5a1eb47',1,'OpfData']]],
+  ['summary_3',['summary',['../d6/d65/structOpfData.html#a93d5c6b8d40bf678d655620460aeed1d',1,'OpfData']]]
 ];
