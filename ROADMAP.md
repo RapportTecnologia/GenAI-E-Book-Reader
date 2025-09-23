@@ -92,6 +92,12 @@ Resumo: abertura de PDF/EPUB, navegação (anterior/próxima, seleção direta p
 - Adicionado suporte a arquivos OPF (metadados de e‑books).
 - Adicionado target no CMake para fazer release local para testes.
 
+## 0.1.10 – Busca e Chat (Function Calling)
+- Melhoria nas buscas: refinamentos no fluxo de busca full‑text e semântica (UX e resultados).
+- Indicador de Function Calling na UI de Configurações de LLM: caixa de texto somente leitura que informa se o provedor/modelo selecionado declara suporte a Function Calling.
+- Documentação: notas por provedor/modelo sobre suporte a Function Calling e limitações conhecidas.
+- Observação: a implementação de Function Calling depende da capacidade anunciada pela API do provedor/modelo e poderá evoluir ao longo do ciclo.
+
 ## 0.2.0 – TTS e Dicionario
 - Reestruturar o MainWindows para reduzir seu tamanho, aplicando fachadas para agrupar funções por contextos gráficos.
 - Continuar o desenvolvimento: Dicionário on-click (mínimo 1 idioma), PT-BR e EN-US, AR-EG, AR-SA, AR-YE, AR-DZ, AR-KW, AR-LB, AR-LY, AR-MA, AR-OM, AR-QA, AR-SA, AR-SY, AR-TN, AR-AE, AR-IL, AR-JO, AR-LB, AR-PS, AR-SY, AR-YE, Chines,

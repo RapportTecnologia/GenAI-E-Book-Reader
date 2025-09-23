@@ -3,6 +3,7 @@
 #include "ui/SummaryDialog.h"
 #include "ui/ChatDock.h"
 #include "ui/PdfViewerWidget.h"
+#include "ui/ViewerWidget.h"
 
 #include <QMessageBox>
 #include <QStatusBar>
@@ -18,6 +19,9 @@
 #include <QFileInfo>
 #include <QSettings>
 #include <QRegularExpression>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 void MainWindow::onRequestSummarizeDocument() {
     if (!llm_) return;
@@ -110,6 +114,58 @@ void MainWindow::onRequestSummarizeDocument() {
     });
 }
 
+// ---- LLM Function Calling dispatcher and tools ----
+void MainWindow::handleLlmToolCalls(const QJsonArray& toolCalls) {
+    for (const auto& item : toolCalls) {
+        const QJsonObject tc = item.toObject();
+        const QJsonObject fn = tc.value("function").toObject();
+        const QString name = fn.value("name").toString();
+        const QString argsStr = fn.value("arguments").toString();
+        QJsonObject args;
+        if (!argsStr.isEmpty()) {
+            const auto parsed = QJsonDocument::fromJson(argsStr.toUtf8());
+            if (parsed.isObject()) args = parsed.object();
+        }
+        if (name == QLatin1String("propose_search")) {
+            const QString q = args.value("query").toString();
+            toolProposeSearch(q);
+        } else if (name == QLatin1String("search_next")) {
+            toolNextResult();
+        } else if (name == QLatin1String("search_prev")) {
+            toolPrevResult();
+        } else if (name == QLatin1String("goto_page")) {
+            const int page = args.value("page").toInt();
+            toolGotoPage(page);
+        }
+    }
+}
+
+void MainWindow::toolProposeSearch(const QString& query) {
+    if (!searchEdit_) return;
+    const QString qnorm = query.trimmed();
+    if (qnorm.isEmpty()) return;
+    searchEdit_->setText(qnorm);
+    // Trigger search to populate results, then move to the first (equiv. to Próximo)
+    onSearchTriggered();
+}
+
+void MainWindow::toolNextResult() {
+    onSearchNext();
+}
+
+void MainWindow::toolPrevResult() {
+    onSearchPrev();
+}
+
+void MainWindow::toolGotoPage(int page) {
+    if (page <= 0) return;
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        pv->setCurrentPage(static_cast<unsigned int>(page));
+        pv->flashHighlight();
+        updateStatus();
+    }
+}
+
 void MainWindow::onRequestSynonyms(const QString& wordOrLocution) {
     if (!llm_) return;
     const auto choice = QMessageBox::question(this, tr("Confirmar"), tr("Enviar o trecho selecionado à IA para obter sinônimos?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
@@ -189,14 +245,48 @@ void MainWindow::onChatSendMessage(const QString& text) {
     if (chatDock_) chatDock_->appendUser(text);
     statusBar()->showMessage(tr("Enviando ao chat da IA..."));
     const auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
-    llm_->chatWithMessages(msgs, [this](QString out, QString err){
-        QMetaObject::invokeMethod(this, [this, out, err](){
+    // Define OpenAI-style tools so that the model can request in-app actions
+    QJsonArray tools;
+    // 1) Propose/execute a search
+    {
+        QJsonObject tool; tool["type"] = "function";
+        QJsonObject fn; fn["name"] = "propose_search";
+        QJsonObject params;
+        params["type"] = "object";
+        QJsonObject props; QJsonObject q; q["type"] = "string"; q["description"] = tr("Reescreva/normalize a consulta a ser pesquisada no documento (pt-BR)"); props["query"] = q;
+        params["properties"] = props; QJsonArray req; req.append("query"); params["required"] = req;
+        fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+    }
+    // 2) Navigate next/prev search results
+    {
+        QJsonObject tool; tool["type"] = "function"; QJsonObject fn; fn["name"] = "search_next"; QJsonObject params; params["type"] = "object"; params["properties"] = QJsonObject(); fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+    }
+    {
+        QJsonObject tool; tool["type"] = "function"; QJsonObject fn; fn["name"] = "search_prev"; QJsonObject params; params["type"] = "object"; params["properties"] = QJsonObject(); fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+    }
+    // 3) Go to a specific page (1-based)
+    {
+        QJsonObject tool; tool["type"] = "function";
+        QJsonObject fn; fn["name"] = "goto_page";
+        QJsonObject params; params["type"] = "object";
+        QJsonObject props; QJsonObject p; p["type"] = "integer"; p["minimum"] = 1; p["description"] = tr("Número da página (1-based)"); props["page"] = p;
+        params["properties"] = props; QJsonArray req; req.append("page"); params["required"] = req;
+        fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+    }
+
+    llm_->chatWithMessagesTools(msgs, tools, [this](QString out, QJsonArray toolCalls, QString err){
+        QMetaObject::invokeMethod(this, [this, out, toolCalls, err](){
             if (!err.isEmpty()) {
                 showLongAlert(tr("Erro na IA"), err);
                 statusBar()->clearMessage();
                 return;
             }
-            if (chatDock_) chatDock_->appendAssistant(out);
+            // Dispatch tool calls first (they may change UI state/search)
+            if (!toolCalls.isEmpty()) {
+                handleLlmToolCalls(toolCalls);
+            }
+            // Append any assistant content if present
+            if (!out.trimmed().isEmpty() && chatDock_) chatDock_->appendAssistant(out);
             statusBar()->clearMessage();
             saveChatForCurrentFile();
         });

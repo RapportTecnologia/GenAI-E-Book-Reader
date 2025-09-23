@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVector>
 #include <QPushButton>
+#include <QCheckBox>
 
 class QComboBox;
 class QLineEdit;
@@ -25,6 +26,7 @@ private slots:
     void onApiKeyEdited(const QString&);
     void onModelFilterEdited(const QString& text);
     void onTestModel();
+    void onModelChanged(int index);
 
 private:
     // Debugging helpers
@@ -49,6 +51,9 @@ private:
     void fetchGenerativaModels();
     void fetchOpenAiModels();
     void fetchOllamaModels();
+    void updateFunctionCallingSupport();
+    bool inferFunctionCallingSupport(const QString& provider,
+                                     const QString& modelId) const;
 
     QComboBox* providerCombo_ {nullptr};
     QComboBox* modelCombo_ {nullptr};
@@ -60,6 +65,9 @@ private:
     QPlainTextEdit* promptSummaries_ {nullptr};
     QPlainTextEdit* promptExplanations_ {nullptr};
     QPlainTextEdit* promptChat_ {nullptr};
+    QCheckBox* functionCallingCheck_ {nullptr};
+    // Cache of capabilities obtained from providers when available
+    QMap<QString, bool> modelSupportsFunctions_; // key: provider + "::" + modelId
 
     QDialogButtonBox* buttons_ {nullptr};
 

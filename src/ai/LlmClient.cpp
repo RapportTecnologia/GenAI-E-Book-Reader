@@ -14,6 +14,67 @@ LlmClient::LlmClient(QObject* parent) : QObject(parent) {
     reloadSettings();
 }
 
+void LlmClient::postJsonForTools(const QUrl& url, const QJsonObject& body,
+                                 std::function<void(QString, QJsonArray, QString)> onFinished) {
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    if (!apiKey_.isEmpty()) {
+        req.setRawHeader("Authorization", QByteArray("Bearer ") + apiKey_.toUtf8());
+    }
+    if (provider_ == QLatin1String("openrouter")) {
+        const QByteArray referer = QByteArray("https://rapport.tec.br/genai-e-book-reader");
+        req.setRawHeader("HTTP-Referer", referer);
+        const QByteArray title = QCoreApplication::applicationName().isEmpty()
+                                    ? QByteArray("GenAI E-Book Reader")
+                                    : QCoreApplication::applicationName().toUtf8();
+        req.setRawHeader("X-Title", title);
+    }
+    const QByteArray data = QJsonDocument(body).toJson(QJsonDocument::Compact);
+    qInfo().noquote() << "[LlmClient][HTTP][POST][tools]" << url.toString() << "provider=" << provider_ << " payload_size=" << data.size();
+    auto* reply = nam_->post(req, data);
+    QObject::connect(reply, &QNetworkReply::finished, this, [this, reply, onFinished]() {
+        const auto guard = std::unique_ptr<QNetworkReply, void(*)(QNetworkReply*)>(reply, [](QNetworkReply* r){ r->deleteLater(); });
+        if (reply->error() != QNetworkReply::NoError) {
+            const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+            const QByteArray raw = reply->readAll();
+            QString body = QString::fromUtf8(raw).trimmed();
+            if (body.size() > 1200) body = body.left(1200) + "...";
+            QString err = QString("HTTP %1 — %2\n%3").arg(status).arg(reply->errorString(), body);
+            qWarning().noquote() << "[LlmClient][HTTP][ERROR][tools] status=" << status << " err=" << reply->errorString();
+            onFinished(QString(), QJsonArray(), err);
+            return;
+        }
+        const QByteArray raw = reply->readAll();
+        qInfo().noquote() << "[LlmClient][HTTP][OK][tools] bytes=" << raw.size();
+        const QJsonDocument doc = QJsonDocument::fromJson(raw);
+        if (!doc.isObject()) { onFinished(QString::fromUtf8(raw), QJsonArray(), QString()); return; }
+        const QJsonObject obj = doc.object();
+        QString content;
+        QJsonArray toolCalls;
+        if (provider_ == QLatin1String("ollama")) {
+            // No tool support here; mirror regular content extraction
+            if (obj.contains("message")) {
+                const auto m = obj.value("message").toObject();
+                content = m.value("content").toString();
+            }
+            if (content.isEmpty()) content = obj.value("response").toString();
+        } else {
+            if (obj.contains("choices")) {
+                const auto arr = obj.value("choices").toArray();
+                if (!arr.isEmpty()) {
+                    const auto choice = arr.first().toObject();
+                    const auto msg = choice.value("message").toObject();
+                    content = msg.value("content").toString();
+                    // OpenAI-style: message.tool_calls is an array
+                    const auto tc = msg.value("tool_calls");
+                    if (tc.isArray()) toolCalls = tc.toArray();
+                }
+            }
+        }
+        onFinished(content, toolCalls, QString());
+    });
+}
+
 void LlmClient::chatWithMessages(const QList<QPair<QString, QString>>& messagesIn,
                                  std::function<void(QString, QString)> onFinished) {
     // Choose endpoint per provider
@@ -62,6 +123,45 @@ void LlmClient::chatWithMessages(const QList<QPair<QString, QString>>& messagesI
     }
     body["messages"] = messages;
     postJson(url, body, onFinished);
+}
+
+void LlmClient::chatWithMessagesTools(const QList<QPair<QString, QString>>& messagesIn,
+                                      const QJsonArray& tools,
+                                      std::function<void(QString, QJsonArray, QString)> onFinished) {
+    // Build OpenAI-compatible request with tools. Providers that ignore will just return normal content.
+    const QUrl url(provider_ == QLatin1String("ollama")
+                       ? QUrl(baseUrl_ + "/chat")
+                       : QUrl(baseUrl_ + "/v1/chat/completions"));
+    QJsonObject body; body["model"] = model_;
+    QJsonArray messages;
+    // Always prepend MathJax directive
+    const QString mathDirective = QStringLiteral(
+        "Quando incluir fórmulas ou equações matemáticas nas respostas, formate-as usando LaTeX adequado ao MathJax: "
+        "use $...$ para inline e $$...$$ para exibição. Você também pode usar \\(..\\) e \\[...\\]. "
+        "Não use imagens para fórmulas; sempre use notação LaTeX renderizável.");
+    {
+        QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = mathDirective; messages.append(sysMsg);
+    }
+    bool hasSystem = false;
+    for (const auto& rc : messagesIn) {
+        const QString role = rc.first.trimmed().toLower();
+        const QString content = rc.second;
+        QJsonObject m; m["role"] = role; m["content"] = content; messages.append(m);
+        if (role == QLatin1String("system")) hasSystem = true;
+    }
+    if (!hasSystem) {
+        QSettings s;
+        const QString sys = s.value("ai/prompts/chat").toString();
+        if (!sys.trimmed().isEmpty()) { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = sys; messages.prepend(sysMsg); }
+        const QString nick = s.value("reader/nickname").toString().trimmed();
+        if (!nick.isEmpty()) { QJsonObject sysNick; sysNick["role"] = "system"; sysNick["content"] = QStringLiteral("Quando apropriado, trate o usuário pelo apelido '%1'.").arg(nick); messages.prepend(sysNick); }
+    }
+    body["messages"] = messages;
+    if (provider_ != QLatin1String("ollama")) {
+        // Only OpenAI-style endpoints support tools (body field). Ollama has a different tools API not used here.
+        if (!tools.isEmpty()) body["tools"] = tools;
+    }
+    postJsonForTools(url, body, onFinished);
 }
 
 void LlmClient::chatWithImage(const QString& userPrompt, const QString& imageDataUrl, std::function<void(QString, QString)> onFinished) {
