@@ -15,6 +15,9 @@ public:
     void setData(const OpfData& data);
     OpfData data() const;
 
+signals:
+    void requestCompleteWithAi();
+
 private slots:
     void toggleEdit();
 
@@ -30,4 +33,5 @@ private:
     QPlainTextEdit* summaryEdit_ {nullptr};
     QLineEdit* keywordsEdit_ {nullptr};
     QPushButton* editBtn_ {nullptr};
+    QPushButton* aiBtn_ {nullptr};
 };

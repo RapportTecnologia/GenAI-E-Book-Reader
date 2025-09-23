@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['embeddingindexer_0',['EmbeddingIndexer',['../de/d9c/classEmbeddingIndexer.html',1,'']]],
-  ['embeddingprovider_1',['EmbeddingProvider',['../db/def/classEmbeddingProvider.html',1,'']]],
-  ['embeddingsettingsdialog_2',['EmbeddingSettingsDialog',['../d0/d54/classEmbeddingSettingsDialog.html',1,'']]]
+  ['developerinfo_0',['DeveloperInfo',['../d3/d5b/structgenai_1_1DeveloperInfo.html',1,'genai']]],
+  ['dictionarysettingsdialog_1',['DictionarySettingsDialog',['../d5/da4/classDictionarySettingsDialog.html',1,'']]],
+  ['dummyreader_2',['DummyReader',['../d5/de3/classgenai_1_1DummyReader.html',1,'genai']]]
 ];

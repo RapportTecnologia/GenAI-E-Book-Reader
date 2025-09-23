@@ -54,6 +54,7 @@ bool OpfStore::read(const QString& opfPath, OpfData* out, QString* errorMsg) {
             else if (name == QLatin1String("dc:language")) data.language = readTextElem(xr);
             else if (name == QLatin1String("dc:identifier")) data.identifier = readTextElem(xr);
             else if (name == QLatin1String("dc:description")) data.description = readTextElem(xr);
+            else if (name == QLatin1String("dc:format")) data.format = readTextElem(xr);
             else if (name == QLatin1String("meta")) {
                 const auto attrs = xr.attributes();
                 const QString nameAttr = attrs.value("name").toString();
@@ -61,6 +62,12 @@ bool OpfStore::read(const QString& opfPath, OpfData* out, QString* errorMsg) {
                     data.summary = attrs.value("content").toString();
                 } else if (nameAttr == QLatin1String("keywords")) {
                     data.keywords = attrs.value("content").toString();
+                } else if (nameAttr == QLatin1String("edition")) {
+                    data.edition = attrs.value("content").toString();
+                } else if (nameAttr == QLatin1String("source")) {
+                    data.source = attrs.value("content").toString();
+                } else if (nameAttr == QLatin1String("isbn")) {
+                    data.isbn = attrs.value("content").toString();
                 }
             }
         }
@@ -96,6 +103,7 @@ bool OpfStore::write(const QString& opfPath, const OpfData& d, QString* errorMsg
     if (!d.language.isEmpty()) xw.writeTextElement("dc:language", d.language);
     if (!d.identifier.isEmpty()) xw.writeTextElement("dc:identifier", d.identifier);
     if (!d.description.isEmpty()) xw.writeTextElement("dc:description", d.description);
+    if (!d.format.isEmpty()) xw.writeTextElement("dc:format", d.format);
     if (!d.summary.isEmpty()) {
         xw.writeEmptyElement("meta");
         xw.writeAttribute("name", "summary");
@@ -105,6 +113,21 @@ bool OpfStore::write(const QString& opfPath, const OpfData& d, QString* errorMsg
         xw.writeEmptyElement("meta");
         xw.writeAttribute("name", "keywords");
         xw.writeAttribute("content", d.keywords);
+    }
+    if (!d.edition.isEmpty()) {
+        xw.writeEmptyElement("meta");
+        xw.writeAttribute("name", "edition");
+        xw.writeAttribute("content", d.edition);
+    }
+    if (!d.source.isEmpty()) {
+        xw.writeEmptyElement("meta");
+        xw.writeAttribute("name", "source");
+        xw.writeAttribute("content", d.source);
+    }
+    if (!d.isbn.isEmpty()) {
+        xw.writeEmptyElement("meta");
+        xw.writeAttribute("name", "isbn");
+        xw.writeAttribute("content", d.isbn);
     }
 
     xw.writeEndElement(); // metadata

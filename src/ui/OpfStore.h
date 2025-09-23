@@ -13,6 +13,11 @@ struct OpfData {
     QString description; // long description
     QString summary;     // executive summary
     QString keywords;    // comma-separated
+    // Extended fields (optional)
+    QString edition;     // e.g., Second Edition
+    QString source;      // e.g., origin site (WeLib.org, dokumen.pub)
+    QString format;      // e.g., PDF, DJVU (may map to dc:format)
+    QString isbn;        // canonical ISBN if available
 };
 
 class OpfStore {

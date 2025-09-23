@@ -50,6 +50,7 @@ class DictionarySettingsDialog;
 class RecentFilesDialog;
 class QPdfBookmarkModel;
 class OpfDialog;
+class OpfGenAiDialog;
 
 #include "ui/OpfStore.h"
 
@@ -160,6 +161,8 @@ private slots:
     void onRequestSummarizeDocument();
     /** \brief Abre o diálogo de metadados OPF. */
     void openOpfMetadataDialog();
+    /** \brief Completa metadados OPF faltantes via IA (JSON estrito, sem inventar). */
+    void completeOpfWithGenAi();
 
 private:
     void buildUi();
