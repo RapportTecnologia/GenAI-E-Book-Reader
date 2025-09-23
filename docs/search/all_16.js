@@ -8,18 +8,18 @@ var searchData=
   ['mainwindow_2ecpp_5',['MainWindow.cpp',['../d3/db7/MainWindow_8cpp.html',1,'']]],
   ['mainwindow_2eh_6',['MainWindow.h',['../da/d9c/MainWindow_8h.html',1,'']]],
   ['mainwindow_5fllm_2ecpp_7',['MainWindow_llm.cpp',['../d5/d5a/MainWindow__llm_8cpp.html',1,'']]],
-  ['markdown_8',['0.1.6 – RAG, MathJax e Markdown',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md69',1,'']]],
-  ['mathjax_20e_20markdown_9',['0.1.6 – RAG, MathJax e Markdown',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md69',1,'']]],
+  ['markdown_8',['0.1.6 – RAG, MathJax e Markdown',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md68',1,'']]],
+  ['mathjax_20e_20markdown_9',['0.1.6 – RAG, MathJax e Markdown',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md68',1,'']]],
   ['matriz_20de_20rastreabilidade_20resumo_10',['5) Matriz de Rastreabilidade (resumo)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md33',1,'']]],
   ['md_11',['GenAI E-Book Reader — Plano de Desenvolvimento (baseado em REQUISITOS.md)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html',1,'']]],
-  ['melhorias_20ux_12',['0.6.0 – Integração Calibre e Melhorias UX',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md77',1,'']]],
+  ['melhorias_20ux_12',['0.6.0 – Integração Calibre e Melhorias UX',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md76',1,'']]],
   ['message_13',['message',['../d4/d22/structgenai_1_1OpenResult.html#ab7217863270e7dcb79c544a834c3eba4',1,'genai::OpenResult']]],
-  ['metric_14',['metric',['../de/d9c/classEmbeddingIndexer.html#a348407b5efe4b945f381a8748b87fb12',1,'EmbeddingIndexer::metric()'],['../d3/db0/classVectorIndex.html#ace2651b1881aa059c7589434ebbc4174',1,'VectorIndex::Metric']]],
+  ['metric_14',['metric',['../d3/db0/classVectorIndex.html#ace2651b1881aa059c7589434ebbc4174',1,'VectorIndex::Metric'],['../de/d9c/classEmbeddingIndexer.html#a348407b5efe4b945f381a8748b87fb12',1,'EmbeddingIndexer::metric()']]],
   ['mitigações_20prioritários_15',['8) Riscos e Mitigações (prioritários)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md36',1,'']]],
   ['model_16',['model',['../d1/dd6/structEmbeddingProvider_1_1Config.html#ae1b4aeb7802b59f8fb2e63e1d9b3c57b',1,'EmbeddingProvider::Config']]],
   ['module_5fai_2edox_17',['module_ai.dox',['../db/d71/module__ai_8dox.html',1,'']]],
   ['module_5fcore_2edox_18',['module_core.dox',['../dd/de8/module__core_8dox.html',1,'']]],
   ['module_5fui_2edox_19',['module_ui.dox',['../df/d37/module__ui_8dox.html',1,'']]],
   ['mvp_20',['mvp',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md29',1,'1) Estratégia e Escopo do MVP'],['..//home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/README.md#autotoc_md5',1,'Principais Recursos (MVP)']]],
-  ['mvp_20leitura_20básica_20entregue_20na_20v0_201_200_21',['0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md64',1,'']]]
+  ['mvp_20leitura_20básica_20entregue_20na_20v0_201_200_21',['0.1.0 – MVP Leitura Básica (Entregue na v0.1.0)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md63',1,'']]]
 ];

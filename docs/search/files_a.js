@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['summarydialog_2ecpp_0',['SummaryDialog.cpp',['../d1/d40/SummaryDialog_8cpp.html',1,'']]],
-  ['summarydialog_2eh_1',['SummaryDialog.h',['../d7/d5e/SummaryDialog_8h.html',1,'']]]
+  ['tutorial_2emd_0',['TUTORIAL.md',['../dd/d3d/TUTORIAL_8md.html',1,'']]],
+  ['tutorialdialog_2ecpp_1',['TutorialDialog.cpp',['../d4/daf/TutorialDialog_8cpp.html',1,'']]],
+  ['tutorialdialog_2eh_2',['TutorialDialog.h',['../de/d04/TutorialDialog_8h.html',1,'']]]
 ];

@@ -1,29 +1,19 @@
 <map id="GenAi&#45;E&#45;Book&#45;Reader/src/ui/OpfStore.h" name="GenAi&#45;E&#45;Book&#45;Reader/src/ui/OpfStore.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="648,5,811,45"/>
-<area shape="rect" id="Node000002" href="$db/dbc/BookProviders_8h.html" title=" " alt="" coords="276,93,447,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="636,51,443,96,441,91,635,46"/>
-<area shape="rect" id="Node000004" href="$d3/db7/MainWindow_8cpp.html" title=" " alt="" coords="631,181,806,221"/>
-<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="713,58,699,94,696,117,699,140,712,180,707,182,694,141,691,117,693,93,708,57"/>
-<area shape="rect" id="Node000005" href="$da/d9c/MainWindow_8h.html" title="Janela principal do GenAI E&#45;Book Reader." alt="" coords="471,93,633,133"/>
-<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="679,54,592,96,590,91,677,49"/>
-<area shape="rect" id="Node000008" href="$d5/d41/OpfDialog_8h.html" title=" " alt="" coords="708,93,871,133"/>
-<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="753,55,778,92,774,95,748,58"/>
-<area shape="rect" id="Node000010" href="$d4/d2b/OpfMergeDialog_8h.html" title=" " alt="" coords="895,93,1078,133"/>
-<area shape="poly" id="edge12_Node000001_Node000010" title=" " alt="" coords="800,47,931,91,929,96,798,52"/>
-<area shape="rect" id="Node000012" href="$d1/d4a/OpfStore_8cpp.html" title=" " alt="" coords="1103,93,1265,133"/>
-<area shape="poly" id="edge15_Node000001_Node000012" title=" " alt="" coords="825,41,1091,91,1103,93,1102,98,1090,96,824,46"/>
-<area shape="rect" id="Node000003" href="$db/d89/BookProviders_8cpp.html" title=" " alt="" coords="5,181,192,221"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="292,140,157,184,155,179,290,135"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="454,134,641,179,640,184,452,139"/>
-<area shape="poly" id="edge7_Node000005_Node000004" title=" " alt="" coords="602,137,683,179,681,184,599,142"/>
-<area shape="rect" id="Node000006" href="$df/d0a/main_8cpp.html" title=" " alt="" coords="216,181,379,221"/>
-<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="484,140,354,184,352,179,482,135"/>
-<area shape="rect" id="Node000007" href="$d5/d5a/MainWindow__llm_8cpp.html" title=" " alt="" coords="403,181,607,221"/>
-<area shape="poly" id="edge8_Node000005_Node000007" title=" " alt="" coords="538,147,518,182,513,180,533,144"/>
-<area shape="poly" id="edge10_Node000008_Node000004" title=" " alt="" coords="767,146,736,183,732,179,763,142"/>
-<area shape="rect" id="Node000009" href="$db/d55/OpfDialog_8cpp.html" title=" " alt="" coords="831,181,993,221"/>
-<area shape="poly" id="edge11_Node000008_Node000009" title=" " alt="" coords="829,139,886,179,883,183,826,143"/>
-<area shape="poly" id="edge13_Node000010_Node000004" title=" " alt="" coords="916,140,778,184,777,179,914,135"/>
-<area shape="rect" id="Node000011" href="$d2/de2/OpfMergeDialog_8cpp.html" title=" " alt="" coords="1018,181,1217,221"/>
-<area shape="poly" id="edge14_Node000010_Node000011" title=" " alt="" coords="1028,139,1090,179,1087,183,1025,143"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="461,5,624,45"/>
+<area shape="rect" id="Node000002" href="$d3/db7/MainWindow_8cpp.html" title=" " alt="" coords="421,181,595,221"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="526,58,512,94,507,141,508,181,503,181,501,140,507,93,521,57"/>
+<area shape="rect" id="Node000003" href="$da/d9c/MainWindow_8h.html" title="Janela principal do GenAI E&#45;Book Reader." alt="" coords="260,93,423,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="487,53,386,96,384,91,485,48"/>
+<area shape="rect" id="Node000006" href="$d5/d41/OpfDialog_8h.html" title=" " alt="" coords="521,93,684,133"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="566,55,592,92,587,95,562,58"/>
+<area shape="rect" id="Node000008" href="$d1/d4a/OpfStore_8cpp.html" title=" " alt="" coords="708,93,871,133"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="611,47,736,91,734,96,609,52"/>
+<area shape="poly" id="edge4_Node000003_Node000002" title=" " alt="" coords="391,137,473,179,470,184,389,142"/>
+<area shape="rect" id="Node000004" href="$df/d0a/main_8cpp.html" title=" " alt="" coords="5,181,168,221"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="273,140,143,184,142,179,272,135"/>
+<area shape="rect" id="Node000005" href="$d5/d5a/MainWindow__llm_8cpp.html" title=" " alt="" coords="193,181,397,221"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="327,147,307,182,303,180,322,144"/>
+<area shape="poly" id="edge7_Node000006_Node000002" title=" " alt="" coords="573,145,531,183,527,179,570,141"/>
+<area shape="rect" id="Node000007" href="$db/d55/OpfDialog_8cpp.html" title=" " alt="" coords="620,181,783,221"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="636,140,681,179,678,183,633,144"/>
 </map>

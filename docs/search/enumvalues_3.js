@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['google_0',['Google',['../d0/d46/classOpfMergeDialog.html#a8c5820b568605504aff03efdb08aa15ca8b36e9207c24c76e6719268e49201d94',1,'OpfMergeDialog']]]
+  ['l2_0',['L2',['../d3/db0/classVectorIndex.html#ace2651b1881aa059c7589434ebbc4174a7e6aa2d53f6ee2b1a34b017fa403cb76',1,'VectorIndex']]]
 ];

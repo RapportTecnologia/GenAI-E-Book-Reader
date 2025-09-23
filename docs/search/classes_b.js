@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['summarydialog_0',['SummaryDialog',['../da/d99/classSummaryDialog.html',1,'']]]
+  ['tutorialdialog_0',['TutorialDialog',['../d8/df9/classTutorialDialog.html',1,'']]]
 ];

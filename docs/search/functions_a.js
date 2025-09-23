@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['main_0',['main',['../df/d0a/main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main.cpp']]],
-  ['mainwindow_1',['MainWindow',['../d6/d1a/classMainWindow.html#a996c5a2b6f77944776856f08ec30858d',1,'MainWindow']]],
-  ['metric_2',['metric',['../de/d9c/classEmbeddingIndexer.html#a348407b5efe4b945f381a8748b87fb12',1,'EmbeddingIndexer']]]
+  ['nextpage_0',['nextPage',['../dc/ddc/classPdfViewerWidget.html#aa945f266107808255316222f89f18f1e',1,'PdfViewerWidget']]]
 ];

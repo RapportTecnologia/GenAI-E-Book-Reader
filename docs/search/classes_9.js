@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['params_0',['Params',['../d6/d43/structEmbeddingIndexer_1_1Params.html',1,'EmbeddingIndexer']]],
-  ['pdfviewerwidget_1',['PdfViewerWidget',['../dc/ddc/classPdfViewerWidget.html',1,'']]]
+  ['reader_0',['Reader',['../d4/db7/classgenai_1_1Reader.html',1,'genai']]],
+  ['recentfilesdialog_1',['RecentFilesDialog',['../d5/d44/classRecentFilesDialog.html',1,'']]]
 ];
