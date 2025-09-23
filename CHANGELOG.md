@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-## [0.1.10] - Unreleased
+## [0.1.11]
+
+- Ampliado a documentação do código
+
+## [0.1.10] - 2024-09-23
 
 ### Focus
 - Melhoria nas buscas (full‑text e semântica) e na interação do chat com suporte a Function Calling, quando disponível no modelo/provedor.
