@@ -101,6 +101,9 @@ $(document).ready(function(){initNavTree('dc/ddc/classPdfViewerWidget.html','../
 </div><!--header-->
 <div class="contents">
 
+<p>Visualizador de PDF com seleção de texto e retângulo.  
+ <a href="../../dc/ddc/classPdfViewerWidget.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="../../d4/d6d/PdfViewerWidget_8h_source.html">PdfViewerWidget.h</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Inheritance diagram for PdfViewerWidget:</div>
@@ -109,7 +112,7 @@ $(document).ready(function(){initNavTree('dc/ddc/classPdfViewerWidget.html','../
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="../../df/d96/classPdfViewerWidget__inherit__graph.png" border="0" usemap="#aPdfViewerWidget_inherit__map" alt="Inheritance graph"/></div>
 <map name="aPdfViewerWidget_inherit__map" id="aPdfViewerWidget_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,79,140,104"/>
+<area shape="rect" title="Visualizador de PDF com seleção de texto e retângulo." alt="" coords="5,79,140,104"/>
 <area shape="rect" title=" " alt="" coords="33,5,112,31"/>
 <area shape="poly" title=" " alt="" coords="75,44,75,79,70,79,70,44"/>
 </map>
@@ -121,7 +124,7 @@ $(document).ready(function(){initNavTree('dc/ddc/classPdfViewerWidget.html','../
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="../../da/dc9/classPdfViewerWidget__coll__graph.png" border="0" usemap="#aPdfViewerWidget_coll__map" alt="Collaboration graph"/></div>
 <map name="aPdfViewerWidget_coll__map" id="aPdfViewerWidget_coll__map">
-<area shape="rect" title=" " alt="" coords="5,79,140,104"/>
+<area shape="rect" title="Visualizador de PDF com seleção de texto e retângulo." alt="" coords="5,79,140,104"/>
 <area shape="rect" title=" " alt="" coords="33,5,112,31"/>
 <area shape="poly" title=" " alt="" coords="75,44,75,79,70,79,70,44"/>
 </map>
@@ -139,24 +142,34 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="signals" name="signals"></a>
 Signals</h2></td></tr>
 <tr class="memitem:a2930a9789af388d306a177e755c3eca4" id="r_a2930a9789af388d306a177e755c3eca4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a2930a9789af388d306a177e755c3eca4">zoomFactorChanged</a> (double factor)</td></tr>
+<tr class="memdesc:a2930a9789af388d306a177e755c3eca4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emite quando o fator de zoom muda.  <br /></td></tr>
 <tr class="separator:a2930a9789af388d306a177e755c3eca4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7dd0c29228f3d1fdabaea724350e9c2" id="r_ae7dd0c29228f3d1fdabaea724350e9c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#ae7dd0c29228f3d1fdabaea724350e9c2">scrollChanged</a> (int value)</td></tr>
+<tr class="memdesc:ae7dd0c29228f3d1fdabaea724350e9c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emite quando o scroll vertical muda.  <br /></td></tr>
 <tr class="separator:ae7dd0c29228f3d1fdabaea724350e9c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af03614f8bac0c6d718d55950d6348800" id="r_af03614f8bac0c6d718d55950d6348800"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#af03614f8bac0c6d718d55950d6348800">pageChanged</a> (int page)</td></tr>
+<tr class="memdesc:af03614f8bac0c6d718d55950d6348800"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emite quando a página atual muda.  <br /></td></tr>
 <tr class="separator:af03614f8bac0c6d718d55950d6348800"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a353cd07d7a0423a770e5c689f408195c" id="r_a353cd07d7a0423a770e5c689f408195c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a353cd07d7a0423a770e5c689f408195c">requestSynonyms</a> (const QString &amp;wordOrLocution)</td></tr>
+<tr class="memdesc:a353cd07d7a0423a770e5c689f408195c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solicita sinônimos para o termo selecionado.  <br /></td></tr>
 <tr class="separator:a353cd07d7a0423a770e5c689f408195c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05a240adfab63efc598a6f0631ce3e45" id="r_a05a240adfab63efc598a6f0631ce3e45"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a05a240adfab63efc598a6f0631ce3e45">requestSummarize</a> (const QString &amp;text)</td></tr>
+<tr class="memdesc:a05a240adfab63efc598a6f0631ce3e45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solicita sumarização do texto selecionado.  <br /></td></tr>
 <tr class="separator:a05a240adfab63efc598a6f0631ce3e45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abbf4cac986c53df53789228b07ad31c5" id="r_abbf4cac986c53df53789228b07ad31c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#abbf4cac986c53df53789228b07ad31c5">requestSendToChat</a> (const QString &amp;text)</td></tr>
+<tr class="memdesc:abbf4cac986c53df53789228b07ad31c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solicita envio do texto selecionado para o chat.  <br /></td></tr>
 <tr class="separator:abbf4cac986c53df53789228b07ad31c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5a87fd3775f78d40828e56e2cf253e1" id="r_ac5a87fd3775f78d40828e56e2cf253e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#ac5a87fd3775f78d40828e56e2cf253e1">requestSendImageToChat</a> (const QImage &amp;image)</td></tr>
+<tr class="memdesc:ac5a87fd3775f78d40828e56e2cf253e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solicita envio de imagem (seleção) para o chat.  <br /></td></tr>
 <tr class="separator:ac5a87fd3775f78d40828e56e2cf253e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cfed6e0c7b19ee4a2862a29943096fe" id="r_a8cfed6e0c7b19ee4a2862a29943096fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a8cfed6e0c7b19ee4a2862a29943096fe">requestDictionaryLookup</a> (const QString &amp;term)</td></tr>
+<tr class="memdesc:a8cfed6e0c7b19ee4a2862a29943096fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solicita consulta de dicionário para o termo.  <br /></td></tr>
 <tr class="separator:a8cfed6e0c7b19ee4a2862a29943096fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6af93414bcaf055dbec3cf9f8587bec0" id="r_a6af93414bcaf055dbec3cf9f8587bec0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a6af93414bcaf055dbec3cf9f8587bec0">requestRebuildEmbeddings</a> ()</td></tr>
+<tr class="memdesc:a6af93414bcaf055dbec3cf9f8587bec0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solicita reconstrução das embeddings do documento.  <br /></td></tr>
 <tr class="separator:a6af93414bcaf055dbec3cf9f8587bec0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a483f0bd45376af68ca4efddd92300f5a" id="r_a483f0bd45376af68ca4efddd92300f5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a483f0bd45376af68ca4efddd92300f5a">requestSummarizeDocument</a> ()</td></tr>
+<tr class="memdesc:a483f0bd45376af68ca4efddd92300f5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solicita sumarização de todo o documento.  <br /></td></tr>
 <tr class="separator:a483f0bd45376af68ca4efddd92300f5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -166,53 +179,77 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a84ee4929baf8649f04a401ab296b8e28" id="r_a84ee4929baf8649f04a401ab296b8e28"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a84ee4929baf8649f04a401ab296b8e28">~PdfViewerWidget</a> () override</td></tr>
 <tr class="separator:a84ee4929baf8649f04a401ab296b8e28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25c6d5268c0ef409794040f830201e27" id="r_a25c6d5268c0ef409794040f830201e27"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a25c6d5268c0ef409794040f830201e27">openFile</a> (const QString &amp;path, QString *errorOut=nullptr)</td></tr>
+<tr class="memdesc:a25c6d5268c0ef409794040f830201e27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abre um PDF pelo caminho. Retorna false e preenche <code>errorOut</code> em caso de falha.  <br /></td></tr>
 <tr class="separator:a25c6d5268c0ef409794040f830201e27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e95565876ced45e12bc0ad943c2bea6" id="r_a1e95565876ced45e12bc0ad943c2bea6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a1e95565876ced45e12bc0ad943c2bea6">setZoomFactor</a> (double factor)</td></tr>
+<tr class="memdesc:a1e95565876ced45e12bc0ad943c2bea6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define o fator de zoom atual.  <br /></td></tr>
 <tr class="separator:a1e95565876ced45e12bc0ad943c2bea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5420a9568c25a94134345ced0e83f1cc" id="r_a5420a9568c25a94134345ced0e83f1cc"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a5420a9568c25a94134345ced0e83f1cc">zoomFactor</a> () const</td></tr>
+<tr class="memdesc:a5420a9568c25a94134345ced0e83f1cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtém o fator de zoom atual.  <br /></td></tr>
 <tr class="separator:a5420a9568c25a94134345ced0e83f1cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa945f266107808255316222f89f18f1e" id="r_aa945f266107808255316222f89f18f1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#aa945f266107808255316222f89f18f1e">nextPage</a> ()</td></tr>
+<tr class="memdesc:aa945f266107808255316222f89f18f1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vai para a próxima página.  <br /></td></tr>
 <tr class="separator:aa945f266107808255316222f89f18f1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a580dc0ed0d4a36b83bed761dca4df435" id="r_a580dc0ed0d4a36b83bed761dca4df435"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a580dc0ed0d4a36b83bed761dca4df435">prevPage</a> ()</td></tr>
+<tr class="memdesc:a580dc0ed0d4a36b83bed761dca4df435"><td class="mdescLeft">&#160;</td><td class="mdescRight">Volta para a página anterior.  <br /></td></tr>
 <tr class="separator:a580dc0ed0d4a36b83bed761dca4df435"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7f12aec22c971654a87cf31104465c3" id="r_af7f12aec22c971654a87cf31104465c3"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#af7f12aec22c971654a87cf31104465c3">totalPages</a> () const</td></tr>
+<tr class="memdesc:af7f12aec22c971654a87cf31104465c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Número total de páginas do documento atual.  <br /></td></tr>
 <tr class="separator:af7f12aec22c971654a87cf31104465c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2d4ab926b7055698e65629d02defa78" id="r_ab2d4ab926b7055698e65629d02defa78"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#ab2d4ab926b7055698e65629d02defa78">currentPage</a> () const</td></tr>
+<tr class="memdesc:ab2d4ab926b7055698e65629d02defa78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Página atual (baseada em 1).  <br /></td></tr>
 <tr class="separator:ab2d4ab926b7055698e65629d02defa78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae323d3076918ec66f7b2e5f7b89fddfb" id="r_ae323d3076918ec66f7b2e5f7b89fddfb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#ae323d3076918ec66f7b2e5f7b89fddfb">setCurrentPage</a> (unsigned int page)</td></tr>
+<tr class="memdesc:ae323d3076918ec66f7b2e5f7b89fddfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define a página atual (1..totalPages).  <br /></td></tr>
 <tr class="separator:ae323d3076918ec66f7b2e5f7b89fddfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd91077ce31e7c2ddab99c7c89b5b54b" id="r_abd91077ce31e7c2ddab99c7c89b5b54b"><td class="memItemLeft" align="right" valign="top">QPdfDocument *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#abd91077ce31e7c2ddab99c7c89b5b54b">document</a> () const</td></tr>
 <tr class="separator:abd91077ce31e7c2ddab99c7c89b5b54b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6616311485fd438b1432892df3d89e50" id="r_a6616311485fd438b1432892df3d89e50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a6616311485fd438b1432892df3d89e50">fitToWidth</a> ()</td></tr>
+<tr class="memdesc:a6616311485fd438b1432892df3d89e50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ajusta o PDF para caber na largura do widget.  <br /></td></tr>
 <tr class="separator:a6616311485fd438b1432892df3d89e50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abef0c61de608322f93d3062ccc09070d" id="r_abef0c61de608322f93d3062ccc09070d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#abef0c61de608322f93d3062ccc09070d">setSelectionMode</a> (<a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32">SelectionMode</a> mode)</td></tr>
+<tr class="memdesc:abef0c61de608322f93d3062ccc09070d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define o modo de seleção (automático, texto, retângulo ou nenhum).  <br /></td></tr>
 <tr class="separator:abef0c61de608322f93d3062ccc09070d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b196f4485d5d9672ee88acdc8beac7b" id="r_a9b196f4485d5d9672ee88acdc8beac7b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32">SelectionMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a9b196f4485d5d9672ee88acdc8beac7b">selectionMode</a> () const</td></tr>
 <tr class="separator:a9b196f4485d5d9672ee88acdc8beac7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02ad5b3e5418b770c144faf3044b64f1" id="r_a02ad5b3e5418b770c144faf3044b64f1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a02ad5b3e5418b770c144faf3044b64f1">hasSelection</a> () const</td></tr>
+<tr class="memdesc:a02ad5b3e5418b770c144faf3044b64f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indica se existe uma seleção ativa.  <br /></td></tr>
 <tr class="separator:a02ad5b3e5418b770c144faf3044b64f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abff39ebe2684fdd6172afa054e877c6b" id="r_abff39ebe2684fdd6172afa054e877c6b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#abff39ebe2684fdd6172afa054e877c6b">clearSelection</a> ()</td></tr>
+<tr class="memdesc:abff39ebe2684fdd6172afa054e877c6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Limpa a seleção atual (texto e/ou retângulo).  <br /></td></tr>
 <tr class="separator:abff39ebe2684fdd6172afa054e877c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5939711c319061b2cbcfaab57cee2409" id="r_a5939711c319061b2cbcfaab57cee2409"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a5939711c319061b2cbcfaab57cee2409">copySelection</a> ()</td></tr>
+<tr class="memdesc:a5939711c319061b2cbcfaab57cee2409"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copia o conteúdo da seleção (texto ou OCR) para a área de transferência.  <br /></td></tr>
 <tr class="separator:a5939711c319061b2cbcfaab57cee2409"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3ca1d2e554f63cdd67fe0da10aa345f" id="r_aa3ca1d2e554f63cdd67fe0da10aa345f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#aa3ca1d2e554f63cdd67fe0da10aa345f">saveSelectionAsTxt</a> ()</td></tr>
+<tr class="memdesc:aa3ca1d2e554f63cdd67fe0da10aa345f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Salva a seleção como .txt.  <br /></td></tr>
 <tr class="separator:aa3ca1d2e554f63cdd67fe0da10aa345f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5623bb122b381b2b68aca4b9e569c653" id="r_a5623bb122b381b2b68aca4b9e569c653"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a5623bb122b381b2b68aca4b9e569c653">saveSelectionAsMarkdown</a> ()</td></tr>
+<tr class="memdesc:a5623bb122b381b2b68aca4b9e569c653"><td class="mdescLeft">&#160;</td><td class="mdescRight">Salva a seleção como .md (Markdown).  <br /></td></tr>
 <tr class="separator:a5623bb122b381b2b68aca4b9e569c653"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fa285223abb0061d73494bf5f9c5dd9" id="r_a9fa285223abb0061d73494bf5f9c5dd9"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a9fa285223abb0061d73494bf5f9c5dd9">ocrSelectionText</a> (bool *ok=nullptr)</td></tr>
+<tr class="memdesc:a9fa285223abb0061d73494bf5f9c5dd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Aplica OCR à seleção retangular. Retorna o texto e preenche <code>ok</code>.  <br /></td></tr>
 <tr class="separator:a9fa285223abb0061d73494bf5f9c5dd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ade4d3ab943b162797299c56c747fa5" id="r_a8ade4d3ab943b162797299c56c747fa5"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a8ade4d3ab943b162797299c56c747fa5">selectionText</a> (bool *ok=nullptr)</td></tr>
+<tr class="memdesc:a8ade4d3ab943b162797299c56c747fa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retorna o texto da seleção; usa OCR quando necessário.  <br /></td></tr>
 <tr class="separator:a8ade4d3ab943b162797299c56c747fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51f21e6a21dc0c9b4fa8de58844e3dbf" id="r_a51f21e6a21dc0c9b4fa8de58844e3dbf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a51f21e6a21dc0c9b4fa8de58844e3dbf">setWheelZoomStep</a> (double step)</td></tr>
+<tr class="memdesc:a51f21e6a21dc0c9b4fa8de58844e3dbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define o passo de zoom aplicado pela roda do mouse.  <br /></td></tr>
 <tr class="separator:a51f21e6a21dc0c9b4fa8de58844e3dbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc409e6ecfe9d41117984922b827943a" id="r_afc409e6ecfe9d41117984922b827943a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#afc409e6ecfe9d41117984922b827943a">verticalScrollValue</a> () const</td></tr>
+<tr class="memdesc:afc409e6ecfe9d41117984922b827943a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Valor do scroll vertical atual.  <br /></td></tr>
 <tr class="separator:afc409e6ecfe9d41117984922b827943a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a028e9f2a4739e0b090dd64fcfe670aa5" id="r_a028e9f2a4739e0b090dd64fcfe670aa5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a028e9f2a4739e0b090dd64fcfe670aa5">setVerticalScrollValue</a> (int v)</td></tr>
+<tr class="memdesc:a028e9f2a4739e0b090dd64fcfe670aa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define o scroll vertical.  <br /></td></tr>
 <tr class="separator:a028e9f2a4739e0b090dd64fcfe670aa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a60d7a3d7fc80a956dcaff7bcc443d8" id="r_a2a60d7a3d7fc80a956dcaff7bcc443d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a2a60d7a3d7fc80a956dcaff7bcc443d8">flashHighlight</a> ()</td></tr>
+<tr class="memdesc:a2a60d7a3d7fc80a956dcaff7bcc443d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Efeito visual temporário para indicar destaque de busca.  <br /></td></tr>
 <tr class="separator:a2a60d7a3d7fc80a956dcaff7bcc443d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Enumeration Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Visualizador de PDF com seleção de texto e retângulo. </p>
+<p>Fornece métodos simples para abrir um arquivo, navegar entre páginas (anterior/próxima), ajustar zoom e recuperar texto selecionado. Também emite sinais para integração com a UI e com o módulo de IA. </p>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a77f6869aa09492881d7ae88763e29f32" name="a77f6869aa09492881d7ae88763e29f32"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a77f6869aa09492881d7ae88763e29f32">&#9670;&#160;</a></span>SelectionMode</h2>
 
@@ -309,6 +346,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Limpa a seleção atual (texto e/ou retângulo). </p>
+
 </div>
 </div>
 <a id="a5939711c319061b2cbcfaab57cee2409" name="a5939711c319061b2cbcfaab57cee2409"></a>
@@ -326,6 +365,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Copia o conteúdo da seleção (texto ou OCR) para a área de transferência. </p>
+
 </div>
 </div>
 <a id="ab2d4ab926b7055698e65629d02defa78" name="ab2d4ab926b7055698e65629d02defa78"></a>
@@ -342,6 +383,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Página atual (baseada em 1). </p>
 
 </div>
 </div>
@@ -385,6 +428,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Ajusta o PDF para caber na largura do widget. </p>
+
 </div>
 </div>
 <a id="a2a60d7a3d7fc80a956dcaff7bcc443d8" name="a2a60d7a3d7fc80a956dcaff7bcc443d8"></a>
@@ -401,6 +446,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Efeito visual temporário para indicar destaque de busca. </p>
 
 </div>
 </div>
@@ -419,6 +466,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Indica se existe uma seleção ativa. </p>
+
 </div>
 </div>
 <a id="aa945f266107808255316222f89f18f1e" name="aa945f266107808255316222f89f18f1e"></a>
@@ -435,6 +484,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Vai para a próxima página. </p>
 
 </div>
 </div>
@@ -453,6 +504,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Aplica OCR à seleção retangular. Retorna o texto e preenche <code>ok</code>. </p>
 
 </div>
 </div>
@@ -482,6 +535,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Abre um PDF pelo caminho. Retorna false e preenche <code>errorOut</code> em caso de falha. </p>
+
 </div>
 </div>
 <a id="af03614f8bac0c6d718d55950d6348800" name="af03614f8bac0c6d718d55950d6348800"></a>
@@ -508,6 +563,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Emite quando a página atual muda. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">page</td><td>Número da página atual. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a580dc0ed0d4a36b83bed761dca4df435" name="a580dc0ed0d4a36b83bed761dca4df435"></a>
@@ -524,6 +587,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Volta para a página anterior. </p>
 
 </div>
 </div>
@@ -551,6 +616,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Solicita consulta de dicionário para o termo. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">term</td><td>Termo selecionado. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a6af93414bcaf055dbec3cf9f8587bec0" name="a6af93414bcaf055dbec3cf9f8587bec0"></a>
@@ -575,6 +648,8 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Solicita reconstrução das embeddings do documento. </p>
 
 </div>
 </div>
@@ -602,6 +677,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Solicita envio de imagem (seleção) para o chat. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">image</td><td>Imagem selecionada. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="abbf4cac986c53df53789228b07ad31c5" name="abbf4cac986c53df53789228b07ad31c5"></a>
@@ -627,6 +710,14 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Solicita envio do texto selecionado para o chat. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">text</td><td>Texto selecionado. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -654,6 +745,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Solicita sumarização do texto selecionado. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">text</td><td>Texto selecionado. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a483f0bd45376af68ca4efddd92300f5a" name="a483f0bd45376af68ca4efddd92300f5a"></a>
@@ -678,6 +777,8 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Solicita sumarização de todo o documento. </p>
 
 </div>
 </div>
@@ -705,6 +806,14 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Solicita sinônimos para o termo selecionado. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">wordOrLocution</td><td>Termo selecionado. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a5623bb122b381b2b68aca4b9e569c653" name="a5623bb122b381b2b68aca4b9e569c653"></a>
@@ -722,6 +831,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Salva a seleção como .md (Markdown). </p>
+
 </div>
 </div>
 <a id="aa3ca1d2e554f63cdd67fe0da10aa345f" name="aa3ca1d2e554f63cdd67fe0da10aa345f"></a>
@@ -738,6 +849,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Salva a seleção como .txt. </p>
 
 </div>
 </div>
@@ -764,6 +877,14 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Emite quando o scroll vertical muda. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>Valor do scroll vertical atual. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -808,6 +929,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Retorna o texto da seleção; usa OCR quando necessário. </p>
+
 </div>
 </div>
 <a id="ae323d3076918ec66f7b2e5f7b89fddfb" name="ae323d3076918ec66f7b2e5f7b89fddfb"></a>
@@ -825,6 +948,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Define a página atual (1..totalPages). </p>
 
 </div>
 </div>
@@ -844,6 +969,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Define o modo de seleção (automático, texto, retângulo ou nenhum). </p>
+
 </div>
 </div>
 <a id="a028e9f2a4739e0b090dd64fcfe670aa5" name="a028e9f2a4739e0b090dd64fcfe670aa5"></a>
@@ -861,6 +988,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Define o scroll vertical. </p>
 
 </div>
 </div>
@@ -880,6 +1009,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Define o passo de zoom aplicado pela roda do mouse. </p>
+
 </div>
 </div>
 <a id="a1e95565876ced45e12bc0ad943c2bea6" name="a1e95565876ced45e12bc0ad943c2bea6"></a>
@@ -898,6 +1029,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Define o fator de zoom atual. </p>
+
 </div>
 </div>
 <a id="af7f12aec22c971654a87cf31104465c3" name="af7f12aec22c971654a87cf31104465c3"></a>
@@ -914,6 +1047,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Número total de páginas do documento atual. </p>
 
 </div>
 </div>
@@ -932,6 +1067,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Valor do scroll vertical atual. </p>
+
 </div>
 </div>
 <a id="a5420a9568c25a94134345ced0e83f1cc" name="a5420a9568c25a94134345ced0e83f1cc"></a>
@@ -948,6 +1085,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Obtém o fator de zoom atual. </p>
 
 </div>
 </div>
@@ -974,6 +1113,14 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Emite quando o fator de zoom muda. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">factor</td><td>Fator de zoom atual. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

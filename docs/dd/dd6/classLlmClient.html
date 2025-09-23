@@ -130,16 +130,25 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aeb8c96130963c9ba221668ce8466d580" id="r_aeb8c96130963c9ba221668ce8466d580"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dd6/classLlmClient.html#aeb8c96130963c9ba221668ce8466d580">LlmClient</a> (QObject *parent=nullptr)</td></tr>
 <tr class="separator:aeb8c96130963c9ba221668ce8466d580"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98a5b207968516e32be810ec56fb9173" id="r_a98a5b207968516e32be810ec56fb9173"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dd6/classLlmClient.html#a98a5b207968516e32be810ec56fb9173">reloadSettings</a> ()</td></tr>
+<tr class="memdesc:a98a5b207968516e32be810ec56fb9173"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recarrega configurações do cliente a partir de QSettings.  <br /></td></tr>
 <tr class="separator:a98a5b207968516e32be810ec56fb9173"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e9872dfa9e234ad1f0b03bc9b51f411" id="r_a1e9872dfa9e234ad1f0b03bc9b51f411"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dd6/classLlmClient.html#a1e9872dfa9e234ad1f0b03bc9b51f411">chat</a> (const QString &amp;userMessage, std::function&lt; void(QString, QString)&gt; onFinished)</td></tr>
+<tr class="memdesc:a1e9872dfa9e234ad1f0b03bc9b51f411"><td class="mdescLeft">&#160;</td><td class="mdescRight">Envia um chat com uma única mensagem do usuário. Retorna conteúdo e erro.  <br /></td></tr>
 <tr class="separator:a1e9872dfa9e234ad1f0b03bc9b51f411"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a308d1164941a44fe6db857ae045f9bfd" id="r_a308d1164941a44fe6db857ae045f9bfd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dd6/classLlmClient.html#a308d1164941a44fe6db857ae045f9bfd">chatWithMessages</a> (const QList&lt; QPair&lt; QString, QString &gt; &gt; &amp;messages, std::function&lt; void(QString, QString)&gt; onFinished)</td></tr>
+<tr class="memdesc:a308d1164941a44fe6db857ae045f9bfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Envia um chat com histórico completo (pares role, content).  <br /></td></tr>
 <tr class="separator:a308d1164941a44fe6db857ae045f9bfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaaaeecc7c3d72aa9effda647ed396739" id="r_aaaaeecc7c3d72aa9effda647ed396739"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dd6/classLlmClient.html#aaaaeecc7c3d72aa9effda647ed396739">chatWithMessagesTools</a> (const QList&lt; QPair&lt; QString, QString &gt; &gt; &amp;messages, const QJsonArray &amp;tools, std::function&lt; void(QString, QJsonArray, QString)&gt; onFinished)</td></tr>
+<tr class="memdesc:aaaaeecc7c3d72aa9effda647ed396739"><td class="mdescLeft">&#160;</td><td class="mdescRight">Envia chat com ferramentas (Function Calling); retorna conteúdo e toolCalls.  <br /></td></tr>
+<tr class="separator:aaaaeecc7c3d72aa9effda647ed396739"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a910f01acc686183532d8c3972eb98d4a" id="r_a910f01acc686183532d8c3972eb98d4a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dd6/classLlmClient.html#a910f01acc686183532d8c3972eb98d4a">summarize</a> (const QString &amp;text, std::function&lt; void(QString, QString)&gt; onFinished)</td></tr>
+<tr class="memdesc:a910f01acc686183532d8c3972eb98d4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gera um resumo curto de <code>text</code>.  <br /></td></tr>
 <tr class="separator:a910f01acc686183532d8c3972eb98d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb88c33b21dad54f732196d426e855f6" id="r_afb88c33b21dad54f732196d426e855f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dd6/classLlmClient.html#afb88c33b21dad54f732196d426e855f6">synonyms</a> (const QString &amp;wordOrLocution, const QString &amp;locale, std::function&lt; void(QString, QString)&gt; onFinished)</td></tr>
+<tr class="memdesc:afb88c33b21dad54f732196d426e855f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sugere sinônimos para uma palavra ou locução, considerando o locale.  <br /></td></tr>
 <tr class="separator:afb88c33b21dad54f732196d426e855f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5617e814c94af483aa292e2314dd2f3f" id="r_a5617e814c94af483aa292e2314dd2f3f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dd6/classLlmClient.html#a5617e814c94af483aa292e2314dd2f3f">chatWithImage</a> (const QString &amp;userPrompt, const QString &amp;imageDataUrl, std::function&lt; void(QString, QString)&gt; onFinished)</td></tr>
+<tr class="memdesc:a5617e814c94af483aa292e2314dd2f3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Realiza chat multimodal com uma imagem embutida como data URL.  <br /></td></tr>
 <tr class="separator:a5617e814c94af483aa292e2314dd2f3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -196,6 +205,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Envia um chat com uma única mensagem do usuário. Retorna conteúdo e erro. </p>
+
 </div>
 </div>
 <a id="a5617e814c94af483aa292e2314dd2f3f" name="a5617e814c94af483aa292e2314dd2f3f"></a>
@@ -230,6 +241,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Realiza chat multimodal com uma imagem embutida como data URL. </p>
+
 </div>
 </div>
 <a id="a308d1164941a44fe6db857ae045f9bfd" name="a308d1164941a44fe6db857ae045f9bfd"></a>
@@ -258,6 +271,44 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Envia um chat com histórico completo (pares role, content). </p>
+
+</div>
+</div>
+<a id="aaaaeecc7c3d72aa9effda647ed396739" name="aaaaeecc7c3d72aa9effda647ed396739"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaaaeecc7c3d72aa9effda647ed396739">&#9670;&#160;</a></span>chatWithMessagesTools()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void LlmClient::chatWithMessagesTools </td>
+          <td>(</td>
+          <td class="paramtype">const QList&lt; QPair&lt; QString, QString &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>messages</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QJsonArray &amp;&#160;</td>
+          <td class="paramname"><em>tools</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::function&lt; void(QString, QJsonArray, QString)&gt;&#160;</td>
+          <td class="paramname"><em>onFinished</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Envia chat com ferramentas (Function Calling); retorna conteúdo e toolCalls. </p>
+
 </div>
 </div>
 <a id="a98a5b207968516e32be810ec56fb9173" name="a98a5b207968516e32be810ec56fb9173"></a>
@@ -274,6 +325,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Recarrega configurações do cliente a partir de QSettings. </p>
 
 </div>
 </div>
@@ -302,6 +355,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gera um resumo curto de <code>text</code>. </p>
 
 </div>
 </div>
@@ -336,6 +391,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Sugere sinônimos para uma palavra ou locução, considerando o locale. </p>
 
 </div>
 </div>

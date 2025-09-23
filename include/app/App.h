@@ -3,12 +3,14 @@
 /**
  * \file App.h
  * \brief Declaração da classe principal da aplicação.
+ * \ingroup module_core
  */
 
 namespace genai {
 
 /**
  * \brief Informações básicas da aplicação (versão, nome).
+ * \ingroup module_core
  */
 class AppInfo {
 public:
@@ -25,9 +27,13 @@ public:
     static constexpr const char* Description = "GenAI E-Book Reader é um leitor de e-books com recursos de IA integrados para aprimorar a experiência de leitura.";
 };
 
-
+/**
+ * \brief Informações básicas da aplicação (versão, nome).
+ * \ingroup module_core
+ */
 /**
  * \brief Informações dos desenvolvedores.
+ * \ingroup module_core
  */
 struct DeveloperInfo {
     const char* name;

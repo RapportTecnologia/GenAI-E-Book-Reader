@@ -1,0 +1,12 @@
+/**
+ * \defgroup module_ui UI
+ * \brief Camada de interface (janelas, diálogos, visualizador de PDF).
+ *
+ * Arquivos principais:
+ * - src/ui/MainWindow.h/.cpp — janela principal e integração geral.
+ * - src/ui/PdfViewerWidget.h/.cpp — visualizador PDF com seleção/zoom/navegação.
+ * - src/ui/LlmSettingsDialog.h/.cpp — configurações de IA.
+ * - src/ui/EmbeddingSettingsDialog.h/.cpp — ajustes de embeddings e indexação.
+ * - src/ui/ChatDock.h/.cpp — painel de chat com LLM.
+ * - Demais diálogos auxiliares (About, Tutorial, RecentFiles, etc.).
+ */

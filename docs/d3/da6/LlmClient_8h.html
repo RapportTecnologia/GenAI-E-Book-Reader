@@ -97,11 +97,15 @@ $(document).ready(function(){initNavTree('d3/da6/LlmClient_8h.html','../../'); i
   <div class="headertitle"><div class="title">LlmClient.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Cliente simples compatível com a API de chat do OpenAI (e GenerAtiva).  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;QObject&gt;</code><br />
 <code>#include &lt;QString&gt;</code><br />
 <code>#include &lt;QUrl&gt;</code><br />
 <code>#include &lt;QNetworkAccessManager&gt;</code><br />
 <code>#include &lt;QJsonObject&gt;</code><br />
+<code>#include &lt;QJsonArray&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 </div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Include dependency graph for LlmClient.h:</div>
@@ -110,19 +114,21 @@ $(document).ready(function(){initNavTree('d3/da6/LlmClient_8h.html','../../'); i
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="../../d6/df7/LlmClient_8h__incl.png" border="0" usemap="#aGenAi-E-Book-Reader_2src_2ai_2LlmClient_8h" alt=""/></div>
 <map name="aGenAi-E-Book-Reader_2src_2ai_2LlmClient_8h" id="aGenAi-E-Book-Reader_2src_2ai_2LlmClient_8h">
-<area shape="rect" title=" " alt="" coords="216,5,379,45"/>
+<area shape="rect" title="Cliente simples compatível com a API de chat do OpenAI (e GenerAtiva)." alt="" coords="288,5,451,45"/>
 <area shape="rect" title=" " alt="" coords="5,93,80,119"/>
-<area shape="poly" title=" " alt="" coords="237,48,94,92,92,87,236,43"/>
+<area shape="poly" title=" " alt="" coords="292,48,94,95,93,90,290,43"/>
 <area shape="rect" title=" " alt="" coords="105,93,175,119"/>
-<area shape="poly" title=" " alt="" coords="261,48,177,89,174,85,258,43"/>
+<area shape="poly" title=" " alt="" coords="315,48,187,91,186,86,314,43"/>
 <area shape="rect" title=" " alt="" coords="200,93,251,119"/>
-<area shape="poly" title=" " alt="" coords="282,47,247,85,243,81,278,44"/>
+<area shape="poly" title=" " alt="" coords="336,48,260,89,257,84,334,43"/>
 <area shape="rect" title=" " alt="" coords="275,93,464,119"/>
-<area shape="poly" title=" " alt="" coords="317,44,351,81,347,85,313,47"/>
+<area shape="poly" title=" " alt="" coords="372,46,372,79,367,79,367,46"/>
 <area shape="rect" title=" " alt="" coords="488,93,589,119"/>
-<area shape="poly" title=" " alt="" coords="356,43,491,86,489,92,354,48"/>
-<area shape="rect" title=" " alt="" coords="614,93,701,119"/>
-<area shape="poly" title=" " alt="" coords="380,42,601,90,600,95,378,47"/>
+<area shape="poly" title=" " alt="" coords="411,43,502,85,500,90,409,48"/>
+<area shape="rect" title=" " alt="" coords="614,93,709,119"/>
+<area shape="poly" title=" " alt="" coords="440,43,606,87,605,92,439,48"/>
+<area shape="rect" title=" " alt="" coords="733,93,819,119"/>
+<area shape="poly" title=" " alt="" coords="451,39,720,90,719,96,450,44"/>
 </map>
 </div>
 </div><div class="textblock"><div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
@@ -132,7 +138,7 @@ $(document).ready(function(){initNavTree('d3/da6/LlmClient_8h.html','../../'); i
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="../../d7/db5/LlmClient_8h__dep__incl.png" border="0" usemap="#aGenAi-E-Book-Reader_2src_2ai_2LlmClient_8hdep" alt=""/></div>
 <map name="aGenAi-E-Book-Reader_2src_2ai_2LlmClient_8hdep" id="aGenAi-E-Book-Reader_2src_2ai_2LlmClient_8hdep">
-<area shape="rect" title=" " alt="" coords="324,5,487,45"/>
+<area shape="rect" title="Cliente simples compatível com a API de chat do OpenAI (e GenerAtiva)." alt="" coords="324,5,487,45"/>
 <area shape="rect" href="../../dc/df7/LlmClient_8cpp.html" title=" " alt="" coords="5,93,168,133"/>
 <area shape="poly" title=" " alt="" coords="323,52,157,96,156,91,321,46"/>
 <area shape="rect" href="../../d5/dff/LlmSettingsDialog_8cpp.html" title=" " alt="" coords="192,93,403,133"/>
@@ -151,7 +157,10 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/dd6/classLlmClient.html">LlmClient</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Cliente simples compatível com a API de chat do OpenAI (e GenerAtiva). </p>
+<p>Esta classe centraliza chamadas HTTP para provedores OpenAI-compatíveis (OpenAI, GenerAtiva), lendo configurações de <code>QSettings</code> e expondo métodos utilitários para chat, sumarização, sinônimos e chat multimodal (imagem). </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

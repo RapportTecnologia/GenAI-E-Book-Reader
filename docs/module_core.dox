@@ -1,0 +1,8 @@
+/**
+ * \defgroup module_core Núcleo
+ * \brief Tipos e contratos básicos do aplicativo.
+ *
+ * Arquivos principais:
+ * - include/app/App.h — informações da aplicação (nome, versão, autores).
+ * - include/reader/Reader.h — contrato de leitor e implementação dummy (MVP).
+ */

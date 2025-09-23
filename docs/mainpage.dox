@@ -1,0 +1,43 @@
+/**
+ * \mainpage GenAI E-Book Reader
+ *
+ * \section overview Visão Geral
+ * O GenAI E-Book Reader é um leitor de e-books focado em PDF com recursos de IA:
+ *
+ * - Leitura/navegação de PDF (páginas, zoom, TOC via QPdfBookmarkModel).
+ * - Seleção de texto e por retângulo com suporte a OCR (quando necessário).
+ * - Busca por texto e busca semântica (RAG) com embeddings.
+ * - Integração com LLMs (OpenAI/GenerAtiva) para chat, sumarização, sinônimos e mais.
+ *
+ * \section quickstart Início Rápido
+ * 1. Compile com CMake e Qt 6 (Widgets, PdfWidgets, Network). WebEngineWidgets é opcional.
+ * 2. Rode o executável `genai_reader`.
+ * 3. Abra um PDF (Arquivo → Abrir) e use o painel lateral (TOC) para navegar.
+ * 4. Use a barra de busca (atalho `/`) para localizar trechos por texto ou semântica.
+ * 5. Abra as configurações de IA para informar o provedor e a chave API.
+ *
+ * \section arch Arquitetura (alto nível)
+ * - \ref module_ui: UI (janelas, diálogos e o visualizador de PDF).
+ * - \ref module_ai: Camada de IA (cliente de LLM, embeddings, indexação).
+ * - \ref module_core: Núcleo e contratos (ex.: Reader, AppInfo).
+ *
+ * \section qtnotes Notas sobre versões do Qt
+ * - Qt 5.15: sem suporte C++ para \c QPdfLinkModel (links internos no PDF). TOC funciona via QPdfBookmarkModel.
+ * - Qt 6.4+: \c QPdfLinkModel disponível; permite detectar/navegar links internos no documento.
+ *
+ * \section build Como compilar
+ * Requisitos: CMake >= 3.16, Qt 6 com módulos Widgets, PdfWidgets e Network. WebEngineWidgets é opcional.
+ *
+ * Exemplo:
+ * \code{.bash}
+ * cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+ * cmake --build build -j
+ * ./build/bin/genai_reader
+ * \endcode
+ *
+ * \section docs Gerar documentação (Doxygen)
+ * O CMake define um alvo `docs` que chama o Doxygen usando `docs/Doxyfile`.
+ * \code{.bash}
+ * cmake --build build --target docs
+ * \endcode
+ */

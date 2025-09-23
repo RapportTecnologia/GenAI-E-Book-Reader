@@ -1,0 +1,14 @@
+/**
+ * \defgroup module_ai IA
+ * \brief Camada de inteligência artificial (LLM, embeddings e RAG).
+ *
+ * Arquivos principais:
+ * - src/ai/LlmClient.h/.cpp — cliente OpenAI-compatível (OpenAI, GenerAtiva).
+ * - src/ai/EmbeddingProvider.h/.cpp — provê vetores (embeddings) para textos/páginas.
+ * - src/ai/EmbeddingIndexer.h/.cpp — indexação e consulta do índice vetorial.
+ * - src/ai/VectorIndex.h — estruturas e utilidades para indexação vetorial.
+ *
+ * Fluxos comuns:
+ * - Chat, sumarização, sinônimos: \ref LlmClient.
+ * - Busca semântica (RAG): extração de páginas → embeddings → consulta de similaridade.
+ */
