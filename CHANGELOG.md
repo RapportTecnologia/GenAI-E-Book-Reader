@@ -9,7 +9,9 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 - Ampliado a documentação do código.
 - Melhorado a detecção de dados como título, autor, editor, etc. relativos a metadados.
 - Usando o nome do arquivo para construir os metadados do e-book.
-- Interação com a IA Generativa para obter mais dados sobre o livro
+- Interação com a IA Generativa para obter mais dados sobre o livro.
+- Obtenção de dados para OPF junto ao Google Livros.
+- Contabilidade do tempo gasto para gerar Indice de Embeddings
 
 ## [0.1.10] - 2024-09-23
 

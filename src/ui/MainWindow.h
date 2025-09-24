@@ -51,6 +51,7 @@ class RecentFilesDialog;
 class QPdfBookmarkModel;
 class OpfDialog;
 class OpfGenAiDialog;
+class SearchProgressDialog;
 
 #include "ui/OpfStore.h"
 
@@ -203,6 +204,11 @@ private:
     void toolPrevResult();
     void toolGotoPage(int page);
 
+    // Search progress modal helpers
+    void beginSearchProgress(const QString& title, const QString& firstLine = QString());
+    void logSearchProgress(const QString& line);
+    void endSearchProgress();
+
 private:
     // Search helpers
     bool ensurePagesTextLoaded();
@@ -322,6 +328,7 @@ private:
     SummaryDialog* summaryDlg_ {nullptr};
     OpfDialog* opfDialog_ {nullptr};
     ChatDock* chatDock_ {nullptr};
+    SearchProgressDialog* searchDlg_ {nullptr};
 
     // Cache for plain text pages of current PDF
     QStringList pagesText_;

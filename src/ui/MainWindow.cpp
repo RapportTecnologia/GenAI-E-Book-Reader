@@ -13,6 +13,7 @@
 #include "ui/AboutDialog.h"
 #include "ui/TutorialDialog.h"
 #include "ui/RecentFilesDialog.h"
+#include "ui/SearchProgressDialog.h"
 #include "ui/RecentFilesDialog.h"
 #include <QApplication>
 #include <QCoreApplication>
@@ -929,10 +930,12 @@ void MainWindow::onSearchTriggered() {
     if (currentFilePath_.isEmpty() || !searchEdit_) return;
     const QString q = searchEdit_->text().trimmed();
     if (q.isEmpty()) return;
+    beginSearchProgress(tr("Pesquisando..."), tr("[consulta] %1").arg(q));
     // 1) Plain text search across pages
     QList<int> pages = plainTextSearchPages(q);
     // 2) Semantic search (RAG) if no plain hits
     if (pages.isEmpty()) {
+        logSearchProgress(tr("[info] Nenhum resultado por texto simples. Iniciando busca semântica (RAG)..."));
         startRagSearch(q);
         return;
     }
@@ -944,6 +947,8 @@ void MainWindow::onSearchTriggered() {
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(page)); }
         updateStatus();
         statusBar()->showMessage(tr("%1 resultado(s)").arg(searchResultsPages_.size()), 2000);
+        logSearchProgress(tr("[ok] %1 resultado(s) por texto simples. Página atual: %2").arg(searchResultsPages_.size()).arg(page));
+        endSearchProgress();
 
         // Agentic mode: if query is longer, show constructed RAG prompt in chat dock and use LLM (LlmClient)
         // with retrieved context. Retrieval uses EmbeddingProvider (emb/*). Generation uses LlmClient settings (ai/*).
@@ -1129,10 +1134,37 @@ void MainWindow::onRequestRebuildEmbeddings() {
         QMessageBox::information(this, tr("Recriar Embeddings"), tr("Abra um documento para recriar os embeddings."));
         return;
     }
+    // Compute page count and estimated duration (2 seconds per page)
+    int pageCount = 0;
+    if (auto* pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        if (pv->document()) pageCount = pv->document()->pageCount();
+    }
+    if (pageCount <= 0) {
+        QPdfDocument doc;
+        if (doc.load(currentFilePath_) == static_cast<QPdfDocument::Error>(0)) {
+            pageCount = doc.pageCount();
+        }
+    }
+    auto formatDuration = [](int totalSec) {
+        const int h = totalSec / 3600;
+        const int m = (totalSec % 3600) / 60;
+        const int s = totalSec % 60;
+        QStringList parts;
+        if (h > 0) parts << QString::number(h) + QStringLiteral("h");
+        if (m > 0) parts << QString::number(m) + QStringLiteral("min");
+        if (s > 0 || parts.isEmpty()) parts << QString::number(s) + QStringLiteral("s");
+        return parts.join(QLatin1String(" "));
+    };
+    QString msg = tr("Este processo pode demorar (média de 2 s por página).");
+    if (pageCount > 0) {
+        const int estSecs = pageCount * 2;
+        msg += tr("\nPáginas: %1 • Estimativa: ~%2.").arg(pageCount).arg(formatDuration(estSecs));
+    }
+    msg += tr("\nDeseja continuar?");
     const auto ret = QMessageBox::question(
         this,
         tr("Recriar Embeddings"),
-        tr("Este processo pode demorar, dependendo do tamanho do documento.\nDeseja continuar?"),
+        msg,
         QMessageBox::Yes | QMessageBox::No,
         QMessageBox::No
     );
@@ -1155,6 +1187,13 @@ void MainWindow::onRequestRebuildEmbeddings() {
     lay->addWidget(bar);
     lay->addWidget(details, 1);
     lay->addWidget(btns);
+    // Show ETA also in details
+    if (pageCount > 0) {
+        const int estSecs = pageCount * 2;
+        details->appendPlainText(tr("[INFO] Estimativa: %1 páginas × 2 s ≈ %2")
+                                     .arg(pageCount)
+                                     .arg(formatDuration(estSecs)));
+    }
 
     // Load embedding settings
     QSettings s;
@@ -1779,9 +1818,12 @@ void MainWindow::startRagSearch(const QString& userQuery) {
     showChatPanel();
     if (chatDock_) chatDock_->appendUser(tr("/buscar: %1").arg(userQuery));
     statusBar()->showMessage(tr("Detectando idioma do documento..."));
+    logSearchProgress(tr("[LLM] Detectando idioma do documento..."));
     detectDocumentLanguageAsync([this, userQuery](QString lang){
         statusBar()->showMessage(tr("Traduzindo consulta se necessário (%1)...").arg(lang), 1500);
+        logSearchProgress(tr("[LLM] Idioma detectado: %1").arg(lang));
         translateQueryIfNeededAsync(userQuery, lang, [this](QString translated){
+            logSearchProgress(translated == pendingRagQuery_ ? tr("[LLM] Tradução não necessária.") : tr("[LLM] Consulta traduzida: %1").arg(translated));
             ensureIndexAvailableThen(translated);
         });
     });
@@ -1792,7 +1834,8 @@ void MainWindow::ensureIndexAvailableThen(const QString& translatedQuery) {
     const auto ret = QMessageBox::question(this, tr("Criar índice de embeddings?"),
         tr("Este documento ainda não possui índice de embeddings.\nDeseja criar agora? Este processo pode ser demorado."),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    if (ret != QMessageBox::Yes) { statusBar()->showMessage(tr("Busca semântica cancelada (sem índice)."), 2500); return; }
+    if (ret != QMessageBox::Yes) { statusBar()->showMessage(tr("Busca semântica cancelada (sem índice)."), 2500); logSearchProgress(tr("[cancelado] Usuário optou por não criar o índice.")); endSearchProgress(); return; }
+    logSearchProgress(tr("[index] Criando índice de embeddings...") );
 
     QSettings s;
     EmbeddingIndexer::Params p;
@@ -1811,13 +1854,18 @@ void MainWindow::ensureIndexAvailableThen(const QString& translatedQuery) {
     auto* thread = new QThread(this);
     auto* indexer = new EmbeddingIndexer(p);
     indexer->moveToThread(thread);
+    connect(indexer, &EmbeddingIndexer::stage, this, [this](const QString& name){ logSearchProgress(tr("[etapa] %1").arg(name)); });
+    connect(indexer, &EmbeddingIndexer::progress, this, [this](int pct, const QString& info){ logSearchProgress(tr("[progresso] %1% - %2").arg(pct).arg(info)); });
+    connect(indexer, &EmbeddingIndexer::warn, this, [this](const QString& m){ logSearchProgress(tr("[aviso] %1").arg(m)); });
+    connect(indexer, &EmbeddingIndexer::error, this, [this](const QString& m){ logSearchProgress(tr("[erro] %1").arg(m)); });
     connect(thread, &QThread::started, indexer, &EmbeddingIndexer::run);
     connect(indexer, &EmbeddingIndexer::finished, this, [this, thread, indexer, translatedQuery](bool ok, const QString&){
         thread->quit();
         thread->wait();
         indexer->deleteLater();
         thread->deleteLater();
-        if (!ok) { statusBar()->showMessage(tr("Falha ao criar o índice."), 3000); return; }
+        if (!ok) { statusBar()->showMessage(tr("Falha ao criar o índice."), 3000); logSearchProgress(tr("[erro] Falha ao criar o índice.")); endSearchProgress(); return; }
+        logSearchProgress(tr("[ok] Índice criado."));
         continueRagAfterEnsureIndex(translatedQuery);
     });
     thread->start();
@@ -1833,9 +1881,34 @@ void MainWindow::continueRagAfterEnsureIndex(const QString& translatedQuery) {
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(page)); }
         updateStatus();
         statusBar()->showMessage(tr("%1 resultado(s)").arg(searchResultsPages_.size()), 2000);
+        logSearchProgress(tr("[ok] %1 resultado(s) por RAG. Página atual: %2").arg(searchResultsPages_.size()).arg(page));
+        endSearchProgress();
     } else {
         statusBar()->showMessage(tr("Nenhum resultado encontrado."), 2000);
+        logSearchProgress(tr("[info] Nenhum resultado encontrado."));
+        endSearchProgress();
     }
+}
+
+// ---- Search progress modal helpers ----
+void MainWindow::beginSearchProgress(const QString& title, const QString& firstLine) {
+    if (!searchDlg_) searchDlg_ = new SearchProgressDialog(this);
+    searchDlg_->setWindowTitle(title);
+    searchDlg_->setBusy(true);
+    if (!firstLine.trimmed().isEmpty()) searchDlg_->appendLine(firstLine);
+    searchDlg_->show();
+    searchDlg_->raise();
+    searchDlg_->activateWindow();
+}
+
+void MainWindow::logSearchProgress(const QString& line) {
+    if (searchDlg_) searchDlg_->appendLine(line);
+}
+
+void MainWindow::endSearchProgress() {
+    if (!searchDlg_) return;
+    searchDlg_->setBusy(false);
+    // Keep dialog open for user to read; do not auto-close. User can close.
 }
 
 void MainWindow::copySelection() {
