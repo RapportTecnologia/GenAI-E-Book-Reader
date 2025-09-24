@@ -19,6 +19,15 @@
 #include <QClipboard>
 #include <QGuiApplication>
 #include <QTimer>
+#include <QMenu>
+#include <QContextMenuEvent>
+#include <QStandardPaths>
+#include <QDir>
+#include <QFile>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QPainter>
+#include <QPageLayout>
 #include <cmark.h>
 // Custom WebEngine helpers
 #include "ui/WebPage.h"
@@ -39,7 +48,9 @@ ChatDock::ChatDock(QWidget* parent)
     if (historyView_) {
         auto* page = new WebPage(sharedEphemeralWebProfile(), historyView_);
         historyView_->setPage(page);
-    }
+        // Allow right-click context menu on history view to offer printing
+    if (historyView_) historyView_->installEventFilter(this);
+}
     v->addWidget(historyView_, 1);
     // Scroll to bottom after each page load (connect once)
     connect(historyView_, &QWebEngineView::loadStarted, this, [this](){ pageLoading_ = true; });
@@ -97,12 +108,15 @@ ChatDock::ChatDock(QWidget* parent)
     btnSave_->setText(tr("Salvar"));
     btnSummarize_ = new QToolButton(container_);
     btnSummarize_->setText(tr("Resumir"));
+    btnPrint_ = new QToolButton(container_);
+    btnPrint_->setText(tr("Imprimir"));
     btnNewChat_ = new QToolButton(container_);
     btnNewChat_->setText(tr("Novo"));
     btnHistory_ = new QToolButton(container_);
     btnHistory_->setText(tr("Histórico de Chats"));
     bottom->addWidget(btnSave_);
     bottom->addWidget(btnSummarize_);
+    bottom->addWidget(btnPrint_);
     bottom->addWidget(btnNewChat_);
     bottom->addWidget(btnHistory_);
     bottom->addStretch();
@@ -128,6 +142,7 @@ ChatDock::ChatDock(QWidget* parent)
     input_ = new QPlainTextEdit(container_);
     input_->setPlaceholderText(tr("Digite sua mensagem... (Ctrl+Enter para enviar, Enter insere nova linha)"));
     input_->installEventFilter(this);
+    input_->setContextMenuPolicy(Qt::DefaultContextMenu);
     v->addWidget(input_);
 
     // Send button
@@ -139,6 +154,7 @@ ChatDock::ChatDock(QWidget* parent)
     connect(btnSend_, &QPushButton::clicked, this, &ChatDock::onSendClicked);
     connect(btnSave_, &QToolButton::clicked, this, &ChatDock::onSaveClicked);
     connect(btnSummarize_, &QToolButton::clicked, this, &ChatDock::onSummarizeClicked);
+    connect(btnPrint_, &QToolButton::clicked, this, &ChatDock::onPrintClicked);
     connect(pendingClear_, &QToolButton::clicked, this, &ChatDock::clearPendingImage);
     connect(btnNewChat_, &QToolButton::clicked, this, [this]{ clearConversation(); });
     connect(btnHistory_, &QToolButton::clicked, this, [this]{ emit requestShowSavedChats(); });
@@ -363,6 +379,29 @@ void ChatDock::onSummarizeClicked() {
     emit summarizeTranscriptRequested(transcriptText());
 }
 
+void ChatDock::onPrintClicked() {
+#ifdef HAVE_QT_WEBENGINE
+    if (!historyView_) return;
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setDocName(tr("Chat - GenAI Reader"));
+    QPrintDialog dlg(&printer, this);
+    dlg.setWindowTitle(tr("Imprimir chat"));
+    if (dlg.exec() != QDialog::Accepted) return;
+
+    // Print the current chat view snapshot fitted to a page
+    QPixmap pm = historyView_->grab();
+    if (pm.isNull()) { QMessageBox::warning(this, tr("Imprimir"), tr("Falha ao capturar conteúdo do chat.")); return; }
+    QPainter painter(&printer);
+    if (!painter.isActive()) { QMessageBox::warning(this, tr("Imprimir"), tr("Falha ao iniciar impressora.")); return; }
+    const QRect pageRect = printer.pageLayout().paintRectPixels(printer.resolution());
+    QPixmap scaled = pm.scaled(pageRect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    const int x = pageRect.x() + (pageRect.width() - scaled.width())/2;
+    const int y = pageRect.y() + (pageRect.height() - scaled.height())/2;
+    painter.drawPixmap(QPoint(x, y), scaled);
+    painter.end();
+#endif
+}
+
 bool ChatDock::eventFilter(QObject* obj, QEvent* ev) {
     if (obj == input_ && ev->type() == QEvent::KeyPress) {
         auto* ke = static_cast<QKeyEvent*>(ev);
@@ -370,6 +409,15 @@ bool ChatDock::eventFilter(QObject* obj, QEvent* ev) {
             onSendClicked();
             return true;
         }
+    }
+    // Context menu on history or input: add Print option
+    if ((obj == historyView_ || obj == input_) && ev->type() == QEvent::ContextMenu) {
+        auto* ce = static_cast<QContextMenuEvent*>(ev);
+        QMenu menu(this);
+        QAction* actPrint = menu.addAction(tr("Imprimir chat..."));
+        connect(actPrint, &QAction::triggered, this, &ChatDock::onPrintClicked);
+        menu.exec(ce->globalPos());
+        return true;
     }
     return QDockWidget::eventFilter(obj, ev);
 }

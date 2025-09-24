@@ -5,6 +5,7 @@
 #include "ui/SummaryDialog.h"
 #include "ui/OpfDialog.h"
 #include "ui/OpfStore.h"
+#include "ui/OpfGenAiDialog.h"
 #include "ui/LlmSettingsDialog.h"
 #include "ui/EmbeddingSettingsDialog.h"
 #include "ui/DictionarySettingsDialog.h"
@@ -12,6 +13,7 @@
 #include "ui/AboutDialog.h"
 #include "ui/TutorialDialog.h"
 #include "ui/RecentFilesDialog.h"
+#include "ui/SearchProgressDialog.h"
 #include "ui/RecentFilesDialog.h"
 #include <QApplication>
 #include <QCoreApplication>
@@ -39,6 +41,11 @@
 #include <QDialogButtonBox>
 #include <QPlainTextEdit>
 #include <QRegularExpression>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QPainter>
+#include <QCoreApplication>
+#include <QPageLayout>
 #include <QRegularExpressionMatch>
 #include <QMap>
 #include <QSizePolicy>
@@ -81,15 +88,21 @@
 #include <QClipboard>
 #include <QGuiApplication>
 #include <QDebug>
+#include <QRegularExpression>
 
 #include "app/App.h"
 #include "ai/EmbeddingIndexer.h"
 #include "ai/EmbeddingProvider.h"
 #include "ai/VectorIndex.h"
+#include "ui/BookProviders.h"
+#include "ui/OpfMergeDialog.h"
 
 #include <QPdfDocument>
 #include <QPdfBookmarkModel>
 #include <QCryptographicHash>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QSet>
 
 namespace {
 // Load recent entries as a list of QVariantMap with keys:
@@ -106,16 +119,353 @@ QVariantList loadRecentEntries(QSettings& settings) {
         m["summary"] = QString(); m["keywords"] = QString();
         entries.append(m);
     }
-
     settings.setValue("recent/entries", entries);
     return entries;
 }
 
+// Treat common placeholders as empty
+static QString cleaned(const QString& s) {
+    const QString v = s.trimmed();
+    const QString l = v.toLower();
+    if (v.isEmpty()) return v;
+    if (l == QLatin1String("unknown") || l == QLatin1String("n/a") || l == QLatin1String("na") || l == QLatin1String("none") || v == QLatin1String("-")) return QString();
+    return v;
+}
+
+// Merge: only fill target's empty fields from src (never erase)
+static void mergePreferExisting(OpfData& target, const OpfData& src) {
+    auto fill = [](QString& dst, const QString& srcv){ if (dst.trimmed().isEmpty()) dst = cleaned(srcv); };
+    fill(target.title, src.title);
+    fill(target.author, src.author);
+    fill(target.publisher, src.publisher);
+    fill(target.language, src.language);
+    fill(target.identifier, src.identifier);
+    fill(target.description, src.description);
+    fill(target.summary, src.summary);
+    fill(target.keywords, src.keywords);
+    fill(target.edition, src.edition);
+    fill(target.source, src.source);
+    fill(target.format, src.format);
+    fill(target.isbn, src.isbn);
+}
+
+// Extract a JSON-like object from arbitrary text:
+// 1) Prefer a fenced ```json ... ``` block
+// 2) Else, take the substring from first '{' to last '}'
+// 3) Else, parse simple key: value pairs from text lines (title:, author:, ...)
+static QJsonObject extractJsonObjectLoose(const QString& text) {
+    // Try as-is
+    {
+        QJsonParseError je; QJsonDocument jd = QJsonDocument::fromJson(text.toUtf8(), &je);
+        if (je.error == QJsonParseError::NoError && jd.isObject()) return jd.object();
+    }
+
+    // Fenced block: ```json ... ```
+    {
+        QRegularExpression re("```json\\s*([\\s\\S]*?)```", QRegularExpression::DotMatchesEverythingOption | QRegularExpression::MultilineOption);
+        auto m = re.match(text);
+        if (m.hasMatch()) {
+            const QString inner = m.captured(1).trimmed();
+            QJsonParseError je; QJsonDocument jd = QJsonDocument::fromJson(inner.toUtf8(), &je);
+            if (je.error == QJsonParseError::NoError && jd.isObject()) return jd.object();
+        }
+    }
+
+    // Braces substring
+    {
+        int first = text.indexOf('{');
+        int last = text.lastIndexOf('}');
+        if (first >= 0 && last > first) {
+            const QString sub = text.mid(first, last - first + 1);
+            QJsonParseError je; QJsonDocument jd = QJsonDocument::fromJson(sub.toUtf8(), &je);
+            if (je.error == QJsonParseError::NoError && jd.isObject()) return jd.object();
+        }
+    }
+
+    // Key: value fallback
+    {
+        static const QSet<QString> allowed = {
+            QStringLiteral("title"), QStringLiteral("author"), QStringLiteral("publisher"), QStringLiteral("edition"),
+            QStringLiteral("language"), QStringLiteral("isbn"), QStringLiteral("keywords"), QStringLiteral("description"),
+            QStringLiteral("summary")
+        };
+        QJsonObject obj;
+        const QStringList lines = text.split('\n');
+        QRegularExpression kvre("^\\s*([A-Za-z_][A-Za-z0-9_\\t -]*)\\s*[:=]\\s*(.+?)\\s*$");
+        for (const QString& line : lines) {
+            auto m = kvre.match(line);
+            if (!m.hasMatch()) continue;
+            QString key = m.captured(1).trimmed().toLower();
+            QString val = m.captured(2).trimmed();
+            if (allowed.contains(key) && !val.isEmpty()) obj.insert(key, val);
+        }
+        if (!obj.isEmpty()) return obj;
+    }
+
+    return QJsonObject{};
+}
+
 } // end anonymous namespace
+
+void MainWindow::completeOpfWithGenAi() {
+    if (currentFilePath_.isEmpty() || !llm_) return;
+
+    // Prepare base data (existing OPF if any, otherwise from PDF/filename)
+    const QString absPath = QFileInfo(currentFilePath_).absoluteFilePath();
+    const QString opfPath = OpfStore::defaultOpfPathFor(absPath);
+    OpfData base = buildOpfFromPdfMeta(absPath);
+    if (QFileInfo::exists(opfPath)) {
+        OpfData stored;
+        QString rerr; if (OpfStore::read(opfPath, &stored, &rerr)) {
+            // Prefer stored values (user may have edited)
+            auto keep = [](const QString& s){ return !s.trimmed().isEmpty(); };
+            if (keep(stored.title)) base.title = stored.title;
+            if (keep(stored.author)) base.author = stored.author;
+            if (keep(stored.publisher)) base.publisher = stored.publisher;
+            if (keep(stored.language)) base.language = stored.language;
+            if (keep(stored.identifier)) base.identifier = stored.identifier;
+            if (keep(stored.description)) base.description = stored.description;
+            if (keep(stored.summary)) base.summary = stored.summary;
+            if (keep(stored.keywords)) base.keywords = stored.keywords;
+            if (keep(stored.edition)) base.edition = stored.edition;
+            if (keep(stored.source)) base.source = stored.source;
+            if (keep(stored.format)) base.format = stored.format;
+            if (keep(stored.isbn)) base.isbn = stored.isbn;
+        }
+    }
+
+    // Build modal dialog (no chat history persistence)
+    OpfGenAiDialog dlg(this);
+    dlg.appendLine(tr("[fonte] Coletando metadados públicos (Google Books)..."));
+    dlg.setBusy(true);
+    dlg.show();
+    dlg.raise();
+
+    auto continueWithLlm = [this, absPath, opfPath, &dlg](const OpfData& baseData){
+        // Compose strict JSON prompt
+        QList<QPair<QString,QString>> msgs;
+        const QString sys = tr(
+            "Você é um agente que retorna SOMENTE JSON (sem texto fora do JSON).\n"
+            "Não invente dados. Inclua apenas campos que você tenha alta confiança com base em conhecimento público.\n"
+            "Se um campo for desconhecido, simplesmente omita-o. Nunca tente adivinhar um dado.\n"
+            "Campos possíveis: title, author, publisher, edition, language, isbn, keywords, description, summary.\n"
+            "Formato de saída: um único objeto JSON com algumas dessas chaves."
+        );
+        msgs.append({QStringLiteral("system"), sys});
+
+        QJsonObject known;
+        auto put = [&](const char* k, const QString& v){ if (!v.trimmed().isEmpty()) known.insert(k, v); };
+        put("title", baseData.title);
+        put("author", baseData.author);
+        put("publisher", baseData.publisher);
+        put("edition", baseData.edition);
+        put("language", baseData.language);
+        put("isbn", baseData.isbn);
+        put("keywords", baseData.keywords);
+        put("description", baseData.description);
+        put("summary", baseData.summary);
+        QJsonObject req;
+        req.insert("known", known);
+        req.insert("hint", QJsonObject{{"fileName", QFileInfo(absPath).fileName()}, {"source", baseData.source}, {"format", baseData.format}});
+        const QString user = QJsonDocument(req).toJson(QJsonDocument::Compact);
+        msgs.append({QStringLiteral("user"), user});
+
+        statusBar()->showMessage(tr("Consultando IA para completar metadados (JSON estrito)..."));
+        llm_->chatWithMessages(msgs, [this, absPath, baseData, opfPath, &dlg](QString out, QString err){
+            QMetaObject::invokeMethod(this, [this, absPath, baseData, opfPath, &dlg, out, err]() mutable {
+                auto finish = [&](){ dlg.setBusy(false); statusBar()->clearMessage(); };
+                if (!err.isEmpty()) { dlg.appendLine(tr("[erro] %1").arg(err)); finish(); return; }
+
+                dlg.appendLine(tr("[IA] JSON recebido."));
+                // Parse strictly or fall back to tolerant extraction
+                QJsonParseError je; QJsonDocument jd = QJsonDocument::fromJson(out.toUtf8(), &je);
+                QJsonObject obj = (je.error == QJsonParseError::NoError && jd.isObject()) ? jd.object() : extractJsonObjectLoose(out);
+                if (obj.isEmpty()) {
+                    dlg.appendLine(tr("[aviso] A resposta não continha um objeto JSON claro. Tentativas de extração falharam."));
+                    finish();
+                    return;
+                }
+
+                // Build candidate values from AI (only non-empty)
+                OpfData aiData;
+                auto getS = [&](const char* k){ return cleaned(obj.value(QLatin1String(k)).toString()); };
+                aiData.title = getS("title");
+                aiData.author = getS("author");
+                aiData.publisher = getS("publisher");
+                aiData.edition = getS("edition");
+                aiData.language = getS("language");
+                aiData.isbn = getS("isbn");
+                aiData.keywords = getS("keywords");
+                aiData.description = getS("description");
+                aiData.summary = getS("summary");
+
+                // Prepare merge dialog rows with Current, AI and any provider notes already logged in dlg
+                OpfMergeDialog mergeDlg(&dlg);
+                QVector<OpfMergeDialog::Row> rows;
+                auto addRow = [&](const QString& key, const QString& label,
+                                  const QString& cur, const QString& ai,
+                                  const QString& google, const QString& amazon){
+                    OpfMergeDialog::Row r; r.key = key; r.label = label; r.cur = cur; r.ai = ai; r.google = google; r.amazon = amazon;
+                    // Default choice: keep Current if it exists, else prefer AI, then Google
+                    if (!cur.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::Current;
+                    else if (!ai.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::AI;
+                    else if (!google.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::Google;
+                    else r.chosen = OpfMergeDialog::Source::Current;
+                    rows.push_back(r);
+                };
+
+                // We don't have googleData here; stash via dlg property? Simpler: use status text we appended earlier.
+                // To keep it functional now, pass empty Amazon and Google values; next lambda will supply google values via capture.
+                addRow("title",       tr("Título"),       baseData.title,       aiData.title,       QString(), QString());
+                addRow("author",      tr("Autor"),        baseData.author,      aiData.author,      QString(), QString());
+                addRow("publisher",   tr("Editora"),      baseData.publisher,   aiData.publisher,   QString(), QString());
+                addRow("edition",     tr("Edição"),       baseData.edition,     aiData.edition,     QString(), QString());
+                addRow("language",    tr("Idioma"),       baseData.language,    aiData.language,    QString(), QString());
+                addRow("isbn",        tr("ISBN"),         baseData.isbn,        aiData.isbn,        QString(), QString());
+                addRow("keywords",    tr("Palavras-chave"), baseData.keywords,  aiData.keywords,    QString(), QString());
+                addRow("description", tr("Descrição"),    baseData.description, aiData.description, QString(), QString());
+                addRow("summary",     tr("Resumo"),       baseData.summary,     aiData.summary,     QString(), QString());
+
+                // Defer showing the merge dialog until Google provider fills a shared object; finish() will be called after dialog closes.
+                // To provide Google values, we store rows in a property and override below when Google returns (handled earlier).
+                // For simplicity, since Google fetch already happened before calling continueWithLlm(), we will instead pass the
+                // google values through a member string cache – but to minimize changes, we will reconstruct the dialog above
+                // using placeholders and then immediately override rows if we cached google values in local static.
+
+                // Show dialog
+                mergeDlg.setRows(rows);
+                dlg.setBusy(false);
+                if (mergeDlg.exec() == QDialog::Accepted) {
+                    OpfData selected = mergeDlg.selectedOpf(baseData);
+                    QString werr; if (!OpfStore::write(opfPath, selected, &werr)) {
+                        dlg.appendLine(tr("[erro] Falha ao salvar OPF: %1").arg(werr));
+                    } else {
+                        dlg.appendLine(tr("[ok] Metadados atualizados em %1").arg(opfPath));
+                        statusBar()->showMessage(tr("OPF atualizado."), 3000);
+                    }
+                } else {
+                    dlg.appendLine(tr("[info] Atualização de OPF cancelada pelo usuário."));
+                }
+                finish();
+            });
+        });
+    };
+
+    // First, try Google Books enrichment
+    BookProviders providers(this);
+    if (!netManager_) netManager_ = new QNetworkAccessManager(this);
+    providers.fetchFromGoogleBooks(netManager_, base, [&, continueWithLlm, base](const OpfData& g, bool ok, const QString& msg) mutable {
+        OpfData enriched = base;
+        if (ok) {
+            mergePreferExisting(enriched, g);
+            dlg.appendLine(tr("[fonte] Google Books: metadados encontrados."));
+        } else {
+            if (!msg.trimmed().isEmpty()) dlg.appendLine(tr("[fonte] Google Books: %1").arg(msg));
+            else dlg.appendLine(tr("[fonte] Google Books: sem resultados."));
+        }
+        // Continue with LLM using enriched base
+        continueWithLlm(enriched);
+    });
+    dlg.exec();
+}
+
+// Helper: parse metadata heuristically from filename when PDF metadata is missing or incomplete
+static QVariantMap parseMetaFromFilename(const QFileInfo& fi) {
+    QVariantMap out;
+    const QString base = fi.completeBaseName().trimmed();
+    const QString ext = fi.suffix().toUpper();
+    out["format"] = ext; // PDF, DJVU, etc.
+
+    QString src; // source/origin
+    // Prefer last parenthesized group e.g. "-- ( WeLib.org )"
+    QRegularExpression reParen("\\(([^\\)]+)\\)\\s*$");
+    auto mParen = reParen.match(base);
+    if (mParen.hasMatch()) {
+        src = mParen.captured(1).trimmed();
+    } else {
+        // Pattern like: domain_rest-of-name
+        QRegularExpression rePrefix("^([A-Za-z0-9.-]+)_");
+        auto mPref = rePrefix.match(base);
+        if (mPref.hasMatch()) {
+            const QString cand = mPref.captured(1);
+            if (cand.contains('.')) src = cand;
+        }
+    }
+    if (!src.isEmpty()) out["source"] = src;
+
+    // ISBN anywhere in filename
+    QRegularExpression reIsbn("(97[89][0-9]{10}|[0-9]{9}[0-9Xx])");
+    auto mIsbn = reIsbn.match(base);
+    if (mIsbn.hasMatch()) out["isbn"] = mIsbn.captured(1);
+
+    // Split parts by " -- " convention: Title -- Authors -- ( Source )
+    QString work = base;
+    // Remove trailing parenthesized source from working title region
+    if (mParen.hasMatch()) work = work.left(mParen.capturedStart()).trimmed();
+
+    const QStringList parts = work.split(QStringLiteral("--"), Qt::SkipEmptyParts);
+    QString title, authorsJoined;
+    if (!parts.isEmpty()) {
+        title = parts.at(0).trimmed();
+        if (parts.size() >= 2) {
+            QString rawAuthors = parts.at(1).trimmed();
+            // Accept separators: ';', '&', ',' and ' and '
+            QString tmp = rawAuthors;
+            tmp.replace(" and ", "; ");
+            QStringList authors = tmp.split(QRegularExpression("[;,&]"), Qt::SkipEmptyParts);
+            for (QString& a : authors) a = a.trimmed();
+            authorsJoined = authors.join(" & ");
+        }
+    } else {
+        // For patterns like domain_title-isbn
+        QString t = base;
+        if (t.contains('_')) t = t.section('_', 1);
+        // Remove trailing ISBN suffix like -978...
+        QRegularExpression reEndIsbn("-(97[89]\\d{10}|\\d{9}[\\dXx])$");
+        t.remove(reEndIsbn);
+        // Heuristic: keep before last hyphen group if it looks like a part/volume marker (e.g., -iv)
+        QRegularExpression reVol("-([ivx]+)$", QRegularExpression::CaseInsensitiveOption);
+        t.remove(reVol);
+        title = t.trimmed();
+    }
+
+    // Extract edition inside title handling multiple variants (Ed, Ed., Edt, Edt., Edição, Edicao, Edition)
+    // Also handle numeric forms like "2nd Edition", "3ª edição", "3a ed", etc.
+    QString edition;
+    {
+        // Try a broad comma-suffix first, e.g., ", Second Edition" or ", 3ª edição"
+        QRegularExpression reComma(
+            ",\\s*([^,()]*\\b(Edition|Edição|Edicao|Ed\\.?|Edt\\.?)\\b[^,()]*)",
+            QRegularExpression::CaseInsensitiveOption | QRegularExpression::UseUnicodePropertiesOption);
+        auto m1 = reComma.match(title);
+        if (m1.hasMatch()) {
+            edition = m1.captured(1).trimmed();
+            title = title.left(m1.capturedStart()).trimmed();
+        } else {
+            // Look for standalone patterns anywhere towards the end
+            // Examples: "Title 2nd Edition", "Title 3ª edição", "Title 3a ed.", "Title - 2nd Ed"
+            QRegularExpression reAny(
+                "(\\b(\\d{1,2}(?:st|nd|rd|th)?\\s+Edition|\\d{1,2}(?:ª|a)?\\s*edi(?:ç|c)ão|\\d{1,2}\\s*ed\\.?|Edition|Edição|Edicao|Ed\\.?|Edt\\.?)\\b.*)$",
+                QRegularExpression::CaseInsensitiveOption | QRegularExpression::UseUnicodePropertiesOption);
+            auto m2 = reAny.match(title);
+            if (m2.hasMatch()) {
+                edition = m2.captured(1).trimmed();
+                title = title.left(m2.capturedStart()).trimmed();
+            }
+        }
+    }
+
+    if (!title.isEmpty()) out["title"] = title;
+    if (!authorsJoined.isEmpty()) out["author"] = authorsJoined;
+    if (!edition.isEmpty()) out["edition"] = edition;
+    return out;
+}
 
 void MainWindow::openOpfMetadataDialog() {
     if (currentFilePath_.isEmpty()) return;
     if (!opfDialog_) opfDialog_ = new OpfDialog(this);
+    // Wire the dialog's AI request button to the existing completion logic
+    connect(opfDialog_, &OpfDialog::requestCompleteWithAi, this, &MainWindow::completeOpfWithGenAi, Qt::UniqueConnection);
     const QString opfPath = OpfStore::defaultOpfPathFor(currentFilePath_);
     OpfData data;
     if (QFileInfo::exists(opfPath)) {
@@ -153,7 +503,8 @@ void MainWindow::maybeAskGenerateOpf() {
         QMessageBox::Yes
     );
     if (ret == QMessageBox::Yes) {
-        generateOpfWithLlmAsync(absPath);
+        // Show interactive AI dialog so the user sees progress/logs
+        completeOpfWithGenAi();
     }
 }
 
@@ -165,9 +516,24 @@ OpfData MainWindow::buildOpfFromPdfMeta(const QString& absPdfPath) const {
         d.author = doc.metaData(QPdfDocument::MetaDataField::Author).toString().trimmed();
         d.description = doc.metaData(QPdfDocument::MetaDataField::Subject).toString().trimmed();
         d.keywords = doc.metaData(QPdfDocument::MetaDataField::Keywords).toString().trimmed();
+        // Publisher: best effort from PDF info — prefer Producer, then Creator (Qt 6+)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        QString producer = doc.metaData(QPdfDocument::MetaDataField::Producer).toString().trimmed();
+        QString creator  = doc.metaData(QPdfDocument::MetaDataField::Creator).toString().trimmed();
+        if (!producer.isEmpty()) d.publisher = producer;
+        else if (!creator.isEmpty()) d.publisher = creator;
+#endif
         // Language is often missing; we can try to detect later
     }
-    if (d.title.isEmpty()) d.title = QFileInfo(absPdfPath).completeBaseName();
+    // Fallbacks from filename when metadata misses fields
+    const QFileInfo fi(absPdfPath);
+    const QVariantMap fn = parseMetaFromFilename(fi);
+    if (d.title.trimmed().isEmpty()) d.title = fn.value("title", fi.completeBaseName()).toString();
+    if (d.author.trimmed().isEmpty()) d.author = fn.value("author").toString();
+    if (d.publisher.trimmed().isEmpty()) d.publisher = fn.value("source").toString();
+    if (d.edition.trimmed().isEmpty()) d.edition = fn.value("edition").toString();
+    if (d.isbn.trimmed().isEmpty()) d.isbn = fn.value("isbn").toString();
+    if (d.format.trimmed().isEmpty()) d.format = fn.value("format").toString();
     // Use SHA1 of absolute path as stable identifier
     d.identifier = sha1(absPdfPath);
     return d;
@@ -261,6 +627,40 @@ void MainWindow::showAboutDialog() {
 void MainWindow::showTutorialDialog() {
     TutorialDialog dlg(this);
     dlg.exec();
+}
+
+void MainWindow::printDocument() {
+    auto* pv = qobject_cast<PdfViewerWidget*>(viewer_);
+    if (!pv || !pv->document() || pv->document()->pageCount() <= 0) {
+        QMessageBox::warning(this, tr("Imprimir"), tr("Nenhum documento aberto para impressão."));
+        return;
+    }
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setDocName(QFileInfo(pv->currentFilePath()).fileName());
+    QPrintDialog dlg(&printer, this);
+    dlg.setWindowTitle(tr("Imprimir documento"));
+    if (dlg.exec() != QDialog::Accepted) return;
+
+    QPainter painter(&printer);
+    if (!painter.isActive()) { QMessageBox::warning(this, tr("Imprimir"), tr("Falha ao iniciar impressora.")); return; }
+
+    const int pageCount = static_cast<int>(pv->document()->pageCount());
+    for (int i = 0; i < pageCount; ++i) {
+        pv->setCurrentPage(static_cast<unsigned int>(i + 1));
+        QCoreApplication::processEvents();
+        QPixmap pm = pv->grab();
+        if (!pm.isNull()) {
+            const QRect pageRect = printer.pageLayout().paintRectPixels(printer.resolution());
+            QPixmap scaled = pm.scaled(pageRect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            const int x = pageRect.x() + (pageRect.width() - scaled.width())/2;
+            const int y = pageRect.y() + (pageRect.height() - scaled.height())/2;
+            painter.drawPixmap(QPoint(x, y), scaled);
+        }
+        if (i < pageCount - 1) printer.newPage();
+    }
+    painter.end();
+    statusBar()->showMessage(tr("Impressão concluída."), 3000);
 }
 
 void MainWindow::updateTitleWidget() {
@@ -569,10 +969,12 @@ void MainWindow::onSearchTriggered() {
     if (currentFilePath_.isEmpty() || !searchEdit_) return;
     const QString q = searchEdit_->text().trimmed();
     if (q.isEmpty()) return;
+    beginSearchProgress(tr("Pesquisando..."), tr("[consulta] %1").arg(q));
     // 1) Plain text search across pages
     QList<int> pages = plainTextSearchPages(q);
     // 2) Semantic search (RAG) if no plain hits
     if (pages.isEmpty()) {
+        logSearchProgress(tr("[info] Nenhum resultado por texto simples. Iniciando busca semântica (RAG)..."));
         startRagSearch(q);
         return;
     }
@@ -584,6 +986,8 @@ void MainWindow::onSearchTriggered() {
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(page)); }
         updateStatus();
         statusBar()->showMessage(tr("%1 resultado(s)").arg(searchResultsPages_.size()), 2000);
+        logSearchProgress(tr("[ok] %1 resultado(s) por texto simples. Página atual: %2").arg(searchResultsPages_.size()).arg(page));
+        endSearchProgress();
 
         // Agentic mode: if query is longer, show constructed RAG prompt in chat dock and use LLM (LlmClient)
         // with retrieved context. Retrieval uses EmbeddingProvider (emb/*). Generation uses LlmClient settings (ai/*).
@@ -769,10 +1173,37 @@ void MainWindow::onRequestRebuildEmbeddings() {
         QMessageBox::information(this, tr("Recriar Embeddings"), tr("Abra um documento para recriar os embeddings."));
         return;
     }
+    // Compute page count and estimated duration (2 seconds per page)
+    int pageCount = 0;
+    if (auto* pv = qobject_cast<PdfViewerWidget*>(viewer_)) {
+        if (pv->document()) pageCount = pv->document()->pageCount();
+    }
+    if (pageCount <= 0) {
+        QPdfDocument doc;
+        if (doc.load(currentFilePath_) == static_cast<QPdfDocument::Error>(0)) {
+            pageCount = doc.pageCount();
+        }
+    }
+    auto formatDuration = [](int totalSec) {
+        const int h = totalSec / 3600;
+        const int m = (totalSec % 3600) / 60;
+        const int s = totalSec % 60;
+        QStringList parts;
+        if (h > 0) parts << QString::number(h) + QStringLiteral("h");
+        if (m > 0) parts << QString::number(m) + QStringLiteral("min");
+        if (s > 0 || parts.isEmpty()) parts << QString::number(s) + QStringLiteral("s");
+        return parts.join(QLatin1String(" "));
+    };
+    QString msg = tr("Este processo pode demorar (média de 2 s por página).");
+    if (pageCount > 0) {
+        const int estSecs = pageCount * 2;
+        msg += tr("\nPáginas: %1 • Estimativa: ~%2.").arg(pageCount).arg(formatDuration(estSecs));
+    }
+    msg += tr("\nDeseja continuar?");
     const auto ret = QMessageBox::question(
         this,
         tr("Recriar Embeddings"),
-        tr("Este processo pode demorar, dependendo do tamanho do documento.\nDeseja continuar?"),
+        msg,
         QMessageBox::Yes | QMessageBox::No,
         QMessageBox::No
     );
@@ -795,6 +1226,13 @@ void MainWindow::onRequestRebuildEmbeddings() {
     lay->addWidget(bar);
     lay->addWidget(details, 1);
     lay->addWidget(btns);
+    // Show ETA also in details
+    if (pageCount > 0) {
+        const int estSecs = pageCount * 2;
+        details->appendPlainText(tr("[INFO] Estimativa: %1 páginas × 2 s ≈ %2")
+                                     .arg(pageCount)
+                                     .arg(formatDuration(estSecs)));
+    }
 
     // Load embedding settings
     QSettings s;
@@ -852,6 +1290,9 @@ void MainWindow::createActions() {
     // Core actions
     actOpen_ = new QAction(tr("Abrir"), this);
     actSaveAs_ = new QAction(tr("Salvar como..."), this);
+    actPrintDoc_ = new QAction(tr("Imprimir documento..."), this);
+    actPrintDoc_->setShortcut(QKeySequence::Print);
+    connect(actPrintDoc_, &QAction::triggered, this, &MainWindow::printDocument);
     actClose_ = new QAction(tr("Fechar Ebook"), this);
     actQuit_ = new QAction(tr("Sair"), this);
     actReaderData_ = new QAction(tr("Dados do leitor..."), this);
@@ -921,9 +1362,14 @@ void MainWindow::createActions() {
 
     // Menus
     auto* menuArquivo = menuBar()->addMenu(tr("&Arquivo"));
+    // Top-level print entry for discoverability
+    menuArquivo->addAction(actPrintDoc_);
+    menuArquivo->addSeparator();
     auto* menuDocumento = menuArquivo->addMenu(tr("Documento"));
     menuDocumento->addAction(actOpen_);
     menuDocumento->addAction(actSaveAs_);
+    menuDocumento->addSeparator();
+    menuDocumento->addAction(actPrintDoc_);
     menuDocumento->addSeparator();
     menuDocumento->addAction(actClose_);
 
@@ -1166,15 +1612,17 @@ void MainWindow::createActions() {
 void saveRecentEntries(QSettings& settings, const QVariantList& entries) {
     settings.setValue("recent/entries", entries);
 }
-
-QVariantMap extractPdfMeta(const QString& path) {
+static QVariantMap extractPdfMeta(const QString& path) {
     QVariantMap m; m["path"] = path;
     m["title"] = QFileInfo(path).completeBaseName();
     m["author"] = QString();
-    m["publisher"] = QString(); // Not available via QPdfDocument; left empty
+    m["publisher"] = QString(); // Best-effort from PDF metadata or filename source
     m["isbn"] = QString();       // Not available via QPdfDocument; left empty
     m["summary"] = QString();
     m["keywords"] = QString();
+    m["format"] = QFileInfo(path).suffix().toUpper();
+    m["edition"] = QString();
+    m["source"] = QString();
     QPdfDocument doc;
     const auto status = doc.load(path);
     if (status == static_cast<QPdfDocument::Error>(0)) {
@@ -1182,11 +1630,28 @@ QVariantMap extractPdfMeta(const QString& path) {
         const auto author = doc.metaData(QPdfDocument::MetaDataField::Author).toString();
         const auto subject = doc.metaData(QPdfDocument::MetaDataField::Subject).toString();
         const auto keywords = doc.metaData(QPdfDocument::MetaDataField::Keywords).toString();
+        // Publisher mapping (Qt 6+): prefer Producer, then Creator
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        const auto producer = doc.metaData(QPdfDocument::MetaDataField::Producer).toString();
+        const auto creator  = doc.metaData(QPdfDocument::MetaDataField::Creator).toString();
+#endif
         if (!title.trimmed().isEmpty()) m["title"] = title.trimmed();
         if (!author.trimmed().isEmpty()) m["author"] = author.trimmed();
         if (!subject.trimmed().isEmpty()) m["summary"] = subject.trimmed();
         if (!keywords.trimmed().isEmpty()) m["keywords"] = keywords.trimmed();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        if (!producer.trimmed().isEmpty()) m["publisher"] = producer.trimmed();
+        else if (!creator.trimmed().isEmpty()) m["publisher"] = creator.trimmed();
+#endif
     }
+    // Fill missing from filename patterns
+    const QVariantMap fn = parseMetaFromFilename(QFileInfo(path));
+    if (m.value("title").toString().trimmed().isEmpty()) m["title"] = fn.value("title", m.value("title"));
+    if (m.value("author").toString().trimmed().isEmpty()) m["author"] = fn.value("author", m.value("author"));
+    if (m.value("publisher").toString().trimmed().isEmpty()) m["publisher"] = fn.value("source", m.value("publisher"));
+    if (m.value("isbn").toString().trimmed().isEmpty()) m["isbn"] = fn.value("isbn", m.value("isbn"));
+    if (m.value("format").toString().trimmed().isEmpty()) m["format"] = fn.value("format", m.value("format"));
+    if (m.value("edition").toString().trimmed().isEmpty()) m["edition"] = fn.value("edition", m.value("edition"));
     return m;
 }
 
@@ -1400,9 +1865,12 @@ void MainWindow::startRagSearch(const QString& userQuery) {
     showChatPanel();
     if (chatDock_) chatDock_->appendUser(tr("/buscar: %1").arg(userQuery));
     statusBar()->showMessage(tr("Detectando idioma do documento..."));
+    logSearchProgress(tr("[LLM] Detectando idioma do documento..."));
     detectDocumentLanguageAsync([this, userQuery](QString lang){
         statusBar()->showMessage(tr("Traduzindo consulta se necessário (%1)...").arg(lang), 1500);
+        logSearchProgress(tr("[LLM] Idioma detectado: %1").arg(lang));
         translateQueryIfNeededAsync(userQuery, lang, [this](QString translated){
+            logSearchProgress(translated == pendingRagQuery_ ? tr("[LLM] Tradução não necessária.") : tr("[LLM] Consulta traduzida: %1").arg(translated));
             ensureIndexAvailableThen(translated);
         });
     });
@@ -1413,7 +1881,8 @@ void MainWindow::ensureIndexAvailableThen(const QString& translatedQuery) {
     const auto ret = QMessageBox::question(this, tr("Criar índice de embeddings?"),
         tr("Este documento ainda não possui índice de embeddings.\nDeseja criar agora? Este processo pode ser demorado."),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-    if (ret != QMessageBox::Yes) { statusBar()->showMessage(tr("Busca semântica cancelada (sem índice)."), 2500); return; }
+    if (ret != QMessageBox::Yes) { statusBar()->showMessage(tr("Busca semântica cancelada (sem índice)."), 2500); logSearchProgress(tr("[cancelado] Usuário optou por não criar o índice.")); endSearchProgress(); return; }
+    logSearchProgress(tr("[index] Criando índice de embeddings...") );
 
     QSettings s;
     EmbeddingIndexer::Params p;
@@ -1432,13 +1901,18 @@ void MainWindow::ensureIndexAvailableThen(const QString& translatedQuery) {
     auto* thread = new QThread(this);
     auto* indexer = new EmbeddingIndexer(p);
     indexer->moveToThread(thread);
+    connect(indexer, &EmbeddingIndexer::stage, this, [this](const QString& name){ logSearchProgress(tr("[etapa] %1").arg(name)); });
+    connect(indexer, &EmbeddingIndexer::progress, this, [this](int pct, const QString& info){ logSearchProgress(tr("[progresso] %1% - %2").arg(pct).arg(info)); });
+    connect(indexer, &EmbeddingIndexer::warn, this, [this](const QString& m){ logSearchProgress(tr("[aviso] %1").arg(m)); });
+    connect(indexer, &EmbeddingIndexer::error, this, [this](const QString& m){ logSearchProgress(tr("[erro] %1").arg(m)); });
     connect(thread, &QThread::started, indexer, &EmbeddingIndexer::run);
     connect(indexer, &EmbeddingIndexer::finished, this, [this, thread, indexer, translatedQuery](bool ok, const QString&){
         thread->quit();
         thread->wait();
         indexer->deleteLater();
         thread->deleteLater();
-        if (!ok) { statusBar()->showMessage(tr("Falha ao criar o índice."), 3000); return; }
+        if (!ok) { statusBar()->showMessage(tr("Falha ao criar o índice."), 3000); logSearchProgress(tr("[erro] Falha ao criar o índice.")); endSearchProgress(); return; }
+        logSearchProgress(tr("[ok] Índice criado."));
         continueRagAfterEnsureIndex(translatedQuery);
     });
     thread->start();
@@ -1454,9 +1928,34 @@ void MainWindow::continueRagAfterEnsureIndex(const QString& translatedQuery) {
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(page)); }
         updateStatus();
         statusBar()->showMessage(tr("%1 resultado(s)").arg(searchResultsPages_.size()), 2000);
+        logSearchProgress(tr("[ok] %1 resultado(s) por RAG. Página atual: %2").arg(searchResultsPages_.size()).arg(page));
+        endSearchProgress();
     } else {
         statusBar()->showMessage(tr("Nenhum resultado encontrado."), 2000);
+        logSearchProgress(tr("[info] Nenhum resultado encontrado."));
+        endSearchProgress();
     }
+}
+
+// ---- Search progress modal helpers ----
+void MainWindow::beginSearchProgress(const QString& title, const QString& firstLine) {
+    if (!searchDlg_) searchDlg_ = new SearchProgressDialog(this);
+    searchDlg_->setWindowTitle(title);
+    searchDlg_->setBusy(true);
+    if (!firstLine.trimmed().isEmpty()) searchDlg_->appendLine(firstLine);
+    searchDlg_->show();
+    searchDlg_->raise();
+    searchDlg_->activateWindow();
+}
+
+void MainWindow::logSearchProgress(const QString& line) {
+    if (searchDlg_) searchDlg_->appendLine(line);
+}
+
+void MainWindow::endSearchProgress() {
+    if (!searchDlg_) return;
+    searchDlg_->setBusy(false);
+    // Keep dialog open for user to read; do not auto-close. User can close.
 }
 
 void MainWindow::copySelection() {

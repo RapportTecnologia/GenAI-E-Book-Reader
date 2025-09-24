@@ -32,6 +32,7 @@
 // For Qt 5.15, we don't have QPdfLinkModel, so we'll implement a different approach
 class QGraphicsOpacityEffect;
 class QMenu;
+class QPrinter;
 
 /**
  * \class PdfViewerWidget
@@ -69,10 +70,15 @@ public:
     void setCurrentPage(unsigned int page);
 
     QPdfDocument* document() const { return doc_; }
+    /** \brief Caminho absoluto do arquivo PDF atualmente aberto (se houver). */
+    QString currentFilePath() const { return filePath_; }
 
     // Convenience: fit content to widget width for natural reading
     /** \brief Ajusta o PDF para caber na largura do widget. */
     void fitToWidth();
+
+    /** \brief Imprime a página atual (conteúdo visível da página). */
+    void printCurrentPage();
 
     enum class SelectionMode { Auto, Text, Rect, None };
     /** \brief Define o modo de seleção (automático, texto, retângulo ou nenhum). */
@@ -127,6 +133,7 @@ private:
     QPdfDocument* doc_;
     QPdfView* view_;
     QPdfPageNavigator* navigation_;
+    QString filePath_;
 
     // Selection state
     SelectionMode selMode_ { SelectionMode::Auto };

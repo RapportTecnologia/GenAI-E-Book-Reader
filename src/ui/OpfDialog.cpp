@@ -40,12 +40,15 @@ OpfDialog::OpfDialog(QWidget* parent)
 
     auto* btns = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Close, this);
     editBtn_ = new QPushButton(tr("Editar"), this);
+    aiBtn_ = new QPushButton(tr("Completar com IA"), this);
     btns->addButton(editBtn_, QDialogButtonBox::ActionRole);
+    btns->addButton(aiBtn_, QDialogButtonBox::ActionRole);
     lay->addWidget(btns);
 
     connect(btns, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(btns, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(editBtn_, &QPushButton::clicked, this, &OpfDialog::toggleEdit);
+    connect(aiBtn_, &QPushButton::clicked, this, [this]{ emit requestCompleteWithAi(); });
 
     setEditable(false);
 }

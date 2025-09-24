@@ -50,6 +50,8 @@ class DictionarySettingsDialog;
 class RecentFilesDialog;
 class QPdfBookmarkModel;
 class OpfDialog;
+class OpfGenAiDialog;
+class SearchProgressDialog;
 
 #include "ui/OpfStore.h"
 
@@ -142,6 +144,8 @@ private slots:
     void showRecentFilesDialog();
     /** \brief Mostra o tutorial inicial do aplicativo. */
     void showTutorialDialog();
+    /** \brief Imprime o documento inteiro atual. */
+    void printDocument();
 
     // AI actions
     /** \brief Solicita sinônimos para a seleção/palavra destacada. */
@@ -160,6 +164,8 @@ private slots:
     void onRequestSummarizeDocument();
     /** \brief Abre o diálogo de metadados OPF. */
     void openOpfMetadataDialog();
+    /** \brief Completa metadados OPF faltantes via IA (JSON estrito, sem inventar). */
+    void completeOpfWithGenAi();
 
 private:
     void buildUi();
@@ -199,6 +205,11 @@ private:
     void toolNextResult();
     void toolPrevResult();
     void toolGotoPage(int page);
+
+    // Search progress modal helpers
+    void beginSearchProgress(const QString& title, const QString& firstLine = QString());
+    void logSearchProgress(const QString& line);
+    void endSearchProgress();
 
 private:
     // Search helpers
@@ -241,6 +252,7 @@ private:
     QAction* actQuit_ {nullptr};
     QAction* actReaderData_ {nullptr};
     QAction* actChat_ {nullptr};
+    QAction* actPrintDoc_ {nullptr};
     // Edit actions
     QAction* actSelText_ {nullptr};
     QAction* actSelRect_ {nullptr};
@@ -319,6 +331,7 @@ private:
     SummaryDialog* summaryDlg_ {nullptr};
     OpfDialog* opfDialog_ {nullptr};
     ChatDock* chatDock_ {nullptr};
+    SearchProgressDialog* searchDlg_ {nullptr};
 
     // Cache for plain text pages of current PDF
     QStringList pagesText_;

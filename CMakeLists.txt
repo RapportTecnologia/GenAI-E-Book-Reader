@@ -5,6 +5,7 @@ file(READ "${CMAKE_CURRENT_LIST_DIR}/CHANGELOG.md" _CHANGELOG_TXT)
 string(REGEX MATCH "## \\[([0-9]+\\.[0-9]+\\.[0-9]+)\\]" _CHANGELOG_MATCH "${_CHANGELOG_TXT}")
 if(_CHANGELOG_MATCH)
   string(REGEX REPLACE ".*\\[([0-9]+\\.[0-9]+\\.[0-9]+)\\].*" "\\1" GENAI_VERSION "${_CHANGELOG_MATCH}")
+  message(STATUS "Building GenAI_EBook_Reader version ${GENAI_VERSION}")
 else()
   set(GENAI_VERSION "0.0.0")
   message(WARNING "Could not parse version from CHANGELOG.md; defaulting to ${GENAI_VERSION}")
@@ -28,7 +29,7 @@ file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS
 )
 
 # Require Qt6 with Widgets, PdfWidgets and Network; WebEngineWidgets is optional
-find_package(Qt6 REQUIRED COMPONENTS Widgets PdfWidgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets PdfWidgets Network PrintSupport)
 find_package(Qt6 REQUIRED COMPONENTS WebEngineWidgets QUIET)
 if (Qt6WebEngineWidgets_FOUND)
   message(STATUS "Qt6 WebEngineWidgets found: enabling rich chat rendering")
@@ -40,7 +41,7 @@ add_executable(genai_reader ${APP_SOURCES})
 
 target_include_directories(genai_reader PRIVATE include ${CMAKE_SOURCE_DIR}/src ${Qt6_INCLUDE_DIRS})
 
-target_link_libraries(genai_reader PRIVATE Qt6::Widgets Qt6::PdfWidgets Qt6::Network)
+target_link_libraries(genai_reader PRIVATE Qt6::Widgets Qt6::PdfWidgets Qt6::Network Qt6::PrintSupport)
 target_link_libraries(genai_reader PRIVATE Qt6::WebEngineWidgets)
 target_link_libraries(genai_reader PRIVATE cmark)
 target_compile_definitions(genai_reader PRIVATE HAVE_QT_WEBENGINE)
@@ -100,6 +101,17 @@ else()
     file(APPEND "${ENV_FILE_PATH}" "GENERATIVA_API_KEY=${GENERATIVA_API_KEY_DEFAULT}\n")
     message(STATUS "Appended GENERATIVA_API_KEY to existing .env")
   endif()
+  # Ensure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET exist in .env; append if missing
+  string(FIND "${_ENV_EXISTING}" "GOOGLE_CLIENT_ID=" _HAS_GOOGLE_ID)
+  if(_HAS_GOOGLE_ID EQUAL -1)
+    file(APPEND "${ENV_FILE_PATH}" "GOOGLE_CLIENT_ID=\n")
+    message(STATUS "Appended GOOGLE_CLIENT_ID to existing .env")
+  endif()
+  string(FIND "${_ENV_EXISTING}" "GOOGLE_CLIENT_SECRET=" _HAS_GOOGLE_SECRET)
+  if(_HAS_GOOGLE_SECRET EQUAL -1)
+    file(APPEND "${ENV_FILE_PATH}" "GOOGLE_CLIENT_SECRET=\n")
+    message(STATUS "Appended GOOGLE_CLIENT_SECRET to existing .env")
+  endif()
   message(STATUS ".env already exists at ${ENV_FILE_PATH}")
 endif()
 
@@ -123,6 +135,23 @@ if(_GEN_MATCH)
 endif()
 string(REGEX REPLACE "^\"(.*)\"$" "\\1" GENERATIVA_API_KEY_VALUE "${GENERATIVA_API_KEY_VALUE}")
 string(REPLACE "\r" "" GENERATIVA_API_KEY_VALUE "${GENERATIVA_API_KEY_VALUE}")
+
+# Read Google OAuth client values from .env
+set(GOOGLE_CLIENT_ID_VALUE "")
+string(REGEX MATCH "GOOGLE_CLIENT_ID[ \t]*=([^\n\r]*)" _GID_MATCH "${_ENV_TXT}")
+if(_GID_MATCH)
+  set(GOOGLE_CLIENT_ID_VALUE "${CMAKE_MATCH_1}")
+endif()
+string(REGEX REPLACE "^\"(.*)\"$" "\\1" GOOGLE_CLIENT_ID_VALUE "${GOOGLE_CLIENT_ID_VALUE}")
+string(REPLACE "\r" "" GOOGLE_CLIENT_ID_VALUE "${GOOGLE_CLIENT_ID_VALUE}")
+
+set(GOOGLE_CLIENT_SECRET_VALUE "")
+string(REGEX MATCH "GOOGLE_CLIENT_SECRET[ \t]*=([^\n\r]*)" _GSEC_MATCH "${_ENV_TXT}")
+if(_GSEC_MATCH)
+  set(GOOGLE_CLIENT_SECRET_VALUE "${CMAKE_MATCH_1}")
+endif()
+string(REGEX REPLACE "^\"(.*)\"$" "\\1" GOOGLE_CLIENT_SECRET_VALUE "${GOOGLE_CLIENT_SECRET_VALUE}")
+string(REPLACE "\r" "" GOOGLE_CLIENT_SECRET_VALUE "${GOOGLE_CLIENT_SECRET_VALUE}")
 
 # Generate a header with build-time constants
 set(GENERATED_INCLUDE_DIR "${CMAKE_BINARY_DIR}/generated")
@@ -153,6 +182,8 @@ endif()
 set(DIST_DIR "${CMAKE_SOURCE_DIR}/dist")
 set(DIST_BASENAME "genai_reader-v${PROJECT_VERSION}-linux-x86_64")
 set(APPDIR "${CMAKE_BINARY_DIR}/AppDir")
+# Versioned desktop entry filename to allow version-specific MIME associations
+set(DESKTOP_BASENAME "GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage.desktop")
 find_program(LINUXDEPLOY_BIN linuxdeploy)
 find_program(CONVERT_BIN convert)
 find_program(QMAKE6_BIN qmake6)
@@ -197,9 +228,11 @@ if(UNIX AND NOT APPLE)
     COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/bin"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${APPDIR}/usr/share/applications"
     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:genai_reader>" "${APPDIR}/usr/bin/"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/resources/appimage/genai-reader.desktop" "${APPDIR}/usr/share/applications/"
+    # Copy desktop file with versioned filename so default apps/mimeapps can target the exact release
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/resources/appimage/genai-reader.desktop" "${APPDIR}/usr/share/applications/${DESKTOP_BASENAME}"
 
-    COMMAND ${CMAKE_COMMAND} -E env QMAKE="${QMAKE6_BIN}" "${LINUXDEPLOY_BIN}" --appdir "${APPDIR}" -e "${APPDIR}/usr/bin/genai_reader" -d "${APPDIR}/usr/share/applications/genai-reader.desktop" -i "${APPDIR}/usr/share/icons/hicolor/256x256/apps/genai-reader.png" --output appimage --plugin qt 
+    # Point linuxdeploy to the versioned desktop entry
+    COMMAND ${CMAKE_COMMAND} -E env QMAKE="${QMAKE6_BIN}" "${LINUXDEPLOY_BIN}" --appdir "${APPDIR}" -e "${APPDIR}/usr/bin/genai_reader" -d "${APPDIR}/usr/share/applications/${DESKTOP_BASENAME}" -i "${APPDIR}/usr/share/icons/hicolor/256x256/apps/genai-reader.png" --output appimage --plugin qt 
     COMMAND ${CMAKE_COMMAND} -E rename "${CMAKE_BINARY_DIR}/GenAI_E-Book_Reader-x86_64.AppImage" "${DIST_DIR}/GenAI_EBook_Reader-v${PROJECT_VERSION}-x86_64.AppImage"
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
