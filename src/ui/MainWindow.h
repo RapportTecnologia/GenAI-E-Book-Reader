@@ -144,6 +144,8 @@ private slots:
     void showRecentFilesDialog();
     /** \brief Mostra o tutorial inicial do aplicativo. */
     void showTutorialDialog();
+    /** \brief Imprime o documento inteiro atual. */
+    void printDocument();
 
     // AI actions
     /** \brief Solicita sinônimos para a seleção/palavra destacada. */
@@ -250,6 +252,7 @@ private:
     QAction* actQuit_ {nullptr};
     QAction* actReaderData_ {nullptr};
     QAction* actChat_ {nullptr};
+    QAction* actPrintDoc_ {nullptr};
     // Edit actions
     QAction* actSelText_ {nullptr};
     QAction* actSelRect_ {nullptr};

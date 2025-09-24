@@ -10,6 +10,10 @@
 #include <QGuiApplication>
 #include <QClipboard>
 #include <QScrollBar>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QPainter>
+#include <QPageLayout>
 #include <QFileDialog>
 #include <QFile>
 #include <QFileInfo>
@@ -100,6 +104,8 @@ bool PdfViewerWidget::openFile(const QString& path, QString* errorOut) {
     // Keep multi-page mode active after load
     view_->setPageMode(QPdfView::PageMode::MultiPage);
     if (navigation_) navigation_->jump(0, QPointF(), 0);
+    // Store file path for potential full-document actions
+    filePath_ = QFileInfo(path).absoluteFilePath();
 
     return true;
 }
@@ -216,6 +222,10 @@ bool PdfViewerWidget::eventFilter(QObject* watched, QEvent* event) {
                 const QString text = selectionText(&ok);
                 const bool hasImageSelection = selRect_.isValid() && !selRect_.isEmpty();
                 QMenu menu(this);
+                // Printing option for current page
+                QAction* actPrintPage = menu.addAction(tr("Imprimir página atual..."));
+                QObject::connect(actPrintPage, &QAction::triggered, this, [this]() { printCurrentPage(); });
+                menu.addSeparator();
                 if (ok && !text.trimmed().isEmpty()) {
                     const int wordCount = text.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts).size();
                     if (wordCount <= 3 && text.size() <= 80) {
@@ -692,3 +702,26 @@ QString PdfViewerWidget::extractTextFromSelectionNative() {
 }
 
 
+
+void PdfViewerWidget::printCurrentPage() {
+    if (!view_ || !navigation_ || !doc_) return;
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setDocName(tr("Página %1 - GenAI Reader").arg(navigation_->currentPage() + 1));
+    QPrintDialog dlg(&printer, this);
+    dlg.setWindowTitle(tr("Imprimir página atual"));
+    if (dlg.exec() != QDialog::Accepted) return;
+
+    // Grab the visible area and scale to fit the printable page rect
+    QPixmap pm = view_->viewport() ? view_->viewport()->grab() : view_->grab();
+    if (pm.isNull()) { showToast(tr("Falha ao capturar a página para impressão.")); return; }
+
+    QPainter painter(&printer);
+    if (!painter.isActive()) { showToast(tr("Falha ao iniciar impressora.")); return; }
+
+    const QRect pageRect = printer.pageLayout().paintRectPixels(printer.resolution());
+    QPixmap scaled = pm.scaled(pageRect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    const int x = pageRect.x() + (pageRect.width() - scaled.width())/2;
+    const int y = pageRect.y() + (pageRect.height() - scaled.height())/2;
+    painter.drawPixmap(QPoint(x, y), scaled);
+    painter.end();
+}

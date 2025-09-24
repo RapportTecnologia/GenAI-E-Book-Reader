@@ -41,6 +41,11 @@
 #include <QDialogButtonBox>
 #include <QPlainTextEdit>
 #include <QRegularExpression>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QPainter>
+#include <QCoreApplication>
+#include <QPageLayout>
 #include <QRegularExpressionMatch>
 #include <QMap>
 #include <QSizePolicy>
@@ -622,6 +627,40 @@ void MainWindow::showAboutDialog() {
 void MainWindow::showTutorialDialog() {
     TutorialDialog dlg(this);
     dlg.exec();
+}
+
+void MainWindow::printDocument() {
+    auto* pv = qobject_cast<PdfViewerWidget*>(viewer_);
+    if (!pv || !pv->document() || pv->document()->pageCount() <= 0) {
+        QMessageBox::warning(this, tr("Imprimir"), tr("Nenhum documento aberto para impressão."));
+        return;
+    }
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setDocName(QFileInfo(pv->currentFilePath()).fileName());
+    QPrintDialog dlg(&printer, this);
+    dlg.setWindowTitle(tr("Imprimir documento"));
+    if (dlg.exec() != QDialog::Accepted) return;
+
+    QPainter painter(&printer);
+    if (!painter.isActive()) { QMessageBox::warning(this, tr("Imprimir"), tr("Falha ao iniciar impressora.")); return; }
+
+    const int pageCount = static_cast<int>(pv->document()->pageCount());
+    for (int i = 0; i < pageCount; ++i) {
+        pv->setCurrentPage(static_cast<unsigned int>(i + 1));
+        QCoreApplication::processEvents();
+        QPixmap pm = pv->grab();
+        if (!pm.isNull()) {
+            const QRect pageRect = printer.pageLayout().paintRectPixels(printer.resolution());
+            QPixmap scaled = pm.scaled(pageRect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            const int x = pageRect.x() + (pageRect.width() - scaled.width())/2;
+            const int y = pageRect.y() + (pageRect.height() - scaled.height())/2;
+            painter.drawPixmap(QPoint(x, y), scaled);
+        }
+        if (i < pageCount - 1) printer.newPage();
+    }
+    painter.end();
+    statusBar()->showMessage(tr("Impressão concluída."), 3000);
 }
 
 void MainWindow::updateTitleWidget() {
@@ -1251,6 +1290,9 @@ void MainWindow::createActions() {
     // Core actions
     actOpen_ = new QAction(tr("Abrir"), this);
     actSaveAs_ = new QAction(tr("Salvar como..."), this);
+    actPrintDoc_ = new QAction(tr("Imprimir documento..."), this);
+    actPrintDoc_->setShortcut(QKeySequence::Print);
+    connect(actPrintDoc_, &QAction::triggered, this, &MainWindow::printDocument);
     actClose_ = new QAction(tr("Fechar Ebook"), this);
     actQuit_ = new QAction(tr("Sair"), this);
     actReaderData_ = new QAction(tr("Dados do leitor..."), this);
@@ -1320,9 +1362,14 @@ void MainWindow::createActions() {
 
     // Menus
     auto* menuArquivo = menuBar()->addMenu(tr("&Arquivo"));
+    // Top-level print entry for discoverability
+    menuArquivo->addAction(actPrintDoc_);
+    menuArquivo->addSeparator();
     auto* menuDocumento = menuArquivo->addMenu(tr("Documento"));
     menuDocumento->addAction(actOpen_);
     menuDocumento->addAction(actSaveAs_);
+    menuDocumento->addSeparator();
+    menuDocumento->addAction(actPrintDoc_);
     menuDocumento->addSeparator();
     menuDocumento->addAction(actClose_);
 

@@ -59,6 +59,7 @@ private slots:
     void onSendClicked();
     void onSaveClicked();
     void onSummarizeClicked();
+    void onPrintClicked();
 
 protected:
     bool eventFilter(QObject* obj, QEvent* ev) override;
@@ -77,6 +78,7 @@ private:
     QToolButton* btnSummarize_ {nullptr};
     QToolButton* btnNewChat_ {nullptr};
     QToolButton* btnHistory_ {nullptr};
+    QToolButton* btnPrint_ {nullptr};
     // Pending image preview UI
     QWidget* pendingContainer_ {nullptr};
     QLabel* pendingThumb_ {nullptr};
