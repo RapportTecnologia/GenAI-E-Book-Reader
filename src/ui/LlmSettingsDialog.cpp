@@ -26,6 +26,7 @@
 #include <QSignalBlocker>
 #include <QCheckBox>
 #include "ai/LlmClient.h"
+#include <algorithm>
 #if __has_include("Config.h")
 #  include "Config.h"
 #else
@@ -293,8 +294,8 @@ void LlmSettingsDialog::populateModelsFor(const QString& provider) {
     } else if (provider == "ollama") {
         modelCombo_->addItem(tr("Verificando Ollama..."), "");
         modelCombo_->setEditText(QString());
+        modelCombo_->setEnabled(false);
         verifyOrAssistOllama();
-        modelCombo_->setEnabled(true);
         appendDebug(tr("[MODELS] Verificando Ollama"));
     } else {
         modelCombo_->addItem("gpt-4o-mini (recomendado)", "gpt-4o-mini");
@@ -675,10 +676,24 @@ void LlmSettingsDialog::fetchOpenWebUiModels() {
 }
 
 void LlmSettingsDialog::verifyOrAssistOllama() {
-    // Guide the user to install and pull models
-    QMessageBox::StandardButton btn = QMessageBox::information(
-        this,
-        tr("Ollama não encontrado"),
+    // Build base URL (default to local Ollama API)
+    QString base = baseUrlEdit_ ? baseUrlEdit_->text().trimmed() : QString();
+    if (base.isEmpty()) base = QStringLiteral("http://127.0.0.1:11434/api");
+    if (base.endsWith('/')) base.chop(1);
+
+    const QUrl url(base + "/version");
+    appendDebug(tr("[OLLAMA] Verificando serviço em %1").arg(url.toString()));
+
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    auto* reply = nam_->get(req);
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        const auto guard = std::unique_ptr<QNetworkReply, void(*)(QNetworkReply*)>(reply, [](QNetworkReply* r){ r->deleteLater(); });
+        if (reply->error() != QNetworkReply::NoError) {
+            appendDebug(tr("[OLLAMA] Falha ao conectar: %1").arg(reply->errorString()));
+            QMessageBox::StandardButton btn = QMessageBox::information(
+                this,
+                tr("Ollama não encontrado"),
                 tr("Não foi possível conectar ao Ollama em 127.0.0.1:11434.\n\n"
                    "Passos sugeridos:\n"
                    "1) Instale o Ollama: https://ollama.com/download\n"
@@ -691,17 +706,105 @@ void LlmSettingsDialog::verifyOrAssistOllama() {
                    "  ou\n"
                    "  ollama pull granite3.3:2b\n\n"
                    "Após concluir, clique em 'Repetir' para atualizar a lista de modelos."),
-        QMessageBox::Retry | QMessageBox::Cancel,
-        QMessageBox::Retry);
-    if (btn == QMessageBox::Retry && retryOllama_ < 3) {
-        ++retryOllama_;
-        verifyOrAssistOllama();
-    } else {
+                QMessageBox::Retry | QMessageBox::Cancel,
+                QMessageBox::Retry);
+            if (btn == QMessageBox::Retry && retryOllama_ < 3) {
+                ++retryOllama_;
+                verifyOrAssistOllama();
+            } else {
+                QSignalBlocker bCombo(*modelCombo_);
+                std::unique_ptr<QSignalBlocker> bLineEdit;
+                if (modelCombo_->lineEdit()) bLineEdit.reset(new QSignalBlocker(*modelCombo_->lineEdit()));
+                modelCombo_->clear();
+                modelCombo_->addItem(tr("Ollama indisponível"), "");
+                modelCombo_->setEnabled(true);
+                retryOllama_ = 0;
+                updateFunctionCallingSupport();
+            }
+            return;
+        }
+        appendDebug(tr("[OLLAMA] Serviço disponível. Obtendo lista de modelos..."));
+        fetchOllamaModels();
+    });
+}
+
+void LlmSettingsDialog::fetchOllamaModels() {
+    // Determine base URL for Ollama
+    QString base = baseUrlEdit_ ? baseUrlEdit_->text().trimmed() : QString();
+    if (base.isEmpty()) base = QStringLiteral("http://127.0.0.1:11434/api");
+    if (base.endsWith('/')) base.chop(1);
+    const QUrl url(base + "/tags");
+
+    QSignalBlocker bCombo(*modelCombo_);
+    std::unique_ptr<QSignalBlocker> bLineEdit;
+    if (modelCombo_->lineEdit()) bLineEdit.reset(new QSignalBlocker(*modelCombo_->lineEdit()));
+    updatingModelList_ = true;
+    modelCombo_->clear();
+    modelCombo_->addItem(tr("Carregando modelos do Ollama..."), "");
+    modelCombo_->setEnabled(false);
+    updatingModelList_ = false;
+
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    auto* reply = nam_->get(req);
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        const auto guard = std::unique_ptr<QNetworkReply, void(*)(QNetworkReply*)>(reply, [](QNetworkReply* r){ r->deleteLater(); });
         modelCombo_->clear();
-        modelCombo_->addItem(tr("Ollama indisponível"), "");
-        retryOllama_ = 0;
-    }
-    updateFunctionCallingSupport();
+        if (reply->error() != QNetworkReply::NoError) {
+            appendDebug(tr("[OLLAMA] Falha ao listar modelos: %1").arg(reply->errorString()));
+            const QString errText = tr("Não foi possível obter a lista de modelos do Ollama.\n\nErro: %1\n\nDeseja verificar sua configuração e tentar novamente?")
+                                      .arg(reply->errorString());
+            auto btn = QMessageBox::question(this, tr("Falha ao listar modelos"), errText,
+                                             QMessageBox::Retry | QMessageBox::Cancel, QMessageBox::Retry);
+            if (btn == QMessageBox::Retry && retryOllama_ < 3) {
+                ++retryOllama_;
+                fetchOllamaModels();
+            } else {
+                modelCombo_->addItem(tr("Falha ao listar modelos do Ollama"), "");
+                retryOllama_ = 0;
+                modelCombo_->setEnabled(true);
+                updateFunctionCallingSupport();
+            }
+            return;
+        }
+        const QByteArray raw = reply->readAll();
+        const QJsonDocument doc = QJsonDocument::fromJson(raw);
+        const QJsonObject obj = doc.object();
+        const QJsonArray models = obj.value("models").toArray();
+
+        // Collect names
+        QVector<QString> names;
+        names.reserve(models.size());
+        for (const auto& it : models) {
+            const QJsonObject m = it.toObject();
+            const QString name = m.value("name").toString();
+            if (!name.isEmpty()) names.push_back(name);
+        }
+        // Prefer Granite models first
+        std::stable_sort(names.begin(), names.end(), [](const QString& a, const QString& b){
+            const bool ag = a.toLower().contains("granite");
+            const bool bg = b.toLower().contains("granite");
+            if (ag != bg) return ag; // granite first
+            return a.toLower() < b.toLower();
+        });
+
+        for (const auto& id : names) {
+            modelCombo_->addItem(id, id);
+        }
+        if (modelCombo_->count() == 0) {
+            modelCombo_->addItem(tr("Nenhum modelo encontrado no Ollama"), "");
+        } else {
+            // Default selection: prefer granite3.3:8b or 2b
+            int idx = -1;
+            idx = modelCombo_->findData("granite3.3:8b");
+            if (idx < 0) idx = modelCombo_->findData("granite3.3:2b");
+            if (idx < 0) idx = 0;
+            modelCombo_->setCurrentIndex(idx);
+        }
+        retryOllama_ = 0; // success resets counter
+        modelCombo_->setEnabled(true);
+        updateFunctionCallingSupport();
+    });
 }
 
 void LlmSettingsDialog::fetchGenerativaModels() {

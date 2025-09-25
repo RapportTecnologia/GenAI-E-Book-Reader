@@ -15,6 +15,7 @@
   - Melhorias na interface do usuário. Abrir janela ocupando toda a tela.
   - Tentativa de melhorar a janela de explicação sobre uso do OpenRouter.ai com o video do YouTube.
   - Revisar o Algorítimo de OPF, correções e melhorias.
+  - Removido o BUG relativo a seleção do Ollama
 
   ## [0.1.11] - 2025-09-24
 
