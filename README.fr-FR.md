@@ -7,6 +7,22 @@
 [![Latest Release](https://img.shields.io/github/v/release/RapportTecnologia/GenAi-E-Book-Reader?label=version)](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contribuer)
 
+<!-- Traductions -->
+**Traductions :** 🇧🇷 [Português (original)](README.md) | 🇸🇦 [العربية](README.ar.md) | 🇬🇧 [English (UK)](README.en-GB.md) | 🇫🇷 Français
+
+<figure style="text-align: center;">
+    <img src="docs/imgs/logo-do-projeto.png" alt="GenAI E-Book Reader">
+    <figcaption>GenAI E-Book Reader</figcaption>
+    </figure>
+
+## Soutien financier du projet
+
+Si ce projet vous est utile et que vous souhaitez soutenir le développement, vous pouvez envoyer un PIX du montant de votre choix. Merci !
+
+![PIX](docs/imgs/pix.png)
+
+PIX : _consultoria@carlosdelfino.eti.br_ ou _(+55 85) 98520‑5490_
+
 # GenAI E‑Book Reader
 
 Lecteur d’e‑books moderne axé sur la productivité et l’étude, développé en C/C++ avec Qt6, avec des fonctionnalités prévues telles que les annotations, un dictionnaire, la synthèse vocale (TTS), des statistiques de lecture et l’appui de l’IA (RAG) pour les résumés et explications.
@@ -21,22 +37,35 @@ Vous pouvez télécharger la dernière version stable ou compiler la version de 
 
 ### Version stable (recommandée)
 
-La dernière version stable est **v0.1.9**. Pour la plupart des utilisateurs, nous recommandons de télécharger l’exécutable prêt à l’emploi.
+La dernière version stable est **v0.1.12**. Pour la plupart des utilisateurs, nous recommandons de télécharger l’exécutable prêt à l’emploi.
 
 1. Rendez‑vous sur la [page des releases](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest).
-2. Téléchargez `GenAI_EBook_Reader-v0.1.9-x86_64.AppImage`.
+2. Téléchargez `GenAI_EBook_Reader-v0.1.12-x86_64.AppImage`.
 3. Rendez le fichier exécutable :
     ```bash
-    chmod +x GenAI_EBook_Reader-v0.1.9-x86_64.AppImage
+    chmod +x GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
     ```
 4. Lancez l’application :
     ```bash
-    ./GenAI_EBook_Reader-v0.1.9-x86_64.AppImage
+    ./GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
     ```
 
 ### Version de développement
 
 Si vous souhaitez tester les dernières fonctionnalités destinées à la prochaine version, vous pouvez compiler le projet depuis les sources. Cette version inclut de nouvelles fonctions et des corrections de bogues, mais peut être instable.
+
+## Tutoriels
+- 🇧🇷 [Tutoriel en portugais](TUTORIAL.md)
+- 🇸🇦 [الدليل بالعربية](TUTORIAL.ar.md)
+- 🇬🇧 [Tutoriel (anglais Royaume‑Uni)](TUTORIAL.en-GB.md)
+- 🇫🇷 [Tutoriel (français)](TUTORIAL.fr-FR.md)
+
+## Tutoriels vidéo
+* [Présentation du projet](https://www.youtube.com/watch?v=4wveYzO_Lko)
+* [Présentation OpenRouter.ia](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
+* [Associer des fichiers e‑book au GER](https://www.youtube.com/watch?v=2a1KO5Vig0k)
+
+* [Autres vidéos](https://www.youtube.com/@RapportTecnologia/videos)
 
 ## Fonctionnalités clés (MVP)
 - Lecture de PDF avec navigation basique et thèmes clair/sombre. (Prise en charge d’EPUB/MOBI au programme.)
@@ -55,15 +84,13 @@ Si vous souhaitez tester les dernières fonctionnalités destinées à la procha
 - Barre de recherche avec recherche de texte littéral et repli vers la recherche sémantique par phrases via embeddings ; inclut des options rapides (métrique, Top‑K et seuils).
 - Prise en charge des fichiers OPF (métadonnées d’ebooks) avec lecture et affichage basiques des informations.
 
-[Présentation du projet](https://www.youtube.com/watch?v=4wveYzO_Lko)
-[Présentation OpenRouter.ia en version 0.1.9](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
-[Associer des fichiers e‑book au GER](https://www.youtube.com/watch?v=2a1KO5Vig0k)
+### Notes de version
 
-Note (0.1.10 – développement) : focus sur l’amélioration des recherches (texte et sémantique) et sur l’interaction du chat avec prise en charge du Function Calling lorsque le modèle/fournisseur le propose. La fenêtre des paramètres LLM affiche désormais un indicateur en lecture seule indiquant si le modèle sélectionné déclare prendre en charge le Function Calling.
+Note (0.1.12 – développement) : focus sur l’amélioration des recherches (texte et sémantique) et sur l’interaction du chat avec prise en charge du Function Calling lorsque le modèle/fournisseur le propose. La fenêtre des paramètres LLM affiche désormais un indicateur en lecture seule indiquant si le modèle sélectionné déclare prendre en charge le Function Calling.
 
-Note (0.1.9) : nouveaux fournisseurs LLM pris en charge (Ollama local, GenerAtiva et OpenRouter), améliorations de l’interface des paramètres LLM (liste des modèles et test du modèle), ajustements CI et CMake (cible de release locale), débogage élargi pour la sélection fournisseurs/modèles, suppression de la dépendance à PHPList et interaction personnalisée utilisateur/LLM. Une clé de courtoisie pour un usage initial d’OpenRouter est incluse (il est recommandé de configurer votre propre clé).
+Note (0.1.11) : nouveaux fournisseurs LLM pris en charge (Ollama local, GenerAtiva et OpenRouter), améliorations de l’interface des paramètres LLM (liste des modèles et test du modèle), ajustements CI et CMake (cible de release locale), débogage élargi pour la sélection fournisseurs/modèles, suppression de la dépendance à PHPList et interaction personnalisée utilisateur/LLM. Une clé de courtoisie pour un usage initial d’OpenRouter est incluse (il est recommandé de configurer votre propre clé).
 
-Note (0.1.8) : prise en charge des liens internes cliquables dans les PDF (index/résumé au sein du document) via QPdfLinkModel (Qt6), améliorations de la navigation via le TOC (synchronisation avec les clics et les boutons Précédent/Suivant), corrections de sélection de texte et petits ajustements d’UI. Documentation mise à jour.
+Note (0.1.10) : prise en charge des liens internes cliquables dans les PDF (index/résumé au sein du document) via QPdfLinkModel (Qt6), améliorations de la navigation via le TOC (synchronisation avec les clics et les boutons Précédent/Suivant), corrections de sélection de texte et petits ajustements d’UI. Documentation mise à jour.
 
 Note (0.1.7) : ajout de la possibilité d’ouvrir des e‑books directement en ligne de commande et d’associer des fichiers dans le système. Démarrage du dictionnaire (utilisant actuellement un LLM) et amélioration du panneau d’informations de l’application.
 

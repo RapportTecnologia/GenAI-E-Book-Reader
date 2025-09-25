@@ -10,6 +10,19 @@
 <!-- Traduções -->
 **Traduções:** 🇧🇷 Português (original) | 🇸🇦 [العربية](README.ar.md) | 🇬🇧 [English (UK)](README.en-GB.md) | 🇫🇷 [Français](README.fr-FR.md)
 
+<figure style="text-align: center;">
+    <img src="docs/imgs/logo-do-projeto.png" alt="GenAI E-Book Reader">
+    <figcaption>GenAI E-Book Reader</figcaption>
+</figure>
+
+# Manutenção Financeira do Projeto
+
+Para que eu possa continuar me dedicando ao projeto, e se ele está sendo bom para você me faça um PIX de qualquer valor, eu agradeço!
+
+![PIX](docs/imgs/pix.png)
+
+PIX: *consultoria@carlosdelfino.eti.br* ou *(85) 985205490*
+
 # GenAI E-Book Reader
 
 Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/C++ com Qt6, com recursos planejados de anotações, dicionário, Text-to-Speech (TTS), estatísticas de leitura e apoio de IA (RAG) para resumos e explicações.
@@ -24,28 +37,36 @@ Leitor de e-books moderno com foco em produtividade e estudo, desenvolvido em C/
 - 🇬🇧 [Tutorial (English, UK)](TUTORIAL.en-GB.md)
 - 🇫🇷 [Tutoriel (Français)](TUTORIAL.fr-FR.md)
 
+## Video Tutoriais
+* [Apresentação do Projeto](https://www.youtube.com/watch?v=4wveYzO_Lko)
+* [Apresentação OpenRouter.ia](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
+* [Como associar arquivos de E-Book ao GER](https://www.youtube.com/watch?v=2a1KO5Vig0k)
+
+* [Demais Videos](https://www.youtube.com/@RapportTecnologia/videos)
+
+
 ## Como Obter o Aplicativo
 
 Você pode baixar a versão estável mais recente ou compilar a versão de desenvolvimento para ter acesso aos recursos mais novos.
 
 ### Versão Estável (Recomendado)
 
-A versão estável mais recente é a **v0.1.9**. Para a maioria dos usuários, recomendamos o download do executável pronto para uso.
+A versão estável mais recente é a **v0.1.12**. Para a maioria dos usuários, recomendamos o download do executável pronto para uso.
 
 1.  Acesse a [**página de Releases**](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest).
-2.  Baixe o arquivo `GenAI_EBook_Reader-v0.1.9-x86_64.AppImage`.
+2.  Baixe o arquivo `GenAI_EBook_Reader-v0.1.12-x86_64.AppImage`.
 3.  Dê permissão de execução ao arquivo:
     ```bash
-    chmod +x GenAI_EBook_Reader-v0.1.9-x86_64.AppImage
+    chmod +x GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
     ```
 4.  Execute o aplicativo:
     ```bash
-    ./GenAI_EBook_Reader-v0.1.9-x86_64.AppImage
+    ./GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
     ```
 
 ### Versão de Desenvolvimento
 
-Se você deseja testar os recursos mais recentes que estarão na próxima versão, pode compilar o projeto a partir do código-fonte. Esta versão inclui novas funcionalidades e correções de bugs, mas pode ser instável.
+Se você deseja testar os recursos mais recentes que estarão na próxima versão, pode compilar o projeto a partir do código-fonte. Esta versão inclui novas funcionalidades e correções de bugs, mas pode ser instável. Vejas os branchs de versão para obter a versão mais atual do fonte.
 
 
 ## Principais Recursos (MVP)
@@ -65,26 +86,12 @@ Se você deseja testar os recursos mais recentes que estarão na próxima versã
 - Barra de busca com pesquisa por texto e fallback para busca semântica por frases usando embeddings; inclui opções rápidas (métrica, Top‑K e limiares).
  - Suporte a arquivos OPF (metadados de e‑books), com leitura e exibição básica de informações.
 
-[Apresentação do Projeto](https://www.youtube.com/watch?v=4wveYzO_Lko)
-[Apresentação OpenRouter.ia na Versão 0.1.9](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
-[Como associar arquivos de E-Book ao GER](https://www.youtube.com/watch?v=2a1KO5Vig0k)
 
-Nota (0.1.10 - desenvolvimento): Foco em melhoria das buscas (texto e semântica) e na interação do chat com suporte a Function Calling quando o modelo/provedor disponibilizar. A janela de Configurações de LLM passa a exibir um indicador somente leitura informando se o modelo selecionado declara suporte a Function Calling.
-Nota (0.1.9): Novos provedores de LLM suportados (Ollama local, GenerAtiva e OpenRouter), melhorias na interface de Configurações de LLM (listagem de modelos e teste de modelo), ajustes no CI e no CMake (target de release local), depuração ampliada na seleção de provedores/modelos, remoção da dependência do PHPList e interação com usuário/LLM personalizada. Chave de cortesia para uso inicial do OpenRouter incluída (recomenda-se configurar sua própria chave).
-Nota (0.1.8): Suporte a links internos clicáveis em PDFs (índice/sumário dentro do documento) usando QPdfLinkModel (Qt6), melhorias na navegação pelo TOC (sincronização com cliques e com os botões Voltar/Avançar), correções na seleção de texto e pequenos ajustes de UI. Documentação atualizada.
-Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.
-Nota (0.1.6): otimização da renderização do chat, com a conversão de Markdown movida para o back-end (C++), corrigindo bugs de instabilidade com MathJax.
-Nota (0.1.3): refinamento de UI — ícone do app a partir de `docs/imgs/logo-do-projeto.png`, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível. Painel de TOC remodelado com barra de ferramentas (alternar entre "Páginas"/"Conteúdo" e botões de navegação) e tamanho padrão inicial do splitter ~10% (TOC) / ~90% (visualizador).
-Nota (0.1.2): implementado "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.
-Nota (0.1.1): adicionados seleção de página via combobox e restauração do último arquivo/diretório aberto.
+## Observações de privacidade:
+- Antes de qualquer envio de conteúdo à IA, a aplicação solicita sua confirmação.
+- Tokens são armazenados nas preferências do usuário (`QSettings`).
 
-Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulos) quando disponíveis; na ausência, lista todas as páginas. A seleção por combobox contempla todas as páginas do documento. O painel de TOC inclui uma barra de ferramentas para alternar entre "Páginas" e "Conteúdo" e botões de navegação; por padrão o painel ocupa ~10% da largura da janela na primeira execução. Atualmente, o binário suporta leitura de PDFs; arquivos OPF são aceitos para leitura de metadados.
-
-## Sumário (TOC) e Navegação
-- Alternar modo do TOC:
-  - "Páginas": lista plana de páginas; os botões "Voltar/Avançar" mudam a página atual.
-  - "Conteúdo": capítulos (grupos de páginas); os botões percorrem o item anterior/próximo (capítulo ou página filho). 
-- Atalhos do painel: arraste o divisor para redimensionar; o tamanho fica salvo para as próximas sessões.
+Para um guia passo a passo com imagens e dicas, consulte o [TUTORIAL.md](TUTORIAL.md).
 
 ## Busca no documento (texto e semântica)
 
@@ -97,15 +104,6 @@ Observação: para PDFs, o sumário (TOC) usa bookmarks (capítulos/subcapítulo
 - Pré‑requisito para a busca semântica: o documento precisa ter embeddings indexados.
   - Para recriar o índice, clique com o botão direito dentro do PDF e escolha "Recriar embeddings do documento...".
   - Também é possível ajustar o provedor/modelo e parâmetros em `Configurações > Embeddings`.
-
-### Botão de Título (barra superior)
-
-- Exibe o título do documento (para PDFs, usa metadados Title quando disponíveis; senão, nome do arquivo).
-- Clique para ver o caminho completo do arquivo e copiá‑lo para a área de transferência.
-- Menu contextual (clique direito):
-  - "Abrir diretório no gerenciador"
-  - "Adicionar ao Calibre e migrar embeddings..."
-  - "Renomear arquivo e migrar embeddings..."
 
 ## IA (LLM): Configuração e Uso
 A aplicação possui integração com provedores compatíveis com a API da OpenAI para chat, resumos e sinônimos.
@@ -122,38 +120,6 @@ Como configurar:
 - Informe a API Key do provedor escolhido (para OpenAI/GenerAtiva/OpenRouter). Para Ollama local, a chave não é necessária, apenas garanta que o serviço esteja rodando em `http://localhost:11434`.
 - Opcional: preencha "Base URL" para apontar a um endpoint compatível com OpenAI quando aplicável.
 - Ajuste os prompts padrão para Sinônimos, Resumos, Explicações e Chat conforme sua preferência.
-
-### Indicador de Function Calling (0.1.10)
-- A janela de Configurações de LLM passa a exibir uma caixa de texto somente leitura indicando se o provedor/modelo selecionado suporta Function Calling.
-- Quando a API do provedor expõe essa capacidade via listagem de modelos ou metadados, a detecção é automática e o indicador mostra “Suporta Function Calling”. Caso contrário, o indicador exibe uma mensagem informativa (ex.: “Capacidade não informada pelo provedor”).
-- Observação: o suporte efetivo a Function Calling depende do provedor/modelo escolhido e pode variar ao longo do tempo conforme as APIs evoluem.
-
-Uso no leitor:
-- Sinônimos: selecione uma palavra/locução e acione a ação de IA para sinônimos; será solicitado consentimento antes do envio.
-- Resumo: selecione um trecho e acione a ação de IA para resumo; o resultado abre no diálogo de resumo.
-- Chat: envie um trecho ao chat da IA ou digite livremente no painel de chat.
-  - Renderização avançada no painel de chat (Markdown/HTML):
-    - Tabelas Markdown (GFM) com bordas, cabeçalho e rolagem horizontal quando necessário.
-    - Syntax highlighting para blocos de código (highlight.js, tema GitHub).
-    - MathJax v3 para fórmulas (inline e display), aplicado após o parse do Markdown.
-    - Auto-scroll para a última mensagem recebida/enviada.
-  - Sessões de chat:
-    - Botão "Novo" inicia uma nova conversa (pergunta se deseja salvar a conversa atual no histórico, com título automático).
-    - Botão "Histórico" lista e restaura conversas salvas (por arquivo aberto), mantendo o contexto da IA.
-  - Contexto contínuo: novos envios incluem o histórico completo de mensagens (system/user/assistant) para melhor continuidade.
-
-Persistência/Configurações (QSettings):
-- `ai/provider`: `openai` | `generativa` | `ollama` | `openrouter` (padrão: `openai`)
-- `ai/base_url`: URL base para override (opcional)
-- `ai/api_key`: token secreto do provedor (não aplicável para Ollama local)
-- `ai/model`: nome do modelo (ex.: `gpt-4o-mini`, `llama3`, `gpt-4o-mini-transcribe` etc.)
-- `ai/prompts/synonyms`, `ai/prompts/summaries`, `ai/prompts/explanations`, `ai/prompts/chat`
-
-Observações de privacidade:
-- Antes de qualquer envio de conteúdo à IA, a aplicação solicita sua confirmação.
-- Tokens são armazenados nas preferências do usuário (`QSettings`).
-
-Para um guia passo a passo com imagens e dicas, consulte o [TUTORIAL.md](TUTORIAL.md).
 
 ## RAG (Experimental)
 
@@ -203,6 +169,17 @@ Sugestões de valores seguros:
 - Próximas melhorias:
   - Diagnóstico de dependências (status de `pdftotext`, `pdftoppm`, `tesseract`) na UI.
   - Fallbacks adicionais e otimizações em I/O de metadados.
+
+## Notas de Versão
+
+### Nota (0.1.12 - desenvolvimento): Foco em melhoria das buscas (texto e semântica) e na interação do chat com suporte a Function Calling quando o modelo/provedor disponibilizar. A janela de Configurações de LLM passa a exibir um indicador somente leitura informando se o modelo selecionado declara suporte a Function Calling.
+### Nota (0.1.11): Novos provedores de LLM suportados (Ollama local, GenerAtiva e OpenRouter), melhorias na interface de Configurações de LLM (listagem de modelos e teste de modelo), ajustes no CI e no CMake (target de release local), depuração ampliada na seleção de provedores/modelos, remoção da dependência do PHPList e interação com usuário/LLM personalizada. Chave de cortesia para uso inicial do OpenRouter incluída (recomenda-se configurar sua própria chave).
+### Nota (0.1.10): Suporte a links internos clicáveis em PDFs (índice/sumário dentro do documento) usando QPdfLinkModel (Qt6), melhorias na navegação pelo TOC (sincronização com cliques e com os botões Voltar/Avançar), correções na seleção de texto e pequenos ajustes de UI. Documentação atualizada.
+### Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.
+### Nota (0.1.6): otimização da renderização do chat, com a conversão de Markdown movida para o back-end (C++), corrigindo bugs de instabilidade com MathJax.
+### Nota (0.1.3): refinamento de UI — ícone do app a partir de `docs/imgs/logo-do-projeto.png`, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível. Painel de TOC remodelado com barra de ferramentas (alternar entre "Páginas"/"Conteúdo" e botões de navegação) e tamanho padrão inicial do splitter ~10% (TOC) / ~90% (visualizador).
+### Nota (0.1.2): implementado "Salvar como" (RF-28) e pequenos aprimoramentos de leitura.
+### Nota (0.1.1): adicionados seleção de página via combobox e restauração do último arquivo/diretório aberto.
 
 ## Próximas versões
 - Planejamento contínuo em `ROADMAP.md`.

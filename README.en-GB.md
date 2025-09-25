@@ -7,6 +7,22 @@
 [![Latest Release](https://img.shields.io/github/v/release/RapportTecnologia/GenAi-E-Book-Reader?label=version)](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-success.svg)](#contributing)
 
+<!-- Translations -->
+**Translations:** 🇧🇷 [Português (original)](README.md) | 🇸🇦 [العربية](README.ar.md) | 🇬🇧 English (UK) | 🇫🇷 [Français](README.fr-FR.md)
+
+<figure style="text-align: center;">
+    <img src="docs/imgs/logo-do-projeto.png" alt="GenAI E-Book Reader">
+    <figcaption>GenAI E-Book Reader</figcaption>
+    </figure>
+
+## Project Financial Support
+
+If this project is useful to you and you want to support ongoing development, you can send a PIX of any amount. Thank you!
+
+![PIX](docs/imgs/pix.png)
+
+PIX: _consultoria@carlosdelfino.eti.br_ or _(+55 85) 98520-5490_
+
 # GenAI E‑Book Reader
 
 A modern e‑book reader focused on productivity and study, developed in C/C++ with Qt6, with planned features such as annotations, a dictionary, Text‑to‑Speech (TTS), reading statistics, and AI support (RAG) for summaries and explanations.
@@ -21,22 +37,35 @@ You can download the latest stable release or build the development version to a
 
 ### Stable Release (Recommended)
 
-The latest stable version is **v0.1.9**. For most users we recommend downloading the ready‑to‑run executable.
+The latest stable version is **v0.1.12**. For most users we recommend downloading the ready‑to‑run executable.
 
 1. Go to the [Releases page](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest).
-2. Download `GenAI_EBook_Reader-v0.1.9-x86_64.AppImage`.
+2. Download `GenAI_EBook_Reader-v0.1.12-x86_64.AppImage`.
 3. Make it executable:
     ```bash
-    chmod +x GenAI_EBook_Reader-v0.1.9-x86_64.AppImage
+    chmod +x GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
     ```
 4. Run the app:
     ```bash
-    ./GenAI_EBook_Reader-v0.1.9-x86_64.AppImage
+    ./GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
     ```
 
 ### Development Version
 
 If you want to try the latest features that will land in the next release, you can build the project from source. This version includes new features and bug fixes but may be unstable.
+
+## Tutorials
+- 🇧🇷 [Tutorial in Portuguese](TUTORIAL.md)
+- 🇸🇦 [الدليل بالعربية](TUTORIAL.ar.md)
+- 🇬🇧 [Tutorial (English, UK)](TUTORIAL.en-GB.md)
+- 🇫🇷 [Tutoriel (Français)](TUTORIAL.fr-FR.md)
+
+## Video Tutorials
+* [Project Presentation](https://www.youtube.com/watch?v=4wveYzO_Lko)
+* [OpenRouter.ia Presentation](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
+* [How to associate E‑Book files with GER](https://www.youtube.com/watch?v=2a1KO5Vig0k)
+
+* [More videos](https://www.youtube.com/@RapportTecnologia/videos)
 
 ## Key Features (MVP)
 - PDF reading with basic navigation and light/dark theme. (EPUB/MOBI support is on the roadmap.)
@@ -55,17 +84,15 @@ If you want to try the latest features that will land in the next release, you c
 - Search bar with literal text search and fallback to semantic phrase search using embeddings; includes quick options (metric, Top‑K and thresholds).
 - Support for OPF files (e‑book metadata), with basic reading and display of information.
 
-[Project Presentation](https://www.youtube.com/watch?v=4wveYzO_Lko)
-[OpenRouter.ia Presentation in Version 0.1.9](https://www.youtube.com/watch?v=dHggyhodAH4&t=4s)
-[How to associate E‑Book files with GER](https://www.youtube.com/watch?v=2a1KO5Vig0k)
+### Release Notes
 
-Note (0.1.10 – development): Focus on improving search (text and semantic) and chat interaction with Function Calling support when the model/provider offers it. The LLM Settings window now shows a read‑only indicator stating whether the selected model declares Function Calling support.
+Note (0.1.12 – development): Focus on improving search (text and semantic) and chat interaction with Function Calling support where the model/provider supports it. The LLM Settings window now displays a read‑only indicator stating whether the selected model declares support for Function Calling.
 
-Note (0.1.9): New supported LLM providers (local Ollama, GenerAtiva and OpenRouter), improvements in the LLM Settings UI (model listing and model test), CI and CMake tweaks (local release target), expanded debugging for provider/model selection, removal of PHPList dependency, and a customised user/LLM interaction. A courtesy key for initial OpenRouter use is included (we recommend configuring your own key).
+Note (0.1.11): New supported LLM providers (local Ollama, GenerAtiva and OpenRouter), improvements to the LLM Settings UI (model listing and model test), CI and CMake tweaks (local release target), expanded debugging for provider/model selection, removal of the PHPList dependency, and customised user/LLM interaction. A courtesy key for initial OpenRouter use is included (we recommend configuring your own key).
 
-Note (0.1.8): Support for clickable internal links in PDFs (index/summary within the document) using QPdfLinkModel (Qt6), improved navigation via the TOC (synchronisation with clicks and Back/Forward buttons), fixes in text selection and minor UI tweaks. Documentation updated.
+Note (0.1.10): Support for clickable internal links in PDFs (index/summary within the document) using QPdfLinkModel (Qt6), improved navigation via the TOC (synchronisation with clicks and Back/Forward buttons), fixes in text selection and minor UI tweaks. Documentation updated.
 
-Note (0.1.7): Added the ability to open e‑books directly from the command line and file type association in the OS. The dictionary was started (currently using an LLM) and the app info panel was improved.
+Note (0.1.7): Added the ability to open e‑books directly from the command line and file associations in the OS. The dictionary was started (currently using an LLM) and the app info panel was improved.
 
 Note (0.1.6): Optimised chat rendering by moving Markdown conversion to the back end (C++), fixing instability bugs with MathJax.
 
