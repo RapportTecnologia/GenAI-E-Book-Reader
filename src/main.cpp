@@ -259,7 +259,6 @@ int main(int argc, char* argv[]) {
     auto showMainOnce = [&]() {
         if (shown) return;
         shown = true;
-        win.show();
         splash.finish(&win);
         // Run post-splash checks first, then proceed with normal flow
         runPostSplashChecks([&](){
@@ -281,8 +280,8 @@ int main(int argc, char* argv[]) {
         });
     };
 
-    // Auto-close after 3 seconds
-    QTimer::singleShot(3000, &app, showMainOnce);
+    // Auto-close after 2 seconds
+    QTimer::singleShot(2000, &app, showMainOnce);
 
     // Close on click
     class SplashClickFilter : public QObject {
@@ -304,6 +303,9 @@ int main(int argc, char* argv[]) {
 
     SplashClickFilter filter(&splash, showMainOnce);
     splash.installEventFilter(&filter);
+
+    win.showMinimized();
+    win.showMaximized();
 
     return app.exec();
 }
