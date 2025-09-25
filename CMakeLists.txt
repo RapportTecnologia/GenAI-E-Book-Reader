@@ -11,6 +11,8 @@ else()
   message(WARNING "Could not parse version from CHANGELOG.md; defaulting to ${GENAI_VERSION}")
 endif()
 
+message(STATUS "Building GenAI_EBook_Reader version ${GENAI_VERSION}")
+
 project(GenAI_EBook_Reader VERSION ${GENAI_VERSION} LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
