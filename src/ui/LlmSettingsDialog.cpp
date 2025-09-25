@@ -63,7 +63,7 @@ void LlmSettingsDialog::showOpenRouterCourtesyDialog() {
     // Build a simple dialog explaining the courtesy key and showing the video
     QDialog dlg(this);
     dlg.setWindowTitle(tr("OpenRouter: chave de cortesia"));
-    dlg.resize(640, 420);
+    dlg.resize(650, 480);
     auto* layout = new QVBoxLayout(&dlg);
 
     auto* msg = new QLabel(
@@ -76,8 +76,23 @@ void LlmSettingsDialog::showOpenRouterCourtesyDialog() {
 #ifdef HAVE_QT_WEBENGINE
     // Embed YouTube video when WebEngine is available
     auto* web = new QWebEngineView(&dlg);
-    web->setUrl(QUrl("https://www.youtube.com/embed/dHggyhodAH4"));
-    web->setMinimumHeight(300);
+    // Use full iframe HTML to ensure all attributes (referrerpolicy, allow, etc.) are respected
+    const QString html = QString::fromLatin1(
+        "<!DOCTYPE html>\n"
+        "<html lang=\"pt-BR\">\n"
+        "<head>\n"
+        "  <meta charset=\"utf-8\">\n"
+        "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
+        "  <style>html,body{margin:0;padding:0;background:#000;color:#fff} .wrap{display:flex;justify-content:center;align-items:center;padding:8px}</style>\n"
+        "</head>\n"
+        "<body>\n"
+        "  <div class=\"wrap\">\n"
+        "    <iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/dHggyhodAH4?si=uietSxsZa1u7EzIn\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>\n"
+        "  </div>\n"
+        "</body>\n"
+        "</html>\n");
+    web->setHtml(html);
+    web->setMinimumHeight(315);
     layout->addWidget(web, 1);
 #else
     // Fallback: clickable link to the video
