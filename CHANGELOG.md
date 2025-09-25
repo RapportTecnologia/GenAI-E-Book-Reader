@@ -5,9 +5,16 @@
   The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
   ## [Unreleased]
-
-
+  
   - Melhorias na integração com WSL no windows
+
+  ## [0.1.12]
+
+  - Adicionado opção de tradução e sinônimos do texto marcado.
+  - Corrigido o BUG de listagem dos modelos da OpenRouter.AI
+  - Melhorias na interface do usuário. Abrir janela ocupando toda a tela.
+  - Tentativa de melhorar a janela de explicação sobre uso do OpenRouter.ai com o video do YouTube.
+  - Revisar o Algorítimo de OPF, correções e melhorias.
 
   ## [0.1.11] - 2025-09-24
 
@@ -29,14 +36,9 @@
 ### Focus
 - Melhoria nas buscas (full‑text e semântica) e na interação do chat com suporte a Function Calling, quando disponível no modelo/provedor.
 
-### Added/Planned
-{{ ... }}
-
-### Fixed
-- Problemas de exibição de tabelas Markdown no chat.
-- Ordem de renderização para garantir MathJax consistente após parsing e highlighting.
 
   [Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.11...HEAD
+  [0.1.12]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.12
   [0.1.11]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.11
   [0.1.10]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.10
   [0.1.9]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.9
