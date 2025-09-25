@@ -434,18 +434,38 @@ void LlmSettingsDialog::applyModelFilter(const QString& filterText) {
     // Partition: free first, then others, applying filter if any
     auto matches = [&](const ModelEntry& m){
         if (t.isEmpty()) return true;
+
+        qDebug() << "[FILTER] Modelo=" << m.name << "id=" << m.id << "name=" << m.name << "texto=" << t;
+        appendDebug(tr("[FILTER] Modelo='%1' id='%2' name='%3' texto='%4'")
+                        .arg(m.name)
+                        .arg(m.id)
+                        .arg(m.name)
+                        .arg(t));
+
         const QString hay = (m.id + " " + m.name).toLower();
         return hay.contains(t.toLower());
     };
     QVector<ModelEntry> freeList;
     QVector<ModelEntry> otherList;
+    
+    qDebug() << "[FILTER] openRouterModels_=" << openRouterModels_.size();
+    appendDebug(tr("[FILTER] openRouterModels_=%1")
+                    .arg(QString::number(openRouterModels_.size())));
+    
     for (const auto& m : openRouterModels_) {
         if (!matches(m)) continue;
+        
         const QString idLower = m.id.toLower();
         const QString nameLower = m.name.toLower();
         const bool isFree = idLower.contains("free") || nameLower.contains("free");
         if (isFree) freeList.push_back(m); else otherList.push_back(m);
     }
+
+    qDebug() << "[FILTER] freeList=" << freeList.size() << "otherList=" << otherList.size();
+    appendDebug(tr("[FILTER] freeList=%1 otherList=%2")
+                    .arg(QString::number(freeList.size()))
+                    .arg(QString::number(otherList.size())));
+
     auto addEntries = [&](const QVector<ModelEntry>& list){
         for (const auto& m : list) {
             const QString label = m.name.isEmpty() ? m.id : QString("%1 (%2)").arg(m.name, m.id);
@@ -473,6 +493,7 @@ void LlmSettingsDialog::fetchOpenRouterModels() {
         openRouterModels_.clear();
         modelCombo_->clear();
         modelCombo_->addItem(tr("Carregando modelos do OpenRouter..."), "openrouter/auto");
+        modelCombo_->setEnabled(false);
         updatingModelList_ = false;
     }
 
@@ -488,7 +509,7 @@ void LlmSettingsDialog::fetchOpenRouterModels() {
     req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     const QString key = apiKeyEdit_->text().trimmed();
     if (!key.isEmpty()) req.setRawHeader("Authorization", QByteArray("Bearer ") + key.toUtf8());
-    req.setRawHeader("HTTP-Referer", QByteArray("https://rapport.tec.br/genai-reader"));
+    req.setRawHeader("HTTP-Referer", QByteArray("https://rapport.tec.br/genai-e-book-reader"));
     const QByteArray title = QCoreApplication::applicationName().isEmpty() ? QByteArray("GenAI E-Book Reader") : QCoreApplication::applicationName().toUtf8();
     req.setRawHeader("X-Title", title);
     appendDebug(tr("[HTTP] GET %1 (Authorization=%2)")
@@ -545,8 +566,13 @@ void LlmSettingsDialog::fetchOpenRouterModels() {
         appendDebug(tr("[MODELS] OpenRouter carregou %1 modelos").arg(QString::number(openRouterModels_.size())));
         // Populate with free-first ordering
         const QString currentFilter = modelCombo_->lineEdit() ? modelCombo_->lineEdit()->text() : QString();
-        appendDebug(tr("[MODELS] Aplicando filtro atual='%1'").arg(currentFilter));
-        applyModelFilter(currentFilter);
+        
+        modelCombo_->clear();
+        for (const auto& m : openRouterModels_) {
+            const QString label = m.name.isEmpty() ? m.id : QString("%1 (%2)").arg(m.name, m.id);
+            modelCombo_->addItem(label, m.id);
+        }
+        
         // Try to keep previously selected model if present in settings
         QSettings s; const QString currentModel = s.value("ai/model").toString();
         int idx = modelCombo_->findData(currentModel);
