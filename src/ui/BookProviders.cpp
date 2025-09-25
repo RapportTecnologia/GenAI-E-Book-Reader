@@ -95,3 +95,12 @@ void BookProviders::fetchFromGoogleBooks(QNetworkAccessManager* nm,
         if (done) done(parsed, true, QString());
     });
 }
+
+void BookProviders::fetchFromAmazonBooks(QNetworkAccessManager* nm,
+                                         const OpfData& hint,
+                                         std::function<void(const OpfData& result, bool ok, const QString& message)> done) {
+    Q_UNUSED(nm);
+    // For now, we don't have Amazon Product Advertising API credentials configured.
+    // We return a graceful message and no data, so the merge dialog still works.
+    if (done) done(OpfData{}, false, QStringLiteral("Amazon Books não configurado (forneça chaves/API para habilitar)."));
+}

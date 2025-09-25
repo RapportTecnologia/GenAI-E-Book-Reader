@@ -235,11 +235,20 @@ void MainWindow::completeOpfWithGenAi() {
     }
 
     // Build modal dialog (no chat history persistence)
-    OpfGenAiDialog dlg(this);
+    OpfGenAiDialog dlg(opfDialog_ && opfDialog_->isVisible() ? static_cast<QWidget*>(opfDialog_) : static_cast<QWidget*>(this));
+    dlg.setModal(true);
+    dlg.setWindowModality(Qt::ApplicationModal);
     dlg.appendLine(tr("[fonte] Coletando metadados públicos (Google Books)..."));
     dlg.setBusy(true);
     dlg.show();
     dlg.raise();
+    dlg.activateWindow();
+
+    // Reflect busy state on OPF dialog if open
+    if (opfDialog_) {
+        opfDialog_->setBusy(true);
+        opfDialog_->setStatusMessage(tr("Atualizando metadados (IA/Google)..."));
+    }
 
     auto continueWithLlm = [this, absPath, opfPath, &dlg](const OpfData& baseData){
         // Compose strict JSON prompt
@@ -274,7 +283,7 @@ void MainWindow::completeOpfWithGenAi() {
         llm_->chatWithMessages(msgs, [this, absPath, baseData, opfPath, &dlg](QString out, QString err){
             QMetaObject::invokeMethod(this, [this, absPath, baseData, opfPath, &dlg, out, err]() mutable {
                 auto finish = [&](){ dlg.setBusy(false); statusBar()->clearMessage(); };
-                if (!err.isEmpty()) { dlg.appendLine(tr("[erro] %1").arg(err)); finish(); return; }
+                if (!err.isEmpty()) { dlg.appendLine(tr("[erro] %1").arg(err)); finish(); if (opfDialog_) { opfDialog_->setBusy(false); opfDialog_->setStatusMessage(QString()); } return; }
 
                 dlg.appendLine(tr("[IA] JSON recebido."));
                 // Parse strictly or fall back to tolerant extraction
@@ -366,7 +375,9 @@ void MainWindow::completeOpfWithGenAi() {
         // Continue with LLM using enriched base
         continueWithLlm(enriched);
     });
+    if (opfDialog_ && opfDialog_->isVisible()) opfDialog_->setEnabled(false);
     dlg.exec();
+    if (opfDialog_) opfDialog_->setEnabled(true);
 }
 
 // Helper: parse metadata heuristically from filename when PDF metadata is missing or incomplete
@@ -466,23 +477,83 @@ void MainWindow::openOpfMetadataDialog() {
     if (!opfDialog_) opfDialog_ = new OpfDialog(this);
     // Wire the dialog's AI request button to the existing completion logic
     connect(opfDialog_, &OpfDialog::requestCompleteWithAi, this, &MainWindow::completeOpfWithGenAi, Qt::UniqueConnection);
-    const QString opfPath = OpfStore::defaultOpfPathFor(currentFilePath_);
+    connect(opfDialog_, &OpfDialog::requestRegenerateOpf, this, &MainWindow::regenerateOpfInteractive, Qt::UniqueConnection);
+    const QString absPdfPath = QFileInfo(currentFilePath_).absoluteFilePath();
+    const QString opfPath = OpfStore::defaultOpfPathFor(absPdfPath);
     OpfData data;
+    if (!QFileInfo::exists(opfPath)) {
+        // If OPF is missing, run the full regeneration flow first (modal) to ensure file exists
+        // If the dialog is already visible (reopen), disable it while regenerating
+        if (opfDialog_ && opfDialog_->isVisible()) opfDialog_->setEnabled(false);
+        regenerateOpfInteractive();
+        if (opfDialog_) opfDialog_->setEnabled(true);
+    }
     if (QFileInfo::exists(opfPath)) {
-        QString err; if (!OpfStore::read(opfPath, &data, &err)) {
+        QString err;
+        if (!OpfStore::read(opfPath, &data, &err)) {
             showLongAlert(tr("Erro ao ler OPF"), err);
+            data = buildOpfFromPdfMeta(absPdfPath);
         }
     } else {
-        data = buildOpfFromPdfMeta(currentFilePath_);
+        // Still no OPF (e.g., user cancelou a regeneração): show best-effort from PDF/filename
+        data = buildOpfFromPdfMeta(absPdfPath);
+    }
+    // Backfill any missing fields from the current PDF/filename heuristics so the dialog is never blank
+    {
+        const OpfData base = buildOpfFromPdfMeta(absPdfPath);
+        auto fill = [](QString& dst, const QString& srcv){ if (dst.trimmed().isEmpty()) dst = srcv.trimmed(); };
+        fill(data.title, base.title);
+        fill(data.author, base.author);
+        fill(data.publisher, base.publisher);
+        fill(data.language, base.language);
+        fill(data.identifier, base.identifier);
+        fill(data.description, base.description);
+        fill(data.summary, base.summary);
+        fill(data.keywords, base.keywords);
+        fill(data.edition, base.edition);
+        fill(data.source, base.source);
+        fill(data.format, base.format);
+        fill(data.isbn, base.isbn);
     }
     opfDialog_->setData(data);
+    opfDialog_->setStatusMessage(QString());
+    opfDialog_->setBusy(false);
     if (opfDialog_->exec() == QDialog::Accepted) {
         const OpfData out = opfDialog_->data();
         QString err; if (!OpfStore::write(opfPath, out, &err)) {
             showLongAlert(tr("Erro ao salvar OPF"), err);
         } else {
             statusBar()->showMessage(tr("Metadados OPF salvos em %1").arg(opfPath), 3000);
+            reloadOpfDialogFromDiskIfOpen(opfPath);
         }
+    }
+}
+
+void MainWindow::reloadOpfDialogFromDiskIfOpen(const QString& opfPath) {
+    if (!opfDialog_) return;
+    if (!QFileInfo::exists(opfPath)) return;
+    OpfData latest;
+    QString err;
+    if (OpfStore::read(opfPath, &latest, &err)) {
+        // Backfill missing fields from PDF/filename heuristics to avoid blanks
+        OpfData base = buildOpfFromPdfMeta(currentFilePath_);
+        // Fill only empty fields in 'latest' using 'base'
+        auto fill = [](QString& dst, const QString& srcv){ if (dst.trimmed().isEmpty()) dst = srcv.trimmed(); };
+        fill(latest.title, base.title);
+        fill(latest.author, base.author);
+        fill(latest.publisher, base.publisher);
+        fill(latest.language, base.language);
+        fill(latest.identifier, base.identifier);
+        fill(latest.description, base.description);
+        fill(latest.summary, base.summary);
+        fill(latest.keywords, base.keywords);
+        fill(latest.edition, base.edition);
+        fill(latest.source, base.source);
+        fill(latest.format, base.format);
+        fill(latest.isbn, base.isbn);
+        opfDialog_->setData(latest);
+        opfDialog_->setStatusMessage(QString());
+        opfDialog_->setBusy(false);
     }
 }
 
@@ -491,21 +562,205 @@ void MainWindow::maybeAskGenerateOpf() {
     const QString absPath = QFileInfo(currentFilePath_).absoluteFilePath();
     const QString opfPath = OpfStore::defaultOpfPathFor(absPath);
     const bool exists = QFileInfo::exists(opfPath);
-    const bool asked = settings_.value(QString("files/%1/asked_opf").arg(absPath), false).toBool();
-    if (exists || asked) return;
+    if (exists) return;
+    // Auto-run regeneration when no OPF exists: gather from providers and show merge dialog
     settings_.setValue(QString("files/%1/asked_opf").arg(absPath), true);
+    regenerateOpfInteractive();
+}
 
-    const auto ret = QMessageBox::question(
-        this,
-        tr("Gerar resumo/descrição?"),
-        tr("Deseja gerar um resumo e descrição via IA e salvar como metadados OPF?"),
-        QMessageBox::Yes | QMessageBox::No,
-        QMessageBox::Yes
-    );
-    if (ret == QMessageBox::Yes) {
-        // Show interactive AI dialog so the user sees progress/logs
-        completeOpfWithGenAi();
+void MainWindow::regenerateOpfInteractive() {
+    if (currentFilePath_.isEmpty()) return;
+    const QString absPath = QFileInfo(currentFilePath_).absoluteFilePath();
+    const QString opfPath = OpfStore::defaultOpfPathFor(absPath);
+
+    // Base from PDF and filename heuristics
+    OpfData base = buildOpfFromPdfMeta(absPath);
+    // If an OPF already exists, prefer its non-empty values as the current baseline
+    if (QFileInfo::exists(opfPath)) {
+        OpfData stored; QString rerr;
+        if (OpfStore::read(opfPath, &stored, &rerr)) {
+            auto keep = [](const QString& s){ return !s.trimmed().isEmpty(); };
+            if (keep(stored.title)) base.title = stored.title;
+            if (keep(stored.author)) base.author = stored.author;
+            if (keep(stored.publisher)) base.publisher = stored.publisher;
+            if (keep(stored.language)) base.language = stored.language;
+            if (keep(stored.identifier)) base.identifier = stored.identifier;
+            if (keep(stored.description)) base.description = stored.description;
+            if (keep(stored.summary)) base.summary = stored.summary;
+            if (keep(stored.keywords)) base.keywords = stored.keywords;
+            if (keep(stored.edition)) base.edition = stored.edition;
+            if (keep(stored.source)) base.source = stored.source;
+            if (keep(stored.format)) base.format = stored.format;
+            if (keep(stored.isbn)) base.isbn = stored.isbn;
+        }
     }
+
+    // Prepare progress/log dialog
+    OpfGenAiDialog dlg(this);
+    dlg.setWindowTitle(tr("Recriar OPF"));
+    dlg.appendLine(tr("[base] Extraindo metadados do PDF e nome do arquivo..."));
+    dlg.setBusy(true);
+    dlg.show();
+    dlg.raise();
+
+    // Reflect busy state on OPF dialog if open
+    if (opfDialog_) {
+        opfDialog_->setBusy(true);
+        opfDialog_->setStatusMessage(tr("Recriando OPF... coletando fontes (Google/Amazon/IA)."));
+    }
+
+    // Ensure network manager
+    if (!netManager_) netManager_ = new QNetworkAccessManager(this);
+    BookProviders providers(this);
+
+    // Hold provider results
+    struct ProviderOut { OpfData google; bool gOk{false}; QString gMsg; OpfData amazon; bool aOk{false}; QString aMsg; } out;
+
+    auto proceedToLlm = [this, absPath, opfPath, &dlg, base, &out](const OpfData& enrichedBase){
+        if (!llm_) {
+            // No LLM configured: go straight to merge with current+google+amazon
+            OpfMergeDialog mergeDlg(&dlg);
+            QVector<OpfMergeDialog::Row> rows;
+            auto addRow = [&](const QString& key, const QString& label,
+                              const QString& cur, const QString& ai,
+                              const QString& google, const QString& amazon){
+                OpfMergeDialog::Row r; r.key = key; r.label = label; r.cur = cur; r.ai = ai; r.google = google; r.amazon = amazon;
+                if (!cur.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::Current;
+                else if (!google.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::Google;
+                else if (!amazon.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::Amazon;
+                rows.push_back(r);
+            };
+            addRow("title",       tr("Título"),         enrichedBase.title,       QString(), out.google.title,       out.amazon.title);
+            addRow("author",      tr("Autor"),          enrichedBase.author,      QString(), out.google.author,      out.amazon.author);
+            addRow("publisher",   tr("Editora"),        enrichedBase.publisher,   QString(), out.google.publisher,   out.amazon.publisher);
+            addRow("edition",     tr("Edição"),         enrichedBase.edition,     QString(), QString(),             QString());
+            addRow("language",    tr("Idioma"),         enrichedBase.language,    QString(), out.google.language,    out.amazon.language);
+            addRow("isbn",        tr("ISBN"),           enrichedBase.isbn,        QString(), out.google.isbn,        out.amazon.isbn);
+            addRow("keywords",    tr("Palavras-chave"), enrichedBase.keywords,    QString(), out.google.keywords,    out.amazon.keywords);
+            addRow("description", tr("Descrição"),      enrichedBase.description, QString(), out.google.description, out.amazon.description);
+            addRow("summary",     tr("Resumo"),         enrichedBase.summary,     QString(), QString(),             QString());
+            mergeDlg.setRows(rows);
+            dlg.setBusy(false);
+            if (opfDialog_) { opfDialog_->setBusy(false); opfDialog_->setStatusMessage(QString()); }
+            if (mergeDlg.exec() == QDialog::Accepted) {
+                OpfData selected = mergeDlg.selectedOpf(enrichedBase);
+                QString werr; if (!OpfStore::write(opfPath, selected, &werr)) {
+                    dlg.appendLine(tr("[erro] Falha ao salvar OPF: %1").arg(werr));
+                } else {
+                    dlg.appendLine(tr("[ok] Metadados atualizados em %1").arg(opfPath));
+                    statusBar()->showMessage(tr("OPF atualizado."), 3000);
+                    reloadOpfDialogFromDiskIfOpen(opfPath);
+                }
+            } else {
+                dlg.appendLine(tr("[info] Atualização de OPF cancelada pelo usuário."));
+            }
+            dlg.setBusy(false);
+            if (opfDialog_) { opfDialog_->setBusy(false); opfDialog_->setStatusMessage(QString()); }
+            return;
+        }
+
+        // With LLM: request strict JSON completion
+        QList<QPair<QString,QString>> msgs;
+        const QString sys = tr(
+            "Você é um agente que retorna SOMENTE JSON (sem texto fora do JSON).\n"
+            "Não invente dados. Inclua apenas campos que você tenha alta confiança com base em conhecimento público.\n"
+            "Se um campo for desconhecido, simplesmente omita-o. Nunca tente adivinhar um dado.\n"
+            "Campos possíveis: title, author, publisher, edition, language, isbn, keywords, description, summary.\n"
+            "Formato de saída: um único objeto JSON com algumas dessas chaves.");
+        msgs.append({QStringLiteral("system"), sys});
+
+        QJsonObject known;
+        auto put = [&](const char* k, const QString& v){ if (!v.trimmed().isEmpty()) known.insert(k, v); };
+        put("title", enrichedBase.title);
+        put("author", enrichedBase.author);
+        put("publisher", enrichedBase.publisher);
+        put("edition", enrichedBase.edition);
+        put("language", enrichedBase.language);
+        put("isbn", enrichedBase.isbn);
+        put("keywords", enrichedBase.keywords);
+        put("description", enrichedBase.description);
+        put("summary", enrichedBase.summary);
+        QJsonObject req; req.insert("known", known);
+        req.insert("hint", QJsonObject{{"fileName", QFileInfo(absPath).fileName()}, {"source", enrichedBase.source}, {"format", enrichedBase.format}});
+        const QString user = QJsonDocument(req).toJson(QJsonDocument::Compact);
+        msgs.append({QStringLiteral("user"), user});
+
+        statusBar()->showMessage(tr("Consultando IA para completar metadados (JSON estrito)..."));
+        llm_->chatWithMessages(msgs, [this, absPath, enrichedBase, opfPath, &dlg, &out](QString outText, QString err){
+            QMetaObject::invokeMethod(this, [this, absPath, enrichedBase, opfPath, &dlg, &out, outText, err]() mutable {
+                auto finish = [&](){ dlg.setBusy(false); statusBar()->clearMessage(); };
+                if (!err.isEmpty()) { dlg.appendLine(tr("[erro] %1").arg(err)); finish(); return; }
+                dlg.appendLine(tr("[IA] JSON recebido."));
+                QJsonParseError je; QJsonDocument jd = QJsonDocument::fromJson(outText.toUtf8(), &je);
+                QJsonObject obj = (je.error == QJsonParseError::NoError && jd.isObject()) ? jd.object() : extractJsonObjectLoose(outText);
+                OpfData aiData; if (!obj.isEmpty()) {
+                    auto getS = [&](const char* k){ return cleaned(obj.value(QLatin1String(k)).toString()); };
+                    aiData.title = getS("title");
+                    aiData.author = getS("author");
+                    aiData.publisher = getS("publisher");
+                    aiData.edition = getS("edition");
+                    aiData.language = getS("language");
+                    aiData.isbn = getS("isbn");
+                    aiData.keywords = getS("keywords");
+                    aiData.description = getS("description");
+                    aiData.summary = getS("summary");
+                }
+                OpfMergeDialog mergeDlg(&dlg);
+                QVector<OpfMergeDialog::Row> rows;
+                auto addRow = [&](const QString& key, const QString& label,
+                                  const QString& cur, const QString& ai,
+                                  const QString& google, const QString& amazon){
+                    OpfMergeDialog::Row r; r.key = key; r.label = label; r.cur = cur; r.ai = ai; r.google = google; r.amazon = amazon;
+                    if (!cur.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::Current;
+                    else if (!ai.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::AI;
+                    else if (!google.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::Google;
+                    else if (!amazon.trimmed().isEmpty()) r.chosen = OpfMergeDialog::Source::Amazon;
+                    rows.push_back(r);
+                };
+                addRow("title",       tr("Título"),         enrichedBase.title,       aiData.title,       out.google.title,       out.amazon.title);
+                addRow("author",      tr("Autor"),          enrichedBase.author,      aiData.author,      out.google.author,      out.amazon.author);
+                addRow("publisher",   tr("Editora"),        enrichedBase.publisher,   aiData.publisher,   out.google.publisher,   out.amazon.publisher);
+                addRow("edition",     tr("Edição"),         enrichedBase.edition,     aiData.edition,     QString(),             QString());
+                addRow("language",    tr("Idioma"),         enrichedBase.language,    aiData.language,    out.google.language,    out.amazon.language);
+                addRow("isbn",        tr("ISBN"),           enrichedBase.isbn,        aiData.isbn,        out.google.isbn,        out.amazon.isbn);
+                addRow("keywords",    tr("Palavras-chave"), enrichedBase.keywords,    aiData.keywords,    out.google.keywords,    out.amazon.keywords);
+                addRow("description", tr("Descrição"),      enrichedBase.description, aiData.description, out.google.description, out.amazon.description);
+                addRow("summary",     tr("Resumo"),         enrichedBase.summary,     aiData.summary,     QString(),             QString());
+                mergeDlg.setRows(rows);
+                dlg.setBusy(false);
+                if (opfDialog_) { opfDialog_->setBusy(false); opfDialog_->setStatusMessage(QString()); }
+                if (mergeDlg.exec() == QDialog::Accepted) {
+                    OpfData selected = mergeDlg.selectedOpf(enrichedBase);
+                    QString werr; if (!OpfStore::write(opfPath, selected, &werr)) {
+                        dlg.appendLine(tr("[erro] Falha ao salvar OPF: %1").arg(werr));
+                    } else {
+                        dlg.appendLine(tr("[ok] Metadados atualizados em %1").arg(opfPath));
+                        statusBar()->showMessage(tr("OPF atualizado."), 3000);
+                        reloadOpfDialogFromDiskIfOpen(opfPath);
+                    }
+                } else {
+                    dlg.appendLine(tr("[info] Atualização de OPF cancelada pelo usuário."));
+                }
+                finish();
+                if (opfDialog_) { opfDialog_->setBusy(false); opfDialog_->setStatusMessage(QString()); }
+            });
+        });
+    };
+
+    // Chain: Google -> Amazon -> LLM
+    providers.fetchFromGoogleBooks(netManager_, base, [&, proceedToLlm](const OpfData& g, bool ok, const QString& msg) mutable {
+        if (ok) { out.google = g; dlg.appendLine(tr("[fonte] Google Books: metadados encontrados.")); }
+        else { out.gMsg = msg; dlg.appendLine(tr("[fonte] Google Books: %1").arg(msg.isEmpty()? tr("sem resultados") : msg)); }
+        OpfData enriched = base; if (ok) mergePreferExisting(enriched, g);
+        providers.fetchFromAmazonBooks(netManager_, enriched, [&, proceedToLlm, enriched](const OpfData& a, bool aok, const QString& amsg) mutable {
+            if (aok) { out.amazon = a; dlg.appendLine(tr("[fonte] Amazon Books: metadados encontrados.")); }
+            else { out.aMsg = amsg; dlg.appendLine(tr("[fonte] Amazon Books: %1").arg(amsg.isEmpty()? tr("não disponível") : amsg)); }
+            OpfData enriched2 = enriched; if (aok) mergePreferExisting(enriched2, a);
+            proceedToLlm(enriched2);
+        });
+    });
+
+    dlg.exec();
 }
 
 OpfData MainWindow::buildOpfFromPdfMeta(const QString& absPdfPath) const {
@@ -612,6 +867,7 @@ void MainWindow::generateOpfWithLlmAsync(const QString& absPdfPath) {
                 showLongAlert(tr("Erro ao salvar OPF"), werr);
             } else {
                 statusBar()->showMessage(tr("OPF criado em %1").arg(opfPath), 4000);
+                reloadOpfDialogFromDiskIfOpen(opfPath);
             }
             statusBar()->clearMessage();
         });

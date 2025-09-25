@@ -6,6 +6,8 @@
 #include <QPlainTextEdit>
 #include <QDialogButtonBox>
 #include <QPushButton>
+#include <QLabel>
+#include <QProgressBar>
 
 OpfDialog::OpfDialog(QWidget* parent)
     : QDialog(parent) {
@@ -38,17 +40,34 @@ OpfDialog::OpfDialog(QWidget* parent)
     lay->addWidget(descriptionEdit_, 1);
     lay->addWidget(summaryEdit_, 1);
 
+    // Status label (busy/info messages)
+    statusLabel_ = new QLabel(this);
+    statusLabel_->setObjectName("opfStatusLabel");
+    statusLabel_->setStyleSheet("color: #666;");
+    statusLabel_->setText(QString());
+    lay->addWidget(statusLabel_);
+
+    // Indeterminate progress bar as a spinner-like indicator
+    progress_ = new QProgressBar(this);
+    progress_->setRange(0, 0); // indeterminate
+    progress_->setTextVisible(false);
+    progress_->setVisible(false);
+    lay->addWidget(progress_);
+
     auto* btns = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Close, this);
     editBtn_ = new QPushButton(tr("Editar"), this);
     aiBtn_ = new QPushButton(tr("Completar com IA"), this);
+    regenBtn_ = new QPushButton(tr("Recriar OPF"), this);
     btns->addButton(editBtn_, QDialogButtonBox::ActionRole);
     btns->addButton(aiBtn_, QDialogButtonBox::ActionRole);
+    btns->addButton(regenBtn_, QDialogButtonBox::ActionRole);
     lay->addWidget(btns);
 
     connect(btns, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(btns, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(editBtn_, &QPushButton::clicked, this, &OpfDialog::toggleEdit);
     connect(aiBtn_, &QPushButton::clicked, this, [this]{ emit requestCompleteWithAi(); });
+    connect(regenBtn_, &QPushButton::clicked, this, [this]{ emit requestRegenerateOpf(); });
 
     setEditable(false);
 }
@@ -93,4 +112,18 @@ OpfData OpfDialog::data() const {
     d.summary = summaryEdit_->toPlainText();
     d.keywords = keywordsEdit_->text();
     return d;
+}
+
+void OpfDialog::setBusy(bool busy) {
+    busy_ = busy;
+    // Disable interactive buttons while busy and force read-only fields
+    if (editBtn_) editBtn_->setEnabled(!busy);
+    if (aiBtn_) aiBtn_->setEnabled(!busy);
+    if (regenBtn_) regenBtn_->setEnabled(!busy);
+    setEditable(!busy);
+}
+
+void OpfDialog::setStatusMessage(const QString& msg) {
+    if (!statusLabel_) return;
+    statusLabel_->setText(msg);
 }

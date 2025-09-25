@@ -22,6 +22,13 @@ public:
                               const OpfData& hint,
                               std::function<void(const OpfData& result, bool ok, const QString& message)> done);
 
+    // Query Amazon Books (Product Advertising API or public pages). This is a placeholder implementation
+    // that returns an informative message until API keys/config are provided.
+    // Calls done(result, ok, message).
+    void fetchFromAmazonBooks(QNetworkAccessManager* nm,
+                              const OpfData& hint,
+                              std::function<void(const OpfData& result, bool ok, const QString& message)> done);
+
 private:
     static OpfData parseGoogleVolume(const QJsonObject& volume);
 };

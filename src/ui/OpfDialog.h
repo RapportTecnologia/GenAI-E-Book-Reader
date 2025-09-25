@@ -1,11 +1,14 @@
 #pragma once
 
 #include <QDialog>
+#include <QString>
 #include "ui/OpfStore.h"
 
 class QLineEdit;
 class QPlainTextEdit;
 class QPushButton;
+class QLabel;
+class QProgressBar;
 
 class OpfDialog : public QDialog {
     Q_OBJECT
@@ -15,8 +18,13 @@ public:
     void setData(const OpfData& data);
     OpfData data() const;
 
+    // Visual feedback while OPF is being generated in background
+    void setBusy(bool busy);
+    void setStatusMessage(const QString& msg);
+
 signals:
     void requestCompleteWithAi();
+    void requestRegenerateOpf();
 
 private slots:
     void toggleEdit();
@@ -34,4 +42,8 @@ private:
     QLineEdit* keywordsEdit_ {nullptr};
     QPushButton* editBtn_ {nullptr};
     QPushButton* aiBtn_ {nullptr};
+    QPushButton* regenBtn_ {nullptr};
+    QLabel* statusLabel_ {nullptr};
+    QProgressBar* progress_ {nullptr};
+    bool busy_ {false};
 };

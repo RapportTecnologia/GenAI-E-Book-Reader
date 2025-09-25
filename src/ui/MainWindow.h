@@ -166,6 +166,8 @@ private slots:
     void openOpfMetadataDialog();
     /** \brief Completa metadados OPF faltantes via IA (JSON estrito, sem inventar). */
     void completeOpfWithGenAi();
+    /** \brief Recria o OPF coletando dados de múltiplas fontes (PDF, nome do arquivo, Google, Amazon, IA) e permite mesclar. */
+    void regenerateOpfInteractive();
 
 private:
     void buildUi();
@@ -232,6 +234,10 @@ private:
     void maybeAskGenerateOpf();
     void generateOpfWithLlmAsync(const QString& absPdfPath);
     OpfData buildOpfFromPdfMeta(const QString& absPdfPath) const;
+    // UI helper: after writing OPF, reload the dialog if it's open so fields are not stale
+    void reloadOpfDialogFromDiskIfOpen(const QString& opfPath);
+    // Apply current OPF generation status to dialog if open
+    void applyOpfBusyStatusToDialogIfOpen();
 
     QWidget* viewer_ {nullptr}; // can be ViewerWidget or PdfViewerWidget
     QTreeWidget* toc_ {nullptr};
@@ -343,4 +349,8 @@ private:
 
     // Pending state for async RAG
     QString pendingRagQuery_;
+
+    // OPF generation status (for UI feedback in OpfDialog)
+    bool opfGenInProgress_ {false};
+    QString opfGenStatus_;
 };
