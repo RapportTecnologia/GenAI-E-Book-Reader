@@ -6,7 +6,6 @@
   ## [Unreleased]
 
   - Melhorias na integração com WSL no windows
-    - Revisar a passagem dos metadados do e-book para o chat.
 
   ## [0.1.12]
 
@@ -25,6 +24,10 @@
   - Consulta estruturada para OPF (Function Calling):
     - Nova ferramenta `query_opf` disponível no chat para retornar campos do OPF atual de forma estruturada (JSON).
     - Campos suportados: `title`, `author`, `publisher`, `language`, `identifier`, `description`, `summary`, `keywords`, `edition`, `source`, `format`, `isbn`.
+  - Agora pode escolher em qual idioma se quer que a IA responda.
+  - Revisar a passagem dos metadados do e-book para o chat.
+  - Informa matadados do livro no prompt de sistema, melhorando a contextualização das consultas.
+
 
   ## [0.1.11] - 2025-09-24
 

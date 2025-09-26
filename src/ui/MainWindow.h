@@ -239,6 +239,10 @@ private:
     // Apply current OPF generation status to dialog if open
     void applyOpfBusyStatusToDialogIfOpen();
 
+    // Build a system message including the current e-book metadata (title, author, description, summary)
+    // to be prepended to chat conversations with the LLM.
+    QString buildOpfSystemPrompt() const;
+
     QWidget* viewer_ {nullptr}; // can be ViewerWidget or PdfViewerWidget
     QTreeWidget* toc_ {nullptr};
     QPdfBookmarkModel* tocModel_ {nullptr};

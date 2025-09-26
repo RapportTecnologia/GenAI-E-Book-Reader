@@ -3024,8 +3024,13 @@ bool MainWindow::openPath(const QString& file) {
                 const QMessageBox::StandardButton ret = QMessageBox::question(
                     this,
                     tr("Criar embeddings?"),
-                    tr("Deseja criar o índice vetorial (embeddings) para este e-book agora?\n\n"
-                       "Observação: isso pode ser relativamente demorado conforme o tamanho do arquivo."),
+                    tr("Este documento ainda não possui índice de embeddings.\n\n"
+                       "O que é isso? Embeddings são representações vetoriais dos trechos do livro. Elas permitem:\n"
+                       "- Busca semântica (encontrar ideias mesmo sem as palavras exatas);\n"
+                       "- RAG no chat (a IA recupera trechos relevantes do PDF para responder citando páginas).\n\n"
+                       "Sem esse índice, a busca usa apenas texto simples e o RAG fica limitado.\n\n"
+                       "Deseja criar agora? O processo analisa o PDF em partes, gera vetores e grava um índice local.\n"
+                       "Observação: pode levar algum tempo conforme o tamanho do arquivo e o modelo em Configurações > Embeddings."),
                     QMessageBox::Yes | QMessageBox::No,
                     QMessageBox::No
                 );

@@ -277,7 +277,18 @@ void MainWindow::onRequestSendToChat(const QString& text) {
     if (chatDock_) chatDock_->appendUser(text);
     statusBar()->showMessage(tr("Enviando ao chat da IA..."));
     // Send full conversation for continuous context
-    const auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
+    auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
+    // Prepend system metadata of the current e-book (title, author, description, summary)
+    const QString sysOpf = buildOpfSystemPrompt();
+    if (!sysOpf.trimmed().isEmpty()) {
+        msgs.prepend({QStringLiteral("system"), sysOpf});
+    }
+    // Precision policy: do not fabricate; if metadata is missing, say it's unknown
+    const QString sysPolicy = tr(
+        "Política de precisão: use apenas os metadados fornecidos (OPF/PDF) e o que estiver no histórico. "
+        "Se uma informação não estiver disponível (por exemplo, autor, biografia/currículo), responda explicitamente que é desconhecida/não disponível. "
+        "Não invente dados. Quando apropriado, solicite a ferramenta 'query_opf' para confirmar metadados.");
+    msgs.prepend({QStringLiteral("system"), sysPolicy});
     llm_->chatWithMessages(msgs, [this](QString out, QString err){
         QMetaObject::invokeMethod(this, [this, out, err](){
             if (!err.isEmpty()) {
@@ -298,7 +309,12 @@ void MainWindow::onChatSendMessage(const QString& text) {
     if (text.trimmed().isEmpty() || !llm_) return;
     if (chatDock_) chatDock_->appendUser(text);
     statusBar()->showMessage(tr("Enviando ao chat da IA..."));
-    const auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
+    auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
+    // Prepend system metadata of the current e-book (title, author, description, summary)
+    const QString sysOpf = buildOpfSystemPrompt();
+    if (!sysOpf.trimmed().isEmpty()) {
+        msgs.prepend({QStringLiteral("system"), sysOpf});
+    }
     // Define OpenAI-style tools so that the model can request in-app actions
     QSettings s; const QString respLang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
     QJsonArray tools;
@@ -332,13 +348,14 @@ void MainWindow::onChatSendMessage(const QString& text) {
     {
         QJsonObject tool; tool["type"] = "function";
         QJsonObject fn; fn["name"] = "query_opf";
+        fn["description"] = tr("Consultar metadados do OPF do documento atual. Use para confirmar título/autor/etc. Não invente valores. Se o campo vier vazio, trate-o como desconhecido e informe isso ao usuário.");
         QJsonObject params; params["type"] = "object";
         QJsonObject props;
         // Optional list of fields to include; if omitted, include all
         QJsonObject fields; fields["type"] = "array";
         QJsonObject items; items["type"] = "string";
         fields["items"] = items;
-        fields["description"] = tr("Lista opcional de campos a retornar: title, author, publisher, language, identifier, description, summary, keywords, edition, source, format, isbn");
+        fields["description"] = tr("Lista opcional de campos a retornar (se um campo estiver vazio no OPF, considere-o desconhecido): title, author, publisher, language, identifier, description, summary, keywords, edition, source, format, isbn");
         props["fields"] = fields;
         params["properties"] = props;
         fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
@@ -361,6 +378,46 @@ void MainWindow::onChatSendMessage(const QString& text) {
             saveChatForCurrentFile();
         });
     });
+}
+
+QString MainWindow::buildOpfSystemPrompt() const {
+    if (currentFilePath_.isEmpty()) return QString();
+    const QString opfPath = OpfStore::defaultOpfPathFor(currentFilePath_);
+    if (opfPath.isEmpty()) return QString();
+    OpfData d; QString err;
+    bool haveOpf = OpfStore::read(opfPath, &d, &err);
+    // Fallback: if OPF missing or largely empty, try to infer from PDF metadata
+    if (!haveOpf || (d.title.trimmed().isEmpty() && d.author.trimmed().isEmpty() && d.description.trimmed().isEmpty() && d.summary.trimmed().isEmpty())) {
+        OpfData inferred = buildOpfFromPdfMeta(currentFilePath_);
+        // Only fill missing fields to avoid overwriting present OPF data
+        if (d.title.trimmed().isEmpty()) d.title = inferred.title;
+        if (d.author.trimmed().isEmpty()) d.author = inferred.author;
+        if (d.description.trimmed().isEmpty()) d.description = inferred.description;
+        if (d.summary.trimmed().isEmpty()) d.summary = inferred.summary;
+        if (d.keywords.trimmed().isEmpty()) d.keywords = inferred.keywords;
+        if (d.language.trimmed().isEmpty()) d.language = inferred.language;
+        if (d.publisher.trimmed().isEmpty()) d.publisher = inferred.publisher;
+        if (d.isbn.trimmed().isEmpty()) d.isbn = inferred.isbn;
+        if (d.format.trimmed().isEmpty()) d.format = inferred.format;
+    }
+
+    QStringList lines;
+    lines << tr("Arquivo: %1").arg(QFileInfo(currentFilePath_).fileName());
+    if (!d.title.trimmed().isEmpty()) lines << tr("Título: %1").arg(d.title);
+    if (!d.author.trimmed().isEmpty()) lines << tr("Autor: %1").arg(d.author);
+    if (!d.language.trimmed().isEmpty()) lines << tr("Idioma: %1").arg(d.language);
+    if (!d.publisher.trimmed().isEmpty()) lines << tr("Editora: %1").arg(d.publisher);
+    if (!d.isbn.trimmed().isEmpty()) lines << tr("ISBN: %1").arg(d.isbn);
+    if (!d.description.trimmed().isEmpty()) lines << tr("Descrição: %1").arg(d.description);
+    if (!d.summary.trimmed().isEmpty()) lines << tr("Resumo: %1").arg(d.summary);
+    if (!d.keywords.trimmed().isEmpty()) lines << tr("Palavras‑chave: %1").arg(d.keywords);
+
+    // If still only filename present, avoid adding an empty system prompt
+    const int nonTrivial = lines.size();
+    if (nonTrivial <= 1) return QString();
+
+    const QString header = tr("Metadados do e-book atual (OPF/PDF). Considere-os como contexto verdadeiro e use-os para responder perguntas sobre o livro sem inventar fatos:");
+    return header + "\n" + lines.join("\n");
 }
 
 void MainWindow::onChatSaveTranscript(const QString& text) {
