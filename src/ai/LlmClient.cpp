@@ -78,9 +78,13 @@ void LlmClient::postJsonForTools(const QUrl& url, const QJsonObject& body,
 void LlmClient::chatWithMessages(const QList<QPair<QString, QString>>& messagesIn,
                                  std::function<void(QString, QString)> onFinished) {
     // Choose endpoint per provider
-    const QUrl url(provider_ == QLatin1String("ollama")
-                       ? QUrl(baseUrl_ + "/chat")
-                       : QUrl(baseUrl_ + "/v1/chat/completions"));
+    const QUrl url(
+        provider_ == QLatin1String("ollama")
+            ? QUrl(baseUrl_ + "/chat")
+            : (provider_ == QLatin1String("perplexity")
+                   ? QUrl(baseUrl_ + "/chat/completions")
+                   : QUrl(baseUrl_ + "/v1/chat/completions"))
+    );
     QJsonObject body; body["model"] = model_;
     QJsonArray messages;
     // Always prepend a MathJax/LaTeX directive to avoid ambiguity in rendering formulas
@@ -169,7 +173,9 @@ void LlmClient::chatWithImage(const QString& userPrompt, const QString& imageDat
         onFinished(QString(), QStringLiteral("O provedor Ollama (local) não suporta chat com imagem neste aplicativo."));
         return;
     }
-    const QUrl url(baseUrl_ + "/v1/chat/completions");
+    const QUrl url(provider_ == QLatin1String("perplexity")
+                       ? QUrl(baseUrl_ + "/chat/completions")
+                       : QUrl(baseUrl_ + "/v1/chat/completions"));
     QJsonObject body; body["model"] = model_;
     QJsonArray messages;
     // Optional system prompt
@@ -225,6 +231,8 @@ void LlmClient::reloadSettings() {
     } else if (provider_ == QLatin1String("generativa")) {
         apiKey_ = QString::fromUtf8(qgetenv("GENERATIVA_API_KEY"));
         if (apiKey_.isEmpty()) apiKey_ = QString::fromUtf8(qgetenv("OPENAI_API_KEY"));
+    } else if (provider_ == QLatin1String("perplexity")) {
+        apiKey_ = QString::fromUtf8(qgetenv("PERPLEXITY_API_KEY"));
     } else {
         apiKey_ = QString::fromUtf8(qgetenv("OPENAI_API_KEY"));
     }
@@ -241,6 +249,9 @@ void LlmClient::reloadSettings() {
             model_ = "granite3.2:8b";
         } else if (provider_ == QLatin1String("openwebui")) {
             model_ = "granite3.2:8b";
+        } else if (provider_ == QLatin1String("perplexity")) {
+            // Default to an online-search-enabled model
+            model_ = "sonar-small-online";
         } else {
             model_ = "gpt-4o-mini";
         }
@@ -257,6 +268,9 @@ void LlmClient::reloadSettings() {
         baseUrl_ = "http://localhost:11434/api";
     } else if (provider_ == "openwebui") {
         baseUrl_ = "http://localhost:3000/api";
+    } else if (provider_ == "perplexity") {
+        // Perplexity uses /chat/completions (no /v1 prefix)
+        baseUrl_ = "https://api.perplexity.ai";
     } else {
         baseUrl_ = "https://api.openai.com";
     }

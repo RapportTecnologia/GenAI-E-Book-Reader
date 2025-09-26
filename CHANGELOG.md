@@ -1,21 +1,30 @@
 # Changelog
-
   All notable changes to this project will be documented in this file.
 
   The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
   ## [Unreleased]
-  
+
   - Melhorias na integração com WSL no windows
+    - Revisar a passagem dos metadados do e-book para o chat.
 
   ## [0.1.12]
 
   - Adicionado opção de tradução e sinônimos do texto marcado.
   - Corrigido o BUG de listagem dos modelos da OpenRouter.AI
-  - Melhorias na interface do usuário. Abrir janela ocupando toda a tela.
   - Tentativa de melhorar a janela de explicação sobre uso do OpenRouter.ai com o video do YouTube.
   - Revisar o Algorítimo de OPF, correções e melhorias.
   - Removido o BUG relativo a seleção do Ollama
+  - Ajuste no tamanho da janela Recriando embeddings para melhor visualização.
+  - Suporte ao provedor Perplexity nos engines de LLM:
+    - Novo provedor `perplexity` em Configurações de LLM, com seleção de modelos recomendados (`sonar-small-online`, `sonar-medium-online`, etc.).
+    - Uso do endpoint compatível com OpenAI em `https://api.perplexity.ai/chat/completions`.
+    - Leitura da chave via `QSettings` (ai/api_keys/perplexity) com fallback à env `PERPLEXITY_API_KEY`.
+  - Chat com pesquisa (web-enabled) via Perplexity:
+    - Permite escolher modelos “online” para respostas com buscas na web.
+  - Consulta estruturada para OPF (Function Calling):
+    - Nova ferramenta `query_opf` disponível no chat para retornar campos do OPF atual de forma estruturada (JSON).
+    - Campos suportados: `title`, `author`, `publisher`, `language`, `identifier`, `description`, `summary`, `keywords`, `edition`, `source`, `format`, `isbn`.
 
   ## [0.1.11] - 2025-09-24
 

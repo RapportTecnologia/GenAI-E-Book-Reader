@@ -4,7 +4,9 @@
  * \file LlmClient.h
  * \brief Cliente simples compatível com a API de chat do OpenAI (e GenerAtiva).
  *
- * Esta classe centraliza chamadas HTTP para provedores OpenAI-compatíveis (OpenAI, GenerAtiva),
+ * Esta classe centraliza chamadas HTTP para provedores OpenAI-compatíveis (OpenAI, GenerAtiva,
+ * OpenRouter, OpenWebUI, Ollama) e também Perplexity ("OpenAI-like" com caminhos levemente
+ * diferentes),
  * lendo configurações de \c QSettings e expondo métodos utilitários para chat, sumarização,
  * sinônimos e chat multimodal (imagem).
  * \ingroup ai
@@ -27,7 +29,7 @@ public:
     explicit LlmClient(QObject* parent = nullptr);
 
     // Configuration is read first from QSettings keys:
-    //   ai/provider: "openai" | "generativa" (default: openai)
+    //   ai/provider: "openai" | "generativa" | "openrouter" | "openwebui" | "ollama" | "perplexity" (default: openai)
     //   ai/base_url: base URL override (optional)
     //   ai/api_key: secret token
     //   ai/model: model name (default: gpt-4o-mini or gpt-3.5-turbo compatible)

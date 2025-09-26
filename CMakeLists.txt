@@ -84,10 +84,11 @@ target_sources(genai_reader PRIVATE ${CMAKE_SOURCE_DIR}/resources/app.qrc)
 # If a .env file does not exist at the project root, create one with defaults.
 set(OPENROUTER_API_KEY_DEFAULT "" CACHE STRING "Default OpenRouter API key to write to .env if it doesn't exist")
 set(GENERATIVA_API_KEY_DEFAULT "" CACHE STRING "Default GenerAtiva API key to write to .env if it doesn't exist")
+set(PERPLEXITY_API_KEY_DEFAULT "" CACHE STRING "Default Perplexity API key to write to .env if it doesn't exist")
 
 set(ENV_FILE_PATH "${CMAKE_SOURCE_DIR}/.env")
 if(NOT EXISTS "${ENV_FILE_PATH}")
-  file(WRITE "${ENV_FILE_PATH}" "OPENROUTER_API_KEY=${OPENROUTER_API_KEY_DEFAULT}\nGENERATIVA_API_KEY=${GENERATIVA_API_KEY_DEFAULT}\n")
+  file(WRITE "${ENV_FILE_PATH}" "OPENROUTER_API_KEY=${OPENROUTER_API_KEY_DEFAULT}\nGENERATIVA_API_KEY=${GENERATIVA_API_KEY_DEFAULT}\nPERPLEXITY_API_KEY=${PERPLEXITY_API_KEY_DEFAULT}\n")
   message(STATUS "Created default .env at ${ENV_FILE_PATH}")
 else()
   # Ensure OPENROUTER_API_KEY key exists in .env; if missing, append it with default empty value
@@ -102,6 +103,12 @@ else()
   if(_HAS_GEN_KEY EQUAL -1)
     file(APPEND "${ENV_FILE_PATH}" "GENERATIVA_API_KEY=${GENERATIVA_API_KEY_DEFAULT}\n")
     message(STATUS "Appended GENERATIVA_API_KEY to existing .env")
+  endif()
+  # Ensure PERPLEXITY_API_KEY key exists in .env; if missing, append it with default empty value
+  string(FIND "${_ENV_EXISTING}" "PERPLEXITY_API_KEY=" _HAS_PPLX_KEY)
+  if(_HAS_PPLX_KEY EQUAL -1)
+    file(APPEND "${ENV_FILE_PATH}" "PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY_DEFAULT}\n")
+    message(STATUS "Appended PERPLEXITY_API_KEY to existing .env")
   endif()
   # Ensure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET exist in .env; append if missing
   string(FIND "${_ENV_EXISTING}" "GOOGLE_CLIENT_ID=" _HAS_GOOGLE_ID)
@@ -126,8 +133,8 @@ if(_OR_MATCH)
   set(OPENROUTER_API_KEY_VALUE "${CMAKE_MATCH_1}")
 endif()
 # Sanitize potential quotes or CRLF
-string(REGEX REPLACE "^\"(.*)\"$" "\\1" OPENROUTER_API_KEY_VALUE "${OPENROUTER_API_KEY_VALUE}")
-string(REPLACE "\r" "" OPENROUTER_API_KEY_VALUE "${OPENROUTER_API_KEY_VALUE}")
+string(REGEX REPLACE "^\"(.*)\"$" "\\1" OPENROUTER_API_KEY "${OPENROUTER_API_KEY_VALUE}")
+string(REPLACE "\r" "" OPENROUTER_API_KEY "${OPENROUTER_API_KEY}")
 
 # Read GENERATIVA_API_KEY value from .env to inject into code
 set(GENERATIVA_API_KEY_VALUE "")
@@ -135,8 +142,17 @@ string(REGEX MATCH "GENERATIVA_API_KEY[ \t]*=([^\n\r]*)" _GEN_MATCH "${_ENV_TXT}
 if(_GEN_MATCH)
   set(GENERATIVA_API_KEY_VALUE "${CMAKE_MATCH_1}")
 endif()
-string(REGEX REPLACE "^\"(.*)\"$" "\\1" GENERATIVA_API_KEY_VALUE "${GENERATIVA_API_KEY_VALUE}")
-string(REPLACE "\r" "" GENERATIVA_API_KEY_VALUE "${GENERATIVA_API_KEY_VALUE}")
+string(REGEX REPLACE "^\"(.*)\"$" "\\1" GENERATIVA_API_KEY "${GENERATIVA_API_KEY_VALUE}")
+string(REPLACE "\r" "" GENERATIVA_API_KEY "${GENERATIVA_API_KEY}")
+
+# Read PERPLEXITY_API_KEY value from .env to inject into code
+set(PERPLEXITY_API_KEY_VALUE "")
+string(REGEX MATCH "PERPLEXITY_API_KEY[ \t]*=([^\n\r]*)" _PPLX_MATCH "${_ENV_TXT}")
+if(_PPLX_MATCH)
+  set(PERPLEXITY_API_KEY_VALUE "${CMAKE_MATCH_1}")
+endif()
+string(REGEX REPLACE "^\"(.*)\"$" "\\1" PERPLEXITY_API_KEY "${PERPLEXITY_API_KEY_VALUE}")
+string(REPLACE "\r" "" PERPLEXITY_API_KEY "${PERPLEXITY_API_KEY}")
 
 # Read Google OAuth client values from .env
 set(GOOGLE_CLIENT_ID_VALUE "")

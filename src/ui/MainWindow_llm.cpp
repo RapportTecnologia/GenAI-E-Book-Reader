@@ -4,6 +4,7 @@
 #include "ui/ChatDock.h"
 #include "ui/PdfViewerWidget.h"
 #include "ui/ViewerWidget.h"
+#include "ui/OpfStore.h"
 
 #include <QMessageBox>
 #include <QStatusBar>
@@ -136,6 +137,55 @@ void MainWindow::handleLlmToolCalls(const QJsonArray& toolCalls) {
         } else if (name == QLatin1String("goto_page")) {
             const int page = args.value("page").toInt();
             toolGotoPage(page);
+        } else if (name == QLatin1String("query_opf")) {
+            // Read OPF for current document and append JSON result in the chat
+            QString opfPath;
+            if (!currentFilePath_.isEmpty()) {
+                opfPath = OpfStore::defaultOpfPathFor(currentFilePath_);
+            }
+            QJsonObject result;
+            if (!opfPath.isEmpty()) {
+                OpfData d; QString err;
+                if (OpfStore::read(opfPath, &d, &err)) {
+                    // Build JSON of all fields
+                    QJsonObject all;
+                    all["title"] = d.title;
+                    all["author"] = d.author;
+                    all["publisher"] = d.publisher;
+                    all["language"] = d.language;
+                    all["identifier"] = d.identifier;
+                    all["description"] = d.description;
+                    all["summary"] = d.summary;
+                    all["keywords"] = d.keywords;
+                    all["edition"] = d.edition;
+                    all["source"] = d.source;
+                    all["format"] = d.format;
+                    all["isbn"] = d.isbn;
+
+                    // If fields filter provided, pick subset
+                    QJsonArray only = args.value("fields").toArray();
+                    if (only.isEmpty()) {
+                        result = all;
+                    } else {
+                        QJsonObject filtered;
+                        for (const auto& v : only) {
+                            const QString key = v.toString();
+                            if (all.contains(key)) filtered.insert(key, all.value(key));
+                        }
+                        result = filtered;
+                    }
+                } else {
+                    result["error"] = tr("Falha ao ler OPF: %1").arg(err);
+                    result["opf_path"] = opfPath;
+                }
+            } else {
+                result["error"] = tr("Documento atual não possui caminho de OPF resolvido.");
+            }
+            // Append to chat as structured JSON block
+            if (chatDock_) {
+                const QString json = QString::fromUtf8(QJsonDocument(result).toJson(QJsonDocument::Indented));
+                chatDock_->appendAssistant(QString::fromLatin1("Resultado da consulta OPF:\n```json\n%1\n```\n").arg(json));
+            }
         }
     }
 }
@@ -271,6 +321,21 @@ void MainWindow::onChatSendMessage(const QString& text) {
         QJsonObject params; params["type"] = "object";
         QJsonObject props; QJsonObject p; p["type"] = "integer"; p["minimum"] = 1; p["description"] = tr("Número da página (1-based)"); props["page"] = p;
         params["properties"] = props; QJsonArray req; req.append("page"); params["required"] = req;
+        fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+    }
+    // 4) Structured OPF query: allow the model to request OPF metadata in a structured way
+    {
+        QJsonObject tool; tool["type"] = "function";
+        QJsonObject fn; fn["name"] = "query_opf";
+        QJsonObject params; params["type"] = "object";
+        QJsonObject props;
+        // Optional list of fields to include; if omitted, include all
+        QJsonObject fields; fields["type"] = "array";
+        QJsonObject items; items["type"] = "string";
+        fields["items"] = items;
+        fields["description"] = tr("Lista opcional de campos a retornar: title, author, publisher, language, identifier, description, summary, keywords, edition, source, format, isbn");
+        props["fields"] = fields;
+        params["properties"] = props;
         fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
     }
 

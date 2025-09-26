@@ -1490,6 +1490,14 @@ void MainWindow::onRequestRebuildEmbeddings() {
                                      .arg(formatDuration(estSecs)));
     }
 
+    // Ajuste tamanho da janela para melhor visualização, 1.5 vezes o tamanho padrão
+    {
+        const QSize hint = dlg.sizeHint();
+        if (hint.isValid()) {
+            dlg.resize(hint.width() * 1.5, hint.height());
+        }
+    }
+
     // Load embedding settings
     QSettings s;
     const QString provider = s.value("emb/provider", "generativa").toString();

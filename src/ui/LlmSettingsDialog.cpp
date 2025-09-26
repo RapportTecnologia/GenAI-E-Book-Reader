@@ -31,6 +31,8 @@
 #  include "Config.h"
 #else
 #  define GENAI_OPENROUTER_API_KEY ""
+#  define GENAI_GENERATIVA_API_KEY ""
+#  define GENAI_PERPLEXITY_API_KEY ""
 #endif
 #ifdef HAVE_QT_WEBENGINE
 #include <QWebEngineView>
@@ -241,6 +243,7 @@ void LlmSettingsDialog::populateProviders() {
     providerCombo_->addItem("Ollama (local)", "ollama");
     providerCombo_->addItem("OpenRouter.ai", "openrouter");
     providerCombo_->addItem("OpenAI", "openai");
+    providerCombo_->addItem("Perplexity", "perplexity");
     appendDebug(tr("[POPULATE] Provedores carregados"));
 }
 
@@ -297,6 +300,22 @@ void LlmSettingsDialog::populateModelsFor(const QString& provider) {
         modelCombo_->setEnabled(false);
         verifyOrAssistOllama();
         appendDebug(tr("[MODELS] Verificando Ollama"));
+    } else if (provider == "perplexity") {
+        if (key.isEmpty()) {
+            modelCombo_->addItem(tr("Informe a API Key para listar modelos"), "");
+            modelCombo_->setEnabled(false);
+            modelCombo_->setEditText(QString());
+            appendDebug(tr("[MODELS] Perplexity requer API Key"));
+            return;
+        }
+        // Static recommended list for Perplexity
+        modelCombo_->addItem("sonar-small-online (web)", "sonar-small-online");
+        modelCombo_->addItem("sonar-medium-online (web)", "sonar-medium-online");
+        modelCombo_->addItem("sonar-small", "sonar-small");
+        modelCombo_->addItem("sonar-medium", "sonar-medium");
+        modelCombo_->setEnabled(true);
+        modelCombo_->setEditText(QString());
+        appendDebug(tr("[MODELS] Lista estatica (Perplexity) populada"));
     } else {
         modelCombo_->addItem("gpt-4o-mini (recomendado)", "gpt-4o-mini");
         modelCombo_->addItem("gpt-4o", "gpt-4o");
@@ -341,6 +360,20 @@ void LlmSettingsDialog::onProviderChanged(int) {
                 saveApiKeyForProvider(provider, courtesyKeyGen);
             } else {
                 appendDebug(tr("[GENERATIVA] Nenhuma API key definida em build; aguardando usuário informar"));
+            }
+        }
+    }
+    // If Perplexity selected: apply courtesy key from build-time config if available
+    if (provider == QLatin1String("perplexity")) {
+        if (apiKeyEdit_->text().trimmed().isEmpty()) {
+            const QString courtesyKeyPplx = QString::fromUtf8(GENAI_PERPLEXITY_API_KEY);
+            if (!courtesyKeyPplx.trimmed().isEmpty()) {
+                apiKeyEdit_->setText(courtesyKeyPplx);
+                appendDebug(tr("[PERPLEXITY] Usando API key definida em build (Config.h)"));
+                // Persist immediately so that LlmClient and future sessions pick it up
+                saveApiKeyForProvider(provider, courtesyKeyPplx);
+            } else {
+                appendDebug(tr("[PERPLEXITY] Nenhuma API key definida em build; aguardando usuário informar"));
             }
         }
     }
