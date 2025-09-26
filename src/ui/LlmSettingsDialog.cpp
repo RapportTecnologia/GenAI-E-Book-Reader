@@ -17,6 +17,7 @@
 #include <QJsonArray>
 #include <QCoreApplication>
 #include <QUrl>
+#include <QString>
 #include <memory>
 #include <QMessageBox>
 #include <QPushButton>
@@ -39,27 +40,43 @@
 #endif
 
 namespace {
-// Defaults aimed at: Resumos, Sinônimos, Explicações e Chat sem delírios
-const char* kDefaultPromptSynonyms =
-    "Atue como um dicionário de sinônimos confiável em pt-BR.\n"
-    "Dado um termo ou locução, retorne de 5 a 10 sinônimos e, quando útil, pequenas notas de uso.\n"
-    "Evite invenções. Seja conciso.";
+// Build defaults for prompts based on the configured response language
+static QString defaultPromptSynonyms(const QString& lang)
+{
+    return QString::fromUtf8(
+        "Atue como um dicionário de sinônimos confiável no idioma %1.\n"
+        "Dado um termo ou locução, retorne de 5 a 10 sinônimos e, quando útil, pequenas notas de uso.\n"
+        "Evite invenções. Seja conciso.")
+        .arg(lang);
+}
 
-const char* kDefaultPromptSummaries =
-    "Resuma com precisão e objetividade em pt-BR.\n"
-    "Foque ideias principais, termos-chave e estrutura.\n"
-    "Evite alucinações. Seja fiel ao texto.\n"
-    "Se apropriado, organize em tópicos curtos.";
+static QString defaultPromptSummaries(const QString& lang)
+{
+    return QString::fromUtf8(
+        "Resuma com precisão e objetividade em %1.\n"
+        "Foque ideias principais, termos-chave e estrutura.\n"
+        "Evite alucinações. Seja fiel ao texto.\n"
+        "Se apropriado, organize em tópicos curtos.")
+        .arg(lang);
+}
 
-const char* kDefaultPromptExplanations =
-    "Explique o conteúdo em pt-BR de forma clara e didática, para um público geral.\n"
-    "Defina termos importantes, traga exemplos curtos e analogias simples.\n"
-    "Evite especulações: se a informação não estiver no trecho, não invente.";
+static QString defaultPromptExplanations(const QString& lang)
+{
+    return QString::fromUtf8(
+        "Explique o conteúdo em %1 de forma clara e didática, para um público geral.\n"
+        "Defina termos importantes, traga exemplos curtos e analogias simples.\n"
+        "Evite especulações: se a informação não estiver no trecho, não invente.")
+        .arg(lang);
+}
 
-const char* kDefaultPromptChat =
-    "Você é um assistente que responde em pt-BR com exatidão e concisão.\n"
-    "Jamais invente fatos.\n"
-    "Se não tiver certeza, peça mais contexto ou informe a limitação.";
+static QString defaultPromptChat(const QString& lang)
+{
+    return QString::fromUtf8(
+        "Você é um assistente que responde em %1 com exatidão e concisão.\n"
+        "Jamais invente fatos.\n"
+        "Se não tiver certeza, peça mais contexto ou informe a limitação.")
+        .arg(lang);
+}
 }
 
 void LlmSettingsDialog::showOpenRouterCourtesyDialog() {
@@ -168,6 +185,13 @@ LlmSettingsDialog::LlmSettingsDialog(QWidget* parent)
     baseUrlEdit_ = new QLineEdit(this);
     apiKeyEdit_ = new QLineEdit(this);
     apiKeyEdit_->setEchoMode(QLineEdit::Password);
+    // Response language selector
+    responseLangCombo_ = new QComboBox(this);
+    responseLangCombo_->addItem(QStringLiteral("Português (Brasil) - pt-BR"), QStringLiteral("pt-BR"));
+    responseLangCombo_->addItem(QStringLiteral("English (US) - en-US"), QStringLiteral("en-US"));
+    responseLangCombo_->addItem(QStringLiteral("Español (ES) - es-ES"), QStringLiteral("es-ES"));
+    responseLangCombo_->addItem(QStringLiteral("Français (FR) - fr-FR"), QStringLiteral("fr-FR"));
+    responseLangCombo_->addItem(QStringLiteral("Deutsch (DE) - de-DE"), QStringLiteral("de-DE"));
     functionCallingCheck_ = new QCheckBox(this);
     functionCallingCheck_->setText(tr("Suporte a Function Calling"));
     functionCallingCheck_->setTristate(true);
@@ -176,6 +200,7 @@ LlmSettingsDialog::LlmSettingsDialog(QWidget* parent)
     populateProviders();
     // Reordered for a continuous flow: Provider -> Base URL -> API Key -> Model
     form->addRow(tr("Provedor"), providerCombo_);
+    form->addRow(tr("Idioma das respostas (LLM)"), responseLangCombo_);
     form->addRow(tr("Base URL (opcional)"), baseUrlEdit_);
     form->addRow(tr("API Key"), apiKeyEdit_);
     form->addRow(tr("Modelo"), modelCombo_);
@@ -385,6 +410,7 @@ void LlmSettingsDialog::onProviderChanged(int) {
 
 void LlmSettingsDialog::loadFromSettings() {
     QSettings s;
+    const QString respLang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
     const QString provider = s.value("ai/provider", "openai").toString();
     const QString model = s.value("ai/model", provider == "openrouter" ? "openrouter/auto" : (provider == "generativa" ? "gpt-4o-mini" : "gpt-4o-mini")).toString();
     const QString baseUrl = s.value("ai/base_url").toString();
@@ -397,6 +423,11 @@ void LlmSettingsDialog::loadFromSettings() {
     int idx = providerCombo_->findData(provider);
     if (idx < 0) idx = 0;
     providerCombo_->setCurrentIndex(idx);
+    // Language combo
+    int langIdx = responseLangCombo_ ? responseLangCombo_->findData(respLang) : -1;
+    if (langIdx < 0) langIdx = 0;
+    if (responseLangCombo_) responseLangCombo_->setCurrentIndex(langIdx);
+
     baseUrlEdit_->setText(baseUrl);
     apiKeyEdit_->setText(apiKey);
     populateModelsFor(providerCombo_->currentData().toString());
@@ -406,10 +437,10 @@ void LlmSettingsDialog::loadFromSettings() {
         modelCombo_->setCurrentIndex(midx);
 
     // Prompts
-    const QString pSyn = s.value("ai/prompts/synonyms", QString::fromUtf8(kDefaultPromptSynonyms)).toString();
-    const QString pSum = s.value("ai/prompts/summaries", QString::fromUtf8(kDefaultPromptSummaries)).toString();
-    const QString pExp = s.value("ai/prompts/explanations", QString::fromUtf8(kDefaultPromptExplanations)).toString();
-    const QString pChat = s.value("ai/prompts/chat", QString::fromUtf8(kDefaultPromptChat)).toString();
+    const QString pSyn = s.value("ai/prompts/synonyms", defaultPromptSynonyms(respLang)).toString();
+    const QString pSum = s.value("ai/prompts/summaries", defaultPromptSummaries(respLang)).toString();
+    const QString pExp = s.value("ai/prompts/explanations", defaultPromptExplanations(respLang)).toString();
+    const QString pChat = s.value("ai/prompts/chat", defaultPromptChat(respLang)).toString();
     promptSynonyms_->setPlainText(pSyn);
     promptSummaries_->setPlainText(pSum);
     promptExplanations_->setPlainText(pExp);
@@ -422,6 +453,9 @@ void LlmSettingsDialog::saveToSettings() {
     s.setValue("ai/provider", providerCombo_->currentData().toString());
     s.setValue("ai/model", modelCombo_->currentData().toString());
     s.setValue("ai/base_url", baseUrlEdit_->text().trimmed());
+    if (responseLangCombo_) {
+        s.setValue("ai/response_language", responseLangCombo_->currentData().toString());
+    }
     // Save API key bound to the selected provider
     saveApiKeyForProvider(providerCombo_->currentData().toString(), apiKeyEdit_->text());
 

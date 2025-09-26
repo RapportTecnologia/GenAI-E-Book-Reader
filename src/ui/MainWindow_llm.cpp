@@ -88,9 +88,10 @@ void MainWindow::onRequestSummarizeDocument() {
 
     // 3) Enviar para a IA montar um resumo executivo do e-book
     QList<QPair<QString,QString>> msgs;
-    const QString sys = tr("Você é um assistente que cria um resumo executivo e estruturado de um e-book em português do Brasil.\n"
+    const QString respLang = QSettings().value("ai/response_language", QStringLiteral("pt-BR")).toString();
+    const QString sys = tr("Você é um assistente que cria um resumo executivo e estruturado de um e-book em %1.\n"
                            "Quando possível, cite páginas indicativas (entre colchetes) a partir dos trechos fornecidos.\n"
-                           "Não invente fatos não suportados.");
+                           "Não invente fatos não suportados.").arg(respLang);
     msgs.append({QStringLiteral("system"), sys});
     const QString user = tr("Gere um resumo do e-book atual com tópicos principais, objetivos, público, conceitos-chave e conclusões.\n\nTrechos amostrados do documento:\n%1").arg(context);
     msgs.append({QStringLiteral("user"), user});
@@ -221,7 +222,9 @@ void MainWindow::onRequestSynonyms(const QString& wordOrLocution) {
     const auto choice = QMessageBox::question(this, tr("Confirmar"), tr("Enviar o trecho selecionado à IA para obter sinônimos?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
     if (choice != QMessageBox::Yes) return;
     statusBar()->showMessage(tr("Consultando IA (sinônimos)..."));
-    llm_->synonyms(wordOrLocution, QStringLiteral("pt-BR"), [this](QString out, QString err){
+    {
+        QSettings s; const QString respLang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
+        llm_->synonyms(wordOrLocution, respLang, [this](QString out, QString err){
         QMetaObject::invokeMethod(this, [this, out, err](){
             if (!err.isEmpty()) {
                 showLongAlert(tr("Erro na IA"), err);
@@ -238,7 +241,8 @@ void MainWindow::onRequestSynonyms(const QString& wordOrLocution) {
             }
             statusBar()->clearMessage();
         });
-    });
+        });
+    }
 }
 
 void MainWindow::onRequestSummarize(const QString& text) {
@@ -296,6 +300,7 @@ void MainWindow::onChatSendMessage(const QString& text) {
     statusBar()->showMessage(tr("Enviando ao chat da IA..."));
     const auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
     // Define OpenAI-style tools so that the model can request in-app actions
+    QSettings s; const QString respLang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
     QJsonArray tools;
     // 1) Propose/execute a search
     {
@@ -303,7 +308,7 @@ void MainWindow::onChatSendMessage(const QString& text) {
         QJsonObject fn; fn["name"] = "propose_search";
         QJsonObject params;
         params["type"] = "object";
-        QJsonObject props; QJsonObject q; q["type"] = "string"; q["description"] = tr("Reescreva/normalize a consulta a ser pesquisada no documento (pt-BR)"); props["query"] = q;
+        QJsonObject props; QJsonObject q; q["type"] = "string"; q["description"] = tr("Reescreva/normalize a consulta a ser pesquisada no documento (%1)").arg(respLang);
         params["properties"] = props; QJsonArray req; req.append("query"); params["required"] = req;
         fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
     }
@@ -405,7 +410,7 @@ void MainWindow::onRequestSendImageToChat(const QImage& image) {
         this,
         tr("Enviar imagem ao chat"),
         tr("Prompt para a IA:"),
-        tr("Descreva a imagem em pt-BR, detalhando elementos, relações e possíveis interpretações, sem inventar.")
+        tr("Descreva a imagem em %1, detalhando elementos, relações e possíveis interpretações, sem inventar.").arg(QSettings().value("ai/response_language", QStringLiteral("pt-BR")).toString())
     ).trimmed();
     if (edited.isEmpty()) { if (chatDock_) chatDock_->clearPendingImage(); return; }
     if (chatDock_) {

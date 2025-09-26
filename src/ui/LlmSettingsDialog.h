@@ -59,6 +59,8 @@ private:
     QComboBox* modelCombo_ {nullptr};
     QLineEdit* baseUrlEdit_ {nullptr};
     QLineEdit* apiKeyEdit_ {nullptr};
+    // LLM response language selector (e.g., pt-BR, en-US, es-ES)
+    QComboBox* responseLangCombo_ {nullptr};
 
     QTabWidget* tabs_ {nullptr};
     QPlainTextEdit* promptSynonyms_ {nullptr};

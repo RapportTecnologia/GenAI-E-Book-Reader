@@ -19,6 +19,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QProgressDialog>
 #include <QFile>
 #include <QStandardPaths>
@@ -271,6 +272,34 @@ int main(int argc, char* argv[]) {
                 WelcomeDialog welcomeDialog;
                 if (welcomeDialog.exec() == QDialog::Accepted) {
                     settings.setValue("firstRun", false);
+                    // Ask for LLM response language on very first run if not already set
+                    if (!settings.contains("ai/response_language")) {
+                        // Build a simple selection dialog using QInputDialog
+                        const QStringList langs = {
+                            QStringLiteral("Português (Brasil) - pt-BR"),
+                            QStringLiteral("English (US) - en-US"),
+                            QStringLiteral("Español (ES) - es-ES"),
+                            QStringLiteral("Français (FR) - fr-FR"),
+                            QStringLiteral("Deutsch (DE) - de-DE")
+                        };
+                        const QStringList codes = {
+                            QStringLiteral("pt-BR"), QStringLiteral("en-US"), QStringLiteral("es-ES"),
+                            QStringLiteral("fr-FR"), QStringLiteral("de-DE")
+                        };
+                        bool ok = false;
+                        const QString chosen = QInputDialog::getItem(&win,
+                            QObject::tr("Idioma das respostas da IA"),
+                            QObject::tr("Selecione o idioma preferido para respostas do LLM:"),
+                            langs, 0, false, &ok);
+                        if (ok && !chosen.isEmpty()) {
+                            int idx = langs.indexOf(chosen);
+                            if (idx < 0) idx = 0;
+                            settings.setValue("ai/response_language", codes.value(idx, QStringLiteral("pt-BR")));
+                        } else {
+                            // Default to pt-BR if user cancels
+                            settings.setValue("ai/response_language", QStringLiteral("pt-BR"));
+                        }
+                    }
                     // If no file was specified via CLI, prompt to open one now
                     if (app.arguments().size() <= 1) {
                         win.openFile();

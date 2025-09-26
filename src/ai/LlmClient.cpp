@@ -96,6 +96,15 @@ void LlmClient::chatWithMessages(const QList<QPair<QString, QString>>& messagesI
     {
         QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = mathDirective; messages.append(sysMsg);
     }
+    // Enforce response language from settings
+    {
+        QSettings s; const QString lang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
+        if (!lang.trimmed().isEmpty()) {
+            QJsonObject sysLang; sysLang["role"] = "system";
+            sysLang["content"] = QStringLiteral("Responda sempre no idioma %1, a menos que explicitamente solicitado o contrário.").arg(lang);
+            messages.append(sysLang);
+        }
+    }
     bool hasSystem = false;
     for (const auto& rc : messagesIn) {
         const QString role = rc.first.trimmed().toLower();
@@ -146,6 +155,15 @@ void LlmClient::chatWithMessagesTools(const QList<QPair<QString, QString>>& mess
     {
         QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = mathDirective; messages.append(sysMsg);
     }
+    // Enforce response language from settings
+    {
+        QSettings s; const QString lang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
+        if (!lang.trimmed().isEmpty()) {
+            QJsonObject sysLang; sysLang["role"] = "system";
+            sysLang["content"] = QStringLiteral("Responda sempre no idioma %1, a menos que explicitamente solicitado o contrário.").arg(lang);
+            messages.append(sysLang);
+        }
+    }
     bool hasSystem = false;
     for (const auto& rc : messagesIn) {
         const QString role = rc.first.trimmed().toLower();
@@ -187,6 +205,15 @@ void LlmClient::chatWithImage(const QString& userPrompt, const QString& imageDat
             "Não use imagens para fórmulas; sempre use notação LaTeX renderizável."
         );
         QJsonObject sysMath; sysMath["role"] = "system"; sysMath["content"] = mathDirective; messages.append(sysMath);
+        // Enforce response language from settings
+        {
+            QSettings s; const QString lang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
+            if (!lang.trimmed().isEmpty()) {
+                QJsonObject sysLang; sysLang["role"] = "system";
+                sysLang["content"] = QStringLiteral("Responda sempre no idioma %1, a menos que explicitamente solicitado o contrário.").arg(lang);
+                messages.append(sysLang);
+            }
+        }
 
         QSettings s;
         const QString sys = s.value("ai/prompts/chat").toString();
@@ -361,6 +388,15 @@ void LlmClient::chat(const QString& userMessage, std::function<void(QString, QSt
             "Não use imagens para fórmulas; sempre use notação LaTeX renderizável."
         );
         { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = mathDirective; messages.append(sysMsg); }
+        // Enforce response language from settings
+        {
+            QSettings s; const QString lang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
+            if (!lang.trimmed().isEmpty()) {
+                QJsonObject sysLang; sysLang["role"] = "system";
+                sysLang["content"] = QStringLiteral("Responda sempre no idioma %1, a menos que explicitamente solicitado o contrário.").arg(lang);
+                messages.append(sysLang);
+            }
+        }
 
         QSettings s;
         const QString sys = s.value("ai/prompts/chat").toString();
@@ -391,6 +427,15 @@ void LlmClient::summarize(const QString& text, std::function<void(QString, QStri
             "Não use imagens para fórmulas; sempre use notação LaTeX renderizável."
         );
         { QJsonObject sysMsg; sysMsg["role"] = "system"; sysMsg["content"] = mathDirective; messages.append(sysMsg); }
+        // Enforce response language from settings
+        {
+            QSettings s; const QString lang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
+            if (!lang.trimmed().isEmpty()) {
+                QJsonObject sysLang; sysLang["role"] = "system";
+                sysLang["content"] = QStringLiteral("Responda sempre no idioma %1, a menos que explicitamente solicitado o contrário.").arg(lang);
+                messages.append(sysLang);
+            }
+        }
 
         QSettings s;
         const QString sys = s.value("ai/prompts/summaries").toString();
@@ -430,7 +475,8 @@ void LlmClient::synonyms(const QString& wordOrLocution, const QString& locale, s
         if (!nick.isEmpty()) { QJsonObject sysNick; sysNick["role"] = "system"; sysNick["content"] = QStringLiteral("Quando apropriado, trate o usuário pelo apelido '%1'.").arg(nick); messages.append(sysNick); }
     }
     {
-        const QString loc = locale.isEmpty() ? QStringLiteral("pt-BR") : locale;
+        QSettings s; const QString defLang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
+        const QString loc = locale.isEmpty() ? defLang : locale;
         QJsonObject m; m["role"] = "user"; m["content"] = QString::fromLatin1("Idioma: %1\nTermo: %2").arg(loc, wordOrLocution);
         messages.append(m);
     }
