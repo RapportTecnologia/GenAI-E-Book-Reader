@@ -7,7 +7,7 @@
 
   - Melhorias na integração com WSL no windows
 
-  ## [0.1.12]
+  ## [0.1.12] - 2025-09-26
 
   - Adicionado opção de tradução e sinônimos do texto marcado.
   - Corrigido o BUG de listagem dos modelos da OpenRouter.AI
