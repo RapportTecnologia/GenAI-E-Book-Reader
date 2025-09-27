@@ -1,5 +1,4 @@
 # Changelog
-  All notable changes to this project will be documented in this file.
 
   The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
@@ -7,11 +6,20 @@
 
   - Melhorias na integração com WSL no windows
 
+  ## [0.1.13] - 2025-09-27
+  - Chat/OPF:
+    - OPF agora é usado apenas para identificação mínima do livro no chat (arquivo, título, autor, ISBN).
+    - Removida a exposição da ferramenta `query_opf` no Function Calling por padrão, evitando latência e ruído durante a conversa. O handler interno permanece para compatibilidade.
+    - Corrigido o schema da ferramenta `propose_search` (faltava declarar `properties.query`).
+    - Revisado o prompt de sistema para uma política de precisão concisa, sem referências a solicitar `query_opf` durante o chat.
+    - Revisão do processo de criar um novo chat, agora ele pergunta se deseja salvar o chat atual no histórico. E inicia um novo esquecendo o anterior.
+    - Adicionar spiner para indicar que a IA está processando a requisição.
+    - 
+
   ## [0.1.12] - 2025-09-26
 
   - Adicionado opção de tradução e sinônimos do texto marcado.
   - Corrigido o BUG de listagem dos modelos da OpenRouter.AI
-  - Tentativa de melhorar a janela de explicação sobre uso do OpenRouter.ai com o video do YouTube.
   - Revisar o Algorítimo de OPF, correções e melhorias.
   - Removido o BUG relativo a seleção do Ollama
   - Ajuste no tamanho da janela Recriando embeddings para melhor visualização.
@@ -50,7 +58,8 @@
 - Melhoria nas buscas (full‑text e semântica) e na interação do chat com suporte a Function Calling, quando disponível no modelo/provedor.
 
 
-  [Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.11...HEAD
+  [Unreleased]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.13...HEAD
+  [0.1.13]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.13
   [0.1.12]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.12
   [0.1.11]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.11
   [0.1.10]: https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.10

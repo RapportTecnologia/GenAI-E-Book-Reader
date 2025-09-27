@@ -14,6 +14,7 @@ class QHBoxLayout;
 class QImage;
 class QLabel;
 class QToolButton;
+class QProgressBar;
 
 // Simple chat panel docked to the right
 class ChatDock : public QDockWidget {
@@ -48,12 +49,19 @@ public:
     bool hasPendingImage() const { return !pendingImage_.isNull(); }
     QImage pendingImage() const { return pendingImage_; }
 
+    // Busy state: disable input and show overlay spinner over chat history
+    void setBusy(bool on);
+    bool isBusy() const { return busy_; }
+
 signals:
     void sendMessageRequested(const QString& text);
     void saveTranscriptRequested(const QString& text);
     void summarizeTranscriptRequested(const QString& text);
     void requestShowSavedChats(); // ask MainWindow to open a saved chats picker
     void conversationCleared(const QString& maybeTitle, const QString& html, const QList<QPair<QString,QString>>& msgs);
+    // Emitted whenever a brand-new chat session is started (after clearing),
+    // regardless of whether the previous chat was saved or not.
+    void newChatStarted();
 
 private slots:
     void onSendClicked();
@@ -98,4 +106,11 @@ private:
     QTimer* rebuildTimer_ {nullptr};
     bool pageLoading_ {false};
     bool rebuildPending_ {false};
+
+    // Busy overlay elements
+    QWidget* overlay_ {nullptr};
+    QWidget* overlayInner_ {nullptr};
+    QProgressBar* overlayBar_ {nullptr};
+    QLabel* overlayLabel_ {nullptr};
+    bool busy_ {false};
 };

@@ -239,6 +239,13 @@ private:
     // Apply current OPF generation status to dialog if open
     void applyOpfBusyStatusToDialogIfOpen();
 
+    // RAG answer helpers (Chat): when the user asks a question about the book,
+    // retrieve relevant pages, navigate to the best one, and generate a grounded answer.
+    void answerQuestionWithRag(const QString& userQuery);
+    void ensureIndexAvailableThenForAnswer(const QString& translatedQuery);
+    void continueRagAnswer(const QString& translatedQuery);
+    QString buildRagContextFromPages(const QList<int>& pages, int maxChars = 4000);
+
     // Build a system message including the current e-book metadata (title, author, description, summary)
     // to be prepended to chat conversations with the LLM.
     QString buildOpfSystemPrompt() const;
@@ -347,12 +354,20 @@ private:
     QStringList pagesText_;
     bool pagesTextLoaded_ {false};
 
+    // When true, indicates the user explicitly started a brand-new chat session
+    // and we must NOT auto-load any previously persisted chat upon showing the chat panel.
+    bool freshChatSession_ {false};
+
     // Search results state
     QList<int> searchResultsPages_;
     int searchResultIdx_ {-1};
 
     // Pending state for async RAG
     QString pendingRagQuery_;
+
+    // State for RAG-driven chat answer
+    bool ragAnswerInProgress_ {false};
+    QString lastChatQuestion_;
 
     // OPF generation status (for UI feedback in OpfDialog)
     bool opfGenInProgress_ {false};

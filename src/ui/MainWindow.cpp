@@ -1979,6 +1979,9 @@ void MainWindow::showSavedChatsPicker() {
     for (const auto& m : arr) { const auto o = m.toObject(); msgs.append(QPair<QString,QString>(o.value("role").toString(), o.value("content").toString())); }
     chatDock_->setTranscriptHtml(html);
     chatDock_->setConversationForLlm(msgs);
+    // A saved session is now explicitly loaded; treat as not-fresh so
+    // subsequent showChatPanel() calls can auto-load as usual
+    freshChatSession_ = false;
 }
 
 void MainWindow::enableAutoSelection() {
@@ -2199,6 +2202,159 @@ void MainWindow::continueRagAfterEnsureIndex(const QString& translatedQuery) {
         logSearchProgress(tr("[info] Nenhum resultado encontrado."));
         endSearchProgress();
     }
+}
+
+// ---- RAG-driven Q&A helpers (chat) ----
+
+QString MainWindow::buildRagContextFromPages(const QList<int>& pages, int maxChars) {
+    if (!ensurePagesTextLoaded()) return QString();
+    QString ctx;
+    int remaining = qMax(1000, maxChars);
+    for (int i = 0; i < pages.size(); ++i) {
+        const int p = pages.at(i);
+        const int idx = p - 1;
+        if (idx < 0 || idx >= pagesText_.size()) continue;
+        QString t = pagesText_.at(idx);
+        t.replace(QRegularExpression("\\s+"), " ");
+        if (t.size() > remaining - 80) {
+            t = t.left(qMax(0, remaining - 80));
+        }
+        const QString header = tr("[Página %1]\n").arg(p);
+        const int chunkLen = header.size() + t.size() + 2;
+        if (chunkLen <= remaining) {
+            ctx += header;
+            ctx += t.trimmed();
+            ctx += "\n\n";
+            remaining -= chunkLen;
+            if (remaining <= 0) break;
+        } else {
+            break;
+        }
+    }
+    return ctx.trimmed();
+}
+
+void MainWindow::answerQuestionWithRag(const QString& userQuery) {
+    if (userQuery.trimmed().isEmpty() || currentFilePath_.isEmpty() || !llm_) return;
+    ragAnswerInProgress_ = true;
+    lastChatQuestion_ = userQuery;
+    showChatPanel();
+    if (chatDock_) chatDock_->appendUser(userQuery);
+    statusBar()->showMessage(tr("Respondendo com base no livro (RAG)..."));
+    // Detect language and translate query similarly to search pipeline
+    detectDocumentLanguageAsync([this, userQuery](QString lang){
+        translateQueryIfNeededAsync(userQuery, lang, [this](QString translated){
+            ensureIndexAvailableThenForAnswer(translated);
+        });
+    });
+}
+
+void MainWindow::ensureIndexAvailableThenForAnswer(const QString& translatedQuery) {
+    IndexPaths paths; if (getIndexPaths(&paths)) { continueRagAnswer(translatedQuery); return; }
+    const auto ret = QMessageBox::question(this, tr("Criar índice de embeddings?"),
+        tr("Este documento ainda não possui índice de embeddings.\nDeseja criar agora? Este processo pode ser demorado."),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    if (ret != QMessageBox::Yes) {
+        // Fallback: try plain-text search for a quick best-effort answer
+        QList<int> pages = plainTextSearchPages(translatedQuery, 3);
+        if (!pages.isEmpty()) {
+            if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pv->setCurrentPage(static_cast<unsigned int>(pages.first())); pv->flashHighlight(); }
+            if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(pages.first())); }
+            continueRagAnswer(translatedQuery);
+        } else {
+            if (chatDock_) chatDock_->appendAssistant(tr("Não há índice de embeddings e não foi possível encontrar contexto. Gere os embeddings para habilitar respostas fundamentadas."));
+            statusBar()->clearMessage();
+            ragAnswerInProgress_ = false;
+        }
+        return;
+    }
+    // Build and run indexer
+    const QString absPath = QFileInfo(currentFilePath_).absoluteFilePath();
+    const QString dbDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/embeddings";
+    QDir().mkpath(dbDir);
+    QSettings s;
+    EmbeddingIndexer::Params ip;
+    ip.pdfPath = absPath;
+    ip.dbDir = dbDir;
+    ip.providerCfg.provider = s.value("emb/provider", "generativa").toString();
+    ip.providerCfg.model = s.value("emb/model", "nomic-embed-text:latest").toString();
+    ip.providerCfg.baseUrl = s.value("emb/base_url").toString();
+    ip.providerCfg.apiKey = s.value("emb/api_key").toString();
+    ip.chunkSize = s.value("emb/chunk_size", 1000).toInt();
+    ip.chunkOverlap = s.value("emb/chunk_overlap", 100).toInt();
+    ip.batchSize = s.value("emb/batch_size", 16).toInt();
+    ip.pauseMsBetweenBatches = s.value("emb/pause_ms", 0).toInt();
+
+    auto* thread = new QThread(this);
+    auto* indexer = new EmbeddingIndexer(ip);
+    indexer->moveToThread(thread);
+    connect(thread, &QThread::started, indexer, &EmbeddingIndexer::run);
+    connect(indexer, &EmbeddingIndexer::finished, this, [this, thread, indexer, translatedQuery](bool ok, const QString&){
+        thread->quit(); thread->wait(); indexer->deleteLater(); thread->deleteLater();
+        if (!ok) {
+            if (chatDock_) chatDock_->appendAssistant(tr("Falha ao criar o índice. Não foi possível responder com base no livro."));
+            statusBar()->clearMessage(); ragAnswerInProgress_ = false; return;
+        }
+        continueRagAnswer(translatedQuery);
+    });
+    thread->start();
+}
+
+void MainWindow::continueRagAnswer(const QString& translatedQuery) {
+    // Retrieve top-k pages using vector index when available; else plain text
+    QList<int> semPages = semanticSearchPages(translatedQuery, qMax(1, settings_.value("emb/top_k", 5).toInt()));
+    QList<int> pages = semPages;
+    if (pages.isEmpty()) pages = plainTextSearchPages(translatedQuery, 3);
+    if (!pages.isEmpty()) {
+        const int best = pages.first();
+        if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pv->setCurrentPage(static_cast<unsigned int>(best)); pv->flashHighlight(); }
+        if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(best)); }
+        updateStatus();
+    }
+
+    // Build grounded context from the top pages
+    const int ctxChars = qBound(1500, settings_.value("rag/context_max_chars", 4000).toInt(), 8000);
+    const QString context = buildRagContextFromPages(pages.mid(0, 3), ctxChars);
+
+    QList<QPair<QString,QString>> msgs;
+    // Precision/grounding policy
+    const QString respLang = QSettings().value("ai/response_language", QStringLiteral("pt-BR")).toString();
+    const QString sysPolicy = tr(
+        "Você é um assistente que responde APENAS com base no conteúdo fornecido em CONTEXTO (trechos do e-book) em %1.\n"
+        "- Se a resposta não estiver no contexto, diga explicitamente que não há informação suficiente e sugira a página mais próxima.\n"
+        "- Cite as páginas entre colchetes [Página N] quando possível.\n"
+        "- Seja conciso, objetivo e não invente.").arg(respLang);
+    msgs.append({QStringLiteral("system"), sysPolicy});
+    const QString sysOpf = buildOpfSystemPrompt();
+    if (!sysOpf.trimmed().isEmpty()) msgs.append({QStringLiteral("system"), sysOpf});
+
+    QString userPrompt;
+    if (!context.isEmpty()) {
+        userPrompt = tr("Pergunta: %1\n\nContexto (trechos do e-book):\n%2\n\nResponda em %3, citando as páginas quando possível.")
+                         .arg(lastChatQuestion_)
+                         .arg(context)
+                         .arg(respLang);
+    } else {
+        userPrompt = tr("Pergunta: %1\n\nObservação: contexto indisponível. Se não houver informação no histórico, informe que não é possível responder com base no livro.").arg(lastChatQuestion_);
+    }
+    msgs.append({QStringLiteral("user"), userPrompt});
+
+    llm_->chatWithMessages(msgs, [this](QString out, QString err){
+        QMetaObject::invokeMethod(this, [this, out, err](){
+            if (!err.isEmpty()) {
+                showLongAlert(tr("Erro na IA"), err);
+                statusBar()->clearMessage();
+                ragAnswerInProgress_ = false;
+                if (chatDock_) chatDock_->setBusy(false);
+                return;
+            }
+            if (chatDock_) chatDock_->appendAssistant(out);
+            statusBar()->clearMessage();
+            saveChatForCurrentFile();
+            ragAnswerInProgress_ = false;
+            if (chatDock_) chatDock_->setBusy(false);
+        });
+    });
 }
 
 // ---- Search progress modal helpers ----
@@ -2581,6 +2737,8 @@ void MainWindow::buildUi() {
         writeChatSessions(currentFilePath_, sessions);
     });
     connect(chatDock_, &ChatDock::requestShowSavedChats, this, [this]{ showSavedChatsPicker(); });
+    // If user starts a brand-new chat, avoid reloading any persisted chat
+    connect(chatDock_, &ChatDock::newChatStarted, this, [this]{ freshChatSession_ = true; });
     chatDock_->show();
     chatDock_->raise();
 }
@@ -2590,7 +2748,7 @@ void MainWindow::showChatPanel() {
         chatDock_->show();
         chatDock_->raise();
     }
-    if (!currentFilePath_.isEmpty()) {
+    if (!currentFilePath_.isEmpty() && !freshChatSession_) {
         loadChatForFile(currentFilePath_);
     }
 }
@@ -2782,6 +2940,8 @@ void MainWindow::closeDocument() {
     toc_->clear();
     // Save chat for current file before clearing
     saveChatForCurrentFile();
+    // Reset fresh session guard when closing
+    freshChatSession_ = false;
     // Replace current viewer with a fresh ViewerWidget
     QWidget* newViewer = new ViewerWidget(this);
     int idx = splitter_->indexOf(viewer_);
@@ -2930,6 +3090,9 @@ bool MainWindow::openPath(const QString& file) {
     if (!currentFilePath_.isEmpty()) {
         saveChatForCurrentFile();
     }
+    // Switching to another file: clear the fresh session guard so normal
+    // auto-load behavior applies for the new file
+    freshChatSession_ = false;
 
     if (fi.suffix().compare("pdf", Qt::CaseInsensitive) == 0) {
         // Replace current viewer with a PdfViewerWidget

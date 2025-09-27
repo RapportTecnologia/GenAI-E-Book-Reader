@@ -139,54 +139,23 @@ void MainWindow::handleLlmToolCalls(const QJsonArray& toolCalls) {
             const int page = args.value("page").toInt();
             toolGotoPage(page);
         } else if (name == QLatin1String("query_opf")) {
-            // Read OPF for current document and append JSON result in the chat
+            // Read OPF for current document and append a concise one-line identification
             QString opfPath;
             if (!currentFilePath_.isEmpty()) {
                 opfPath = OpfStore::defaultOpfPathFor(currentFilePath_);
             }
-            QJsonObject result;
-            if (!opfPath.isEmpty()) {
-                OpfData d; QString err;
-                if (OpfStore::read(opfPath, &d, &err)) {
-                    // Build JSON of all fields
-                    QJsonObject all;
-                    all["title"] = d.title;
-                    all["author"] = d.author;
-                    all["publisher"] = d.publisher;
-                    all["language"] = d.language;
-                    all["identifier"] = d.identifier;
-                    all["description"] = d.description;
-                    all["summary"] = d.summary;
-                    all["keywords"] = d.keywords;
-                    all["edition"] = d.edition;
-                    all["source"] = d.source;
-                    all["format"] = d.format;
-                    all["isbn"] = d.isbn;
-
-                    // If fields filter provided, pick subset
-                    QJsonArray only = args.value("fields").toArray();
-                    if (only.isEmpty()) {
-                        result = all;
-                    } else {
-                        QJsonObject filtered;
-                        for (const auto& v : only) {
-                            const QString key = v.toString();
-                            if (all.contains(key)) filtered.insert(key, all.value(key));
-                        }
-                        result = filtered;
-                    }
-                } else {
-                    result["error"] = tr("Falha ao ler OPF: %1").arg(err);
-                    result["opf_path"] = opfPath;
-                }
-            } else {
-                result["error"] = tr("Documento atual não possui caminho de OPF resolvido.");
-            }
-            // Append to chat as structured JSON block
-            if (chatDock_) {
-                const QString json = QString::fromUtf8(QJsonDocument(result).toJson(QJsonDocument::Indented));
-                chatDock_->appendAssistant(QString::fromLatin1("Resultado da consulta OPF:\n```json\n%1\n```\n").arg(json));
-            }
+            if (opfPath.isEmpty()) continue; // silent: do not disrupt chat
+            OpfData d; QString err;
+            if (!OpfStore::read(opfPath, &d, &err)) continue; // silent on error
+            const QString title = d.title.trimmed();
+            const QString author = d.author.trimmed();
+            const QString isbn = d.isbn.trimmed();
+            QString line = tr("[OPF] %1%2%3")
+                               .arg(!title.isEmpty() ? tr("Título: %1").arg(title) : QString())
+                               .arg(!author.isEmpty() ? tr(", Autor: %1").arg(author) : QString())
+                               .arg(!isbn.isEmpty() ? tr(", ISBN: %1").arg(isbn) : QString());
+            if (line.trimmed().isEmpty()) continue;
+            if (chatDock_) chatDock_->appendAssistant(line);
         }
     }
 }
@@ -276,6 +245,7 @@ void MainWindow::onRequestSendToChat(const QString& text) {
     showChatPanel();
     if (chatDock_) chatDock_->appendUser(text);
     statusBar()->showMessage(tr("Enviando ao chat da IA..."));
+    if (chatDock_) chatDock_->setBusy(true);
     // Send full conversation for continuous context
     auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
     // Prepend system metadata of the current e-book (title, author, description, summary)
@@ -283,22 +253,24 @@ void MainWindow::onRequestSendToChat(const QString& text) {
     if (!sysOpf.trimmed().isEmpty()) {
         msgs.prepend({QStringLiteral("system"), sysOpf});
     }
-    // Precision policy: do not fabricate; if metadata is missing, say it's unknown
+    // Precision policy: minimal metadata, never fabricate
     const QString sysPolicy = tr(
-        "Política de precisão: use apenas os metadados fornecidos (OPF/PDF) e o que estiver no histórico. "
-        "Se uma informação não estiver disponível (por exemplo, autor, biografia/currículo), responda explicitamente que é desconhecida/não disponível. "
-        "Não invente dados. Quando apropriado, solicite a ferramenta 'query_opf' para confirmar metadados.");
+        "Política de precisão: use apenas os metadados mínimos fornecidos e o que estiver no histórico. "
+        "Se uma informação não estiver disponível (por exemplo, autor), responda explicitamente que é desconhecida/não disponível. "
+        "Não invente dados.");
     msgs.prepend({QStringLiteral("system"), sysPolicy});
     llm_->chatWithMessages(msgs, [this](QString out, QString err){
         QMetaObject::invokeMethod(this, [this, out, err](){
             if (!err.isEmpty()) {
                 showLongAlert(tr("Erro na IA"), err);
                 statusBar()->clearMessage();
+                if (chatDock_) chatDock_->setBusy(false);
                 return;
             }
             if (chatDock_) chatDock_->appendAssistant(out);
             statusBar()->clearMessage();
             saveChatForCurrentFile();
+            if (chatDock_) chatDock_->setBusy(false);
         });
     });
 }
@@ -307,77 +279,52 @@ void MainWindow::onRequestSendToChat(const QString& text) {
 
 void MainWindow::onChatSendMessage(const QString& text) {
     if (text.trimmed().isEmpty() || !llm_) return;
-    if (chatDock_) chatDock_->appendUser(text);
-    statusBar()->showMessage(tr("Enviando ao chat da IA..."));
-    auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
-    // Prepend system metadata of the current e-book (title, author, description, summary)
-    const QString sysOpf = buildOpfSystemPrompt();
-    if (!sysOpf.trimmed().isEmpty()) {
-        msgs.prepend({QStringLiteral("system"), sysOpf});
-    }
-    // Define OpenAI-style tools so that the model can request in-app actions
-    QSettings s; const QString respLang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
-    QJsonArray tools;
-    // 1) Propose/execute a search
-    {
-        QJsonObject tool; tool["type"] = "function";
-        QJsonObject fn; fn["name"] = "propose_search";
-        QJsonObject params;
-        params["type"] = "object";
-        QJsonObject props; QJsonObject q; q["type"] = "string"; q["description"] = tr("Reescreva/normalize a consulta a ser pesquisada no documento (%1)").arg(respLang);
-        params["properties"] = props; QJsonArray req; req.append("query"); params["required"] = req;
-        fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
-    }
-    // 2) Navigate next/prev search results
-    {
-        QJsonObject tool; tool["type"] = "function"; QJsonObject fn; fn["name"] = "search_next"; QJsonObject params; params["type"] = "object"; params["properties"] = QJsonObject(); fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
-    }
-    {
-        QJsonObject tool; tool["type"] = "function"; QJsonObject fn; fn["name"] = "search_prev"; QJsonObject params; params["type"] = "object"; params["properties"] = QJsonObject(); fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
-    }
-    // 3) Go to a specific page (1-based)
-    {
-        QJsonObject tool; tool["type"] = "function";
-        QJsonObject fn; fn["name"] = "goto_page";
-        QJsonObject params; params["type"] = "object";
-        QJsonObject props; QJsonObject p; p["type"] = "integer"; p["minimum"] = 1; p["description"] = tr("Número da página (1-based)"); props["page"] = p;
-        params["properties"] = props; QJsonArray req; req.append("page"); params["required"] = req;
-        fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
-    }
-    // 4) Structured OPF query: allow the model to request OPF metadata in a structured way
-    {
-        QJsonObject tool; tool["type"] = "function";
-        QJsonObject fn; fn["name"] = "query_opf";
-        fn["description"] = tr("Consultar metadados do OPF do documento atual. Use para confirmar título/autor/etc. Não invente valores. Se o campo vier vazio, trate-o como desconhecido e informe isso ao usuário.");
-        QJsonObject params; params["type"] = "object";
-        QJsonObject props;
-        // Optional list of fields to include; if omitted, include all
-        QJsonObject fields; fields["type"] = "array";
-        QJsonObject items; items["type"] = "string";
-        fields["items"] = items;
-        fields["description"] = tr("Lista opcional de campos a retornar (se um campo estiver vazio no OPF, considere-o desconhecido): title, author, publisher, language, identifier, description, summary, keywords, edition, source, format, isbn");
-        props["fields"] = fields;
-        params["properties"] = props;
-        fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+    // If it's a slash command, keep legacy tool-based flow
+    if (text.startsWith('/')) {
+        if (chatDock_) chatDock_->appendUser(text);
+        statusBar()->showMessage(tr("Enviando ao chat da IA..."));
+        if (chatDock_) chatDock_->setBusy(true);
+        auto msgs = chatDock_ ? chatDock_->conversationForLlm() : QList<QPair<QString, QString>>{};
+        const QString sysOpf = buildOpfSystemPrompt();
+        if (!sysOpf.trimmed().isEmpty()) { msgs.prepend({QStringLiteral("system"), sysOpf}); }
+        QSettings s; const QString respLang = s.value("ai/response_language", QStringLiteral("pt-BR")).toString();
+        QJsonArray tools;
+        {
+            QJsonObject tool; tool["type"] = "function";
+            QJsonObject fn; fn["name"] = "propose_search";
+            QJsonObject params; params["type"] = "object";
+            QJsonObject props; QJsonObject q; q["type"] = "string"; q["description"] = tr("Reescreva/normalize a consulta a ser pesquisada no documento (%1)").arg(respLang);
+            props["query"] = q; params["properties"] = props; QJsonArray req; req.append("query"); params["required"] = req;
+            fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+        }
+        { QJsonObject tool; tool["type"] = "function"; QJsonObject fn; fn["name"] = "search_next"; QJsonObject params; params["type"] = "object"; params["properties"] = QJsonObject(); fn["parameters"] = params; tool["function"] = fn; tools.append(tool); }
+        { QJsonObject tool; tool["type"] = "function"; QJsonObject fn; fn["name"] = "search_prev"; QJsonObject params; params["type"] = "object"; params["properties"] = QJsonObject(); fn["parameters"] = params; tool["function"] = fn; tools.append(tool); }
+        {
+            QJsonObject tool; tool["type"] = "function";
+            QJsonObject fn; fn["name"] = "goto_page";
+            QJsonObject params; params["type"] = "object";
+            QJsonObject props; QJsonObject p; p["type"] = "integer"; p["minimum"] = 1; p["description"] = tr("Número da página (1-based)"); props["page"] = p;
+            params["properties"] = props; QJsonArray req; req.append("page"); params["required"] = req;
+            fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+        }
+        llm_->chatWithMessagesTools(msgs, tools, [this](QString out, QJsonArray toolCalls, QString err){
+            QMetaObject::invokeMethod(this, [this, out, toolCalls, err](){
+                if (!err.isEmpty()) { showLongAlert(tr("Erro na IA"), err); statusBar()->clearMessage(); return; }
+                if (!toolCalls.isEmpty()) { handleLlmToolCalls(toolCalls); }
+                if (!out.trimmed().isEmpty() && chatDock_) chatDock_->appendAssistant(out);
+                statusBar()->clearMessage();
+                saveChatForCurrentFile();
+                if (chatDock_) chatDock_->setBusy(false);
+            });
+        });
+        return;
     }
 
-    llm_->chatWithMessagesTools(msgs, tools, [this](QString out, QJsonArray toolCalls, QString err){
-        QMetaObject::invokeMethod(this, [this, out, toolCalls, err](){
-            if (!err.isEmpty()) {
-                showLongAlert(tr("Erro na IA"), err);
-                statusBar()->clearMessage();
-                return;
-            }
-            // Dispatch tool calls first (they may change UI state/search)
-            if (!toolCalls.isEmpty()) {
-                handleLlmToolCalls(toolCalls);
-            }
-            // Append any assistant content if present
-            if (!out.trimmed().isEmpty() && chatDock_) chatDock_->appendAssistant(out);
-            statusBar()->clearMessage();
-            saveChatForCurrentFile();
-        });
-    });
+    // Default: use RAG to select page and answer grounded on the book
+    if (chatDock_) chatDock_->appendUser(text);
+    statusBar()->showMessage(tr("Respondendo com base no livro (RAG)..."));
+    if (chatDock_) chatDock_->setBusy(true);
+    answerQuestionWithRag(text);
 }
 
 QString MainWindow::buildOpfSystemPrompt() const {
@@ -387,36 +334,25 @@ QString MainWindow::buildOpfSystemPrompt() const {
     OpfData d; QString err;
     bool haveOpf = OpfStore::read(opfPath, &d, &err);
     // Fallback: if OPF missing or largely empty, try to infer from PDF metadata
-    if (!haveOpf || (d.title.trimmed().isEmpty() && d.author.trimmed().isEmpty() && d.description.trimmed().isEmpty() && d.summary.trimmed().isEmpty())) {
+    if (!haveOpf || (d.title.trimmed().isEmpty() && d.author.trimmed().isEmpty())) {
         OpfData inferred = buildOpfFromPdfMeta(currentFilePath_);
         // Only fill missing fields to avoid overwriting present OPF data
         if (d.title.trimmed().isEmpty()) d.title = inferred.title;
         if (d.author.trimmed().isEmpty()) d.author = inferred.author;
-        if (d.description.trimmed().isEmpty()) d.description = inferred.description;
-        if (d.summary.trimmed().isEmpty()) d.summary = inferred.summary;
-        if (d.keywords.trimmed().isEmpty()) d.keywords = inferred.keywords;
-        if (d.language.trimmed().isEmpty()) d.language = inferred.language;
-        if (d.publisher.trimmed().isEmpty()) d.publisher = inferred.publisher;
         if (d.isbn.trimmed().isEmpty()) d.isbn = inferred.isbn;
-        if (d.format.trimmed().isEmpty()) d.format = inferred.format;
     }
 
     QStringList lines;
     lines << tr("Arquivo: %1").arg(QFileInfo(currentFilePath_).fileName());
     if (!d.title.trimmed().isEmpty()) lines << tr("Título: %1").arg(d.title);
     if (!d.author.trimmed().isEmpty()) lines << tr("Autor: %1").arg(d.author);
-    if (!d.language.trimmed().isEmpty()) lines << tr("Idioma: %1").arg(d.language);
-    if (!d.publisher.trimmed().isEmpty()) lines << tr("Editora: %1").arg(d.publisher);
     if (!d.isbn.trimmed().isEmpty()) lines << tr("ISBN: %1").arg(d.isbn);
-    if (!d.description.trimmed().isEmpty()) lines << tr("Descrição: %1").arg(d.description);
-    if (!d.summary.trimmed().isEmpty()) lines << tr("Resumo: %1").arg(d.summary);
-    if (!d.keywords.trimmed().isEmpty()) lines << tr("Palavras‑chave: %1").arg(d.keywords);
 
     // If still only filename present, avoid adding an empty system prompt
     const int nonTrivial = lines.size();
     if (nonTrivial <= 1) return QString();
 
-    const QString header = tr("Metadados do e-book atual (OPF/PDF). Considere-os como contexto verdadeiro e use-os para responder perguntas sobre o livro sem inventar fatos:");
+    const QString header = tr("Metadados mínimos de identificação do e-book atual. Use apenas para contextualizar a conversa, sem inferências adicionais:");
     return header + "\n" + lines.join("\n");
 }
 

@@ -28,6 +28,7 @@
 #include <QPrintDialog>
 #include <QPainter>
 #include <QPageLayout>
+#include <QProgressBar>
 #include <cmark.h>
 // Custom WebEngine helpers
 #include "ui/WebPage.h"
@@ -162,6 +163,8 @@ ChatDock::ChatDock(QWidget* parent)
     connect(agenticCopy_, &QToolButton::clicked, this, [this]{
         if (!agenticView_) return; auto* cb = QGuiApplication::clipboard(); if (cb) cb->setText(agenticView_->toPlainText());
     });
+
+    // Create busy overlay lazily on first use in setBusy()
 }
 
 void ChatDock::rebuildDocument() {
@@ -316,6 +319,9 @@ void ChatDock::clearConversation() {
     htmlBody_.clear();
     historyMsgs_.clear();
     rebuildDocument();
+    // Notify listeners that a brand-new chat session has started so they can
+    // avoid reloading previous history automatically.
+    emit newChatStarted();
 }
 
 QString ChatDock::suggestTitle() const {
@@ -403,6 +409,9 @@ void ChatDock::onPrintClicked() {
 }
 
 bool ChatDock::eventFilter(QObject* obj, QEvent* ev) {
+    if (obj == historyView_ && overlay_ && ev->type() == QEvent::Resize) {
+        overlay_->setGeometry(historyView_->rect());
+    }
     if (obj == input_ && ev->type() == QEvent::KeyPress) {
         auto* ke = static_cast<QKeyEvent*>(ev);
         if ((ke->key() == Qt::Key_Return || ke->key() == Qt::Key_Enter) && (ke->modifiers() & Qt::ControlModifier)) {
@@ -420,4 +429,47 @@ bool ChatDock::eventFilter(QObject* obj, QEvent* ev) {
         return true;
     }
     return QDockWidget::eventFilter(obj, ev);
+}
+
+void ChatDock::setBusy(bool on) {
+    busy_ = on;
+    if (input_) input_->setDisabled(on);
+    if (btnSend_) btnSend_->setDisabled(on);
+    if (!historyView_) return;
+    // Lazy create overlay
+    if (!overlay_) {
+        overlay_ = new QWidget(historyView_);
+        overlay_->setAttribute(Qt::WA_NoSystemBackground, false);
+        overlay_->setAutoFillBackground(true);
+        QPalette pal = overlay_->palette();
+        pal.setColor(QPalette::Window, QColor(0,0,0,90));
+        overlay_->setPalette(pal);
+        overlay_->setGeometry(historyView_->rect());
+
+        overlayInner_ = new QWidget(overlay_);
+        overlayInner_->setObjectName("overlayInner");
+        overlayInner_->setStyleSheet("#overlayInner { background: rgba(255,255,255,0.95); border-radius: 8px; }");
+        auto* innerLayout = new QVBoxLayout(overlayInner_);
+        innerLayout->setContentsMargins(16,16,16,16);
+        innerLayout->setSpacing(8);
+        overlayBar_ = new QProgressBar(overlayInner_);
+        overlayBar_->setRange(0,0); // indeterminate
+        overlayLabel_ = new QLabel(tr("Pensando..."), overlayInner_);
+        overlayLabel_->setAlignment(Qt::AlignCenter);
+        innerLayout->addWidget(overlayBar_);
+        innerLayout->addWidget(overlayLabel_);
+
+        // Center the inner box
+        const int w = 260, h = 96;
+        overlayInner_->setFixedSize(w, h);
+        overlayInner_->move(overlay_->rect().center() - QPoint(w/2, h/2));
+
+        overlay_->hide();
+    }
+    overlay_->setVisible(on);
+    if (overlayInner_) {
+        const int w = overlayInner_->width();
+        const int h = overlayInner_->height();
+        overlayInner_->move(overlay_->rect().center() - QPoint(w/2, h/2));
+    }
 }
