@@ -41,6 +41,11 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="0.1.13" date="2025-09-27">
+      <description>
+        <p xml:lang="pt_BR">Histórico de navegação entre páginas; correções no fluxo de versão; melhorias na interação do chat.</p>
+      </description>
+    </release>
     <release version="0.1.8" date="2025-09-21">
       <description>
         <p xml:lang="pt_BR">Compilação para o Windows, ainda em implementação. Ajuda será bem-vinda.</p>

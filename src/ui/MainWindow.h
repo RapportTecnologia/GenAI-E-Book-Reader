@@ -140,6 +140,10 @@ private slots:
     void showAboutDialog();
     /** \brief Atualiza UI ao mudar a página atual. */
     void onCurrentPageChanged(int page);
+    /** \brief Volta para a página anterior no histórico de navegação. */
+    void onHistoryBack();
+    /** \brief Avança para a próxima página no histórico de navegação. */
+    void onHistoryForward();
     /** \brief Mostra diálogo de arquivos recentes. */
     void showRecentFilesDialog();
     /** \brief Mostra o tutorial inicial do aplicativo. */
@@ -266,6 +270,9 @@ private:
     QAction* actZoomOut_ {nullptr};
     QAction* actZoomReset_ {nullptr};
     QAction* actToggleTheme_ {nullptr};
+    // History navigation actions
+    QAction* actHistoryBack_ {nullptr};
+    QAction* actHistoryForward_ {nullptr};
     QAction* actQuit_ {nullptr};
     QAction* actReaderData_ {nullptr};
     QAction* actChat_ {nullptr};
@@ -361,6 +368,12 @@ private:
     // Search results state
     QList<int> searchResultsPages_;
     int searchResultIdx_ {-1};
+
+    // Page navigation history
+    QList<int> pageBackStack_;
+    QList<int> pageFwdStack_;
+    int currentPage_{-1};
+    bool inHistoryNav_{false};
 
     // Pending state for async RAG
     QString pendingRagQuery_;

@@ -1560,8 +1560,15 @@ void MainWindow::createActions() {
     actClose_ = new QAction(tr("Fechar Ebook"), this);
     actQuit_ = new QAction(tr("Sair"), this);
     actReaderData_ = new QAction(tr("Dados do leitor..."), this);
-    actPrev_ = new QAction(tr("Anterior"), this);
-    actNext_ = new QAction(tr("Próxima"), this);
+    // History navigation actions
+    actHistoryBack_ = new QAction(tr("Voltar Histórico"), this);
+    actHistoryForward_ = new QAction(tr("Avançar Histórico"), this);
+    actHistoryBack_->setShortcut(QKeySequence(Qt::ALT | Qt::Key_Left));
+    actHistoryForward_->setShortcut(QKeySequence(Qt::ALT | Qt::Key_Right));
+    actHistoryBack_->setEnabled(false);
+    actHistoryForward_->setEnabled(false);
+    actPrev_ = new QAction(tr("Página Anterior"), this);
+    actNext_ = new QAction(tr("Próxima Página"), this);
     actZoomIn_ = new QAction(tr("Zoom +"), this);
     actZoomOut_ = new QAction(tr("Zoom -"), this);
     actZoomReset_ = new QAction(tr("Zoom 100%"), this);
@@ -1607,6 +1614,8 @@ void MainWindow::createActions() {
     // Signals
     connect(actOpen_, &QAction::triggered, this, &MainWindow::openFile);
     connect(actSaveAs_, &QAction::triggered, this, &MainWindow::saveAs);
+    connect(actHistoryBack_, &QAction::triggered, this, &MainWindow::onHistoryBack);
+    connect(actHistoryForward_, &QAction::triggered, this, &MainWindow::onHistoryForward);
     connect(actPrev_, &QAction::triggered, this, &MainWindow::onTocPrev);
     connect(actNext_, &QAction::triggered, this, &MainWindow::onTocNext);
     connect(actZoomIn_, &QAction::triggered, this, &MainWindow::zoomIn);
@@ -1721,6 +1730,9 @@ void MainWindow::createActions() {
     QWidget* leftSpacer = new QWidget(tb);
     leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     tb->addWidget(leftSpacer);
+    // History navigation controls
+    tb->addAction(actHistoryBack_);
+    tb->addAction(actHistoryForward_);
     tb->addAction(actPrev_);
     tb->addAction(actNext_);
     pageCombo_ = new QComboBox(tb);
@@ -2310,51 +2322,97 @@ void MainWindow::continueRagAnswer(const QString& translatedQuery) {
         if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) { pv->setCurrentPage(static_cast<unsigned int>(best)); pv->flashHighlight(); }
         if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) { vw->setCurrentPage(static_cast<unsigned int>(best)); }
         updateStatus();
+        // Hint in chat with the RAG results list for quick navigation
+        if (chatDock_) {
+            QStringList ps; for (int p : pages) ps << QString::number(p);
+            if (!ps.isEmpty()) chatDock_->appendAssistant(tr("[RAG] Resultados: páginas %1").arg(ps.join(", ")));
+        }
     }
-
-    // Build grounded context from the top pages
-    const int ctxChars = qBound(1500, settings_.value("rag/context_max_chars", 4000).toInt(), 8000);
+    // Build grounded context from the top pages (configurable max chars)
+    const int ctxChars = qBound(1500,
+                                settings_.value("ai/rag_context_chars",
+                                                settings_.value("rag/context_max_chars", 4000).toInt()).toInt(),
+                                8000);
     const QString context = buildRagContextFromPages(pages.mid(0, 3), ctxChars);
 
     QList<QPair<QString,QString>> msgs;
-    // Precision/grounding policy
+    // Guardrails and format: Section A (grounded) + Section B (beyond-the-book)
     const QString respLang = QSettings().value("ai/response_language", QStringLiteral("pt-BR")).toString();
     const QString sysPolicy = tr(
-        "Você é um assistente que responde APENAS com base no conteúdo fornecido em CONTEXTO (trechos do e-book) em %1.\n"
-        "- Se a resposta não estiver no contexto, diga explicitamente que não há informação suficiente e sugira a página mais próxima.\n"
-        "- Cite as páginas entre colchetes [Página N] quando possível.\n"
-        "- Seja conciso, objetivo e não invente.").arg(respLang);
+        "Você responderá em %1.\n"
+        "A) Resposta fundamentada no livro: use SOMENTE o contexto fornecido, cite páginas como [pN].\n"
+        "Se o contexto for insuficiente, diga explicitamente.\n"
+        "B) Ampliação do conhecimento (fora do livro): sugestões de referências, livros, artigos e links relevantes."
+    ).arg(respLang);
     msgs.append({QStringLiteral("system"), sysPolicy});
     const QString sysOpf = buildOpfSystemPrompt();
     if (!sysOpf.trimmed().isEmpty()) msgs.append({QStringLiteral("system"), sysOpf});
 
-    QString userPrompt;
+    // Original question + grounded context
+    msgs.append({QStringLiteral("user"), lastChatQuestion_});
     if (!context.isEmpty()) {
-        userPrompt = tr("Pergunta: %1\n\nContexto (trechos do e-book):\n%2\n\nResponda em %3, citando as páginas quando possível.")
-                         .arg(lastChatQuestion_)
-                         .arg(context)
-                         .arg(respLang);
-    } else {
-        userPrompt = tr("Pergunta: %1\n\nObservação: contexto indisponível. Se não houver informação no histórico, informe que não é possível responder com base no livro.").arg(lastChatQuestion_);
+        const QString primer = tr("Contexto do livro (trechos selecionados):\n%1").arg(context);
+        msgs.append({QStringLiteral("assistant"), primer});
     }
-    msgs.append({QStringLiteral("user"), userPrompt});
+    // Ask for the two sections explicitly
+    msgs.append({QStringLiteral("user"), tr("Produza duas seções: A) Resposta fundamentada no livro (cite [pN]) B) Ampliação do conhecimento (fora do livro) com referências e links.")});
 
-    llm_->chatWithMessages(msgs, [this](QString out, QString err){
-        QMetaObject::invokeMethod(this, [this, out, err](){
-            if (!err.isEmpty()) {
-                showLongAlert(tr("Erro na IA"), err);
+    const bool augmentExternal = settings_.value("ai/augment_external", true).toBool();
+    if (augmentExternal) {
+        QJsonArray tools;
+        // Tool: retrieve_passages(pages: int[])
+        {
+            QJsonObject tool; tool["type"] = "function";
+            QJsonObject fn; fn["name"] = "retrieve_passages";
+            QJsonObject params; params["type"] = "object";
+            QJsonObject props; QJsonObject arrDef; arrDef["type"] = "array"; QJsonObject items; items["type"] = "integer"; items["minimum"] = 1; arrDef["items"] = items; props["pages"] = arrDef;
+            params["properties"] = props; QJsonArray req; req.append("pages"); params["required"] = req;
+            fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+        }
+        // Tool: suggest_references(topic: string, max_items?: int)
+        {
+            QJsonObject tool; tool["type"] = "function";
+            QJsonObject fn; fn["name"] = "suggest_references";
+            QJsonObject params; params["type"] = "object";
+            QJsonObject props; QJsonObject topic; topic["type"] = "string"; topic["description"] = tr("Tópico central para recomendações adicionais"); props["topic"] = topic; QJsonObject mi; mi["type"] = "integer"; mi["minimum"] = 1; mi["maximum"] = 20; props["max_items"] = mi;
+            params["properties"] = props; QJsonArray req; req.append("topic"); params["required"] = req;
+            fn["parameters"] = params; tool["function"] = fn; tools.append(tool);
+        }
+        llm_->chatWithMessagesTools(msgs, tools, [this](QString out, QJsonArray toolCalls, QString err){
+            QMetaObject::invokeMethod(this, [this, out, toolCalls, err](){
+                if (!err.isEmpty()) {
+                    showLongAlert(tr("Erro na IA"), err);
+                    statusBar()->clearMessage();
+                    ragAnswerInProgress_ = false;
+                    if (chatDock_) chatDock_->setBusy(false);
+                    return;
+                }
+                if (!toolCalls.isEmpty()) { handleLlmToolCalls(toolCalls); }
+                if (chatDock_ && !out.trimmed().isEmpty()) chatDock_->appendAssistant(out);
                 statusBar()->clearMessage();
+                saveChatForCurrentFile();
                 ragAnswerInProgress_ = false;
                 if (chatDock_) chatDock_->setBusy(false);
-                return;
-            }
-            if (chatDock_) chatDock_->appendAssistant(out);
-            statusBar()->clearMessage();
-            saveChatForCurrentFile();
-            ragAnswerInProgress_ = false;
-            if (chatDock_) chatDock_->setBusy(false);
+            });
         });
-    });
+    } else {
+        llm_->chatWithMessages(msgs, [this](QString out, QString err){
+            QMetaObject::invokeMethod(this, [this, out, err](){
+                if (!err.isEmpty()) {
+                    showLongAlert(tr("Erro na IA"), err);
+                    statusBar()->clearMessage();
+                    ragAnswerInProgress_ = false;
+                    if (chatDock_) chatDock_->setBusy(false);
+                    return;
+                }
+                if (chatDock_) chatDock_->appendAssistant(out);
+                statusBar()->clearMessage();
+                saveChatForCurrentFile();
+                ragAnswerInProgress_ = false;
+                if (chatDock_) chatDock_->setBusy(false);
+            });
+        });
+    }
 }
 
 // ---- Search progress modal helpers ----
@@ -2979,6 +3037,19 @@ void MainWindow::updateStatus() {
 }
 
 void MainWindow::onCurrentPageChanged(int page) {
+    // Maintain navigation history stacks
+    if (!inHistoryNav_) {
+        if (currentPage_ > 0 && page > 0 && page != currentPage_) {
+            pageBackStack_.append(currentPage_);
+            pageFwdStack_.clear();
+        }
+    }
+    currentPage_ = page;
+    inHistoryNav_ = false;
+
+    if (actHistoryBack_) actHistoryBack_->setEnabled(!pageBackStack_.isEmpty());
+    if (actHistoryForward_) actHistoryForward_->setEnabled(!pageFwdStack_.isEmpty());
+
     if (pageCombo_ && page > 0 && page <= pageCombo_->count()) {
         pageCombo_->blockSignals(true);
         pageCombo_->setCurrentIndex(page - 1);
@@ -3052,6 +3123,26 @@ void MainWindow::prevPage() {
     updateStatus();
 }
 
+void MainWindow::onHistoryBack() {
+    if (pageBackStack_.isEmpty()) return;
+    const int target = pageBackStack_.takeLast();
+    if (currentPage_ > 0) pageFwdStack_.append(currentPage_);
+    inHistoryNav_ = true;
+    const unsigned int up = static_cast<unsigned int>(qMax(1, target));
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) vw->setCurrentPage(up);
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) pv->setCurrentPage(up);
+}
+
+void MainWindow::onHistoryForward() {
+    if (pageFwdStack_.isEmpty()) return;
+    const int target = pageFwdStack_.takeLast();
+    if (currentPage_ > 0) pageBackStack_.append(currentPage_);
+    inHistoryNav_ = true;
+    const unsigned int up = static_cast<unsigned int>(qMax(1, target));
+    if (auto vw = qobject_cast<ViewerWidget*>(viewer_)) vw->setCurrentPage(up);
+    if (auto pv = qobject_cast<PdfViewerWidget*>(viewer_)) pv->setCurrentPage(up);
+}
+
 void MainWindow::updatePageCombo() {
     if (!pageCombo_) return;
     unsigned int cur = 1, tot = 0;
@@ -3114,6 +3205,10 @@ bool MainWindow::openPath(const QString& file) {
         splitter_->replaceWidget(idx, newViewer);
         viewer_->deleteLater();
         viewer_ = newViewer;
+        // Wire page change to MainWindow so history, TOC and combo stay in sync
+        if (auto* pvw = qobject_cast<PdfViewerWidget*>(viewer_)) {
+            connect(pvw, &PdfViewerWidget::pageChanged, this, &MainWindow::onCurrentPageChanged, Qt::UniqueConnection);
+        }
 
         // Connect context-menu AI actions from the PDF viewer to MainWindow slots
         connect(newViewer, &PdfViewerWidget::requestSynonyms, this, &MainWindow::onRequestSynonyms);
