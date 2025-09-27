@@ -1,23 +1,30 @@
 # Changelog
 
-  The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
+   The format is based on Keep a Changelog and this project adheres to Semantic Versioning.
 
-  ## [Unreleased]
+   ## [Unreleased]
 
-  - Melhorias na integração com WSL no windows
+   - Melhorias na integração com WSL no windows
 
-  ## [0.1.13] - 2025-09-27
+   ## [0.1.13] - 2025-09-27
+
+   - Manter o histórico de navegação entre as páginas, permitindo voltar e avançar.
+   - Revisão a interação via chat pois está muito pobre, já esteve melhor.
+   - Corrigir o fluxo de versão, pois houve um erro ao liberar a versão 0.1.12 que foi com as alterações da versão 0.1.13
+   - Corrigido o cmake para atualizar a versão da aplicação, infelizmente ainda força a recompilação de todo o código. 
+  - Renomeados os botões de navegação de página para deixar mais claros:
+    - "Próxima Página" (antes: "Próxima")
+    - "Página Anterior" (antes: "Anterior")
+
+
+   ## [0.1.12] - 2025-09-26
+
   - Chat/OPF:
-    - OPF agora é usado apenas para identificação mínima do livro no chat (arquivo, título, autor, ISBN).
-    - Removida a exposição da ferramenta `query_opf` no Function Calling por padrão, evitando latência e ruído durante a conversa. O handler interno permanece para compatibilidade.
-    - Corrigido o schema da ferramenta `propose_search` (faltava declarar `properties.query`).
-    - Revisado o prompt de sistema para uma política de precisão concisa, sem referências a solicitar `query_opf` durante o chat.
-    - Revisão do processo de criar um novo chat, agora ele pergunta se deseja salvar o chat atual no histórico. E inicia um novo esquecendo o anterior.
-    - Adicionar spiner para indicar que a IA está processando a requisição.
-    - 
-
-  ## [0.1.12] - 2025-09-26
-
+  - OPF agora é usado apenas para identificação mínima do livro no chat (arquivo, título, autor, ISBN).
+  - Removida a exposição da ferramenta `query_opf` no Function Calling por padrão, evitando latência e ruído durante a conversa. O handler interno permanece para compatibilidade.
+  - Corrigido o schema da ferramenta `propose_search` (faltava declarar `properties.query`).
+  - Revisão do processo de criar um novo chat, agora ele pergunta se deseja salvar o chat atual no histórico. E inicia um novo esquecendo o anterior.
+  - Adicionar spiner para indicar que a IA está processando a requisição.
   - Adicionado opção de tradução e sinônimos do texto marcado.
   - Corrigido o BUG de listagem dos modelos da OpenRouter.AI
   - Revisar o Algorítimo de OPF, correções e melhorias.

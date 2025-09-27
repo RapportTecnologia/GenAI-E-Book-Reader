@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 # Extract version from CHANGELOG.md (first heading like: ## [X.Y.Z])
 file(READ "${CMAKE_CURRENT_LIST_DIR}/CHANGELOG.md" _CHANGELOG_TXT)
-string(REGEX MATCH "## \\[([0-9]+\\.[0-9]+\\.[0-9]+)\\]" _CHANGELOG_MATCH "${_CHANGELOG_TXT}")
+string(REGEX MATCH "## \\[[0-9]+\\.[0-9]+\\.[0-9]+\\]" _CHANGELOG_MATCH "${_CHANGELOG_TXT}")
 if(_CHANGELOG_MATCH)
   string(REGEX REPLACE ".*\\[([0-9]+\\.[0-9]+\\.[0-9]+)\\].*" "\\1" GENAI_VERSION "${_CHANGELOG_MATCH}")
   message(STATUS "Building GenAI_EBook_Reader version ${GENAI_VERSION}")
@@ -10,6 +10,9 @@ else()
   set(GENAI_VERSION "0.0.0")
   message(WARNING "Could not parse version from CHANGELOG.md; defaulting to ${GENAI_VERSION}")
 endif()
+
+# Re-run CMake automatically when CHANGELOG.md changes so version propagates into build
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/CHANGELOG.md")
 
 message(STATUS "Building GenAI_EBook_Reader version ${GENAI_VERSION}")
 

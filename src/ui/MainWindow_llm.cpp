@@ -138,6 +138,37 @@ void MainWindow::handleLlmToolCalls(const QJsonArray& toolCalls) {
         } else if (name == QLatin1String("goto_page")) {
             const int page = args.value("page").toInt();
             toolGotoPage(page);
+        } else if (name == QLatin1String("retrieve_passages")) {
+            // Return additional snippets for requested pages to the chat
+            QJsonArray arr = args.value("pages").toArray();
+            if (arr.isEmpty()) continue;
+            if (!ensurePagesTextLoaded()) continue;
+            QStringList blocks;
+            for (const auto& v : arr) {
+                const int p = v.toInt();
+                if (p <= 0) continue;
+                const int idx = p - 1;
+                if (idx < 0 || idx >= pagesText_.size()) continue;
+                QString t = pagesText_.at(idx);
+                t.replace(QRegularExpression("\\s+"), " ");
+                if (t.size() > 1000) t = t.left(1000);
+                const QString block = tr("[Página %1]\n%2").arg(p).arg(t.trimmed());
+                blocks << block;
+            }
+            if (!blocks.isEmpty() && chatDock_) {
+                chatDock_->appendAssistant(blocks.join("\n\n"));
+            }
+        } else if (name == QLatin1String("suggest_references")) {
+            // The model may produce references itself; we can surface the topic intent in chat
+            const QString topic = args.value("topic").toString();
+            const int maxItems = args.value("max_items").toInt();
+            if (chatDock_) {
+                if (!topic.trimmed().isEmpty()) {
+                    chatDock_->appendAssistant(tr("[referências] Tópico: %1%2").arg(topic).arg(maxItems > 0 ? tr(" (máx. %1 itens)").arg(maxItems) : QString()));
+                } else {
+                    chatDock_->appendAssistant(tr("[referências] Gerando sugestões adicionais de fontes e leituras."));
+                }
+            }
         } else if (name == QLatin1String("query_opf")) {
             // Read OPF for current document and append a concise one-line identification
             QString opfPath;
