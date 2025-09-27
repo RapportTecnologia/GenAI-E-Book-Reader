@@ -9,12 +9,13 @@ var searchData=
   ['requestdictionarylookup_6',['requestDictionaryLookup',['../dc/ddc/classPdfViewerWidget.html#a8cfed6e0c7b19ee4a2862a29943096fe',1,'PdfViewerWidget']]],
   ['requestpause_7',['requestPause',['../de/d9c/classEmbeddingIndexer.html#a47afb951c90b357c8d0b956cdd5d9b32',1,'EmbeddingIndexer']]],
   ['requestrebuildembeddings_8',['requestRebuildEmbeddings',['../dc/ddc/classPdfViewerWidget.html#a6af93414bcaf055dbec3cf9f8587bec0',1,'PdfViewerWidget']]],
-  ['requestresume_9',['requestResume',['../de/d9c/classEmbeddingIndexer.html#ad96ee1dcb367944a388940aba2c20e69',1,'EmbeddingIndexer']]],
-  ['requestsendimagetochat_10',['requestSendImageToChat',['../dc/ddc/classPdfViewerWidget.html#ac5a87fd3775f78d40828e56e2cf253e1',1,'PdfViewerWidget']]],
-  ['requestsendtochat_11',['requestSendToChat',['../dc/ddc/classPdfViewerWidget.html#abbf4cac986c53df53789228b07ad31c5',1,'PdfViewerWidget']]],
-  ['requestshowsavedchats_12',['requestShowSavedChats',['../d0/daf/classChatDock.html#a3d69db425d00daa1345cdb69fe10dcdf',1,'ChatDock']]],
-  ['requestsummarize_13',['requestSummarize',['../dc/ddc/classPdfViewerWidget.html#a05a240adfab63efc598a6f0631ce3e45',1,'PdfViewerWidget']]],
-  ['requestsummarizedocument_14',['requestSummarizeDocument',['../dc/ddc/classPdfViewerWidget.html#a483f0bd45376af68ca4efddd92300f5a',1,'PdfViewerWidget']]],
-  ['requestsynonyms_15',['requestSynonyms',['../dc/ddc/classPdfViewerWidget.html#a353cd07d7a0423a770e5c689f408195c',1,'PdfViewerWidget']]],
-  ['run_16',['run',['../de/d9c/classEmbeddingIndexer.html#a1a4bcabcd8a4adabcb181ceecb2aad12',1,'EmbeddingIndexer']]]
+  ['requestregenerateopf_9',['requestRegenerateOpf',['../d8/d98/classOpfDialog.html#a93be99f1309695ed11f17eef600ee090',1,'OpfDialog']]],
+  ['requestresume_10',['requestResume',['../de/d9c/classEmbeddingIndexer.html#ad96ee1dcb367944a388940aba2c20e69',1,'EmbeddingIndexer']]],
+  ['requestsendimagetochat_11',['requestSendImageToChat',['../dc/ddc/classPdfViewerWidget.html#ac5a87fd3775f78d40828e56e2cf253e1',1,'PdfViewerWidget']]],
+  ['requestsendtochat_12',['requestSendToChat',['../dc/ddc/classPdfViewerWidget.html#abbf4cac986c53df53789228b07ad31c5',1,'PdfViewerWidget']]],
+  ['requestshowsavedchats_13',['requestShowSavedChats',['../d0/daf/classChatDock.html#a3d69db425d00daa1345cdb69fe10dcdf',1,'ChatDock']]],
+  ['requestsummarize_14',['requestSummarize',['../dc/ddc/classPdfViewerWidget.html#a05a240adfab63efc598a6f0631ce3e45',1,'PdfViewerWidget']]],
+  ['requestsummarizedocument_15',['requestSummarizeDocument',['../dc/ddc/classPdfViewerWidget.html#a483f0bd45376af68ca4efddd92300f5a',1,'PdfViewerWidget']]],
+  ['requestsynonyms_16',['requestSynonyms',['../dc/ddc/classPdfViewerWidget.html#a353cd07d7a0423a770e5c689f408195c',1,'PdfViewerWidget']]],
+  ['run_17',['run',['../de/d9c/classEmbeddingIndexer.html#a1a4bcabcd8a4adabcb181ceecb2aad12',1,'EmbeddingIndexer']]]
 ];

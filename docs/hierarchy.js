@@ -18,6 +18,7 @@ var hierarchy =
       [ "OpfGenAiDialog", "d2/dd9/classOpfGenAiDialog.html", null ],
       [ "OpfMergeDialog", "d0/d46/classOpfMergeDialog.html", null ],
       [ "RecentFilesDialog", "d5/d44/classRecentFilesDialog.html", null ],
+      [ "SearchProgressDialog", "d2/d59/classSearchProgressDialog.html", null ],
       [ "SummaryDialog", "da/d99/classSummaryDialog.html", null ],
       [ "TutorialDialog", "d8/df9/classTutorialDialog.html", null ],
       [ "WelcomeDialog", "dd/dd8/classWelcomeDialog.html", null ]

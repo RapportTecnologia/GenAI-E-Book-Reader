@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="../../logo-do-projeto.png"/></td>
   <td id="projectalign">
-   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.0.1</span>
+   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.1.12</span>
    </div>
    <div id="projectbrief">Leitor de e-books com IA, TTS, anotações e integrações</div>
   </td>
@@ -131,6 +131,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a24642ac87c4f7454689376c42af50c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3558eb5bec6ad14820361947a579c732" id="r_a3558eb5bec6ad14820361947a579c732"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/dc3/classBookProviders.html#a3558eb5bec6ad14820361947a579c732">fetchFromGoogleBooks</a> (QNetworkAccessManager *nm, const <a class="el" href="../../d6/d65/structOpfData.html">OpfData</a> &amp;hint, std::function&lt; void(const <a class="el" href="../../d6/d65/structOpfData.html">OpfData</a> &amp;result, bool ok, const QString &amp;message)&gt; done)</td></tr>
 <tr class="separator:a3558eb5bec6ad14820361947a579c732"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf30a8b004caab92bbbbe9ad1a1c3d16" id="r_abf30a8b004caab92bbbbe9ad1a1c3d16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/dc3/classBookProviders.html#abf30a8b004caab92bbbbe9ad1a1c3d16">fetchFromAmazonBooks</a> (QNetworkAccessManager *nm, const <a class="el" href="../../d6/d65/structOpfData.html">OpfData</a> &amp;hint, std::function&lt; void(const <a class="el" href="../../d6/d65/structOpfData.html">OpfData</a> &amp;result, bool ok, const QString &amp;message)&gt; done)</td></tr>
+<tr class="separator:abf30a8b004caab92bbbbe9ad1a1c3d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Helper to enrich OPF metadata using external book info providers (e.g., Google Books). </p>
@@ -162,6 +164,40 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="abf30a8b004caab92bbbbe9ad1a1c3d16" name="abf30a8b004caab92bbbbe9ad1a1c3d16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf30a8b004caab92bbbbe9ad1a1c3d16">&#9670;&#160;</a></span>fetchFromAmazonBooks()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void BookProviders::fetchFromAmazonBooks </td>
+          <td>(</td>
+          <td class="paramtype">QNetworkAccessManager *&#160;</td>
+          <td class="paramname"><em>nm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="../../d6/d65/structOpfData.html">OpfData</a> &amp;&#160;</td>
+          <td class="paramname"><em>hint</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::function&lt; void(const <a class="el" href="../../d6/d65/structOpfData.html">OpfData</a> &amp;result, bool ok, const QString &amp;message)&gt;&#160;</td>
+          <td class="paramname"><em>done</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a3558eb5bec6ad14820361947a579c732" name="a3558eb5bec6ad14820361947a579c732"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3558eb5bec6ad14820361947a579c732">&#9670;&#160;</a></span>fetchFromGoogleBooks()</h2>
 

@@ -25,6 +25,7 @@ var annotated_dup =
     [ "OpfStore", "d9/db4/classOpfStore.html", null ],
     [ "PdfViewerWidget", "dc/ddc/classPdfViewerWidget.html", "dc/ddc/classPdfViewerWidget" ],
     [ "RecentFilesDialog", "d5/d44/classRecentFilesDialog.html", "d5/d44/classRecentFilesDialog" ],
+    [ "SearchProgressDialog", "d2/d59/classSearchProgressDialog.html", "d2/d59/classSearchProgressDialog" ],
     [ "SummaryDialog", "da/d99/classSummaryDialog.html", "da/d99/classSummaryDialog" ],
     [ "TutorialDialog", "d8/df9/classTutorialDialog.html", "d8/df9/classTutorialDialog" ],
     [ "VectorIndex", "d3/db0/classVectorIndex.html", "d3/db0/classVectorIndex" ],

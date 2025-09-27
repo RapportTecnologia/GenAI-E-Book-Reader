@@ -3,7 +3,7 @@
 # Project
 PROJECT_NAME           = "GenAI E-Book Reader"
 PROJECT_BRIEF          = "Leitor de e-books com IA, TTS, anotações e integrações"
-PROJECT_NUMBER         = 0.0.1
+PROJECT_NUMBER         = 0.1.12
 OUTPUT_DIRECTORY       = docs
 CREATE_SUBDIRS         = YES
 

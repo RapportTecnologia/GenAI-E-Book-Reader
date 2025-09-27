@@ -1,16 +1,20 @@
 var searchData=
 [
-  ['fase_201_20—_204_20sprints_20de_202_20semanas_0',['3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md31',1,'']]],
-  ['fases_1',['2) Roadmap por Fases',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md30',1,'']]],
-  ['fazer_20uma_20busca_20semântica_2',['Passo 3: Fazer uma Busca Semântica',['../dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md89',1,'']]],
-  ['fetchfromgooglebooks_3',['fetchFromGoogleBooks',['../d1/dc3/classBookProviders.html#a3558eb5bec6ad14820361947a579c732',1,'BookProviders']]],
-  ['finished_4',['finished',['../de/d9c/classEmbeddingIndexer.html#a75b0e392af9fb2817f42ce15d5e4eab4',1,'EmbeddingIndexer']]],
-  ['fittowidth_5',['fitToWidth',['../dc/ddc/classPdfViewerWidget.html#a6616311485fd438b1432892df3d89e50',1,'PdfViewerWidget']]],
-  ['fixed_6',['fixed',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md57',1,'Fixed'],['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md61',1,'Fixed']]],
-  ['flashhighlight_7',['flashHighlight',['../dc/ddc/classPdfViewerWidget.html#a2a60d7a3d7fc80a956dcaff7bcc443d8',1,'PdfViewerWidget']]],
-  ['focus_8',['Focus',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md47',1,'']]],
-  ['fonte_20linux_9',['Compilando a partir do código-fonte (Linux)',['..//home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/README.md#autotoc_md18',1,'']]],
-  ['format_10',['format',['../d6/d65/structOpfData.html#a36dcbb058394b03eb3c24e913d9645c6',1,'OpfData']]],
-  ['function_20calling_11',['0.1.10 – Busca e Chat (Function Calling)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md73',1,'']]],
-  ['function_20calling_200_201_2010_12',['Indicador de Function Calling (0.1.10)',['..//home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/README.md#autotoc_md10',1,'']]]
+  ['fase_201_20—_204_20sprints_20de_202_20semanas_0',['3) Sprints Sugeridos (Fase 1 — 4 sprints de ~2 semanas)',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md40',1,'']]],
+  ['fases_1',['2) Roadmap por Fases',['../dd/d0f/md_GenAi-E-Book-Reader_2PLANO-DE-DESENVOLVIMENTO.html#autotoc_md39',1,'']]],
+  ['fazer_20uma_20busca_20semântica_2',['Passo 3: Fazer uma Busca Semântica',['../dc/dca/md_GenAi-E-Book-Reader_2TUTORIAL.html#autotoc_md86',1,'']]],
+  ['ferramentas_20alternar_20entre_20páginas_20conteúdo_20e_20botões_20de_20navegação_20e_20tamanho_20padrão_20inicial_20do_20splitter_2010_20toc_2090_20visualizador_3',['Nota (0.1.3): refinamento de UI — ícone do app a partir de &lt;tt&gt;docs/imgs/logo-do-projeto.png&lt;/tt&gt;, splash screen com versão/autor e título da janela exibindo o nome do livro (metadados quando disponíveis; senão, nome do arquivo). Ajuste para a área de leitura ocupar 100% do espaço disponível. Painel de TOC remodelado com barra de ferramentas (alternar entre &quot;Páginas&quot;/&quot;Conteúdo&quot; e botões de navegação) e tamanho padrão inicial do splitter ~10% (TOC) / ~90% (visualizador).',['..//home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/README.md#autotoc_md23',1,'']]],
+  ['fetchfromamazonbooks_4',['fetchFromAmazonBooks',['../d1/dc3/classBookProviders.html#abf30a8b004caab92bbbbe9ad1a1c3d16',1,'BookProviders']]],
+  ['fetchfromgooglebooks_5',['fetchFromGoogleBooks',['../d1/dc3/classBookProviders.html#a3558eb5bec6ad14820361947a579c732',1,'BookProviders']]],
+  ['financeira_20do_20projeto_6',['Manutenção Financeira do Projeto',['..//home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/README.md#autotoc_md0',1,'']]],
+  ['finished_7',['finished',['../de/d9c/classEmbeddingIndexer.html#a75b0e392af9fb2817f42ce15d5e4eab4',1,'EmbeddingIndexer']]],
+  ['fittowidth_8',['fitToWidth',['../dc/ddc/classPdfViewerWidget.html#a6616311485fd438b1432892df3d89e50',1,'PdfViewerWidget']]],
+  ['flashhighlight_9',['flashHighlight',['../dc/ddc/classPdfViewerWidget.html#a2a60d7a3d7fc80a956dcaff7bcc443d8',1,'PdfViewerWidget']]],
+  ['foco_20em_20melhoria_20das_20buscas_20texto_20e_20semântica_20e_20na_20interação_20do_20chat_20com_20suporte_20a_20function_20calling_20quando_20o_20modelo_20provedor_20disponibilizar_20a_20janela_20de_20configurações_20de_20llm_20passa_20a_20exibir_20um_20indicador_20somente_20leitura_20informando_20se_20o_20modelo_20selecionado_20declara_20suporte_20a_20function_20calling_10',['Nota (0.1.12 - desenvolvimento): Foco em melhoria das buscas (texto e semântica) e na interação do chat com suporte a Function Calling quando o modelo/provedor disponibilizar. A janela de Configurações de LLM passa a exibir um indicador somente leitura informando se o modelo selecionado declara suporte a Function Calling.',['..//home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/README.md#autotoc_md18',1,'']]],
+  ['focus_11',['Focus',['../dc/d9d/md_GenAi-E-Book-Reader_2CHANGELOG.html#autotoc_md58',1,'']]],
+  ['foi_20iniciado_20atualmente_20usando_20llm_20e_20o_20painel_20de_20informações_20do_20aplicativo_20foi_20aprimorado_12',['Nota (0.1.7): Adicionada a capacidade de abrir e-books diretamente pela linha de comando e associação de arquivos no sistema. O dicionário foi iniciado (atualmente usando LLM) e o painel de informações do aplicativo foi aprimorado.',['..//home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/README.md#autotoc_md21',1,'']]],
+  ['fonte_20linux_13',['Compilando a partir do código-fonte (Linux)',['..//home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/README.md#autotoc_md27',1,'']]],
+  ['format_14',['format',['../d6/d65/structOpfData.html#a36dcbb058394b03eb3c24e913d9645c6',1,'OpfData']]],
+  ['function_20calling_15',['0.1.10 – Busca e Chat (Function Calling)',['../dc/d11/md_GenAi-E-Book-Reader_2ROADMAP.html#autotoc_md70',1,'']]],
+  ['function_20calling_20quando_20o_20modelo_20provedor_20disponibilizar_20a_20janela_20de_20configurações_20de_20llm_20passa_20a_20exibir_20um_20indicador_20somente_20leitura_20informando_20se_20o_20modelo_20selecionado_20declara_20suporte_20a_20function_20calling_16',['Nota (0.1.12 - desenvolvimento): Foco em melhoria das buscas (texto e semântica) e na interação do chat com suporte a Function Calling quando o modelo/provedor disponibilizar. A janela de Configurações de LLM passa a exibir um indicador somente leitura informando se o modelo selecionado declara suporte a Function Calling.',['..//home/carlosdelfino/workspace/Rapport/Generativa/GenAi-E-Book-Reader/README.md#autotoc_md18',1,'']]]
 ];

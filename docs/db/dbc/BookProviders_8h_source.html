@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="../../logo-do-projeto.png"/></td>
   <td id="projectalign">
-   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.0.1</span>
+   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.1.12</span>
    </div>
    <div id="projectbrief">Leitor de e-books com IA, TTS, anotações e integrações</div>
   </td>
@@ -122,13 +122,21 @@ $(document).ready(function(){initNavTree('db/dbc/BookProviders_8h_source.html','
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>                              <span class="keyword">const</span> <a class="code hl_struct" href="../../d6/d65/structOpfData.html">OpfData</a>&amp; hint,</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>                              std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> <a class="code hl_struct" href="../../d6/d65/structOpfData.html">OpfData</a>&amp; result, <span class="keywordtype">bool</span> ok, <span class="keyword">const</span> QString&amp; message)&gt; done);</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keyword">static</span> <a class="code hl_struct" href="../../d6/d65/structOpfData.html">OpfData</a> parseGoogleVolume(<span class="keyword">const</span> QJsonObject&amp; volume);</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>};</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="comment">// Query Amazon Books (Product Advertising API or public pages). This is a placeholder implementation</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="comment">// that returns an informative message until API keys/config are provided.</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="comment">// Calls done(result, ok, message).</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="../../d1/dc3/classBookProviders.html#abf30a8b004caab92bbbbe9ad1a1c3d16">fetchFromAmazonBooks</a>(QNetworkAccessManager* nm,</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>                              <span class="keyword">const</span> <a class="code hl_struct" href="../../d6/d65/structOpfData.html">OpfData</a>&amp; hint,</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>                              std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> <a class="code hl_struct" href="../../d6/d65/structOpfData.html">OpfData</a>&amp; result, <span class="keywordtype">bool</span> ok, <span class="keyword">const</span> QString&amp; message)&gt; done);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">static</span> <a class="code hl_struct" href="../../d6/d65/structOpfData.html">OpfData</a> parseGoogleVolume(<span class="keyword">const</span> QJsonObject&amp; volume);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>};</div>
 </div>
 <div class="ttc" id="aOpfStore_8h_html"><div class="ttname"><a href="../../d1/d18/OpfStore_8h.html">OpfStore.h</a></div></div>
 <div class="ttc" id="aclassBookProviders_html"><div class="ttname"><a href="../../d1/dc3/classBookProviders.html">BookProviders</a></div><div class="ttdef"><b>Definition</b> BookProviders.h:14</div></div>
 <div class="ttc" id="aclassBookProviders_html_a3558eb5bec6ad14820361947a579c732"><div class="ttname"><a href="../../d1/dc3/classBookProviders.html#a3558eb5bec6ad14820361947a579c732">BookProviders::fetchFromGoogleBooks</a></div><div class="ttdeci">void fetchFromGoogleBooks(QNetworkAccessManager *nm, const OpfData &amp;hint, std::function&lt; void(const OpfData &amp;result, bool ok, const QString &amp;message)&gt; done)</div><div class="ttdef"><b>Definition</b> BookProviders.cpp:55</div></div>
+<div class="ttc" id="aclassBookProviders_html_abf30a8b004caab92bbbbe9ad1a1c3d16"><div class="ttname"><a href="../../d1/dc3/classBookProviders.html#abf30a8b004caab92bbbbe9ad1a1c3d16">BookProviders::fetchFromAmazonBooks</a></div><div class="ttdeci">void fetchFromAmazonBooks(QNetworkAccessManager *nm, const OpfData &amp;hint, std::function&lt; void(const OpfData &amp;result, bool ok, const QString &amp;message)&gt; done)</div><div class="ttdef"><b>Definition</b> BookProviders.cpp:99</div></div>
 <div class="ttc" id="astructOpfData_html"><div class="ttname"><a href="../../d6/d65/structOpfData.html">OpfData</a></div><div class="ttdef"><b>Definition</b> OpfStore.h:7</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

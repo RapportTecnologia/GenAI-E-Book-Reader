@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="../../logo-do-projeto.png"/></td>
   <td id="projectalign">
-   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.0.1</span>
+   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.1.12</span>
    </div>
    <div id="projectbrief">Leitor de e-books com IA, TTS, anotações e integrações</div>
   </td>
@@ -130,6 +130,8 @@ $(document).ready(function(){initNavTree('d8/d98/classOpfDialog.html','../../');
 Signals</h2></td></tr>
 <tr class="memitem:ab3e63920fa0491271eb73334ac82a94c" id="r_ab3e63920fa0491271eb73334ac82a94c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d98/classOpfDialog.html#ab3e63920fa0491271eb73334ac82a94c">requestCompleteWithAi</a> ()</td></tr>
 <tr class="separator:ab3e63920fa0491271eb73334ac82a94c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93be99f1309695ed11f17eef600ee090" id="r_a93be99f1309695ed11f17eef600ee090"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d98/classOpfDialog.html#a93be99f1309695ed11f17eef600ee090">requestRegenerateOpf</a> ()</td></tr>
+<tr class="separator:a93be99f1309695ed11f17eef600ee090"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -139,6 +141,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9f67c0a352c31123c1617a7d6a1bcffe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d093ebb1e94f6d9fa4fe64384d099ad" id="r_a1d093ebb1e94f6d9fa4fe64384d099ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d65/structOpfData.html">OpfData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d98/classOpfDialog.html#a1d093ebb1e94f6d9fa4fe64384d099ad">data</a> () const</td></tr>
 <tr class="separator:a1d093ebb1e94f6d9fa4fe64384d099ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adea0572ab54486e0d04a6db6197f1bc7" id="r_adea0572ab54486e0d04a6db6197f1bc7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d98/classOpfDialog.html#adea0572ab54486e0d04a6db6197f1bc7">setBusy</a> (bool busy)</td></tr>
+<tr class="separator:adea0572ab54486e0d04a6db6197f1bc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb164e1710d586ebd7cd641b3bd9f9f8" id="r_acb164e1710d586ebd7cd641b3bd9f9f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d98/classOpfDialog.html#acb164e1710d586ebd7cd641b3bd9f9f8">setStatusMessage</a> (const QString &amp;msg)</td></tr>
+<tr class="separator:acb164e1710d586ebd7cd641b3bd9f9f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a26860508d06194fab3f7e6fb30db50d7" name="a26860508d06194fab3f7e6fb30db50d7"></a>
@@ -210,6 +216,49 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a93be99f1309695ed11f17eef600ee090" name="a93be99f1309695ed11f17eef600ee090"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93be99f1309695ed11f17eef600ee090">&#9670;&#160;</a></span>requestRegenerateOpf</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpfDialog::requestRegenerateOpf </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">signal</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adea0572ab54486e0d04a6db6197f1bc7" name="adea0572ab54486e0d04a6db6197f1bc7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adea0572ab54486e0d04a6db6197f1bc7">&#9670;&#160;</a></span>setBusy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpfDialog::setBusy </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>busy</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a9f67c0a352c31123c1617a7d6a1bcffe" name="a9f67c0a352c31123c1617a7d6a1bcffe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9f67c0a352c31123c1617a7d6a1bcffe">&#9670;&#160;</a></span>setData()</h2>
 
@@ -221,6 +270,24 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="../../d6/d65/structOpfData.html">OpfData</a> &amp;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acb164e1710d586ebd7cd641b3bd9f9f8" name="acb164e1710d586ebd7cd641b3bd9f9f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb164e1710d586ebd7cd641b3bd9f9f8">&#9670;&#160;</a></span>setStatusMessage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OpfDialog::setStatusMessage </td>
+          <td>(</td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
           <td></td>
         </tr>
       </table>

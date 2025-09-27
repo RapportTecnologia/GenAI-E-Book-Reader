@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="../../logo-do-projeto.png"/></td>
   <td id="projectalign">
-   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.0.1</span>
+   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.1.12</span>
    </div>
    <div id="projectbrief">Leitor de e-books com IA, TTS, anotações e integrações</div>
   </td>
@@ -204,9 +204,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae323d3076918ec66f7b2e5f7b89fddfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd91077ce31e7c2ddab99c7c89b5b54b" id="r_abd91077ce31e7c2ddab99c7c89b5b54b"><td class="memItemLeft" align="right" valign="top">QPdfDocument *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#abd91077ce31e7c2ddab99c7c89b5b54b">document</a> () const</td></tr>
 <tr class="separator:abd91077ce31e7c2ddab99c7c89b5b54b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17ea346f88ebc6ce40731ea6519e3ff6" id="r_a17ea346f88ebc6ce40731ea6519e3ff6"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a17ea346f88ebc6ce40731ea6519e3ff6">currentFilePath</a> () const</td></tr>
+<tr class="memdesc:a17ea346f88ebc6ce40731ea6519e3ff6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Caminho absoluto do arquivo PDF atualmente aberto (se houver).  <br /></td></tr>
+<tr class="separator:a17ea346f88ebc6ce40731ea6519e3ff6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6616311485fd438b1432892df3d89e50" id="r_a6616311485fd438b1432892df3d89e50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a6616311485fd438b1432892df3d89e50">fitToWidth</a> ()</td></tr>
 <tr class="memdesc:a6616311485fd438b1432892df3d89e50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ajusta o PDF para caber na largura do widget.  <br /></td></tr>
 <tr class="separator:a6616311485fd438b1432892df3d89e50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdaaede10496c8fd0e0334be5121d94f" id="r_afdaaede10496c8fd0e0334be5121d94f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#afdaaede10496c8fd0e0334be5121d94f">printCurrentPage</a> ()</td></tr>
+<tr class="memdesc:afdaaede10496c8fd0e0334be5121d94f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Imprime a página atual (conteúdo visível da página).  <br /></td></tr>
+<tr class="separator:afdaaede10496c8fd0e0334be5121d94f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abef0c61de608322f93d3062ccc09070d" id="r_abef0c61de608322f93d3062ccc09070d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddc/classPdfViewerWidget.html#abef0c61de608322f93d3062ccc09070d">setSelectionMode</a> (<a class="el" href="../../dc/ddc/classPdfViewerWidget.html#a77f6869aa09492881d7ae88763e29f32">SelectionMode</a> mode)</td></tr>
 <tr class="memdesc:abef0c61de608322f93d3062ccc09070d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define o modo de seleção (automático, texto, retângulo ou nenhum).  <br /></td></tr>
 <tr class="separator:abef0c61de608322f93d3062ccc09070d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -366,6 +372,33 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Copia o conteúdo da seleção (texto ou OCR) para a área de transferência. </p>
+
+</div>
+</div>
+<a id="a17ea346f88ebc6ce40731ea6519e3ff6" name="a17ea346f88ebc6ce40731ea6519e3ff6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17ea346f88ebc6ce40731ea6519e3ff6">&#9670;&#160;</a></span>currentFilePath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">QString PdfViewerWidget::currentFilePath </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Caminho absoluto do arquivo PDF atualmente aberto (se houver). </p>
 
 </div>
 </div>
@@ -589,6 +622,25 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Volta para a página anterior. </p>
+
+</div>
+</div>
+<a id="afdaaede10496c8fd0e0334be5121d94f" name="afdaaede10496c8fd0e0334be5121d94f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdaaede10496c8fd0e0334be5121d94f">&#9670;&#160;</a></span>printCurrentPage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void PdfViewerWidget::printCurrentPage </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Imprime a página atual (conteúdo visível da página). </p>
 
 </div>
 </div>

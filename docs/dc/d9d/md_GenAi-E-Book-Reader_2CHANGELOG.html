@@ -27,7 +27,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="../../logo-do-projeto.png"/></td>
   <td id="projectalign">
-   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.0.1</span>
+   <div id="projectname">GenAI E-Book Reader<span id="projectnumber">&#160;0.1.12</span>
    </div>
    <div id="projectbrief">Leitor de e-books com IA, TTS, anotações e integrações</div>
   </td>
@@ -95,139 +95,66 @@ $(document).ready(function(){initNavTree('dc/d9d/md_GenAi-E-Book-Reader_2CHANGEL
   <div class="headertitle"><div class="title">Changelog</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="autotoc_md44"></a> All notable changes to this project will be documented in this file.</p>
+<div class="textblock"><p><a class="anchor" id="autotoc_md53"></a> All notable changes to this project will be documented in this file.</p>
 <p>The format is based on Keep a Changelog and this project adheres to Semantic Versioning.</p>
-<h1><a class="anchor" id="autotoc_md45"></a>
-[0.1.11]</h1>
+<h1><a class="anchor" id="autotoc_md54"></a>
+&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.11...HEAD"</h1>
+<p>&gt;Unreleased</p>
+<ul>
+<li>Melhorias na integração com WSL no windows</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md55"></a>
+&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.12" &gt;0.1.12&lt;/a&gt; - 2025-09-26</h1>
+<ul>
+<li>Adicionado opção de tradução e sinônimos do texto marcado.</li>
+<li>Corrigido o BUG de listagem dos modelos da OpenRouter.AI</li>
+<li>Tentativa de melhorar a janela de explicação sobre uso do OpenRouter.ai com o video do YouTube.</li>
+<li>Revisar o Algorítimo de OPF, correções e melhorias.</li>
+<li>Removido o BUG relativo a seleção do Ollama</li>
+<li>Ajuste no tamanho da janela Recriando embeddings para melhor visualização.</li>
+<li>Suporte ao provedor Perplexity nos engines de LLM:<ul>
+<li>Novo provedor <code>perplexity</code> em Configurações de LLM, com seleção de modelos recomendados (<code>sonar-small-online</code>, <code>sonar-medium-online</code>, etc.).</li>
+<li>Uso do endpoint compatível com OpenAI em <code><a href="https://api.perplexity.ai/chat/completions">https://api.perplexity.ai/chat/completions</a></code>.</li>
+<li>Leitura da chave via <code>QSettings</code> (ai/api_keys/perplexity) com fallback à env <code>PERPLEXITY_API_KEY</code>.</li>
+</ul>
+</li>
+<li>Chat com pesquisa (web-enabled) via Perplexity:<ul>
+<li>Permite escolher modelos “online” para respostas com buscas na web.</li>
+</ul>
+</li>
+<li>Consulta estruturada para OPF (Function Calling):<ul>
+<li>Nova ferramenta <code>query_opf</code> disponível no chat para retornar campos do OPF atual de forma estruturada (JSON).</li>
+<li>Campos suportados: <code>title</code>, <code>author</code>, <code>publisher</code>, <code>language</code>, <code>identifier</code>, <code>description</code>, <code>summary</code>, <code>keywords</code>, <code>edition</code>, <code>source</code>, <code>format</code>, <code>isbn</code>.</li>
+</ul>
+</li>
+<li>Agora pode escolher em qual idioma se quer que a IA responda.</li>
+<li>Revisar a passagem dos metadados do e-book para o chat.</li>
+<li>Informa matadados do livro no prompt de sistema, melhorando a contextualização das consultas.</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md56"></a>
+&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.11" &gt;0.1.11&lt;/a&gt; - 2025-09-24</h1>
 <ul>
 <li>Ampliado a documentação do código.</li>
 <li>Melhorado a detecção de dados como título, autor, editor, etc. relativos a metadados.</li>
 <li>Usando o nome do arquivo para construir os metadados do e-book.</li>
-<li>Interação com a IA Generativa para obter mais dados sobre o livro</li>
+<li>Interação com a IA Generativa para obter mais dados sobre o livro.</li>
+<li>Obtenção de dados para OPF junto ao Google Livros.</li>
+<li>Contabilidade do tempo gasto para gerar Indice de Embeddings</li>
+<li>Checagem se é a ultima versão, se não for, exibe uma janela com a versão mais recente e pergunta se deseja fazer o download.</li>
+<li>Pergunta ao usuário se ele deseja associar o leitor aos arquivos PDFs</li>
+<li>Recurso de impressão adicionado:<ul>
+<li>Menu Arquivo &gt; Documento &gt; "Imprimir documento..." envia o PDF atual para a impressora do sistema (Linux <code>lp</code>).</li>
+<li>Clique direito no leitor de PDF oferece "Imprimir página atual..." (imprime a página visível).</li>
+<li>Chat: botão "Imprimir" acima da caixa de texto e opção no clique direito para imprimir a transcrição (gera PDF temporário e envia para <code>lp</code>).</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md46"></a>
-&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/compare/v0.1.9...v0.1.10" &gt;0.1.10&lt;/a&gt; - 2024-09-23</h1>
-<h2><a class="anchor" id="autotoc_md47"></a>
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md57"></a>
+&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.10" &gt;0.1.10&lt;/a&gt; - 2024-09-23</h1>
+<h2><a class="anchor" id="autotoc_md58"></a>
 Focus</h2>
 <ul>
-<li>Melhoria nas buscas (full‑text e semântica) e na interação do chat com suporte a Function Calling, quando disponível no modelo/provedor.</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md48"></a>
-Added/Planned</h2>
-<ul>
-<li>Indicador de capacidade de Function Calling na janela de Configurações de LLM: uma caixa de texto somente leitura exibirá se o provedor/modelo selecionado suporta Function Calling (detecção automática quando a API expuser essa informação; caso contrário, texto informativo com instruções).</li>
-<li>Documentação atualizada descrevendo o comportamento esperado de Function Calling por provedor/modelo e as limitações conhecidas.</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md49"></a>
-Notes</h2>
-<ul>
-<li>Esta versão é focada em preparar a infraestrutura e UX para Function Calling e em aprimorar a qualidade das pesquisas (texto e semântica). Implementações adicionais podem ser entregues de forma incremental ao longo do ciclo 0.1.10.</li>
-</ul>
-<h1><a class="anchor" id="autotoc_md50"></a>
-&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.9" &gt;0.1.9&lt;/a&gt; - 2025-09-22</h1>
-<ul>
-<li>Ajuste no CI para refletir os ajustes em CMakeList.txt</li>
-<li>Automatizado o ajuste de versão com base no primeiro nota de versão</li>
-<li>Adicionado novos provedores de LLM: Ollama, GenerAtive AI e OpenRouter.</li>
-<li>Melhorias na interface de configuração de LLM. listagem de modelos e teste de modelo.</li>
-<li>Adicionado ao CMakeList.txt um target para fazer release local para testes.</li>
-<li>Aumentado a depuração no processo de seleção de Provedores de IA e LLMs</li>
-<li>Chave de cortesia para uso do OpenRouter.ia adicionada</li>
-<li>Removido a dependência do PHPList e personalizado a interação com a LLM</li>
-<li>Personalizado a interação com o usuário.</li>
-<li>Iniciado estudos de envio do e-book para resumo pela IA.</li>
-<li>Adicionado suporte a arquivos OPF.</li>
-</ul>
-<h1><a class="anchor" id="autotoc_md51"></a>
-&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.8" &gt;0.1.8&lt;/a&gt; - 2025-09-21</h1>
-<ul>
-<li>Compilação para o Windows, ainda em implementação, Ajuda será bem vinda.</li>
-<li>Ajuste na documentação, em especial tutorial e arquivo readme.</li>
-<li>Adicionado ao menu help o conteúdo do arquivo <a class="el" href="../../dd/d3d/TUTORIAL_8md.html">TUTORIAL.md</a></li>
-<li>Melhorias na seleção de página e sincronismo do e-book com o TOC e seletor de página na barra de ferramentas.</li>
-<li>Sincronizado o TOC e a página selecionada na barra de ferramentas com a página exibida do e-book.</li>
-<li>Revisão do menu "Arquivos Recentes" e da janela de listagem.</li>
-<li>Iniciado o estudo para implementar a funcionalidade do menu/conteudo/indice/sumário do e-book.</li>
-<li>Melhorado gestão de chat por arquivos.</li>
-<li>Adoção do Metadados para AppImage. Melhorias relativas no CMakeFile.txt</li>
-</ul>
-<h1><a class="anchor" id="autotoc_md52"></a>
-&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.7" &gt;0.1.7&lt;/a&gt; - 2025-09-20</h1>
-<h2><a class="anchor" id="autotoc_md53"></a>
-Added</h2>
-<ul>
-<li>Ajustado painel de Informações da Aplicação</li>
-<li>Carga de e-books pela linha de comando ou menu no explorador (Abrir Com).</li>
-<li>Associação de extenção com o applicativo.</li>
-<li>Dicionário iniciado, funcionando apenas com LLM. preciso testar com APIs especializadas.</li>
-<li>Adicionado Target para Gerar AppImage</li>
-</ul>
-<h1><a class="anchor" id="autotoc_md54"></a>
-&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.6" &gt;0.1.6&lt;/a&gt; - 2025-09-18</h1>
-<h2><a class="anchor" id="autotoc_md55"></a>
-Added</h2>
-<ul>
-<li>Indexação de embeddings por documento com controle de chunking/batching e escrita incremental. Issue #3</li>
-<li>Busca por frases usando embeddings (fallback semântico quando a busca por texto não encontra resultados), com opções rápidas: métrica (cosine/dot/L2), Top‑K e limiares. Issue #3</li>
-<li>Botão de Título central na barra superior exibindo o nome do documento atual e menu contextual com ações: abrir diretório, adicionar ao Calibre com migração de embeddings e renomear arquivo com migração. Issues #6, #7, #8</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md56"></a>
-Changed</h2>
-<ul>
-<li>Otimizada a renderização do painel de chat, movendo a conversão de Markdown do front-end (JavaScript, <code>marked.js</code>) para o back-end (C++ com a biblioteca <code>cmark</code>). Isso simplifica o código do cliente e melhora a manutenibilidade.</li>
-<li>Barra de busca unificada na toolbar com campo de pesquisa, botões Anterior/Próximo e menu de Opções para a busca semântica.</li>
-<li>Ajuste na exibição dos Desenvolvedores</li>
-<li>Ajuste na exibição da licença</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md57"></a>
-Fixed</h2>
-<ul>
-<li>Corrigidos travamentos e erros de renderização (<code>Uncaught TypeError</code>) do MathJax que ocorriam durante a atualização do conteúdo do chat. (Resolve Issue #1)</li>
-</ul>
-<h1><a class="anchor" id="autotoc_md58"></a>
-&lt;a href="https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/tag/v0.1.5" &gt;0.1.5&lt;/a&gt; - 2025-09-14</h1>
-<h2><a class="anchor" id="autotoc_md59"></a>
-Added</h2>
-<ul>
-<li>Integração com LLM (OpenAI/GenerAtiva) com diálogo de Configurações de LLM:<ul>
-<li>Provedor, Modelo, Base URL (opcional), API Key e prompts personalizáveis para Sinônimos, Resumos, Explicações e Chat.</li>
-</ul>
-</li>
-<li>Painel de Chat com IA (dock à direita):<ul>
-<li>Enviar mensagens, salvar a conversa em <code>.txt</code> e solicitar um compilado (resumo) do diálogo atual.</li>
-</ul>
-</li>
-<li>Ações de IA no leitor:<ul>
-<li>Sinônimos e Resumo a partir da seleção, com confirmação prévia antes do envio do conteúdo.</li>
-</ul>
-</li>
-<li>Painel de Chat com renderização avançada:<ul>
-<li>Suporte a Markdown GFM com tabelas corretamente renderizadas (bordas, cabeçalho e rolagem horizontal quando necessário).</li>
-<li>Syntax highlighting para blocos de código via highlight.js (tema GitHub).</li>
-<li>MathJax v3 configurado para inline/display LaTeX; typeset após o Markdown e highlighting.</li>
-<li>Auto-scroll para a última mensagem após cada atualização do chat.</li>
-</ul>
-</li>
-<li>Sessões de chat:<ul>
-<li>Botão "Novo" para iniciar uma nova conversa (com confirmação para salvar a conversa atual).</li>
-<li>Botão "Histórico" para listar e restaurar conversas salvas.</li>
-<li>Título automático de cada conversa salva (baseado na última resposta da IA ou primeira mensagem do usuário).</li>
-<li>Persistência por arquivo em <code>QSettings</code> como lista JSON (título, HTML e turns role/content).</li>
-</ul>
-</li>
-<li>Contexto contínuo com a IA: envios passam a incluir todo o histórico da conversa para melhor continuidade.</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md60"></a>
-Changed</h2>
-<ul>
-<li>Documentação: <code><a class="el" href="../../da/ddd/README_8md.html">README.md</a></code> ganhou seção de LLM e link para <code><a class="el" href="../../dd/d3d/TUTORIAL_8md.html">TUTORIAL.md</a></code> com passo a passo.</li>
-<li>Removido o fallback de QTextEdit no Chat: <code>QWebEngineView</code> passa a ser obrigatório, garantindo Markdown/MathJax/highlighting consistentes.</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md61"></a>
-Fixed</h2>
-<ul>
-<li>Problemas de exibição de tabelas Markdown no chat.</li>
-<li>Ordem de renderização para garantir MathJax consistente após parsing e highlighting. </li>
+<li>Melhoria nas buscas (full‑text e semântica) e na interação do chat com suporte a Function Calling, quando disponível no modelo/provedor. </li>
 </ul>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->

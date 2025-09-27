@@ -27,6 +27,8 @@ var dir_9c869cc3a6d7190ddcef4d8b0e1244f4 =
     [ "PdfViewerWidget.h", "d4/d6d/PdfViewerWidget_8h.html", "d4/d6d/PdfViewerWidget_8h" ],
     [ "RecentFilesDialog.cpp", "dc/d1c/RecentFilesDialog_8cpp.html", null ],
     [ "RecentFilesDialog.h", "da/d18/RecentFilesDialog_8h.html", "da/d18/RecentFilesDialog_8h" ],
+    [ "SearchProgressDialog.cpp", "d6/d4b/SearchProgressDialog_8cpp.html", null ],
+    [ "SearchProgressDialog.h", "da/db0/SearchProgressDialog_8h.html", "da/db0/SearchProgressDialog_8h" ],
     [ "SummaryDialog.cpp", "d1/d40/SummaryDialog_8cpp.html", null ],
     [ "SummaryDialog.h", "d7/d5e/SummaryDialog_8h.html", "d7/d5e/SummaryDialog_8h" ],
     [ "TutorialDialog.cpp", "d4/daf/TutorialDialog_8cpp.html", null ],

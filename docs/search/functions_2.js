@@ -12,5 +12,6 @@ var searchData=
   ['conversationforllm_9',['conversationForLlm',['../d0/daf/classChatDock.html#a03a807d11fa4246ac23a852e7cfe08f2',1,'ChatDock']]],
   ['copyselection_10',['copySelection',['../dc/ddc/classPdfViewerWidget.html#a5939711c319061b2cbcfaab57cee2409',1,'PdfViewerWidget']]],
   ['current_11',['current',['../d4/db7/classgenai_1_1Reader.html#acac8f5f8b2b71e2c137dbf9b25b0951c',1,'genai::Reader::current()'],['../d5/de3/classgenai_1_1DummyReader.html#ad4516396e04ba0ca4908aebc6f58fd4b',1,'genai::DummyReader::current()']]],
-  ['currentpage_12',['currentPage',['../dc/ddc/classPdfViewerWidget.html#ab2d4ab926b7055698e65629d02defa78',1,'PdfViewerWidget']]]
+  ['currentfilepath_12',['currentFilePath',['../dc/ddc/classPdfViewerWidget.html#a17ea346f88ebc6ce40731ea6519e3ff6',1,'PdfViewerWidget']]],
+  ['currentpage_13',['currentPage',['../dc/ddc/classPdfViewerWidget.html#ab2d4ab926b7055698e65629d02defa78',1,'PdfViewerWidget']]]
 ];
