@@ -337,7 +337,8 @@ endif()
 add_custom_target(github_release
     DEPENDS dist
     COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git add -A
-    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git commit -m "Release version ${PROJECT_VERSION}"
+    # Allow clean working tree: if there is nothing to commit, proceed without failing
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} /bin/sh -c "git commit -m 'Release version ${PROJECT_VERSION}' || echo 'No changes to commit'"
     COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push
     COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git tag -a "v${PROJECT_VERSION}" -m "Release version ${PROJECT_VERSION}" --force
     COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR} git push origin "v${PROJECT_VERSION}" --force

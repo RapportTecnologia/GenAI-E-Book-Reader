@@ -51,17 +51,17 @@ Você pode baixar a versão estável mais recente ou compilar a versão de desen
 
 ### Versão Estável (Recomendado)
 
-A versão estável mais recente é a **v0.1.12**. Para a maioria dos usuários, recomendamos o download do executável pronto para uso.
+A versão estável mais recente é a **v0.1.13**. Para a maioria dos usuários, recomendamos o download do executável pronto para uso.
 
 1.  Acesse a [**página de Releases**](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest).
-2.  Baixe o arquivo `GenAI_EBook_Reader-v0.1.12-x86_64.AppImage`.
+2.  Baixe o arquivo `GenAI_EBook_Reader-v0.1.13-x86_64.AppImage`.
 3.  Dê permissão de execução ao arquivo:
     ```bash
-    chmod +x GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
+    chmod +x GenAI_EBook_Reader-v0.1.13-x86_64.AppImage
     ```
 4.  Execute o aplicativo:
     ```bash
-    ./GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
+    ./GenAI_EBook_Reader-v0.1.13-x86_64.AppImage
     ```
 
 ### Versão de Desenvolvimento

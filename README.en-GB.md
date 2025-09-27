@@ -37,17 +37,17 @@ You can download the latest stable release or build the development version to a
 
 ### Stable Release (Recommended)
 
-The latest stable version is **v0.1.12**. For most users we recommend downloading the ready‑to‑run executable.
+The latest stable version is **v0.1.13**. For most users we recommend downloading the ready‑to‑run executable.
 
 1. Go to the [Releases page](https://github.com/RapportTecnologia/GenAi-E-Book-Reader/releases/latest).
-2. Download `GenAI_EBook_Reader-v0.1.12-x86_64.AppImage`.
+2. Download `GenAI_EBook_Reader-v0.1.13-x86_64.AppImage`.
 3. Make it executable:
     ```bash
-    chmod +x GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
+    chmod +x GenAI_EBook_Reader-v0.1.13-x86_64.AppImage
     ```
 4. Run the app:
     ```bash
-    ./GenAI_EBook_Reader-v0.1.12-x86_64.AppImage
+    ./GenAI_EBook_Reader-v0.1.13-x86_64.AppImage
     ```
 
 ### Development Version
