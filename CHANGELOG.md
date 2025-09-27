@@ -6,17 +6,7 @@
 
   - Melhorias na integração com WSL no windows
 
-  ## [0.1.13] - 2025-09-27
-  - Chat/OPF:
-    - OPF agora é usado apenas para identificação mínima do livro no chat (arquivo, título, autor, ISBN).
-    - Removida a exposição da ferramenta `query_opf` no Function Calling por padrão, evitando latência e ruído durante a conversa. O handler interno permanece para compatibilidade.
-    - Corrigido o schema da ferramenta `propose_search` (faltava declarar `properties.query`).
-    - Revisado o prompt de sistema para uma política de precisão concisa, sem referências a solicitar `query_opf` durante o chat.
-    - Revisão do processo de criar um novo chat, agora ele pergunta se deseja salvar o chat atual no histórico. E inicia um novo esquecendo o anterior.
-    - Adicionar spiner para indicar que a IA está processando a requisição.
-    - 
-
-  ## [0.1.12] - 2025-09-26
+  ## [0.1.12] - 2025-09-27
 
   - Adicionado opção de tradução e sinônimos do texto marcado.
   - Corrigido o BUG de listagem dos modelos da OpenRouter.AI
@@ -35,6 +25,13 @@
   - Agora pode escolher em qual idioma se quer que a IA responda.
   - Revisar a passagem dos metadados do e-book para o chat.
   - Informa matadados do livro no prompt de sistema, melhorando a contextualização das consultas.
+  - Chat/OPF:
+    - OPF agora é usado apenas para identificação mínima do livro no chat (arquivo, título, autor, ISBN).
+    - Removida a exposição da ferramenta `query_opf` no Function Calling por padrão, evitando latência e ruído durante a conversa. O handler interno permanece para compatibilidade.
+    - Corrigido o schema da ferramenta `propose_search` (faltava declarar `properties.query`).
+    - Revisado o prompt de sistema para uma política de precisão concisa, sem referências a solicitar `query_opf` durante o chat.
+    - Revisão do processo de criar um novo chat, agora ele pergunta se deseja salvar o chat atual no histórico. E inicia um novo esquecendo o anterior.
+    - Adicionar spiner para indicar que a IA está processando a requisição.
 
 
   ## [0.1.11] - 2025-09-24
