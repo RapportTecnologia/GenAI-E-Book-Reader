@@ -51,6 +51,8 @@ ChatDock::ChatDock(QWidget* parent)
         historyView_->setPage(page);
         // Allow right-click context menu on history view to offer printing
     if (historyView_) historyView_->installEventFilter(this);
+    // Track container events to keep overlay in sync
+    container_->installEventFilter(this);
 }
     v->addWidget(historyView_, 1);
     // Scroll to bottom after each page load (connect once)
@@ -409,8 +411,21 @@ void ChatDock::onPrintClicked() {
 }
 
 bool ChatDock::eventFilter(QObject* obj, QEvent* ev) {
-    if (obj == historyView_ && overlay_ && ev->type() == QEvent::Resize) {
-        overlay_->setGeometry(historyView_->rect());
+    const bool isHist = (obj == historyView_);
+    const bool isCont = (obj == container_);
+    if ((isHist || isCont) && overlay_) {
+        if (ev->type() == QEvent::Resize || ev->type() == QEvent::Show || ev->type() == QEvent::Move) {
+            // Position overlay to cover the historyView_ area within container_
+            if (historyView_ && overlay_->parentWidget() == container_) {
+                overlay_->setGeometry(historyView_->geometry());
+            }
+            if (overlayInner_) {
+                const int w = overlayInner_->width();
+                const int h = overlayInner_->height();
+                overlayInner_->move(overlay_->rect().center() - QPoint(w/2, h/2));
+            }
+            overlay_->raise();
+        }
     }
     if (obj == input_ && ev->type() == QEvent::KeyPress) {
         auto* ke = static_cast<QKeyEvent*>(ev);
@@ -438,26 +453,31 @@ void ChatDock::setBusy(bool on) {
     if (!historyView_) return;
     // Lazy create overlay
     if (!overlay_) {
-        overlay_ = new QWidget(historyView_);
+        // Parent to container_ so it can be stacked above QWebEngineView reliably
+        overlay_ = new QWidget(container_);
         overlay_->setAttribute(Qt::WA_NoSystemBackground, false);
         overlay_->setAutoFillBackground(true);
         QPalette pal = overlay_->palette();
         pal.setColor(QPalette::Window, QColor(0,0,0,90));
         overlay_->setPalette(pal);
-        overlay_->setGeometry(historyView_->rect());
+        if (historyView_) overlay_->setGeometry(historyView_->geometry());
 
         overlayInner_ = new QWidget(overlay_);
         overlayInner_->setObjectName("overlayInner");
-        overlayInner_->setStyleSheet("#overlayInner { background: rgba(255,255,255,0.95); border-radius: 8px; }");
+        overlayInner_->setStyleSheet("#overlayInner { background: #ffffff; border: 1px solid rgba(0,0,0,0.15); box-shadow: 0px 6px 18px rgba(0,0,0,0.15); border-radius: 8px; }");
         auto* innerLayout = new QVBoxLayout(overlayInner_);
         innerLayout->setContentsMargins(16,16,16,16);
         innerLayout->setSpacing(8);
+        overlayLabel_ = new QLabel(tr("Pensando"), overlayInner_);
+        overlayLabel_->setStyleSheet("color:#333; font-size:14px; font-weight:600;");
+        overlayLabel_->setAlignment(Qt::AlignCenter);
         overlayBar_ = new QProgressBar(overlayInner_);
         overlayBar_->setRange(0,0); // indeterminate
-        overlayLabel_ = new QLabel(tr("Pensando..."), overlayInner_);
-        overlayLabel_->setAlignment(Qt::AlignCenter);
-        innerLayout->addWidget(overlayBar_);
+        overlayBar_->setTextVisible(true);
+        overlayBar_->setFormat(tr("Pensando"));
+        overlayBar_->setStyleSheet("QProgressBar { text-align:center; color:#333; } QProgressBar::chunk { background-color:#3b82f6; }");
         innerLayout->addWidget(overlayLabel_);
+        innerLayout->addWidget(overlayBar_);
 
         // Center the inner box
         const int w = 260, h = 96;
@@ -467,6 +487,7 @@ void ChatDock::setBusy(bool on) {
         overlay_->hide();
     }
     overlay_->setVisible(on);
+    overlay_->raise();
     if (overlayInner_) {
         const int w = overlayInner_->width();
         const int h = overlayInner_->height();
